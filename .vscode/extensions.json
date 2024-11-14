@@ -1,0 +1,15 @@
+{
+	"recommendations": [
+		"EditorConfig.EditorConfig",
+		"ms-vscode.makefile-tools",
+		"ms-vscode.cpptools-extension-pack",
+		"ms-vscode.cpptools",
+		"ms-vscode.cpptools-themes"
+	],
+	"unwantedRecommendations": [
+		"ms-vscode.cmake-tools",
+		"josetr.cmake-language-support-vscode",
+		"twxs.cmake",
+		"jackboosy.vcpkg-cmake-tools"
+	]
+}

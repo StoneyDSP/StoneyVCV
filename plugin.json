@@ -1,0 +1,17 @@
+{
+  "slug": "StoneyVCV",
+  "name": "Core",
+  "version": "2.0.0",
+  "license": "MIT",
+  "brand": "StoneyDSP",
+  "author": "Nathan J. Hood",
+  "authorEmail": "nathanjhood@googlemail.com",
+  "authorUrl": "https://github.com/nathanjhood",
+  "pluginUrl": "https://github.com/StoneyDSP/StoneyVCV",
+  "manualUrl": "https://github.com/StoneyDSP/StoneyVCV/blob/main/README.md",
+  "sourceUrl": "https://github.com/StoneyDSP/StoneyVCV/blob/main",
+  "donateUrl": "",
+  "changelogUrl": "https://github.com/StoneyDSP/StoneyVCV/blob/main/CHANGELOG.md",
+  "modules": [
+  ]
+}
