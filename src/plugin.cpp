@@ -29,3 +29,31 @@
  *
  ******************************************************************************/
 
+#undef STONEYDSP_HPP_INCLUDED
+
+#include "plugin.hpp"
+
+#ifdef STONEYDSP_HPP_INCLUDED
+  #error "incorrect usage of 'StoneyDSP.hpp'..."
+#endif
+
+// Include StoneyDSP library here, for a single global linkage object
+#include "../src/StoneyDSP"
+
+/** @brief The `StoneyDSP` VCV Rack Plugin instance. */
+::rack::plugin::Plugin* StoneyDSP::VCVRack::pluginInstance;
+
+/**
+ * @brief The `StoneyDSP` VCV Rack Plugin Initialiser.
+ *
+ * @param p
+ */
+void init(::rack::plugin::Plugin* p) {
+
+	::StoneyDSP::VCVRack::pluginInstance = p;
+
+
+	// Any other plugin initialization may go here.
+	// As an alternative, consider lazy-loading assets and lookup tables when
+    // your module is created to reduce startup times of Rack.
+}
