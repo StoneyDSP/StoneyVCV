@@ -46,6 +46,7 @@
 
 #include "StoneyDSP/version.hpp"
 #include "StoneyDSP/system.hpp"
+#include "StoneyDSP/common.hpp"
 
 //==============================================================================
 
