@@ -37,17 +37,40 @@
 
 // Standard includes
 
-#if __has_include(<stdint.h>)
- #include <stdint.h>
-#endif
+// #if __has_include(<stdint.h>)
+//  #include <stdint.h>
+// #endif
 
-#if __has_include(<string>)
- #include <string>
-#endif
+// #if __has_include(<string>)
+//  #include <string>
+// #endif
 
 // #if __has_include(<string_view>)
 //   #include <string_view> // Not supported by Rack!! :(
 // #endif
+
+#if defined (__SSE2__)
+ #if __has_include(<emmintrin.h>)
+  #include <emmintrin.h>
+ #else
+  #define SIMDE_ENABLE_NATIVE_ALIASES
+  #include <simde/x86/sse2.h> // The appropriate header file for emmintrin.h is simde/x86/sse2.h
+ #endif
+#elif defined(__aarch64__)
+ #if __has_include(<sse2neon.h>)
+ #include <sse2neon.h>
+#else
+ #warning SSE2 support is not available. Code will not compile
+#endif
+
+#if defined (__SSE4_2__) && __has_include(<nmmintrin.h>)
+ #include <nmmintrin.h>
+#else
+ #define SIMDE_ENABLE_NATIVE_ALIASES
+ #include <simde/x86/sse4.2.h>
+#endif
+
+//==============================================================================
 
 // // No SIMDE SSE2
 
@@ -63,20 +86,20 @@
 
 // Yes SIMDE SSE2
 
-#if defined(__SSE2__) || defined(__aarch64__)
-  #define SIMDE_ENABLE_NATIVE_ALIASES
-  // The appropriate header file for emmintrin.h is simde/x86/sse2.h
-  #include <simde/x86/sse2.h>
-#else
-  #warning SSE2/NEON support is not available. Code will not compile.
-#endif
+// #if defined(__SSE2__) || defined(__aarch64__)
+//   #define SIMDE_ENABLE_NATIVE_ALIASES
+//   // The appropriate header file for emmintrin.h is simde/x86/sse2.h
+//   #include <simde/x86/sse2.h>
+// #else
+//   #warning SSE2/NEON support is not available. Code will not compile.
+// #endif
 
-#ifdef __SSE4_2__
- #include <nmmintrin.h>
-#else
- #define SIMDE_ENABLE_NATIVE_ALIASES
- #include <simde/x86/sse4.2.h>
-#endif
+// #ifdef __SSE4_2__
+//  #include <nmmintrin.h>
+// #else
+//  #define SIMDE_ENABLE_NATIVE_ALIASES
+//  #include <simde/x86/sse4.2.h>
+// #endif
 
 //==============================================================================
 
