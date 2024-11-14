@@ -49,13 +49,29 @@
 //   #include <string_view> // Not supported by Rack!! :(
 // #endif
 
+// // No SIMDE SSE2
+
 // #ifdef __SSE2__
 //   #include <emmintrin.h>
 // #else
-//   #warning SSE2 is not available. Code will not compile!
+//   #ifdef __aarch64__
+//     #include "sse2neon.h"
+//   #else
+//     #warning SSE2 support is not available. Code will not compile
+//   #endif
 // #endif
 
-#if defined (__SSE4_2__) && __has_include(<nmmintrin.h>)
+// Yes SIMDE SSE2
+
+#if defined(__SSE2__) || defined(__aarch64__)
+  #define SIMDE_ENABLE_NATIVE_ALIASES
+  // The appropriate header file for emmintrin.h is simde/x86/sse2.h
+  #include <simde/x86/sse2.h>
+#else
+  #warning SSE2/NEON support is not available. Code will not compile.
+#endif
+
+#ifdef __SSE4_2__
  #include <nmmintrin.h>
 #else
  #define SIMDE_ENABLE_NATIVE_ALIASES
