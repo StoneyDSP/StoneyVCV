@@ -40,3 +40,42 @@
 #else
 
 #include <rack.hpp>
+
+//==============================================================================
+
+namespace StoneyDSP
+{
+/** @addtogroup StoneyDSP
+ *  @{
+ */
+
+/**
+ * @brief The `VCVRack` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ *
+ */
+namespace VCVRack
+{
+/** @addtogroup VCVRack
+ *  @{
+ */
+
+//==============================================================================
+
+// Declare the Plugin, defined in plugin.cpp
+extern rack::plugin::Plugin* pluginInstance;
+
+//==============================================================================
+
+  /// @} group VCVRack
+} // namespace VCVRack
+
+  /// @} group StoneyDSP
+} // namespace StoneyDSP
+
+//==============================================================================
+
+#endif
+
+//==============================================================================
