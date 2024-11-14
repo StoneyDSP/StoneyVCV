@@ -32,4 +32,16 @@
 //==============================================================================
 
 #include "StoneyDSP.hpp"
+
+//==============================================================================
+
+std::string StoneyDSP::SystemStats::getStoneyDSPVersion()
+{
+    return "StoneyDSP v" STONEYDSP_STRINGIFY (STONEYDSP_VERSION_MAJOR)
+                "." STONEYDSP_STRINGIFY (STONEYDSP_VERSION_MINOR)
+                "." STONEYDSP_STRINGIFY (STONEYDSP_BUILDNUMBER);
+}
+
+// std::string_view ::StoneyDSP::SystemStats::getStoneyDSPVersion()
+
 //==============================================================================
