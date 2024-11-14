@@ -98,9 +98,9 @@ using __DOUBLE_T = __m128d;
 using __FLOAT_T = __m128;
 using __INT_T = __m128i;
 
-using __UDOUBLE_T = __m128d_u;
-using __UFLOAT_T = __m128_u;
-using __UINT_T = __m128i_u;
+// using __UDOUBLE_T = __m128d_u;   // not supported on ARM....
+// using __UFLOAT_T = __m128_u;     // not supported on ARM....
+// using __UINT_T = __m128i_u;      // not supported on ARM....
 
 //==============================================================================
 
@@ -124,23 +124,25 @@ using float_t = __FLOAT_T;
  */
 using int_t = __INT_T;
 
-/**
- * @brief An unaligned 128-bit register of four single-precision floating
- * point numbers `(4x32 = 128 bits)`.
- */
-using ufloat_t = __UFLOAT_T;
+// not supported on ARM....
 
-/**
- * @brief An unaligned 128-bit register of two double-precision floating
- * point numbers `(2x64 = 128 bits)`.
- */
-using udouble_t = __UDOUBLE_T;
+// /**
+//  * @brief An unaligned 128-bit register of four single-precision floating
+//  * point numbers `(4x32 = 128 bits)`.
+//  */
+// using ufloat_t = __UFLOAT_T;
 
-/**
- * @brief An unaligned 128-bit register of integer numbers
- * `(16x8, 8x16, 4x32, or 2x64 = 128 bits)`.
- */
-using uint_t = __UINT_T;
+// /**
+//  * @brief An unaligned 128-bit register of two double-precision floating
+//  * point numbers `(2x64 = 128 bits)`.
+//  */
+// using udouble_t = __UDOUBLE_T;
+
+// /**
+//  * @brief An unaligned 128-bit register of integer numbers
+//  * `(16x8, 8x16, 4x32, or 2x64 = 128 bits)`.
+//  */
+// using uint_t = __UINT_T;
 
 //==============================================================================
 
@@ -692,7 +694,7 @@ public:
      * @return `Vector<int8_t, 16>`
      */
     static Vector load(const int8_t* x) {
-#if STONEYDSP_GCC && (__GNUC__)
+#if defined (STONEYDSP_GCC) || (defined (STONEYDSP_MAC) && defined (STONEYDSP_ARM))
 		// HACK
 		// Use _mm_loadu_si128() because GCC doesn't support _mm_loadu_si8()
 		return Vector(_mm_loadu_si128((const __m128i*) x));
@@ -715,7 +717,7 @@ public:
 	 * @param x
 	 */
 	void store(int8_t* x) {
-#if STONEYDSP_GCC && (__GNUC__)
+#if defined (STONEYDSP_GCC) || (defined (STONEYDSP_MAC) && defined (STONEYDSP_ARM))
 		// HACK
 		// Use `_mm_storeu_si128()` because GCC doesn't support
         // `_mm_storeu_si8()`
