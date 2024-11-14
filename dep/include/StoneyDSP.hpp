@@ -172,3 +172,9 @@ void ignoreUnused (Types&&...) noexcept {}
 
 //==============================================================================
 
+// StoneyDSP Library
+
+#include "StoneyDSP/simd.hpp"
+#include "StoneyDSP/dsp.hpp"
+
+//==============================================================================
