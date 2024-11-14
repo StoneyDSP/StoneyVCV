@@ -1,0 +1,67 @@
+name: macos
+
+on:
+  # Runs on all pushes
+  push:
+  # # A push is made to a GitHub Pages-enabled branch
+  # page_build:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# When pushing new commits, cancel any running builds on that branch
+concurrency:
+  group: macos-latest-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DISPLAY: :0
+  SCCACHE_GHA_ENABLED: "true"
+  SCCACHE_CACHE_MULTIARCH: 1 # for macos actions only!
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+  RACK_SDK_VERSION: 2.5.2
+  RACK_SDK_PLATFORM: "mac-x64+arm64"
+  RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+
+jobs:
+  macos:
+    runs-on: macos-latest
+
+    steps:
+    
+    - name: Checkout StoneyVCV code
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        
+      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    - name: Install VCV's macOS Deps
+      run: |
+        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
+
+    - name: Set Up Build Cache
+      uses: mozilla-actions/sccache-action@v0.0.4
+
+    - name: Build
+      run: make
+
+    - name: Install
+      run: make install
+
+#     - name: Test
+#       run: ???
+
+    - name: Dist
+      run: make dist
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-2.0.0-mac-x64+arm64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyVCV-2.0.0-lin-x64.vcvplugin'
+
+    - name: Get Artifacts
+      uses: actions/download-artifact@v4
