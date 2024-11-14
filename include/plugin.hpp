@@ -41,6 +41,8 @@
 
 #include <rack.hpp>
 
+#include "StoneyDSP/version.hpp"
+
 //==============================================================================
 
 namespace StoneyDSP
