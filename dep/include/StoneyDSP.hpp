@@ -44,6 +44,8 @@
   # define STONEYDSP_STRINGIFY(n) STONEYDSP_STRINGIFY_HELPER(n)
 #endif
 
+#include "StoneyDSP/version.hpp"
+
 //==============================================================================
 
 /**
