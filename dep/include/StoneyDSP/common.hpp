@@ -58,9 +58,10 @@
  #endif
 #elif defined(__aarch64__)
  #if __has_include(<sse2neon.h>)
- #include <sse2neon.h>
-#else
- #warning SSE2 support is not available. Code will not compile
+  #include <sse2neon.h>
+ #else
+  #warning SSE2 support is not available. Code will not compile
+ #endif
 #endif
 
 #if defined (__SSE4_2__) && __has_include(<nmmintrin.h>)
