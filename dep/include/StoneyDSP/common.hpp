@@ -55,7 +55,7 @@
 //   #warning SSE2 is not available. Code will not compile!
 // #endif
 
-#ifdef __SSE4_2__ && __has_include(<nmmintrin.h>)
+#if defined (__SSE4_2__) && __has_include(<nmmintrin.h>)
  #include <nmmintrin.h>
 #else
  #define SIMDE_ENABLE_NATIVE_ALIASES
