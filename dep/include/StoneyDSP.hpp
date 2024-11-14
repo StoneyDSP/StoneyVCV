@@ -115,6 +115,28 @@ using uint32 = uint32_t;
 
 /** @brief A platform-independent 8-bit signed integer type. */
 using Byte = unsigned char;
+
+//==============================================================================
+
+/** @brief The SystemStats class. */
+class SystemStats final {
+public:
+
+    /**
+     * @brief Returns the current version of `STONEYDSP`.
+     * See also the `STONEYDSP_VERSION`, `STONEYDSP_MAJOR_VERSION` and
+     * `STONEYDSP_MINOR_VERSION` macros.
+     *
+     */
+    static std::string getStoneyDSPVersion();
+
+    // static std::string_view getStoneyDSPVersion();
+
+private:
+    STONEYDSP_DECLARE_NON_CONSTRUCTABLE (SystemStats)
+    STONEYDSP_DECLARE_NON_COPYABLE (SystemStats)
+};
+
 //==============================================================================
 
 /**
