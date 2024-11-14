@@ -45,6 +45,7 @@
 #endif
 
 #include "StoneyDSP/version.hpp"
+#include "StoneyDSP/system.hpp"
 
 //==============================================================================
 
