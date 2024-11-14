@@ -82,6 +82,18 @@ using __INT_16_T = signed short;
 using __UINT_16_T = unsigned short;
 using __INT_32_T = signed int;
 using __UINT_32_T = unsigned int;
+#ifndef STONEYDSP_USING_INT64_2
+ #if STONEYDSP_MSVC
+  using  __INT_64_T = __int64;
+  using  __UINT_64_T = unsigned __int64;
+ #else
+  using __INT_64_T = long long;
+  using __UINT_64_T = unsigned long long;
+ #endif
+#else
+ using __INT_64_T = __m64;    // simd-optimized integer
+ using __UINT_64_T = __m64_u; // simd-optimized integer
+#endif
 using __FLOAT_T = float;
 using __DOUBLE_T = double;
 
@@ -93,6 +105,8 @@ using int16_t = __INT_16_T;
 using uint16_t = __UINT_16_T;
 using int32_t = __INT_32_T;
 using uint32_t = __UINT_32_T;
+using int64_t = __INT_64_T;
+using uint64_t = __UINT_64_T;
 using float_t = __FLOAT_T;
 using double_t = __DOUBLE_T;
 
@@ -110,6 +124,10 @@ using uint16 = uint16_t;
 using int32 = int32_t;
 /** @brief A platform-independent 32-bit unsigned integer type. */
 using uint32 = uint32_t;
+/** @brief A platform-independent 64-bit signed integer type. */
+using int64  = int64_t;
+/** @brief A platform-independent 64-bit unsigned integer type. */
+using uint64 = uint64_t;
 
 //==============================================================================
 
