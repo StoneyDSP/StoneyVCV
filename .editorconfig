@@ -1,0 +1,195 @@
+# Stop the editor from looking for .editorconfig files in the parent directories
+root = true
+
+# NOTE - 'end_of_line' settings should always match with the settings in
+# '.gitattributes', keeping the IDE's and git's parsers in sync.
+# The main caveat is that certain Windows-based file extensions *must* be crlf,
+# which are '*.sln', '*.cmd', and '*.bat', aside from any Powershell files
+# ('*.ps1...'), and everything else can be safely managed with lf EOL's.
+
+[*]
+# Non-configurable Prettier behaviors
+charset = utf-8
+insert_final_newline = true
+# Caveat: Prettier won’t trim trailing whitespace inside template strings,
+# but your editor might.
+trim_trailing_whitespace = true
+
+# Configurable Prettier behaviors
+# (change these if your Prettier config differs)
+end_of_line = lf
+indent_style = space
+indent_size = 2
+max_line_length = 80
+
+## Begin 'strict'
+
+# Windows specific files should retain windows line-endings - see above...
+[*.{sln,[sS][lL][nN]}]
+end_of_line = crlf
+[*.{cmd,[cC][mM][dD]}]
+end_of_line = crlf
+[*.{bat,[bB][aA][tT]}]
+end_of_line = crlf
+[*.{ps1,psm1}]
+end_of_line = crlf
+
+# strict Xml project files
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,vcxitems,vcxitems.filters,proj,nativeproj,locproj,njsproj}]
+indent_size = 2
+end_of_line = crlf
+
+# strict Xml files with utf-8
+[*.{csproj,vbproj,proj,nativeproj,locproj}]
+charset = utf-8
+
+# strict Xml build files
+[*.builds]
+indent_size = 2
+
+# strict Xml files
+[*.{xml,stylecop,resx,ruleset}]
+indent_size = 2
+
+# strict Xml config files
+[*.{msbuild,props,targets,config,nuspec}]
+indent_size = 2
+end_of_line = crlf
+
+# strict YAML
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# strict Markdown
+[*.{md,rmd,mkd,mkdn,mdwn,mdown,markdown,litcoffee}]
+indent_style = space
+trim_trailing_whitespace = false
+tab_width = 4
+
+# strict Makefile
+[{Makefile,*.mak}]
+indent_style = tab
+
+# All <CPP> extensions
+[*.{h,hh,hpp,hxx,h++,inl,ipp,ixx,tlh,tli}]
+indent_style = space
+indent_size = 4
+
+# All <C> extensions
+[*.{c,m}]
+indent_style = space
+indent_size = 4
+
+# All <CXX> extensions
+[*.{C,M,c++,cc,cpp,cxx,mm,mpp,CPP,ixx,cppm,ccm,cxxm,c++m}]
+indent_style = space
+indent_size = 4
+
+# All <Fortran> extensions
+[*.{f,F,fpp,FPP,f77,F77,f90,F90,for,For,FOR,f95,F95,f03,F03,f08,F08}]
+indent_style = space
+indent_size = 4
+
+# All <ASM> extensions
+[*.{s,S,asm}]
+indent_style = space
+indent_size = 4
+
+# All <RC> extensions
+[*.rc]
+charset = utf-16le
+indent_size = 4
+end_of_line = crlf
+indent_style = space
+
+# strict phython
+[*.py]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+max_line_length = 80
+
+# strict C#
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# strict Shellscript
+[*.sh]
+end_of_line = lf
+
+## End 'strict'
+
+## Begin 'styled'
+
+# styled CMake
+[{CMakeLists.txt,*.cmake}]
+indent_size = 4
+indent_style = space
+
+
+# Begin C/C++ VCFormat settings
+[*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
+
+# License header
+file_header_template = Copyright (c) Nathan J. Hood.\nLicensed under the MIT License.
+
+cpp_indent_braces=false
+cpp_indent_multi_line_relative_to=innermost_parenthesis
+cpp_indent_within_parentheses=indent
+cpp_indent_preserve_within_parentheses=false
+cpp_indent_case_labels=false
+cpp_indent_case_contents=true
+cpp_indent_case_contents_when_block=false
+cpp_indent_lambda_braces_when_parameter=true
+cpp_indent_goto_labels=one_left
+cpp_indent_preprocessor=leftmost_column
+cpp_indent_access_specifiers=false
+cpp_indent_namespace_contents=true
+cpp_indent_preserve_comments=false
+cpp_new_line_before_open_brace_namespace=ignore
+cpp_new_line_before_open_brace_type=ignore
+cpp_new_line_before_open_brace_function=ignore
+cpp_new_line_before_open_brace_block=ignore
+cpp_new_line_before_open_brace_lambda=ignore
+cpp_new_line_scope_braces_on_separate_lines=false
+cpp_new_line_close_brace_same_line_empty_type=false
+cpp_new_line_close_brace_same_line_empty_function=false
+cpp_new_line_before_catch=true
+cpp_new_line_before_else=true
+cpp_new_line_before_while_in_do_while=false
+cpp_space_before_function_open_parenthesis=remove
+cpp_space_within_parameter_list_parentheses=false
+cpp_space_between_empty_parameter_list_parentheses=false
+cpp_space_after_keywords_in_control_flow_statements=true
+cpp_space_within_control_flow_statement_parentheses=false
+cpp_space_before_lambda_open_parenthesis=false
+cpp_space_within_cast_parentheses=false
+cpp_space_after_cast_close_parenthesis=false
+cpp_space_within_expression_parentheses=false
+cpp_space_before_block_open_brace=true
+cpp_space_between_empty_braces=false
+cpp_space_before_initializer_list_open_brace=false
+cpp_space_within_initializer_list_braces=true
+cpp_space_preserve_in_initializer_list=true
+cpp_space_before_open_square_bracket=false
+cpp_space_within_square_brackets=false
+cpp_space_before_empty_square_brackets=false
+cpp_space_between_empty_square_brackets=false
+cpp_space_group_square_brackets=true
+cpp_space_within_lambda_brackets=false
+cpp_space_between_empty_lambda_brackets=false
+cpp_space_before_comma=false
+cpp_space_after_comma=true
+cpp_space_remove_around_member_operators=true
+cpp_space_before_inheritance_colon=true
+cpp_space_before_constructor_colon=true
+cpp_space_remove_before_semicolon=true
+cpp_space_after_semicolon=false
+cpp_space_remove_around_unary_operator=true
+cpp_space_around_binary_operator=insert
+cpp_space_around_assignment_operator=insert
+cpp_space_pointer_reference_alignment=left
+cpp_space_around_ternary_operator=insert
+cpp_wrap_preserve_blocks=one_liners

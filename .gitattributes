@@ -1,0 +1,67 @@
+# This sets the default behaviour, overriding core.autocrlf
+* text=auto eol=lf
+
+LICENSE eol=lf
+VERSION eol=lf
+
+# NOTE - 'end_of_line' settings should always match with the settings in
+# '.editorconfig', keeping the IDE's and git's parsers in sync.
+# The main caveat is that certain Windows-based file extensions *must* be CRLF,
+# which are '*.sln', '*.cmd', and '*.bat', aside from any Powershell files
+# ('*.ps1...'), and everything else can be safely managed with LF EOL's.
+
+# Windows specific files should retain windows line-endings - see above...
+*.{sln,[sS][lL][nN]} eol=crlf
+*.{cmd,[cC][mM][dD]} eol=crlf
+*.{bat,[bB][aA][tT]} eol=crlf
+*.{ps1,psm1} eol=crlf
+# UNIX specific files should retain UNIX line-endings - see above...
+*.sh eol=lf
+
+# strict Xml project files
+*.{pbxproj} -text
+*.{csproj,vbproj,vcxproj,vcxproj.filters,vcxitems,vcxitems.filters,proj,nativeproj,locproj,njsproj} eol=crlf
+*.{csproj,vbproj,proj,nativeproj,locproj} charset=utf-8
+*.{msbuild,props,targets,config,nuspec} eol=crlf
+
+CMakeLists.txt text
+*.{cmake} text
+
+Makefile text
+*.{mk} text
+
+config.guess text
+
+# All source files should have unix line-endings in the repository, but convert
+# to native line-endings on checkout.
+
+*.{md,rmd,mkd,mkdn,mdwn,mdown,markdown,litcoffee} text
+*.{json} text
+*.{js,cjs,mjs,ejs} text
+*.{ts,cts,mts,d.ts} text
+*.{jsx,tsx} text
+*.{svg} text
+*.{html} text
+
+# Keep the include header(s) with LFs to make sure it is uploaded, hashed, etc
+# with LF.
+*.{c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli} text
+
+# binary assets
+#
+*.{bin} binary
+*.{pfx} binary
+*.{jar} binary
+*.{exe} binary
+*.{node} binary
+
+*.{png} binary
+*.{jpg} binary
+*.{bmp} binary
+*.{gif} binary
+*.{ico} binary
+*.{avif} binary
+*.{webp} binary
+
+tsconfig.*.json linguist-language=JSON-with-Comments
+.vscode/*.json linguist-language=JSON-with-Comments
