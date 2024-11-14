@@ -70,6 +70,15 @@ extern rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
+// Declare each Model, defined in each module source file
+#if (STONEYDSP_VERSION_MAJOR >= 0) && (STONEYDSP_VERSION_MINOR >= 1)
+ // EXPERIMENTAL MODULES HERE...
+#elif (STONEYDSP_VERSION_MAJOR) >= 0 && (STONEYDSP_VERSION_MINOR >= 0)
+ #warning "No modules found..."
+#endif
+
+//==============================================================================
+
   /// @} group VCVRack
 } // namespace VCVRack
 

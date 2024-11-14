@@ -52,6 +52,11 @@ void init(::rack::plugin::Plugin* p) {
 
 	::StoneyDSP::VCVRack::pluginInstance = p;
 
+#if STONEYDSP_VERSION_MAJOR >= 0 && STONEYDSP_VERSION_MINOR >= 1
+    // EXPERIMENTAL MODULES HERE...
+#elif STONEYDSP_VERSION_MAJOR >= 0 && STONEYDSP_VERSION_MINOR >= 0
+    #warning "No modules found..."
+#endif
 
 	// Any other plugin initialization may go here.
 	// As an alternative, consider lazy-loading assets and lookup tables when
