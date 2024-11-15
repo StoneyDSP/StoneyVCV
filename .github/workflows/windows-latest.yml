@@ -50,6 +50,8 @@ jobs:
         msystem: MINGW64
         update: true
         install: >-
+          --needed
+          base-devel
           git
           curl
           wget
