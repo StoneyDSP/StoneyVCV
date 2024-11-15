@@ -140,17 +140,34 @@ jobs:
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
         -DVCPKG_MANIFEST_MODE:BOOL=FALSE
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-        -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
+    - name: Test
+      working-directory: "${{ github.workspace }}/build"
+      shell: msys2 {0}
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: >-
+        ctest
+        -j4
+        --rerun-failed
+        --output-on-failure
+        --verbose 
+
     - name: Build
+      working-directory: "${{ github.workspace }}"
+      shell: msys2 {0}
       run: make
 
     - name: Install
+      working-directory: "${{ github.workspace }}"
+      shell: msys2 {0}
       run: make install
 
     - name: Dist
+      working-directory: "${{ github.workspace }}"
+      shell: msys2 {0}
       run: make dist
 
     - name: Upload Build
