@@ -47,6 +47,7 @@
 #include "StoneyDSP/version.hpp"
 #include "StoneyDSP/system.hpp"
 #include "StoneyDSP/common.hpp"
+// #include "StoneyDSP/exceptions.hpp"
 
 //==============================================================================
 
@@ -175,6 +176,6 @@ void ignoreUnused (Types&&...) noexcept {}
 // StoneyDSP Library
 
 #include "StoneyDSP/simd.hpp"
-#include "StoneyDSP/dsp.hpp"
+// #include "StoneyDSP/dsp.hpp"
 
 //==============================================================================
