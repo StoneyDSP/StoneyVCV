@@ -18,6 +18,7 @@ env:
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP & tests
   VCPKG_MAX_CONCURRENCY: 3
+  VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
