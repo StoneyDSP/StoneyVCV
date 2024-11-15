@@ -118,10 +118,31 @@ jobs:
         github-binarycache: true
         pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
+#     - name: Test
+#       env:
+#         VCPKG_ROOT: "/d/a/StoneyVCV/StoneyVCV/vcpkg"
+#       run: make test
+
     - name: Test
-      env:
-        VCPKG_ROOT: "/d/a/StoneyVCV/StoneyVCV/vcpkg"
-      run: make test
+      working-directory: ${{github.workspace}}
+      shell: msys2 {0}
+      run: >-
+        cmake -S${PWD}
+        -B${PWD}/${{ env.BUILD_DIR }}
+        -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        -DCMAKE_C_COMPILER_LAUNCHER=sccache
+        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYDSP_BUILD_EXTRAS:BOOL=TRUE
+        -DSTONEYDSP_BUILD_EXAMPLES:BOOL=TRUE
+        -DCMAKE_INSTALL_PREFIX=${PWD}/install
+        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
+        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
+        -DVCPKG_MANIFEST_MODE:BOOL=FALSE
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        -G "Ninja"
+        --compile-no-warning-as-error
+        --no-warn-unused-cli
 
     - name: Build
       run: make
