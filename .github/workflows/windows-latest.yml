@@ -18,7 +18,6 @@ env:
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP & tests
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
   VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   BUILD_TYPE: Release
@@ -114,8 +113,11 @@ jobs:
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
         github-binarycache: true
+        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
     - name: Test
+      env:
+        VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
       run: make test
 
     - name: Build
