@@ -23,8 +23,8 @@ if (NOT "${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     configure_file("${STONEYDSP_DIR}/${STONEYDSP_VERSION_HPP}" "${STONEYDSP_VERSION_HPP}")
     configure_file("${STONEYDSP_DIR}/${STONEYDSP_HPP}" "${STONEYDSP_HPP}")
 
-    configure_file("${STONEYDSP_DIR}/include/StoneyDSP/DSP/Oscillator.hpp" "include/StoneyDSP/DSP/Oscillator.hpp")
-    configure_file("${STONEYDSP_DIR}/include/StoneyDSP/dsp.hpp" "include/StoneyDSP/dsp.hpp")
+    # configure_file("${STONEYDSP_DIR}/include/StoneyDSP/DSP/Oscillator.hpp" "include/StoneyDSP/DSP/Oscillator.hpp")
+    # configure_file("${STONEYDSP_DIR}/include/StoneyDSP/dsp.hpp" "include/StoneyDSP/dsp.hpp")
 endif()
 
 add_library(Core INTERFACE)
@@ -64,13 +64,13 @@ target_sources (Core
             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${STONEYDSP_HPP}>
             $<INSTALL_INTERFACE:${STONEYDSP_HPP}>
 
-            # These belong in the 'DSP' library, eventually...
-            # //
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/StoneyDSP/DSP/Oscillator.hpp>
-            $<INSTALL_INTERFACE:include/StoneyDSP/DSP/Oscillator.hpp>
-            # //
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/StoneyDSP/dsp.hpp>
-            $<INSTALL_INTERFACE:include/StoneyDSP/dsp.hpp>
+            # # These belong in the 'DSP' library, eventually...
+            # # //
+            # $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/StoneyDSP/DSP/Oscillator.hpp>
+            # $<INSTALL_INTERFACE:include/StoneyDSP/DSP/Oscillator.hpp>
+            # # //
+            # $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/StoneyDSP/dsp.hpp>
+            # $<INSTALL_INTERFACE:include/StoneyDSP/dsp.hpp>
 )
 
 set_target_properties (Core
