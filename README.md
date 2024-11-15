@@ -70,6 +70,18 @@ make install
 
 ---
 
+## Building the tests for Catch2 with CMake
+
+To run unit tests with [Catch2](https://github.com/catch-org/catch2) and CTest:
+
+```shell
+make test
+```
+
+[See the documentation](https://github.com/StoneyDSP/StoneyVCV/blob/production/docs/BuildingTheTestsForCatch2WithCMake.md) for more detailed information.
+
+---
+
 ## Further Reading:
 
 - [VCV Rack - Installing and Running](https://vcvrack.com/manual/Installing)
