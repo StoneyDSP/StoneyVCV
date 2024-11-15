@@ -120,7 +120,7 @@ jobs:
         --no-warn-unused-cli
         
     - name: Build Tests
-      shell: msys {0}
+      shell: msys2 {0}
       run: cmake --build ./build
 
     - name: Test
