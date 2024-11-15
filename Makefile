@@ -4,7 +4,7 @@
 RACK_DIR ?= ../..
 
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += -Iinclude -Idep/include
+FLAGS += -Iinclude -Idep/include -DSTONEYDSP_VERSION_MAJOR=0 -DSTONEYDSP_VERSION_MINOR=1
 CFLAGS +=
 CXXFLAGS +=
 
@@ -21,6 +21,29 @@ DISTRIBUTABLES += res
 DISTRIBUTABLES += LICENSE
 DISTRIBUTABLES += VERSION
 DISTRIBUTABLES += $(wildcard presets)
+
+## For building libstoneydsp & unit tests
+
+VCPKG_JSON_FILES += vcpkg.json
+VCPKG_JSON_FILES += vcpkg-configuration.json
+
+vcpkg: $(VCPKG_JSON_FILES)
+	vcpkg install
+
+.PHONY: vcpkg
+
+TEST_SOURCES += test/StoneyDSP/simd.cpp
+
+## For running unit tests
+
+test: $(TEST_SOURCES)
+	cmake -S . -B build -DVCPKG_ROOT="${VCPKG_ROOT}" && \
+	cmake --build build && \
+	cd build && \
+	./tests && \
+	cd ..
+
+.PHONY: test
 
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk

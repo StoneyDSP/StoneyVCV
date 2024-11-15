@@ -1,6 +1,6 @@
 /***************************************************************************//**
- * @file plugin.hpp
- * @author Nathan J. Hood <nathanjhood@googlemail.com>
+ * @file simd.hpp
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @brief
  * @version 0.0.0
  * @date 2024-11-11
@@ -29,64 +29,43 @@
  *
  ******************************************************************************/
 
+//==============================================================================
+
 #pragma once
 
-#define PLUGIN_HPP_INCLUDED
+#define STONEYDSP_DSP_HPP_INCLUDED
 
 //==============================================================================
 
-#if !__has_include(<rack.hpp>)
- #error "Cannot find required header 'rack.hpp' - did you set $RACK_DIR?"
-#else
-
-#include <rack.hpp>
-
-#include "StoneyDSP/version.hpp"
-
-//==============================================================================
-
-namespace StoneyDSP
-{
+namespace StoneyDSP {
 /** @addtogroup StoneyDSP
  *  @{
  */
 
+//==============================================================================
+
 /**
- * @brief The `VCVRack` namespace.
+ * @brief The `DSP` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
+ * @namespace StoneyDSP
  *
  */
-namespace VCVRack
-{
-/** @addtogroup VCVRack
+namespace DSP {
+/** @addtogroup DSP
  *  @{
  */
 
-//==============================================================================
-
-// Declare the Plugin, defined in plugin.cpp
-extern rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
-// Declare each Model, defined in each module source file
-#if (STONEYDSP_VERSION_MAJOR >= 0) && (STONEYDSP_VERSION_MINOR >= 1)
- // EXPERIMENTAL MODULES HERE...
-#elif (STONEYDSP_VERSION_MAJOR) >= 0 && (STONEYDSP_VERSION_MINOR >= 0)
- #warning "No modules found..."
-#endif
+  /// @} group DSP
+} // namespace DSP
 
 //==============================================================================
-
-  /// @} group VCVRack
-} // namespace VCVRack
 
   /// @} group StoneyDSP
 } // namespace StoneyDSP
 
 //==============================================================================
 
-#endif
-
-//==============================================================================
