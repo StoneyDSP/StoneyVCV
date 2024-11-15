@@ -18,7 +18,8 @@ env:
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP & tests
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
+  VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
+  VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,6 +50,8 @@ jobs:
         msystem: MINGW64
         update: true
         install: >-
+          --needed
+          base-devel
           git
           curl
           wget
@@ -59,6 +62,7 @@ jobs:
           mingw-w64-x86_64-gcc 
           mingw-w64-x86_64-gdb 
           mingw-w64-x86_64-cmake 
+          mingw-w64-x86_64-catch 
           autoconf 
           automake 
           libtool 
@@ -99,11 +103,11 @@ jobs:
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
-    - name: vcpkg install
+    - name: Deps
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: x64-windows
+        triplet: x64-mingw-dynamic
         # Additional cache key component (optional)
         cache-key: windows-latest # optional
         # GitHub token to authenticate API requests. Recommended to use  github.token 
@@ -112,11 +116,11 @@ jobs:
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
         github-binarycache: true
-
-    - name: Deps
-      run: make vcpkg
+        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
     - name: Test
+      env:
+        VCPKG_ROOT: "/d/a/StoneyVCV/StoneyVCV/vcpkg"
       run: make test
 
     - name: Build
