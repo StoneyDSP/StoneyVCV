@@ -117,7 +117,7 @@ jobs:
 
     - name: Test
       env:
-        VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
+        VCPKG_ROOT: "/d/a/StoneyVCV/StoneyVCV/vcpkg"
       run: make test
 
     - name: Build
