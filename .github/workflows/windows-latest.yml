@@ -145,7 +145,7 @@ jobs:
         
     - name: Build Tests
       shell: msys2 {0}
-      run: cmake --build ./build
+      run: cmake --build build
 
     - name: Test
       shell: msys2 {0}
