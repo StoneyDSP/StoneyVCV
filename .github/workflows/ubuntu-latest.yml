@@ -21,10 +21,11 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP and tests
   VCPKG_MAX_CONCURRENCY: 3
+  VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "lin-x64"
-  RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+  RACK_DIR: "${{ github.workspace }}/dep/Rack-SDK"
 
 jobs:
   ubuntu:
