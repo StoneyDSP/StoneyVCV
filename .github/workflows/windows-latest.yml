@@ -100,7 +100,7 @@ jobs:
 #         VCPKG_ROOT: "/d/a/StoneyVCV/StoneyVCV/vcpkg"
 #       run: make test
 
-    - name: Test
+    - name: Configure Tests
       shell: msys2 {0}
       run: >-
         cmake -S .
@@ -118,6 +118,10 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH="vcpkg/scripts/buildsystems/vcpkg.cmake"
         --compile-no-warning-as-error
         --no-warn-unused-cli
+        
+    - name: Build Tests
+      shell: msys {0}
+      run: cmake --build ./build
 
     - name: Test
       shell: msys2 {0}
