@@ -36,13 +36,14 @@
  #define STONEYDSP_HAS_CATCH2 1
 #elif __has_include("catch_amalgamated.hpp")
  #include "catch_amalgamated.hpp"
+ #include "../dep/src/catch_amalgamated.cpp"
  #define STONEYDSP_HAS_CATCH2 1
 #else
  #warning "Can't find Catch2 headers for unit tests!"
 #endif
 
 #include "StoneyDSP.hpp"
-#include "StoneyDSP/simd.hpp"
+// #include "StoneyDSP/simd.hpp"
 
 #ifndef STONEYDSP_SIMD_HPP_INCLUDED
  #error "Couldn't find 'StoneyDSP/simd.hpp'?"
@@ -54,45 +55,51 @@
 
 TEST_CASE( "Vector<double, 2>", "[double_2]" ) {
 
-    ::StoneyDSP::SIMD::double_2 dbl;
+    StoneyDSP::SIMD::double_2 vector_of_two_doubles;
 
-    REQUIRE(dbl.size == 2);
+    REQUIRE(vector_of_two_doubles.size == 2);
+    REQUIRE(sizeof(vector_of_two_doubles.v) == 16);
 }
 
 TEST_CASE( "Vector<float, 4>", "[float_4]" ) {
 
-    ::StoneyDSP::SIMD::float_4 flt;
+    ::StoneyDSP::SIMD::float_4 vector_of_four_floats;
 
-    REQUIRE(flt.size == 4);
+    REQUIRE(vector_of_four_floats.size == 4);
+    REQUIRE(sizeof(vector_of_four_floats.v) == 16);
 }
 
 TEST_CASE( "Vector<int8_t, 16>", "[int_8]" ) {
 
-    StoneyDSP::SIMD::int8_16 integer;
+    StoneyDSP::SIMD::int8_16 vector_of_sixteen_8bit_integers;
 
-    REQUIRE(integer.size == 16);
+    REQUIRE(vector_of_sixteen_8bit_integers.size == 16);
+    REQUIRE(sizeof(vector_of_sixteen_8bit_integers.v) == 16);
 }
 
 TEST_CASE( "Vector<int16_t, 8>", "[int_16]" ) {
 
-    ::StoneyDSP::SIMD::int16_8 integer;
+    ::StoneyDSP::SIMD::int16_8 vector_of_eight_16bit_integers;
 
-    REQUIRE(integer.size == 8);
+    REQUIRE(vector_of_eight_16bit_integers.size == 8);
+    REQUIRE(sizeof(vector_of_eight_16bit_integers.v) == 16);
 }
 
 TEST_CASE( "Vector<int32_t, 4>", "[int_32]" ) {
 
-    ::StoneyDSP::SIMD::int32_4 integer;
+    ::StoneyDSP::SIMD::int32_4 vector_of_four_32bit_integers;
 
-    REQUIRE(integer.size == 4);
+    REQUIRE(vector_of_four_32bit_integers.size == 4);
+    REQUIRE(sizeof(vector_of_four_32bit_integers.v) == 16);
 }
 
 #if STONEYDSP_USING_INT64_2
 TEST_CASE( "Vector<int64_t, 2>", "[int_64]" ) {
 
-    ::StoneyDSP::SIMD::int64_2 integer;
+    ::StoneyDSP::SIMD::int64_2 vector_of_two_64bit_integers;
 
-    REQUIRE(integer.size == 2);
+    REQUIRE(vector_of_two_64bit_integers.size == 2);
+    REQUIRE(sizeof(vector_of_two_64bit_integers.v) == 16);
 }
 #endif
 
