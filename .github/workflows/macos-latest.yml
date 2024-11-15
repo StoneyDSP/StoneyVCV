@@ -53,7 +53,7 @@ jobs:
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
-    - name: vcpkg install
+    - name: Deps
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
@@ -66,9 +66,6 @@ jobs:
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
         github-binarycache: true
-
-    - name: Deps
-      run: make vcpkg
 
     - name: Test
       run: make test
