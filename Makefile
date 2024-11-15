@@ -37,7 +37,7 @@ TEST_SOURCES += test/StoneyDSP/simd.cpp
 ## For running unit tests
 
 test: $(TEST_SOURCES)
-	cmake -S . -B build && \
+	cmake -S . -B build -DVCPKG_ROOT="${VCPKG_ROOT}" && \
 	cmake --build build && \
 	cd build && \
 	./tests && \
