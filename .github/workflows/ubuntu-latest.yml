@@ -74,14 +74,14 @@ jobs:
     - name: Deps
       run: make vcpkg
 
+    - name: Test
+      run: make test
+
     - name: Build
       run: make
 
     - name: Install
       run: make install
-
-    - name: Test
-      run: make test
 
     - name: Dist
       run: make dist
