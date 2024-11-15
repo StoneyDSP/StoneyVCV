@@ -119,10 +119,8 @@ jobs:
         github-binarycache: true
         pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
-#     - name: Test
-#       env:
-#         VCPKG_ROOT: "/d/a/StoneyVCV/StoneyVCV/vcpkg"
-#       run: make test
+    - name: Install Test Deps
+      run: make vcpkg
 
     - name: Configure Tests
       shell: msys2 {0}
