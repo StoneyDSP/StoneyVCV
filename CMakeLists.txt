@@ -33,7 +33,7 @@ find_package(Catch2 3 REQUIRED)
 # FetchContent_MakeAvailable(Catch2)
 
 # These tests can use the Catch2-provided main
-add_executable(tests test/StoneyDSP/simd.cpp)
+add_executable(tests test/StoneyDSP/simd.cpp test/StoneyDSP.cpp)
 target_link_libraries(tests PRIVATE StoneyDSP::Core Catch2::Catch2WithMain)
 
 include(CTest)
