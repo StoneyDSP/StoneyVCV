@@ -1,5 +1,8 @@
 {
   "editor.rulers": [80],
+  "cmake.configureOnOpen": false,
+  "cmake.configureOnEdit": false,
+  "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/include",
