@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file plugin.hpp
+ * @file common.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -31,62 +31,76 @@
 
 #pragma once
 
-#define PLUGIN_HPP_INCLUDED
+#define STONEYDSP_COMMON_HPP_INCLUDED
 
 //==============================================================================
 
-#if !__has_include(<rack.hpp>)
- #error "Cannot find required header 'rack.hpp' - did you set $RACK_DIR?"
+// Standard includes
+
+// #if __has_include(<stdint.h>)
+//  #include <stdint.h>
+// #endif
+
+// #if __has_include(<string>)
+//  #include <string>
+// #endif
+
+// #if __has_include(<string_view>)
+//   #include <string_view> // Not supported by Rack!! :(
+// #endif
+
+#if defined (__SSE2__)
+ #include <emmintrin.h>
 #else
+ #define SIMDE_ENABLE_NATIVE_ALIASES
+ #include <simde/x86/sse2.h>
+#endif
 
-#include <rack.hpp>
-
-#include "StoneyDSP/version.hpp"
+#if defined (__SSE4_2__)
+ #include <nmmintrin.h>
+#else
+ #define SIMDE_ENABLE_NATIVE_ALIASES
+ #include <simde/x86/sse4.2.h>
+#endif
 
 //==============================================================================
 
-namespace StoneyDSP
-{
-/** @addtogroup StoneyDSP
- *  @{
- */
+// Platform defs...
 
 /**
- * @brief The `VCVRack` namespace.
- * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @copyright Copyright (c) 2024
+ * @brief This is a shorthand macro for deleting a class's constructor.
  *
  */
-namespace VCVRack
-{
-/** @addtogroup VCVRack
- *  @{
+#define STONEYDSP_DECLARE_NON_CONSTRUCTABLE(className) \
+    className () = delete;
+
+/**
+ * @brief This is a shorthand macro for deleting a class's copy constructor
+ * and copy assignment operator.
+ *
  */
+#define STONEYDSP_DECLARE_NON_COPYABLE(className) \
+    className (const className&) = delete;\
+    className& operator= (const className&) = delete;
 
-//==============================================================================
+/**
+ * @brief This is a shorthand macro for deleting a class's move constructor
+ * and move assignment operator.
+ *
+ */
+#define STONEYDSP_DECLARE_NON_MOVEABLE(className) \
+    className (className&&) = delete;\
+    className& operator= (className&&) = delete;
 
-// Declare the Plugin, defined in plugin.cpp
-extern rack::plugin::Plugin* pluginInstance;
-
-//==============================================================================
-
-// Declare each Model, defined in each module source file
-#if (STONEYDSP_VERSION_MAJOR >= 0) && (STONEYDSP_VERSION_MINOR >= 1)
- // EXPERIMENTAL MODULES HERE...
-#elif (STONEYDSP_VERSION_MAJOR) >= 0 && (STONEYDSP_VERSION_MINOR >= 0)
- #warning "No modules found..."
-#endif
-
-//==============================================================================
-
-  /// @} group VCVRack
-} // namespace VCVRack
-
-  /// @} group StoneyDSP
-} // namespace StoneyDSP
-
-//==============================================================================
-
-#endif
+/**
+ * @brief This macro can be added to class definitions to disable the use of
+ * new/delete to allocate the object on the heap, forcing it to only be used
+ * as a stack or member variable.
+ *
+ */
+#define STONEYDSP_PREVENT_HEAP_ALLOCATION \
+private: \
+    static void* operator new (size_t) = delete; \
+    static void operator delete (void*) = delete;
 
 //==============================================================================

@@ -1,0 +1,23 @@
+{
+  "name": "stoneyvcv",
+  "version": "2.0.0",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "catch2"
+    },
+    {
+      "name": "simde"
+    },
+    {
+      "name": "vcpkg-cmake"
+    },
+    {
+      "name": "vcpkg-cmake-config"
+    },
+    {
+      "name": "sse2neon",
+      "platform": "(osx & arm)"
+    }
+  ]
+}

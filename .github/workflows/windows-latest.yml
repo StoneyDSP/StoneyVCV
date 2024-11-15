@@ -1,0 +1,175 @@
+name: windows
+
+on:
+  # Runs on all pushes
+  push:
+  # # A push is made to a GitHub Pages-enabled branch
+  # page_build:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# When pushing new commits, cancel any running builds on that branch
+concurrency:
+  group: windows-latest-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DISPLAY: :0
+  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
+  CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP & tests
+  VCPKG_MAX_CONCURRENCY: 3
+  VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
+  VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
+  VCPKG_MANIFEST_MODE: ON
+  BUILD_TYPE: Release
+  BUILD_DIR: build
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SCCACHE_GHA_ENABLED: "true"
+  RACK_SDK_VERSION: 2.5.2
+  RACK_SDK_PLATFORM: "win-x64"
+  RACK_DIR: ${{ github.workspace }}\dep\Rack-SDK
+  IPP_DIR: C:\Program Files (x86)\Intel\oneAPI\ipp\latest\lib\cmake\ipp
+  MSYSTEM: "MINGW64"
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+      
+    steps:
+    
+    - name: Checkout StoneyVCV code
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+
+#     - name: Cache IPP
+#       id: cache-ipp
+#       uses: actions/cache@v4
+#       with:
+#         key: ipp-v4
+#         path: C:\Program Files (x86)\Intel
+
+#     - name: Install IPP
+#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
+#       run: |
+#         curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
+#         ./oneapi.exe -s -x -f oneapi
+#         ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
+
+#     - name: Save IPP cache (even on CI fail)
+#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
+#       uses: actions/cache/save@v4
+#       with:
+#         path: C:\Program Files (x86)\Intel
+#         key: ipp-v4
+
+    - name: Set Up Build Cache
+      uses: mozilla-actions/sccache-action@v0.0.4
+
+    - name: Use MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        update: true
+        install: >-
+          --needed
+          base-devel
+          git
+          curl
+          wget
+          make
+          tar
+          unzip
+          ccache
+          mingw-w64-x86_64-gcc 
+          mingw-w64-x86_64-gdb 
+          mingw-w64-x86_64-cmake 
+          mingw-w64-x86_64-catch 
+          autoconf 
+          automake 
+          libtool 
+          mingw-w64-x86_64-jq 
+          python 
+          zstd 
+          mingw-w64-x86_64-pkgconf
+        
+      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    - name: Install VCV's Windows Deps
+      shell: msys2 {0}
+      run: |
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
+
+    - name: Deps
+      uses: johnwason/vcpkg-action@v6
+      with:
+        # vcpkg triplet to use
+        triplet: x64-mingw-dynamic
+        # Additional cache key component (optional)
+        cache-key: windows-latest # optional
+        # GitHub token to authenticate API requests. Recommended to use  github.token 
+        token: ${{ github.token }}
+        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+        manifest-dir: ${{ github.workspace }}
+        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+        github-binarycache: true
+        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
+
+    - name: Configure Tests
+      shell: msys2 {0}
+      run: >-
+        cmake -S .
+        -B ${{ env.BUILD_DIR }}
+        -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        -DCMAKE_CXX_FLAGS="-march=nehalem"
+        -DCMAKE_INSTALL_PREFIX=${PWD}/install
+        -DVCPKG_MANIFEST_MODE=ON
+        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
+        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
+        -DVCPKG_MANIFEST_MODE:BOOL=FALSE
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="vcpkg/scripts/buildsystems/vcpkg.cmake"
+        --compile-no-warning-as-error
+        --no-warn-unused-cli
+        
+    - name: Build Tests
+      shell: msys2 {0}
+      run: cmake --build build
+
+    - name: Test
+      shell: msys2 {0}
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: >-
+        cd build &&
+        ctest
+        -j4
+        --rerun-failed
+        --output-on-failure
+        --verbose 
+        && cd ..
+
+    - name: Build
+      shell: msys2 {0}
+      run: make
+
+    - name: Install
+      shell: msys2 {0}
+      run: make install
+
+    - name: Dist
+      shell: msys2 {0}
+      run: make dist
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-2.0.0-win-x64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyVCV-2.0.0-win-x64.vcvplugin'
+
+    - name: Get Artifacts
+      uses: actions/download-artifact@v4

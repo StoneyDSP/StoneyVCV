@@ -4,12 +4,12 @@
 		"ms-vscode.makefile-tools",
 		"ms-vscode.cpptools-extension-pack",
 		"ms-vscode.cpptools",
-		"ms-vscode.cpptools-themes"
+		"ms-vscode.cpptools-themes",
+    "ms-vscode.cmake-tools",
+		"josetr.cmake-language-support-vscode"
 	],
 	"unwantedRecommendations": [
-		"ms-vscode.cmake-tools",
-		"josetr.cmake-language-support-vscode",
 		"twxs.cmake",
-		"jackboosy.vcpkg-cmake-tools"
+    "jackboosy.vcpkg-cmake-tools"
 	]
 }
