@@ -52,9 +52,7 @@ jobs:
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
-- name: vcpkg install
-      # You may pin to the exact commit or the version.
-      # uses: johnwason/vcpkg-action@7c4b562bb35ef5a01d9d728acc90100b107dee4d
+    - name: vcpkg install
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
