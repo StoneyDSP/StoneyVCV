@@ -20,6 +20,7 @@ env:
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
+  VCPKG_MANIFEST_MODE: ON
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -119,9 +120,6 @@ jobs:
         github-binarycache: true
         pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
-    - name: Install Test Deps
-      run: make vcpkg
-
     - name: Configure Tests
       shell: msys2 {0}
       run: >-
@@ -130,6 +128,7 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
+        -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
         -DVCPKG_MANIFEST_MODE:BOOL=FALSE
