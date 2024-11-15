@@ -45,26 +45,26 @@ jobs:
       with:
         submodules: true
 
-    - name: Cache IPP
-      id: cache-ipp
-      uses: actions/cache@v4
-      with:
-        key: ipp-v4
-        path: C:\Program Files (x86)\Intel
+#     - name: Cache IPP
+#       id: cache-ipp
+#       uses: actions/cache@v4
+#       with:
+#         key: ipp-v4
+#         path: C:\Program Files (x86)\Intel
 
-    - name: Install IPP
-      if: (steps.cache-ipp.outputs.cache-hit != 'true')
-      run: |
-        curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
-        ./oneapi.exe -s -x -f oneapi
-        ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
+#     - name: Install IPP
+#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
+#       run: |
+#         curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
+#         ./oneapi.exe -s -x -f oneapi
+#         ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
 
-    - name: Save IPP cache (even on CI fail)
-      if: (steps.cache-ipp.outputs.cache-hit != 'true')
-      uses: actions/cache/save@v4
-      with:
-        path: C:\Program Files (x86)\Intel
-        key: ipp-v4
+#     - name: Save IPP cache (even on CI fail)
+#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
+#       uses: actions/cache/save@v4
+#       with:
+#         path: C:\Program Files (x86)\Intel
+#         key: ipp-v4
 
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
