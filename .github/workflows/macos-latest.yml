@@ -15,6 +15,13 @@ concurrency:
 
 env:
   DISPLAY: :0
+  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
+  CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build juceaide, etc
+  VCPKG_MAX_CONCURRENCY: 3
+  VCPKG_OSX_ARCHITECTURES: "arm64;x86_64"
+  BUILD_TYPE: Release
+  BUILD_DIR: build
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
   SCCACHE_CACHE_MULTIARCH: 1 # for macos actions only!
   HOMEBREW_NO_INSTALL_CLEANUP: 1
@@ -45,14 +52,33 @@ jobs:
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
+    - name: vcpkg install
+      uses: johnwason/vcpkg-action@v6
+      with:
+        # vcpkg triplet to use
+        triplet: x64-osx
+        # Additional cache key component (optional)
+        cache-key: macos-latest # optional
+        # vcpkg revision to checkout.
+        revision: master
+        # GitHub token to authenticate API requests. Recommended to use  github.token 
+        token: ${{ github.token }}
+        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+        manifest-dir: ${{ github.workspace }}
+        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+        github-binarycache: true
+
+    - name: Deps
+      run: make vcpkg
+
+    - name: Test
+      run: make test
+
     - name: Build
       run: make
 
     - name: Install
       run: make install
-
-#     - name: Test
-#       run: ???
 
     - name: Dist
       run: make dist

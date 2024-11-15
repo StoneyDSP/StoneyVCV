@@ -15,6 +15,12 @@ concurrency:
 
 env:
   DISPLAY: :0
+  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
+  BUILD_TYPE: Release
+  BUILD_DIR: build
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP and tests
+  VCPKG_MAX_CONCURRENCY: 3
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "lin-x64"
@@ -45,14 +51,37 @@ jobs:
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
+    - name: vcpkg install
+      # You may pin to the exact commit or the version.
+      # uses: johnwason/vcpkg-action@7c4b562bb35ef5a01d9d728acc90100b107dee4d
+      uses: johnwason/vcpkg-action@v6
+      with:
+        # vcpkg triplet to use
+        triplet: x64-linux
+        # Additional cache key component (optional)
+        cache-key: ubuntu-22.04 # optional
+        # Disable cache (useful for release builds)
+        # disable-cache: # optional, default is false
+        # vcpkg revision to checkout.
+        revision: master 
+        # GitHub token to authenticate API requests. Recommended to use  github.token 
+        token: ${{ github.token }}
+        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+        manifest-dir: ${{ github.workspace }}
+        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+        github-binarycache: true
+
+    - name: Deps
+      run: make vcpkg
+
+    - name: Test
+      run: make test
+
     - name: Build
       run: make
 
     - name: Install
       run: make install
-
-#     - name: Test
-#       run: ???
 
     - name: Dist
       run: make dist
