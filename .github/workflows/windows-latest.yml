@@ -19,6 +19,8 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP & tests
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
+  VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
+  VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -103,7 +105,7 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: x64-windows
+        triplet: x64-mingw-dynamic
         # Additional cache key component (optional)
         cache-key: windows-latest # optional
         # GitHub token to authenticate API requests. Recommended to use  github.token 
