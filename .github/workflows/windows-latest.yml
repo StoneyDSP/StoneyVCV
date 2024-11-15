@@ -70,38 +70,15 @@ jobs:
           python 
           zstd 
           mingw-w64-x86_64-pkgconf
-
-    - name: Cache IPP
-      id: cache-ipp
-      uses: actions/cache@v4
-      with:
-        key: ipp-v4
-        path: C:\Program Files (x86)\Intel
-
-    - name: Install IPP
-      if: (steps.cache-ipp.outputs.cache-hit != 'true')
-      run: |
-        curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
-        ./oneapi.exe -s -x -f oneapi
-        ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
-
-    - name: Save IPP cache (even on CI fail)
-      if: (steps.cache-ipp.outputs.cache-hit != 'true')
-      uses: actions/cache/save@v4
-      with:
-        path: C:\Program Files (x86)\Intel
-        key: ipp-v4
         
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's Windows Deps
+      shell: msys2 {0}
       run: |
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
-
-    - name: Set Up Build Cache
-      uses: mozilla-actions/sccache-action@v0.0.4
 
     - name: Deps
       uses: johnwason/vcpkg-action@v6
@@ -124,11 +101,10 @@ jobs:
 #       run: make test
 
     - name: Test
-      working-directory: ${{github.workspace}}
       shell: msys2 {0}
       run: >-
-        cmake -S${PWD}
-        -B${PWD}/${{ env.BUILD_DIR }}
+        cmake -S .
+        -B ${{ env.BUILD_DIR }}
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         -DCMAKE_C_COMPILER_LAUNCHER=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
@@ -139,34 +115,32 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
         -DVCPKG_MANIFEST_MODE:BOOL=FALSE
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="vcpkg/scripts/buildsystems/vcpkg.cmake"
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
     - name: Test
-      working-directory: "${{ github.workspace }}/build"
       shell: msys2 {0}
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: >-
+        cd build &&
         ctest
         -j4
         --rerun-failed
         --output-on-failure
         --verbose 
+        && cd ..
 
     - name: Build
-      working-directory: "${{ github.workspace }}"
       shell: msys2 {0}
       run: make
 
     - name: Install
-      working-directory: "${{ github.workspace }}"
       shell: msys2 {0}
       run: make install
 
     - name: Dist
-      working-directory: "${{ github.workspace }}"
       shell: msys2 {0}
       run: make dist
 
