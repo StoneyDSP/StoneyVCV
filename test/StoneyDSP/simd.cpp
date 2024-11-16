@@ -55,51 +55,93 @@
 
 TEST_CASE( "Vector<double, 2>", "[double_2]" ) {
 
-    StoneyDSP::SIMD::double_2 vector_of_two_doubles;
+    SECTION( "size tests" ) {
 
-    REQUIRE(vector_of_two_doubles.size == 2);
-    REQUIRE(sizeof(vector_of_two_doubles.v) == 16);
+        // sizeof class
+        REQUIRE(sizeof(StoneyDSP::SIMD::double_2) == 16);
+
+        StoneyDSP::SIMD::double_2 vector_of_two_doubles;
+
+        // sizeof class members
+        REQUIRE(vector_of_two_doubles.size == 2);
+        REQUIRE(sizeof(vector_of_two_doubles.v) == 16);
+    }
 }
 
 TEST_CASE( "Vector<float, 4>", "[float_4]" ) {
 
-    ::StoneyDSP::SIMD::float_4 vector_of_four_floats;
+    SECTION( "size tests" ) {
 
-    REQUIRE(vector_of_four_floats.size == 4);
-    REQUIRE(sizeof(vector_of_four_floats.v) == 16);
+        // sizeof class
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+
+        ::StoneyDSP::SIMD::float_4 vector_of_four_floats;
+
+        // sizeof class members
+        REQUIRE(vector_of_four_floats.size == 4);
+        REQUIRE(sizeof(vector_of_four_floats.v) == 16);
+    }
 }
 
 TEST_CASE( "Vector<int8_t, 16>", "[int_8]" ) {
 
-    StoneyDSP::SIMD::int8_16 vector_of_sixteen_8bit_integers;
+    SECTION( "size tests" ) {
 
-    REQUIRE(vector_of_sixteen_8bit_integers.size == 16);
-    REQUIRE(sizeof(vector_of_sixteen_8bit_integers.v) == 16);
+        // sizeof class
+        REQUIRE(sizeof(StoneyDSP::SIMD::int8_16) == 8);
+
+        StoneyDSP::SIMD::int8_16 vector_of_sixteen_8bit_integers;
+
+        // sizeof class members
+        REQUIRE(vector_of_sixteen_8bit_integers.size == 16);
+        REQUIRE(sizeof(vector_of_sixteen_8bit_integers.v) == 16);
+    }
 }
 
 TEST_CASE( "Vector<int16_t, 8>", "[int_16]" ) {
 
-    ::StoneyDSP::SIMD::int16_8 vector_of_eight_16bit_integers;
+    SECTION( "size tests" ) {
 
-    REQUIRE(vector_of_eight_16bit_integers.size == 8);
-    REQUIRE(sizeof(vector_of_eight_16bit_integers.v) == 16);
+        // sizeof class
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+
+        ::StoneyDSP::SIMD::int16_8 vector_of_eight_16bit_integers;
+
+        // sizeof class members
+        REQUIRE(vector_of_eight_16bit_integers.size == 8);
+        REQUIRE(sizeof(vector_of_eight_16bit_integers.v) == 16);
+    }
 }
 
 TEST_CASE( "Vector<int32_t, 4>", "[int_32]" ) {
 
-    ::StoneyDSP::SIMD::int32_4 vector_of_four_32bit_integers;
+    SECTION( "size tests" ) {
 
-    REQUIRE(vector_of_four_32bit_integers.size == 4);
-    REQUIRE(sizeof(vector_of_four_32bit_integers.v) == 16);
+        // sizeof class
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+
+        ::StoneyDSP::SIMD::int32_4 vector_of_four_32bit_integers;
+
+        // sizeof class members
+        REQUIRE(vector_of_four_32bit_integers.size == 4);
+        REQUIRE(sizeof(vector_of_four_32bit_integers.v) == 16);
+    }
 }
 
 #if STONEYDSP_USING_INT64_2
 TEST_CASE( "Vector<int64_t, 2>", "[int_64]" ) {
 
-    ::StoneyDSP::SIMD::int64_2 vector_of_two_64bit_integers;
+    SECTION( "size tests" ) {
 
-    REQUIRE(vector_of_two_64bit_integers.size == 2);
-    REQUIRE(sizeof(vector_of_two_64bit_integers.v) == 16);
+        // sizeof class
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+
+        ::StoneyDSP::SIMD::int64_2 vector_of_two_64bit_integers;
+
+        // sizeof class members
+        REQUIRE(vector_of_two_64bit_integers.size == 2);
+        REQUIRE(sizeof(vector_of_two_64bit_integers.v) == 16);
+    }
 }
 #endif
 
