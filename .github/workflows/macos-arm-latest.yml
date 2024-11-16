@@ -1,4 +1,4 @@
-name: macos
+name: macos-arm
 
 on:
   # Runs on all pushes
@@ -10,7 +10,7 @@ on:
 
 # When pushing new commits, cancel any running builds on that branch
 concurrency:
-  group: macos-latest-${{ github.ref }}
+  group: macos-arm-latest-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -31,8 +31,8 @@ env:
   RACK_DIR: "${{ github.workspace }}/dep/Rack-SDK"
 
 jobs:
-  macos:
-    runs-on: macos-latest
+  macos-arm:
+    runs-on: macos-14
 
     steps:
 
@@ -62,9 +62,9 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: x64-osx
+        triplet: arm64-osx
         # Additional cache key component (optional)
-        cache-key: macos-latest # optional
+        cache-key: macos-arm-latest # optional
         # GitHub token to authenticate API requests. Recommended to use  github.token 
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
@@ -84,8 +84,8 @@ jobs:
         -DCMAKE_C_COMPILER_LAUNCHER=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-        -DVCPKG_HOST_TRIPLET:STRING="x64-osx"
-        -DVCPKG_TARGET_TRIPLET:STRING="x64-osx"
+        -DVCPKG_HOST_TRIPLET:STRING="arm64-osx"
+        -DVCPKG_TARGET_TRIPLET:STRING="arm64-osx"
         --compile-no-warning-as-error
         --no-warn-unused-cli
         
