@@ -10,7 +10,7 @@ on:
 
 # When pushing new commits, cancel any running builds on that branch
 concurrency:
-  group: macos-arm-latest-${{ github.ref }}
+  group: macos-latest-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -32,14 +32,14 @@ env:
 
 jobs:
   macos:
-    runs-on: macos-13
+    runs-on: macos-latest
 
     steps:
 
-    - name: Use latest Xcode on system (macOS)
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
+#     - name: Use latest Xcode on system (macOS)
+#       uses: maxim-lobanov/setup-xcode@v1
+#       with:
+#         xcode-version: latest-stable
     
     - name: Checkout StoneyVCV code
       uses: actions/checkout@v4
@@ -79,7 +79,7 @@ jobs:
         -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
         -DVCPKG_MANIFEST_MODE:STRING=ON
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="vcpkg/scripts/buildsystems/vcpkg.cmake"
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${PWD}vcpkg/scripts/buildsystems/vcpkg.cmake"
         -DCMAKE_C_COMPILER_LAUNCHER=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         -DCMAKE_OSX_ARCHITECTURES="x86_64" # "arm64;x86_64"
@@ -89,7 +89,7 @@ jobs:
         --no-warn-unused-cli
         
     - name: Build Tests
-      run: cmake --build build
+      run: cmake --build ./build
 
     - name: Test
       run: >-
