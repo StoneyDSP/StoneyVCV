@@ -62,9 +62,9 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: "x64-osx"
+        triplet: x64-osx
         # Additional cache key component (optional)
-        cache-key: macos-latest # optional
+        cache-key: macos-latest
         # GitHub token to authenticate API requests. Recommended to use  github.token 
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
@@ -74,25 +74,23 @@ jobs:
 
     - name: Configure Tests
       run: >-
-        cmake -S ${{ github.workspace }}
+        cmake 
+        -S ${{ github.workspace }}
         -B ${{ env.BUILD_DIR }}
         -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
         -DVCPKG_MANIFEST_MODE:STRING=ON
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
-        -DCMAKE_OSX_ARCHITECTURES="x86_64"
-        -DVCPKG_HOST_TRIPLET:STRING="x64-osx"
-        -DVCPKG_TARGET_TRIPLET:STRING="x64-osx"
+        -DCMAKE_OSX_ARCHITECTURES=x86_64
+        -DVCPKG_HOST_TRIPLET:STRING=x64-osx
+        -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
         --compile-no-warning-as-error
         --no-warn-unused-cli
-        
+
     - name: Build Tests
-      run: >-
-        cmake
-        --build 
-        ${{ github.workspace }}/build
+      run: cmake --build ${{ github.workspace }}/build
 
     - name: Test
       run: >-
