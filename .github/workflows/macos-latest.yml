@@ -89,7 +89,10 @@ jobs:
         --no-warn-unused-cli
         
     - name: Build Tests
-      run: cmake --build ./build
+      run: >-
+        cmake
+        --build 
+        ${{ github.workspace }}/build
 
     - name: Test
       run: >-
