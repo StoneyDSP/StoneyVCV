@@ -72,11 +72,30 @@ jobs:
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
         github-binarycache: true
 
-    - name: Deps
-      run: make vcpkg
+    - name: Configure Tests
+      run: >-
+        cmake -S .
+        -B ${{ env.BUILD_DIR }}
+        -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
+        -DCMAKE_CXX_FLAGS:STRING="-march=nehalem"
+        -DCMAKE_INSTALL_PREFIX=${PWD}/install
+        -DVCPKG_MANIFEST_MODE:STRING=ON
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="vcpkg/scripts/buildsystems/vcpkg.cmake"
+        --compile-no-warning-as-error
+        --no-warn-unused-cli
+        
+    - name: Build Tests
+      run: cmake --build build
 
     - name: Test
-      run: make test
+      run: >-
+        cd build &&
+        ctest
+        -j4
+        --rerun-failed
+        --output-on-failure
+        --verbose 
+        && cd ..
 
     - name: Build
       run: make
