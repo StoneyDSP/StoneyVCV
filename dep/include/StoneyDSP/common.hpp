@@ -41,9 +41,9 @@
 //  #include <stdint.h>
 // #endif
 
-// #if __has_include(<string>)
-//  #include <string>
-// #endif
+#if __has_include(<string>)
+ #include <string>
+#endif
 
 // #if __has_include(<string_view>)
 //   #include <string_view> // Not supported by Rack!! :(
