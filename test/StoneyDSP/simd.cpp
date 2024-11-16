@@ -73,7 +73,7 @@ TEST_CASE( "Vector<float, 4>", "[float_4]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
 
         ::StoneyDSP::SIMD::float_4 vector_of_four_floats;
 
@@ -88,7 +88,7 @@ TEST_CASE( "Vector<int8_t, 16>", "[int_8]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::int8_16) == 8);
+        REQUIRE(sizeof(StoneyDSP::SIMD::int8_16) == 16);
 
         StoneyDSP::SIMD::int8_16 vector_of_sixteen_8bit_integers;
 
@@ -103,7 +103,7 @@ TEST_CASE( "Vector<int16_t, 8>", "[int_16]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
 
         ::StoneyDSP::SIMD::int16_8 vector_of_eight_16bit_integers;
 
@@ -118,7 +118,7 @@ TEST_CASE( "Vector<int32_t, 4>", "[int_32]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
 
         ::StoneyDSP::SIMD::int32_4 vector_of_four_32bit_integers;
 
@@ -134,7 +134,7 @@ TEST_CASE( "Vector<int64_t, 2>", "[int_64]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 8);
+        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
 
         ::StoneyDSP::SIMD::int64_2 vector_of_two_64bit_integers;
 
