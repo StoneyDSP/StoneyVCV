@@ -18,7 +18,7 @@ env:
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build juceaide, etc
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_OSX_ARCHITECTURES: "arm64;x86_64"
+  VCPKG_OSX_ARCHITECTURES: "x86_64" # "arm64;x86_64"
   VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
   BUILD_TYPE: Release
   BUILD_DIR: build
@@ -82,7 +82,7 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH="vcpkg/scripts/buildsystems/vcpkg.cmake"
         -DCMAKE_C_COMPILER_LAUNCHER=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
-        -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+        -DCMAKE_OSX_ARCHITECTURES="x86_64" # "arm64;x86_64"
         -DVCPKG_HOST_TRIPLET:STRING="x64-osx"
         -DVCPKG_TARGET_TRIPLET:STRING="x64-osx"
         --compile-no-warning-as-error
