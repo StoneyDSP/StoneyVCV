@@ -100,40 +100,43 @@ using __DOUBLE_T = double;
 
 //==============================================================================
 
-using int8_t = __INT_8_T;
-using uint8_t =  __UINT_8_T;
-using int16_t = __INT_16_T;
-using uint16_t = __UINT_16_T;
-using int32_t = __INT_32_T;
-using uint32_t = __UINT_32_T;
-using int64_t = __INT_64_T;
-using uint64_t = __UINT_64_T;
-using float_t = __FLOAT_T;
-using double_t = __DOUBLE_T;
+using int8_t = ::StoneyDSP::__INT_8_T;
+using uint8_t =  ::StoneyDSP::__UINT_8_T;
+using int16_t = ::StoneyDSP::__INT_16_T;
+using uint16_t = ::StoneyDSP::__UINT_16_T;
+using int32_t = ::StoneyDSP::__INT_32_T;
+using uint32_t = ::StoneyDSP::__UINT_32_T;
+using int64_t = ::StoneyDSP::__INT_64_T;
+using uint64_t = ::StoneyDSP::__UINT_64_T;
+using float_t = ::StoneyDSP::__FLOAT_T;
+using double_t = ::StoneyDSP::__DOUBLE_T;
 
 //==============================================================================
 
 /** @brief A platform-independent 8-bit signed integer type. */
-using int8 = int8_t;
+using int8 = ::StoneyDSP::int8_t;
 /** @brief A platform-independent 8-bit unsigned integer type. */
-using uint8 = uint8_t;
+using uint8 = ::StoneyDSP::uint8_t;
 /** @brief A platform-independent 16-bit signed integer type. */
-using int16 = int16_t;
+using int16 = ::StoneyDSP::int16_t;
 /** @brief A platform-independent 16-bit unsigned integer type. */
-using uint16 = uint16_t;
+using uint16 = ::StoneyDSP::uint16_t;
 /** @brief A platform-independent 32-bit signed integer type. */
-using int32 = int32_t;
+using int32 = ::StoneyDSP::int32_t;
 /** @brief A platform-independent 32-bit unsigned integer type. */
-using uint32 = uint32_t;
+using uint32 = ::StoneyDSP::uint32_t;
 /** @brief A platform-independent 64-bit signed integer type. */
-using int64  = int64_t;
+using int64 = ::StoneyDSP::int64_t;
 /** @brief A platform-independent 64-bit unsigned integer type. */
-using uint64 = uint64_t;
+using uint64 = ::StoneyDSP::uint64_t;
 
 //==============================================================================
 
-/** @brief A platform-independent 8-bit signed integer type. */
-using Byte = unsigned char;
+using __BYTE_T = signed char;
+
+using byte_t = ::StoneyDSP::__BYTE_T;
+
+using byte = ::StoneyDSP::byte_t;
 
 //==============================================================================
 
