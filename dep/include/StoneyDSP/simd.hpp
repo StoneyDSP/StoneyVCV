@@ -716,7 +716,7 @@ public:
      * @return `Vector<int8_t, 16>`
      */
     static Vector load(const ::StoneyDSP::int8_t* x) {
-#if defined (STONEYDSP_GCC) || (defined (STONEYDSP_MAC) && defined (STONEYDSP_ARM))
+#if defined (STONEYDSP_GCC) || defined (STONEYDSP_MAC)  // TODO: Check Apple platforms other than Clang
 		// HACK
 		// Use _mm_loadu_si128() because GCC doesn't support _mm_loadu_si8()
 		return Vector(_mm_loadu_si128((const __m128i*) x));
@@ -739,7 +739,7 @@ public:
 	 * @param x
 	 */
 	void store(::StoneyDSP::int8_t* x) {
-#if defined (STONEYDSP_GCC) || (defined (STONEYDSP_MAC) && defined (STONEYDSP_ARM))
+#if defined (STONEYDSP_GCC) || defined (STONEYDSP_MAC) // TODO: Check Apple platforms other than Clang
 		// HACK
 		// Use `_mm_storeu_si128()` because GCC doesn't support
         // `_mm_storeu_si8()`
