@@ -5,7 +5,7 @@ if(DEFINED VCPKG_ROOT AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 endif()
 
-project(STONEYDSP)
+project(StoneyDSP)
 
 set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
 set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
@@ -31,7 +31,7 @@ if (NOT "${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 endif()
 
 add_library(Core INTERFACE)
-add_library(${PROJECT_NAME}::Core ALIAS Core)
+add_library(StoneyDSP::Core ALIAS Core)
 
 target_include_directories (Core
 
