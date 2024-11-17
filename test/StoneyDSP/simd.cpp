@@ -53,7 +53,7 @@
 
 // Tests go here...
 
-TEST_CASE( "Vector<double, 2>", "[double_2]" ) {
+TEST_CASE( "Vector<double_t, 2>", "[double_2]" ) {
 
     SECTION( "size tests" ) {
 
@@ -68,7 +68,7 @@ TEST_CASE( "Vector<double, 2>", "[double_2]" ) {
     }
 }
 
-TEST_CASE( "Vector<float, 4>", "[float_4]" ) {
+TEST_CASE( "Vector<float_t, 4>", "[float_4]" ) {
 
     SECTION( "size tests" ) {
 
