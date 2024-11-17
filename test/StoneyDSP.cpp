@@ -73,10 +73,24 @@ TEST_CASE( "int8_t", "[int8_t]" ) {
     }
 }
 
+TEST_CASE( "uint8_t", "[uint8_t]" ) {
+
+    SECTION( "size tests" ) {
+        REQUIRE(sizeof(::StoneyDSP::uint8_t) == 1);
+    }
+}
+
 TEST_CASE( "int16_t", "[int16_t]" ) {
 
     SECTION( "size tests" ) {
         REQUIRE(sizeof(::StoneyDSP::int16_t) == 2);
+    }
+}
+
+TEST_CASE( "uint16_t", "[uint16_t]" ) {
+
+    SECTION( "size tests" ) {
+        REQUIRE(sizeof(::StoneyDSP::uint16_t) == 2);
     }
 }
 
@@ -87,13 +101,29 @@ TEST_CASE( "int32_t", "[int32_t]" ) {
     }
 }
 
+TEST_CASE( "uint32_t", "[uint32_t]" ) {
+
+    SECTION( "size tests" ) {
+        REQUIRE(sizeof(StoneyDSP::uint32_t) == 4);
+    }
+}
+
 #if STONEYDSP_USING_INT64_2
+
 TEST_CASE( "int64_t", "[int64_t]" ) {
 
     SECTION( "size tests" ) {
         REQUIRE(sizeof(StoneyDSP::int64_t) == 8);
     }
 }
-#endif
+
+TEST_CASE( "uint64_t", "[uint64_t]" ) {
+
+    SECTION( "size tests" ) {
+        REQUIRE(sizeof(StoneyDSP::uint64_t) == 8);
+    }
+}
+
+#endif // STONEYDSP_USING_INT64_2
 
 #endif
