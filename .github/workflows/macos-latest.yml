@@ -3,8 +3,6 @@ name: macos
 on:
   # Runs on all pushes
   push:
-  # # A push is made to a GitHub Pages-enabled branch
-  # page_build:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -64,14 +62,13 @@ jobs:
       with:
         # vcpkg triplet to use
         triplet: x64-osx
-        # Additional cache key component (optional)
-        cache-key: macos-latest
         # GitHub token to authenticate API requests. Recommended to use  github.token 
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
         github-binarycache: true
+        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake sse2neon
 
     - name: Configure Tests
       run: >-
