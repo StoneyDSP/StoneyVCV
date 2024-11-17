@@ -1,24 +1,35 @@
 {
-  "editor.rulers": [80],
-  "cmake.configureOnOpen": false,
+  "editor.rulers": [80, 120, 160, 180, 200],
+  "cmake.configureOnOpen": true,
   "cmake.configureOnEdit": false,
+  "cmake.environment": {
+    "RACK_DIR": "${env:RACK_DIR}",
+    "VCPKG_ROOT": "${env:VCPKG_ROOT}"
+  },
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.mergedCompileCommands": "${workspaceFolder}/build/compile_commands.merged.json",
+  "cmake.loadCompileCommands": true,
   "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
+  "C_Cpp.default.defines": [
+    "STONEYDSP_VERSION_MAJOR=0",
+    "STONEYDSP_VERSION_MINOR=1"
+  ],
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/include",
     "${workspaceFolder}/dep/include",
-    "${RACK_DIR}/include",
-    "${RACK_DIR}/dep/include"
+    "${env:RACK_DIR}/include",
+    "${env:RACK_DIR}/dep/include"
   ],
   "C_Cpp.default.browse.databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
   "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
   "C_Cpp.default.browse.path": [
     "${workspaceFolder}/include",
     "${workspaceFolder}/dep/include",
-    "${RACK_DIR}/include",
-    "${RACK_DIR}/dep/include",
+    "${env:RACK_DIR}/include",
+    "${env:RACK_DIR}/dep/include",
   ],
-  "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.default.cStandard": "c11",
   "C_Cpp.default.cppStandard": "c++11",
   "C_Cpp.vcpkg.enabled": false,
@@ -64,7 +75,7 @@
       "strings": true
     },
     "editor.suggest.insertMode": "replace",
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.json-language-features",
   },
   "[markdown]": {
     "editor.unicodeHighlight.ambiguousCharacters": false,
@@ -76,7 +87,7 @@
       "strings": "off",
       "other": "off"
     },
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "vscode.markdown-language-features"
   },
   "terminal.integrated.profiles.windows": {
 		"MSYS2 UCRT64": {
@@ -130,13 +141,14 @@
 		}
   },
   "files.associations": {
+    "**.vcvm": "json", // VCV Rack presets
     "**.d.ts": "typescript",
     "*.css": "tailwindcss",
     "**.bash**": "shellscript",
     "**.cmake": "cmake",
     ".editorconfig": "editorconfig",
     "config.guess": "shellscript",
-    "StoneyDSP": "cpp",
+    "${workspaceFolder}/dep/src/StoneyDSP": "cpp",
     "string": "cpp",
     "cctype": "cpp",
     "clocale": "cpp",

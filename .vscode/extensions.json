@@ -6,7 +6,8 @@
 		"ms-vscode.cpptools",
 		"ms-vscode.cpptools-themes",
     "ms-vscode.cmake-tools",
-		"josetr.cmake-language-support-vscode"
+		"josetr.cmake-language-support-vscode",
+    "xaver.clang-format"
 	],
 	"unwantedRecommendations": [
 		"twxs.cmake",

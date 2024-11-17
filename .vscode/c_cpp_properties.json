@@ -10,15 +10,16 @@
         "${default}"
       ],
       "defines": [
-        "STONEYDSP_VERSION_MINOR=1"
+        "${default}"
       ],
       "compilerArgs": [
         "-std=c++11",
         "-Wsuggest-override",
         "-fPIC",
-        // "-Iinclude",
-        // "-I{RACK_DIR}/include",
-        // "-I${RACK_DIR}/dep/include",
+        "-Iinclude",
+        "-Idep/include",
+        "-I{RACK_DIR}/include",
+        "-I${RACK_DIR}/dep/include",
         "-fno-gnu-unique",
         "-MMD",
         "-MP",
@@ -29,11 +30,11 @@
         "-Wall",
         "-Wextra",
         "-Wno-unused-parameter",
-        "-march=nehalem"
-        // "-L${RACK_DIR}",
-        // "-lRack",
-        // "-static-libstdc++",
-        // "-static-libgcc"
+        "-march=nehalem",
+        "-L${RACK_DIR}",
+        "-lRack",
+        "-static-libstdc++",
+        "-static-libgcc"
       ],
       "browse": {
         "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
@@ -46,8 +47,9 @@
       "intelliSenseMode": "linux-gcc-x64",
       "cStandard": "gnu11",
       "cppStandard": "gnu++11",
-      "configurationProvider": "ms-vscode.makefile-tools",
-      "mergeConfigurations": true
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json"
     },
     {
       "name": "Windows MSYS2 MinGW64",
@@ -62,9 +64,10 @@
         "-std=c++11",
         "-Wsuggest-override",
         "-fPIC",
-        // "-Iinclude",
-        // "-I{RACK_DIR}\\include",
-        // "-I${RACK_DIR}\\dep\\include",
+        "-Iinclude",
+        "-Idep\\include",
+        "-I{RACK_DIR}\\include",
+        "-I${RACK_DIR}\\dep\\include",
         "-MMD",
         "-MP",
         "-g",
@@ -75,10 +78,10 @@
         "-Wextra",
         "-Wno-unused-parameter",
         "-march=nehalem",
-        "-municode"
-        // "-L${RACK_DIR}",
-        // "-lRack",
-        // "-static-libstdc++",
+        "-municode",
+        "-L${RACK_DIR}",
+        "-lRack",
+        "-static-libstdc++"
       ],
       "browse": {
         "databaseFilename": "${workspaceFolder}\\.vscode\\browse.vc.db",
@@ -91,8 +94,9 @@
       "intelliSenseMode": "windows-gcc-x64",
       "cStandard": "gnu11",
       "cppStandard": "gnu++11",
-      "configurationProvider": "ms-vscode.makefile-tools",
-      "mergeConfigurations": true
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json"
     }
   ]
 }
