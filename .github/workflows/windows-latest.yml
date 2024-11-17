@@ -134,8 +134,8 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
-        -DCMAKE_C_COMPILER_LAUNCHER=sccache
-        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
