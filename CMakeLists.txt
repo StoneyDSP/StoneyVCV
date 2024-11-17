@@ -23,8 +23,6 @@ if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED VCPKG_ROOT)
     set(VCPKG_ROOT "$ENV{VCPKG_ROOT}" CACHE STRING "" FORCE)
 endif()
 
-set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
-
 ## Set CMAKE_TOOLCHAIN_FILE to vcpkg, if not passed as -DCMAKE_TOOLCHAIN_FILE=...
 if(DEFINED VCPKG_ROOT AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
@@ -33,7 +31,7 @@ endif()
 ## Locate helpers...
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules")
 
-project(STONEYVCV)
+project(StoneyVCV)
 
 enable_language(C)
 enable_language(CXX)
@@ -93,9 +91,12 @@ set_target_properties(StoneyVCV
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
 )
 
-target_link_libraries(StoneyVCV PRIVATE
-    StoneyDSP::Core
+target_link_libraries(StoneyVCV
+    PRIVATE
+        StoneyDSP::Core
 )
+
+# set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
 
 add_custom_target(plugin ALL
     COMMAND "make"
@@ -143,7 +144,7 @@ if(STONEYVCV_IS_TOP_LEVEL)
 
     ## These tests can use the Catch2-provided main
     add_executable(Tests)
-    add_executable(StoneyDSP::Core::Tests ALIAS Tests)
+    add_executable(StoneyDSP::Tests ALIAS Tests)
     target_sources(Tests
         PRIVATE
             "test/StoneyDSP/simd.cpp"
