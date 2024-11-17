@@ -3,8 +3,6 @@ name: windows
 on:
   # Runs on all pushes
   push:
-  # # A push is made to a GitHub Pages-enabled branch
-  # page_build:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -49,26 +47,26 @@ jobs:
       shell: bash
       run: choco install ninja sccache
 
-#     - name: Cache IPP
-#       id: cache-ipp
-#       uses: actions/cache@v4
-#       with:
-#         key: ipp-v4
-#         path: C:\Program Files (x86)\Intel
+    - name: Cache IPP
+      id: cache-ipp
+      uses: actions/cache@v4
+      with:
+        key: ipp-v4
+        path: C:\Program Files (x86)\Intel
 
-#     - name: Install IPP
-#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
-#       run: |
-#         curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
-#         ./oneapi.exe -s -x -f oneapi
-#         ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
+    - name: Install IPP
+      if: (steps.cache-ipp.outputs.cache-hit != 'true')
+      run: |
+        curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
+        ./oneapi.exe -s -x -f oneapi
+        ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
 
-#     - name: Save IPP cache (even on CI fail)
-#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
-#       uses: actions/cache/save@v4
-#       with:
-#         path: C:\Program Files (x86)\Intel
-#         key: ipp-v4
+    - name: Save IPP cache (even on CI fail)
+      if: (steps.cache-ipp.outputs.cache-hit != 'true')
+      uses: actions/cache/save@v4
+      with:
+        path: C:\Program Files (x86)\Intel
+        key: ipp-v4
 
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
@@ -141,7 +139,7 @@ jobs:
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=vcpkg/scripts/buildsystems/vcpkg.cmake
         --compile-no-warning-as-error
         --no-warn-unused-cli
         
