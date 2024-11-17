@@ -5,7 +5,10 @@ if(DEFINED VCPKG_ROOT AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 endif()
 
-project(StoneyDSP)
+project(STONEYDSP)
+
+set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
+set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
 
 enable_language(C)
 enable_language(CXX)
