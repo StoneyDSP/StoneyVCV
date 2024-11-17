@@ -78,11 +78,13 @@ jobs:
         -G "Ninja"
         -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+        -DRACK_DIR=${{ env.RACK_DIR }}
         -DVCPKG_MANIFEST_MODE:STRING=ON
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64
+        -DVCPG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
         --compile-no-warning-as-error
@@ -117,13 +119,6 @@ jobs:
         cmake 
         --build ${{ env.BUILD_DIR }}
         --target dist 
-        -j3
-
-    - name: Clean
-      run: >-
-        cmake 
-        --build ${{ env.BUILD_DIR }}
-        --target clean 
         -j3
 
     - name: Install
