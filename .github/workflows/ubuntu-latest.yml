@@ -73,6 +73,8 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=ccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache
+        -DRACK_DIR=${{ env.RACK_DIR }}
+        -DVCPKG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_HOST_TRIPLET:STRING=x64-linux
         -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
         -DVCPKG_MANIFEST_MODE:STRING=ON
@@ -83,28 +85,34 @@ jobs:
     - name: Build Tests
       run: >-
         cmake 
-        --build ${{ github.workspace }}/build
-        --clean-first
+        --build ${{ env.BUILD_DIR }}
+        --target Tests
         -j3
 
     - name: Test
       run: >-
-        cd build &&
+        cd ${{ env.BUILD_DIR }} &&
         ctest
         -j3
         --rerun-failed
         --output-on-failure
         --verbose 
-        && cd ..
+        && cd ${{ github.workspace }}
 
-    - name: Clean
-      run: make clean -j3
 
     - name: Build
-      run: make -j3
+      run: >-
+        cmake
+        --build ${{ env.BUILD_DIR }}
+        --target plugin
+        -j3
 
     - name: Dist
-      run: make dist -j3
+      run: >-
+        cmake
+        --build ${{ env.BUILD_DIR }}
+        --target dist
+        -j3
 
     - name: Install
       run: make install -j3
