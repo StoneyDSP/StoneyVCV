@@ -50,7 +50,7 @@ jobs:
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's macOS Deps
       run: |
-        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache
+        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache tree
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
@@ -91,37 +91,34 @@ jobs:
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
-#     - name: Build Tests
-#       run: >-
-#         cmake
-#         --build ${{ github.workspace }}/build
-#         --clean-first
-#         -j4
-
     - name: Build Tests
-      run: |
-        cd build
-        make -j4
-        cd ..
+      run: >-
+        cmake
+        --build ${{ github.workspace }}/build
+        --clean-first
+        -j3
 
     - name: Test
       run: >-
         cd build &&
         ctest
-        -j4
+        -j3
         --rerun-failed
         --output-on-failure
         --verbose 
         && cd ..
 
     - name: Build
-      run: make -j4
+      run: make -j3
 
     - name: Install
-      run: make install -j4
+      run: make install -j3
 
     - name: Dist
-      run: make dist -j4
+      run: make dist -j3
+
+    - name: Tree
+      run: tree
 
     - name: Upload Build
       uses: actions/upload-artifact@v4
