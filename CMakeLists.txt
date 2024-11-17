@@ -33,6 +33,10 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules")
 
 project(StoneyVCV)
 
+if(WIN32 AND NOT DEFINED CMAKE_EXTRA_GENERATOR)
+    set(CMAKE_EXTRA_GENERATOR "mingw32-make")
+endif()
+
 enable_language(C)
 enable_language(CXX)
 
@@ -135,7 +139,7 @@ add_custom_target(dist
 # )
 
 ## Only build tests if this project is the top-level project...
-if(STONEYVCV_IS_TOP_LEVEL)
+if(StoneyVCV_IS_TOP_LEVEL)
 
     find_package(Catch2 3 REQUIRED)
 
