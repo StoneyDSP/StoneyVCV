@@ -109,8 +109,9 @@ jobs:
         --fresh
         -S .
         -B ${{ env.BUILD_DIR }}
-        -G "Ninja"
+        -G "MSYS Makefiles"
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        -DCMAKE_C_FLAGS="-march=nehalem"
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=./install
         -DVCPKG_MANIFEST_MODE=ON
@@ -126,7 +127,7 @@ jobs:
         cmake
         --build
         ./build
-        --clean-first
+        --target Tests
         -j3
 
     - name: Test
@@ -142,21 +143,21 @@ jobs:
         --verbose 
         && cd ..
 
-    - name: Clean
-      shell: msys2 {0}
-      run: make clean -j3
-
     - name: Build
       shell: msys2 {0}
-      run: make -j3
+      run: cmake --build ./build --target plugin -j3
+
+    - name: Dist
+      shell: msys2 {0}
+      run: cmake --build ./build --target dist -j3
+
+    - name: Clean
+      shell: msys2 {0}
+      run: cmake --build ./build --target clean -j3
 
     - name: Install
       shell: msys2 {0}
       run: make install -j3
-
-    - name: Dist
-      shell: msys2 {0}
-      run: make dist -j3
 
     # Lis all files in tree
     - name: Tree
