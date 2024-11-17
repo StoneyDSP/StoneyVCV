@@ -23,6 +23,15 @@ if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED VCPKG_ROOT)
     set(VCPKG_ROOT "$ENV{VCPKG_ROOT}" CACHE STRING "" FORCE)
 endif()
 
+if(NOT DEFINED CMAKE_MAKE_PROGRAM)
+    set(CMAKE_MAKE_PROGRAM "make" CACHE STRING "" FORCE)
+    set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
+    set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
+    if(NOT DEFINED ENV{CI})
+        set(CMAKE_COLOR_MAKEFILE TRUE CACHE BOOL "" FORCE)
+    endif()
+endif()
+
 ## Set CMAKE_TOOLCHAIN_FILE to vcpkg, if not passed as -DCMAKE_TOOLCHAIN_FILE=...
 if(DEFINED VCPKG_ROOT AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
@@ -31,7 +40,7 @@ endif()
 ## Locate helpers...
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules")
 
-project(StoneyVCV)
+project(STONEYVCV)
 
 enable_language(C)
 enable_language(CXX)
@@ -43,10 +52,17 @@ include(StoneyDSP)
 
 set(PLUGIN_HPP "plugin.hpp")
 set(PLUGIN_CPP "plugin.cpp")
+if(WIN32)
+    set(PLUGIN_LIB "plugin.dll")
+elseif(UNIX AND NOT APPLE)
+    set(PLUGIN_LIB "plugin.dylib")
+else() # LINUX
+    set(PLUGIN_LIB "plugin.so")
+endif()
 
 configure_file("include/${PLUGIN_HPP}" "include/${PLUGIN_HPP}")
 
-add_library(StoneyVCV SHARED EXCLUDE_FROM_ALL)
+add_library(StoneyVCV SHARED) # EXCLUDE_FROM_ALL ??
 add_library(StoneyDSP::StoneyVCV ALIAS StoneyVCV)
 
 target_include_directories(StoneyVCV
@@ -63,7 +79,7 @@ target_include_directories(StoneyVCV
 
 target_sources(StoneyVCV
     PUBLIC
-    FILE_SET stoneydsp_STONEYVCV_PUBLIC_HEADERS
+    FILE_SET stoneyvcv_PUBLIC_HEADERS
     TYPE HEADERS
     BASE_DIRS
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
@@ -74,22 +90,51 @@ target_sources(StoneyVCV
         $<INSTALL_INTERFACE:include/${PLUGIN_HPP}>
 )
 
-target_sources(StoneyVCV PRIVATE "src/plugin.cpp")
+target_sources(StoneyVCV PRIVATE "src/${PLUGIN_CPP}")
 
 set_target_properties(StoneyVCV
     PROPERTIES
         PREFIX ""
         LIBRARY_OUTPUT_NAME "plugin"
-        ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}"
-        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
 )
 
 target_link_libraries(StoneyVCV PRIVATE
     StoneyDSP::Core
 )
 
+add_custom_target(plugin ALL
+    COMMAND "make"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    BYPRODUCTS "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+    SOURCES "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}" "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+    JOB_SERVER_AWARE TRUE
+    DEPENDS StoneyVCV
+    USES_TERMINAL
+)
+
+add_custom_target(dist
+    COMMAND "make" "dist"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    BYPRODUCTS "${PROJECT_SOURCE_DIR}/dist"
+    SOURCES "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+    JOB_SERVER_AWARE TRUE
+    DEPENDS plugin
+    USES_TERMINAL
+)
+
+# add_custom_target(clean
+#     COMMAND "make" "clean"
+#     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+#     BYPRODUCTS "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+#     SOURCES "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}" "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+#     JOB_SERVER_AWARE TRUE
+#     USES_TERMINAL
+# )
+
 ## Only build tests if this project is the top-level project...
-if(StoneyVCV_IS_TOP_LEVEL)
+if(STONEYVCV_IS_TOP_LEVEL)
 
     find_package(Catch2 3 REQUIRED)
 
@@ -104,13 +149,28 @@ if(StoneyVCV_IS_TOP_LEVEL)
     # FetchContent_MakeAvailable(Catch2)
 
     ## These tests can use the Catch2-provided main
-    add_executable(tests test/StoneyDSP/simd.cpp test/StoneyDSP.cpp)
-    target_link_libraries(tests PRIVATE StoneyDSP::Core Catch2::Catch2WithMain)
+    add_executable(Tests)
+    add_executable(StoneyDSP::Core::Tests ALIAS Tests)
+    target_sources(Tests
+        PRIVATE
+            "test/StoneyDSP/simd.cpp"
+            "test/StoneyDSP.cpp"
+    )
+    target_link_libraries(Tests
+        PRIVATE
+            StoneyDSP::Core
+            Catch2::Catch2WithMain
+    )
+    set_target_properties(Tests
+        PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/test"
+            RUNTIME_OUTPUT_NAME "StoneyDSP"
+    )
 
     enable_testing()
 
     include(CTest)
     include(Catch)
-    catch_discover_tests(tests)
+    catch_discover_tests(Tests)
 
 endif()
