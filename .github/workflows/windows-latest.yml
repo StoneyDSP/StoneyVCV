@@ -3,8 +3,6 @@ name: windows
 on:
   # Runs on all pushes
   push:
-  # # A push is made to a GitHub Pages-enabled branch
-  # page_build:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -45,26 +43,9 @@ jobs:
       with:
         submodules: true
 
-#     - name: Cache IPP
-#       id: cache-ipp
-#       uses: actions/cache@v4
-#       with:
-#         key: ipp-v4
-#         path: C:\Program Files (x86)\Intel
-
-#     - name: Install IPP
-#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
-#       run: |
-#         curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
-#         ./oneapi.exe -s -x -f oneapi
-#         ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
-
-#     - name: Save IPP cache (even on CI fail)
-#       if: (steps.cache-ipp.outputs.cache-hit != 'true')
-#       uses: actions/cache/save@v4
-#       with:
-#         path: C:\Program Files (x86)\Intel
-#         key: ipp-v4
+    - name: Install Ninja
+      shell: bash
+      run: choco install ninja sccache
 
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
@@ -87,7 +68,8 @@ jobs:
           mingw-w64-x86_64-gcc 
           mingw-w64-x86_64-gdb 
           mingw-w64-x86_64-cmake 
-          mingw-w64-x86_64-catch 
+          mingw-w64-x86_64-catch
+          mingw-w64-x86_64-ninja
           autoconf 
           automake 
           libtool 
@@ -95,6 +77,8 @@ jobs:
           python 
           zstd 
           mingw-w64-x86_64-pkgconf
+          tree
+          ninja
         
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's Windows Deps
@@ -110,8 +94,6 @@ jobs:
       with:
         # vcpkg triplet to use
         triplet: x64-mingw-dynamic
-        # Additional cache key component (optional)
-        cache-key: windows-latest # optional
         # GitHub token to authenticate API requests. Recommended to use  github.token 
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
@@ -123,22 +105,29 @@ jobs:
     - name: Configure Tests
       shell: msys2 {0}
       run: >-
-        cmake -S .
+        cmake
+        --fresh
+        -S .
         -B ${{ env.BUILD_DIR }}
+        -G "Ninja"
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         -DCMAKE_CXX_FLAGS="-march=nehalem"
-        -DCMAKE_INSTALL_PREFIX=${PWD}/install
+        -DCMAKE_INSTALL_PREFIX=./install
         -DVCPKG_MANIFEST_MODE=ON
-        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
-        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
-        -DVCPKG_MANIFEST_MODE:BOOL=FALSE
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="vcpkg/scripts/buildsystems/vcpkg.cmake"
+        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
+        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
         --compile-no-warning-as-error
         --no-warn-unused-cli
         
     - name: Build Tests
       shell: msys2 {0}
-      run: cmake --build build
+      run: >-
+        cmake
+        --build
+        ./build
+        --clean-first
+        -j3
 
     - name: Test
       shell: msys2 {0}
@@ -147,23 +136,32 @@ jobs:
       run: >-
         cd build &&
         ctest
-        -j4
+        -j3
         --rerun-failed
         --output-on-failure
         --verbose 
         && cd ..
 
+    - name: Clean
+      shell: msys2 {0}
+      run: make clean -j3
+
     - name: Build
       shell: msys2 {0}
-      run: make
+      run: make -j3
 
     - name: Install
       shell: msys2 {0}
-      run: make install
+      run: make install -j3
 
     - name: Dist
       shell: msys2 {0}
-      run: make dist
+      run: make dist -j3
+
+    # Lis all files in tree
+    - name: Tree
+      shell: msys2 {0}
+      run: tree
 
     - name: Upload Build
       uses: actions/upload-artifact@v4

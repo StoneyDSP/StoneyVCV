@@ -3,8 +3,6 @@ name: macos
 on:
   # Runs on all pushes
   push:
-  # # A push is made to a GitHub Pages-enabled branch
-  # page_build:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -16,25 +14,31 @@ concurrency:
 env:
   DISPLAY: :0
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
-  CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build juceaide, etc
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_OSX_ARCHITECTURES: "arm64;x86_64"
-  VCPKG_ROOT: "${{ github.workspace }}/vcpkg"
+  VCPKG_OSX_ARCHITECTURES: "x86_64"
+  VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   BUILD_TYPE: Release
-  BUILD_DIR: build
+  BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
-  SCCACHE_CACHE_MULTIARCH: 1 # for macos actions only!
+  SCCACHE_CACHE_MULTIARCH: 1
+  SCCACHE_RECACHE: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "mac-x64+arm64"
-  RACK_DIR: "${{ github.workspace }}/dep/Rack-SDK"
+  RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
 
 jobs:
   macos:
     runs-on: macos-latest
 
     steps:
+
+#     - name: Use latest Xcode on system (macOS)
+#       uses: maxim-lobanov/setup-xcode@v1
+#       with:
+#         xcode-version: latest-stable
     
     - name: Checkout StoneyVCV code
       uses: actions/checkout@v4
@@ -44,7 +48,7 @@ jobs:
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's macOS Deps
       run: |
-        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config
+        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache ninja tree
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
@@ -58,26 +62,65 @@ jobs:
       with:
         # vcpkg triplet to use
         triplet: x64-osx
-        # Additional cache key component (optional)
-        cache-key: macos-latest # optional
         # GitHub token to authenticate API requests. Recommended to use  github.token 
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
         github-binarycache: true
+        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake sse2neon
+
+    - name: Configure Tests
+      run: >-
+        cmake
+        --fresh
+        -S ${{ github.workspace }}
+        -B ${{ env.BUILD_DIR }}
+        -G "Ninja"
+        -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
+        -DCMAKE_INSTALL_PREFIX=${PWD}/install
+        -DVCPKG_MANIFEST_MODE:STRING=ON
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
+        -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
+        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64
+        -DVCPKG_HOST_TRIPLET:STRING=x64-osx
+        -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
+        --compile-no-warning-as-error
+        --no-warn-unused-cli
+
+    - name: Build Tests
+      run: >-
+        cmake
+        --build ${{ github.workspace }}/build
+        --clean-first
+        -j3
 
     - name: Test
-      run: make test
+      run: >-
+        cd build &&
+        ctest
+        -j3
+        --rerun-failed
+        --output-on-failure
+        --verbose 
+        && cd ..
+
+    - name: Clean
+      run: make clean -j3
 
     - name: Build
-      run: make
-
-    - name: Install
-      run: make install
+      run: make -j3
 
     - name: Dist
-      run: make dist
+      run: make dist -j3
+
+    - name: Install
+      run: make install -j3
+
+    # List all files in tree
+    - name: Tree
+      run: tree
 
     - name: Upload Build
       uses: actions/upload-artifact@v4

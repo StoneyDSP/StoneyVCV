@@ -46,7 +46,7 @@
       "intelliSenseMode": "linux-gcc-x64",
       "cStandard": "gnu11",
       "cppStandard": "gnu++11",
-      "configurationProvider": "ms-vscode.makefile-tools",
+      "configurationProvider": "ms-vscode.cmake-tools",
       "mergeConfigurations": true
     },
     {
@@ -91,7 +91,7 @@
       "intelliSenseMode": "windows-gcc-x64",
       "cStandard": "gnu11",
       "cppStandard": "gnu++11",
-      "configurationProvider": "ms-vscode.makefile-tools",
+      "configurationProvider": "ms-vscode.cmake-tools",
       "mergeConfigurations": true
     }
   ]

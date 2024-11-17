@@ -1,5 +1,3 @@
-# include ./dep.mk
-
 # If RACK_DIR is not defined when calling the Makefile, default to two directories above
 RACK_DIR ?= ../..
 
@@ -22,28 +20,7 @@ DISTRIBUTABLES += LICENSE
 DISTRIBUTABLES += VERSION
 DISTRIBUTABLES += $(wildcard presets)
 
-## For building libstoneydsp & unit tests
-
-VCPKG_JSON_FILES += vcpkg.json
-VCPKG_JSON_FILES += vcpkg-configuration.json
-
-vcpkg: $(VCPKG_JSON_FILES)
-	vcpkg install
-
-.PHONY: vcpkg
-
-TEST_SOURCES += test/StoneyDSP/simd.cpp
-
-## For running unit tests
-
-test: $(TEST_SOURCES)
-	cmake -S . -B build -DVCPKG_ROOT="${VCPKG_ROOT}" && \
-	cmake --build build && \
-	cd build && \
-	./tests && \
-	cd ..
-
-.PHONY: test
-
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
+
+# include $(PWD)/test.mk
