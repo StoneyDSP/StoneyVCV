@@ -78,7 +78,7 @@ jobs:
         cmake
         -S ${{ github.workspace }}
         -B ${{ env.BUILD_DIR }}
-        -G "Unix Makefiles"
+        -G "Ninja"
         -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
         -DVCPKG_MANIFEST_MODE:STRING=ON
