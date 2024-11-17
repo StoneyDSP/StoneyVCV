@@ -129,18 +129,18 @@ jobs:
       run: >-
         cmake
         --fresh
-        -S ${{ github.workspace }}
+        -S ${PWD}
         -B ${{ env.BUILD_DIR }}
         -G "Ninja"
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         -DCMAKE_CXX_FLAGS="-march=nehalem"
-        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+        -DCMAKE_INSTALL_PREFIX=${PWD}/install
         -DCMAKE_C_COMPILER_LAUNCHER=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake
         --compile-no-warning-as-error
         --no-warn-unused-cli
         
@@ -149,7 +149,7 @@ jobs:
       run: >-
         cmake
         --build
-        ${{ github.workspace }}/build
+        ${PWD}/build
         --clean-first
         -j3
 
