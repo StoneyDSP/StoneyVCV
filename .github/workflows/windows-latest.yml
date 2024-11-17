@@ -47,27 +47,6 @@ jobs:
       shell: bash
       run: choco install ninja sccache
 
-    - name: Cache IPP
-      id: cache-ipp
-      uses: actions/cache@v4
-      with:
-        key: ipp-v4
-        path: C:\Program Files (x86)\Intel
-
-    - name: Install IPP
-      if: (steps.cache-ipp.outputs.cache-hit != 'true')
-      run: |
-        curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/8d158661-ca8f-4e66-b5ea-3e0b3d00836a/w_ipp_oneapi_p_2021.10.1.15_offline.exe
-        ./oneapi.exe -s -x -f oneapi
-        ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.
-
-    - name: Save IPP cache (even on CI fail)
-      if: (steps.cache-ipp.outputs.cache-hit != 'true')
-      uses: actions/cache/save@v4
-      with:
-        path: C:\Program Files (x86)\Intel
-        key: ipp-v4
-
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
@@ -134,8 +113,6 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=./install
-        -DCMAKE_C_COMPILER_LAUNCHER=ccache
-        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
