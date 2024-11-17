@@ -152,10 +152,6 @@ jobs:
       shell: msys2 {0}
       run: cmake --build ./build --target dist -j3
 
-    - name: Clean
-      shell: msys2 {0}
-      run: cmake --build ./build --target clean -j3
-
     - name: Install
       shell: msys2 {0}
       run: make install -j3
