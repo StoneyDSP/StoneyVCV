@@ -137,8 +137,8 @@ jobs:
         -DCMAKE_C_COMPILER_LAUNCHER=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
         -DVCPKG_MANIFEST_MODE=ON
-        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw64-dynamic
-        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw64-dynamic
+        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
+        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=vcpkg/scripts/buildsystems/vcpkg.cmake
         --compile-no-warning-as-error
         --no-warn-unused-cli
