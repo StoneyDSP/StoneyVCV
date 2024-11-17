@@ -91,11 +91,18 @@ jobs:
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
+#     - name: Build Tests
+#       run: >-
+#         cmake
+#         --build ${{ github.workspace }}/build
+#         --clean-first
+#         -j4
+
     - name: Build Tests
-      run: >-
-        cmake
-        --build ${{ github.workspace }}/build
-        --verbose
+      run: |
+        cd build
+        make -j4
+        cd ..
 
     - name: Test
       run: >-
@@ -108,13 +115,13 @@ jobs:
         && cd ..
 
     - name: Build
-      run: make
+      run: make -j4
 
     - name: Install
-      run: make install
+      run: make install -j4
 
     - name: Dist
-      run: make dist
+      run: make dist -j4
 
     - name: Upload Build
       uses: actions/upload-artifact@v4
