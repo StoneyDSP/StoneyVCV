@@ -94,7 +94,7 @@ jobs:
       run: >-
         cmake 
         --build ${{ github.workspace }}/build 
-        --trace
+        --verbose
 
     - name: Test
       run: >-
