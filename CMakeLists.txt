@@ -53,7 +53,7 @@ endif()
 
 configure_file("include/${PLUGIN_HPP}" "include/${PLUGIN_HPP}")
 
-add_library(StoneyVCV SHARED) # EXCLUDE_FROM_ALL ??
+add_library(StoneyVCV SHARED EXCLUDE_FROM_ALL)
 add_library(StoneyDSP::StoneyVCV ALIAS StoneyVCV)
 
 target_include_directories(StoneyVCV
@@ -96,7 +96,14 @@ target_link_libraries(StoneyVCV
         StoneyDSP::Core
 )
 
-# set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
+# if(NOT DEFINED CMAKE_MAKE_PROGRAM)
+#     set(CMAKE_MAKE_PROGRAM "make" CACHE STRING "" FORCE)
+    set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
+    set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
+#     if(NOT DEFINED ENV{CI})
+#         set(CMAKE_COLOR_MAKEFILE TRUE CACHE BOOL "" FORCE)
+#     endif()
+# endif()
 
 add_custom_target(plugin ALL
     COMMAND "make"
@@ -104,7 +111,7 @@ add_custom_target(plugin ALL
     BYPRODUCTS "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
     SOURCES "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}" "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
     JOB_SERVER_AWARE TRUE
-    DEPENDS StoneyVCV
+    # DEPENDS StoneyVCV
     USES_TERMINAL
 )
 
