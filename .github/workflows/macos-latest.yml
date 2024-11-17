@@ -15,7 +15,7 @@ concurrency:
 
 env:
   DISPLAY: :0
-  CMAKE_CONFIGURATION_TYPES: "Debug;Release;RelWithDebInfo;MinSizeRel"
+  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_OSX_ARCHITECTURES: "x86_64"
@@ -49,7 +49,7 @@ jobs:
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's macOS Deps
       run: |
-        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config
+        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
@@ -74,26 +74,28 @@ jobs:
 
     - name: Configure Tests
       run: >-
-        cmake 
+        cmake
         -S ${{ github.workspace }}
         -B ${{ env.BUILD_DIR }}
+        -G "Unix Makefiles"
         -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
         -DVCPKG_MANIFEST_MODE:STRING=ON
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DCMAKE_C_COMPILER_LAUNCHER=sccache
-        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
-        -DCMAKE_OSX_ARCHITECTURES=x86_64
+        -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
+        -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
+        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
         --log-level=TRACE
+        --trace
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
     - name: Build Tests
       run: >-
-        cmake 
-        --build ${{ github.workspace }}/build 
+        cmake
+        --build ${{ github.workspace }}/build
         --verbose
 
     - name: Test
