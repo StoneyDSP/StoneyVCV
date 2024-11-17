@@ -25,7 +25,7 @@ env:
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "win-x64"
-  RACK_DIR: ${{ github.workspace }}\dep\Rack-SDK
+  RACK_DIR: dep/Rack-SDK
   IPP_DIR: C:\Program Files (x86)\Intel\oneAPI\ipp\latest\lib\cmake\ipp
   MSYSTEM: "MINGW64"
 
@@ -106,13 +106,15 @@ jobs:
       shell: msys2 {0}
       run: >-
         cmake
-        --fresh
         -S .
         -B ${{ env.BUILD_DIR }}
         -G "Ninja"
         -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        -DCMAKE_C_FLAGS="-march=nehalem"
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=./install
+        -DRACK_DIR=${{ env.RACK_DIR }}
+        -DVCPKG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
@@ -126,7 +128,7 @@ jobs:
         cmake
         --build
         ./build
-        --clean-first
+        --target Tests
         -j3
 
     - name: Test
@@ -142,21 +144,17 @@ jobs:
         --verbose 
         && cd ..
 
-    - name: Clean
-      shell: msys2 {0}
-      run: make clean -j3
-
     - name: Build
       shell: msys2 {0}
-      run: make -j3
+      run: cmake --build ./build --target plugin -j3
+
+    - name: Dist
+      shell: msys2 {0}
+      run: cmake --build ./build --target dist -j3
 
     - name: Install
       shell: msys2 {0}
       run: make install -j3
-
-    - name: Dist
-      shell: msys2 {0}
-      run: make dist -j3
 
     # Lis all files in tree
     - name: Tree

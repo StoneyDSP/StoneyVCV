@@ -38,7 +38,7 @@
 #endif
 
 // Include StoneyDSP library here, for a single global linkage object
-#include "../src/StoneyDSP"
+#include "../dep/src/StoneyDSP"
 
 /** @brief The `StoneyDSP` VCV Rack Plugin instance. */
 ::rack::plugin::Plugin* StoneyDSP::VCVRack::pluginInstance;
