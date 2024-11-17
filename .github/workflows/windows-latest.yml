@@ -106,7 +106,6 @@ jobs:
       shell: msys2 {0}
       run: >-
         cmake
-        --fresh
         -S .
         -B ${{ env.BUILD_DIR }}
         -G "Ninja"
