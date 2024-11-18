@@ -28,10 +28,29 @@ if(DEFINED VCPKG_ROOT AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 endif()
 
-## Locate helpers...
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules")
+## Locate StoneyDSP...
+set(STONEYDSP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep/StoneyDSP")
 
-project(StoneyVCV)
+## Locate CMake Modules...
+list(APPEND CMAKE_MODULE_PATH
+    "${STONEYDSP_DIR}/share/cmake/Modules"
+    "${CMAKE_CURRENT_LIST_DIR}/dep/Catch2/share/cmake/Modules"
+    "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules"
+)
+
+if(NOT DEFINED STONEYVCV_VERSION_MAJOR)
+    set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
+endif()
+if(NOT DEFINED STONEYVCV_VERSION_MINOR)
+set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
+endif()
+
+project(STONEYVCV)
+
+#[==[Set StoneyDSP Library ABI version to use]==]
+set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
+set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
+include(StoneyDSP)
 
 if(WIN32 AND NOT DEFINED CMAKE_EXTRA_GENERATOR)
     set(CMAKE_EXTRA_GENERATOR "mingw32-make")
@@ -39,11 +58,6 @@ endif()
 
 enable_language(C)
 enable_language(CXX)
-
-## Locate StoneyDSP...
-set(STONEYDSP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep")
-
-include(StoneyDSP)
 
 set(PLUGIN_HPP "plugin.hpp")
 set(PLUGIN_CPP "plugin.cpp")
@@ -56,6 +70,8 @@ else() # LINUX
 endif()
 
 configure_file("include/${PLUGIN_HPP}" "include/${PLUGIN_HPP}")
+# configure_file("include/VCA.hpp" "include/VCA.hpp")
+# configure_file("include/VCO.hpp" "include/VCO.hpp")
 
 add_library(StoneyVCV SHARED EXCLUDE_FROM_ALL)
 add_library(StoneyDSP::StoneyVCV ALIAS StoneyVCV)
@@ -85,7 +101,12 @@ target_sources(StoneyVCV
         $<INSTALL_INTERFACE:include/${PLUGIN_HPP}>
 )
 
-target_sources(StoneyVCV PRIVATE "src/${PLUGIN_CPP}")
+target_sources(StoneyVCV
+    PRIVATE
+        "src/${PLUGIN_CPP}"
+        # "src/VCA.cpp"
+        # "src/VCO.cpp"
+)
 
 set_target_properties(StoneyVCV
     PROPERTIES
@@ -98,7 +119,21 @@ set_target_properties(StoneyVCV
 target_link_libraries(StoneyVCV
     PRIVATE
         StoneyDSP::Core
+        StoneyDSP::SIMD
+        StoneyDSP::DSP
 )
+
+target_link_directories(StoneyVCV
+    PUBLIC
+        "${RACK_DIR}"
+)
+target_link_options(StoneyVCV
+    PUBLIC
+        "-lRack"
+)
+
+# Signal a basic C++11 feature to require C++11.
+target_compile_features(StoneyVCV INTERFACE cxx_nullptr)
 
 # if(NOT DEFINED CMAKE_MAKE_PROGRAM)
 #     set(CMAKE_MAKE_PROGRAM "make" CACHE STRING "" FORCE)
@@ -139,7 +174,7 @@ add_custom_target(dist
 # )
 
 ## Only build tests if this project is the top-level project...
-if(StoneyVCV_IS_TOP_LEVEL)
+if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     find_package(Catch2 3 REQUIRED)
 
@@ -154,28 +189,38 @@ if(StoneyVCV_IS_TOP_LEVEL)
     # FetchContent_MakeAvailable(Catch2)
 
     ## These tests can use the Catch2-provided main
-    add_executable(Tests)
-    add_executable(StoneyDSP::Tests ALIAS Tests)
-    target_sources(Tests
-        PRIVATE
-            "test/StoneyDSP/simd.cpp"
-            "test/StoneyDSP.cpp"
+    add_executable(Tests_StoneyVCV)
+    add_executable(StoneyVCV::Tests_StoneyVCV ALIAS Tests_StoneyVCV)
+    add_executable(StoneyDSP::StoneyVCV::Tests_StoneyVCV ALIAS Tests_StoneyVCV)
+    target_include_directories(Tests_StoneyVCV
+        PUBLIC
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            $<INSTALL_INTERFACE:include>
     )
-    target_link_libraries(Tests
+    target_sources(Tests_StoneyVCV
         PRIVATE
-            StoneyDSP::Core
+            "${PROJECT_SOURCE_DIR}/test/plugin.cpp"
+            # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
+            # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
+    )
+    target_link_libraries(Tests_StoneyVCV
+        PRIVATE
+            # StoneyDSP::Core
+            # StoneyDSP::SIMD
+            # StoneyDSP::DSP
+            StoneyDSP::StoneyVCV
             Catch2::Catch2WithMain
     )
-    set_target_properties(Tests
+    set_target_properties(Tests_StoneyVCV
         PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/test"
-            RUNTIME_OUTPUT_NAME "StoneyDSP"
+            RUNTIME_OUTPUT_NAME "Tests_StoneyVCV"
     )
 
     enable_testing()
 
     include(CTest)
     include(Catch)
-    catch_discover_tests(Tests)
+    catch_discover_tests(Tests_StoneyVCV)
 
 endif()

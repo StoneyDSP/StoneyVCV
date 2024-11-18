@@ -33,39 +33,86 @@
 
 #pragma once
 
-#define STONEYDSP_DSP_HPP_INCLUDED
+#define STONEYDSP_DSP_GAIN_HPP_INCLUDED 1
+
+//==============================================================================
+
+#ifndef STONEYDSP_CORE_HPP_INCLUDED
+ #include "StoneyDSP/Core.hpp"
+#endif
+
+#ifndef STONEYDSP_SIMD_HPP_INCLUDED
+ #include "StoneyDSP/SIMD.hpp"
+#endif
 
 //==============================================================================
 
 namespace StoneyDSP {
-/** @addtogroup StoneyDSP
- *  @{
- */
 
-//==============================================================================
-
-/**
- * @brief The `DSP` namespace.
- * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @copyright Copyright (c) 2024
- * @namespace StoneyDSP
- *
- */
 namespace DSP {
-/** @addtogroup DSP
- *  @{
- */
 
+template <typename T, typename S = T>
+class Gain {
+public:
+    T currentGain;
+    Gain();
+    Gain(T newGain);
+    ~Gain();
+    const T& getGain() const;
+    void setGain(const T& newGain);
+    void processSample(S sample);
+private:
+    STONEYDSP_DECLARE_NON_COPYABLE(Gain)
+    STONEYDSP_DECLARE_NON_MOVEABLE(Gain)
+    STONEYDSP_PREVENT_HEAP_ALLOCATION
+};
+
+}
+}
+
+template <typename T, typename S>
+::StoneyDSP::DSP::Gain<T, S>::Gain()
+ : currentGain((T)0.0)
+{
+
+}
+
+template <typename T, typename S>
+::StoneyDSP::DSP::Gain<T, S>::Gain(T newGain)
+ : currentGain(newGain)
+{
+
+}
+
+template <typename T, typename S>
+::StoneyDSP::DSP::Gain<T, S>::~Gain()
+{
+
+}
+
+template <typename T, typename S>
+void ::StoneyDSP::DSP::Gain<T, S>::processSample(S sample)
+{
+    sample *= getGain();
+}
+
+template <class T, class S>
+const T& ::StoneyDSP::DSP::Gain<T, S>::getGain() const
+{
+    return currentGain;
+}
+
+template <class T, class S>
+void ::StoneyDSP::DSP::Gain<T, S>::setGain(const T& newGain)
+{
+    currentGain = newGain;
+}
 
 //==============================================================================
 
-  /// @} group DSP
-} // namespace DSP
+template class ::StoneyDSP::DSP::Gain<::StoneyDSP::double_t>;
+template class ::StoneyDSP::DSP::Gain<::StoneyDSP::float_t>;
+template class ::StoneyDSP::DSP::Gain<::StoneyDSP::SIMD::double_2>;
+template class ::StoneyDSP::DSP::Gain<::StoneyDSP::SIMD::float_4>;
 
 //==============================================================================
-
-  /// @} group StoneyDSP
-} // namespace StoneyDSP
-
-//==============================================================================
-

@@ -29,16 +29,11 @@
  *
  ******************************************************************************/
 
-#undef STONEYDSP_HPP_INCLUDED
-
 #include "plugin.hpp"
 
-#ifdef STONEYDSP_HPP_INCLUDED
-  #error "incorrect usage of 'StoneyDSP.hpp'..."
-#endif
 
 // Include StoneyDSP library here, for a single global linkage object
-#include "../dep/src/StoneyDSP"
+#include "../dep/StoneyDSP/src/StoneyDSP"
 
 /** @brief The `StoneyDSP` VCV Rack Plugin instance. */
 ::rack::plugin::Plugin* StoneyDSP::VCVRack::pluginInstance;
@@ -52,9 +47,9 @@ void init(::rack::plugin::Plugin* p) {
 
 	::StoneyDSP::VCVRack::pluginInstance = p;
 
-#if STONEYDSP_VERSION_MAJOR >= 0 && STONEYDSP_VERSION_MINOR >= 1
+#if STONEYVCV_VERSION_MAJOR >= 0 && STONEYVCV_VERSION_MINOR >= 1
     // EXPERIMENTAL MODULES HERE...
-#elif STONEYDSP_VERSION_MAJOR >= 0 && STONEYDSP_VERSION_MINOR >= 0
+#elif STONEYVCV_VERSION_MAJOR >= 0 && STONEYVCV_VERSION_MINOR >= 0
     #warning "No modules found..."
 #endif
 
