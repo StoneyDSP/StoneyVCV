@@ -123,6 +123,18 @@ target_link_libraries(StoneyVCV
         StoneyDSP::DSP
 )
 
+target_link_directories(StoneyVCV
+    PUBLIC
+        "${RACK_DIR}"
+)
+target_link_options(StoneyVCV
+    PUBLIC
+        "-lRack"
+)
+
+# Signal a basic C++11 feature to require C++11.
+target_compile_features(StoneyVCV INTERFACE cxx_nullptr)
+
 # if(NOT DEFINED CMAKE_MAKE_PROGRAM)
 #     set(CMAKE_MAKE_PROGRAM "make" CACHE STRING "" FORCE)
     set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
@@ -193,10 +205,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
-            StoneyDSP::Core
-            StoneyDSP::SIMD
-            StoneyDSP::DSP
-            # StoneyDSP::StoneyVCV
+            # StoneyDSP::Core
+            # StoneyDSP::SIMD
+            # StoneyDSP::DSP
+            StoneyDSP::StoneyVCV
             Catch2::Catch2WithMain
     )
     set_target_properties(Tests_StoneyVCV
