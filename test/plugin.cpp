@@ -22,7 +22,7 @@
 
 TEST_CASE( "placeholder", "[plugin]" ) {
 
-    REQUIRE(true);
+    REQUIRE(true == true);
 }
 
 #endif // STONEYDSP_HAS_CATCH2
