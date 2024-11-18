@@ -90,14 +90,21 @@ jobs:
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
-    - name: Build Tests
+    - name: Build StoneyDSP Tests
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests
+        --target Tests_StoneyDSP
         -j3
 
-    - name: Test
+    - name: Build StoneyVCV Tests
+      run: >-
+        cmake
+        --build ${{ env.BUILD_DIR }}
+        --target Tests_StoneyVCV
+        -j3
+
+    - name: Run StoneyVCV Tests
       run: >-
         cd ${{ env.BUILD_DIR }} &&
         ctest
