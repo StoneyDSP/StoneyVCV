@@ -12,7 +12,8 @@ StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 ## Contents
 
 - [StoneyVCV](#stoneyvcv)
-  - [Building StoneyVCV for VCV Rack 2](#build-and-install-stoneyvcv-for-vcv-rack-2-with-make)
+  - [Build and Install StoneyVCV for VCV Rack 2 with Make](#build-and-install-stoneyvcv-for-vcv-rack-2-with-make)
+  - [Develop, Test and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2](#develop-test-and-deploy-stoneyvcv-for-vcv-rack-2-with-cmake-and-catch2)
   - [Further Reading](#further-reading)
 
 ## Build and Install StoneyVCV for VCV Rack 2 with Make
