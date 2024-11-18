@@ -79,14 +79,23 @@ jobs:
         -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
         -DVCPKG_MANIFEST_MODE:STRING=ON
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         --compile-no-warning-as-error
         --no-warn-unused-cli
         
-    - name: Build Tests
+    - name: Build StoneyDSP Tests
       run: >-
-        cmake 
+        cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests
+        --target Tests_StoneyDSP
+        -j3
+
+    - name: Build StoneyVCV Tests
+      run: >-
+        cmake
+        --build ${{ env.BUILD_DIR }}
+        --target Tests_StoneyVCV
         -j3
 
     - name: Test
