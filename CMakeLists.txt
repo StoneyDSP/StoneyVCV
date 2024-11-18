@@ -193,10 +193,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
-            # StoneyDSP::Core
-            # StoneyDSP::SIMD
-            # StoneyDSP::DSP
-            StoneyDSP::StoneyVCV
+            StoneyDSP::Core
+            StoneyDSP::SIMD
+            StoneyDSP::DSP
+            # StoneyDSP::StoneyVCV
             Catch2::Catch2WithMain
     )
     set_target_properties(Tests_StoneyVCV
