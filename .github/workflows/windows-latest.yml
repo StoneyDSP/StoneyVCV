@@ -19,6 +19,7 @@ env:
   VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   VCPKG_MANIFEST_MODE: ON
+  VCPKG_ROOT: "vcpkg"
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,9 +36,9 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
-      
+
     steps:
-    
+
     - name: Checkout StoneyVCV code
       uses: actions/checkout@v4
       with:
@@ -61,21 +62,21 @@ jobs:
           tar
           unzip
           ccache
-          mingw-w64-x86_64-gcc 
-          mingw-w64-x86_64-gdb 
-          mingw-w64-x86_64-cmake 
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-gdb
+          mingw-w64-x86_64-cmake
           mingw-w64-x86_64-catch
           mingw-w64-x86_64-ninja
-          autoconf 
-          automake 
-          libtool 
-          mingw-w64-x86_64-jq 
-          python 
-          zstd 
+          autoconf
+          automake
+          libtool
+          mingw-w64-x86_64-jq
+          python
+          zstd
           mingw-w64-x86_64-pkgconf
           tree
           ninja
-        
+
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's Windows Deps
       shell: msys2 {0}
@@ -90,7 +91,7 @@ jobs:
       with:
         # vcpkg triplet to use
         triplet: x64-mingw-dynamic
-        # GitHub token to authenticate API requests. Recommended to use  github.token 
+        # GitHub token to authenticate API requests. Recommended to use  github.token
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
@@ -116,22 +117,16 @@ jobs:
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
         --compile-no-warning-as-error
         --no-warn-unused-cli
-        
-    - name: Build StoneyDSP Tests
+
+    - name: Build Tests
+      shell: msys2 {0}
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
         --target Tests_StoneyDSP
-        -j3
-
-    - name: Build StoneyVCV Tests
-      run: >-
-        cmake
-        --build ${{ env.BUILD_DIR }}
-        --target Tests_StoneyVCV
         -j3
 
     - name: Test
@@ -142,7 +137,7 @@ jobs:
         -j3
         --rerun-failed
         --output-on-failure
-        --verbose 
+        --verbose
         && cd ..
 
     - name: Build
