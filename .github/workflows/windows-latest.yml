@@ -14,7 +14,7 @@ concurrency:
 env:
   DISPLAY: :0
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
-  CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP & tests
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
@@ -42,10 +42,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: true
-
-    - name: Install Ninja
-      shell: bash
-      run: choco install ninja sccache
 
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
@@ -119,22 +115,27 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         --compile-no-warning-as-error
         --no-warn-unused-cli
         
-    - name: Build Tests
-      shell: msys2 {0}
+    - name: Build StoneyDSP Tests
       run: >-
         cmake
-        --build
-        ./build
-        --target Tests
+        --build ${{ env.BUILD_DIR }}
+        --target Tests_StoneyDSP
+        -j3
+
+    - name: Build StoneyVCV Tests
+      run: >-
+        cmake
+        --build ${{ env.BUILD_DIR }}
+        --target Tests_StoneyVCV
         -j3
 
     - name: Test
       shell: msys2 {0}
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: >-
         cd build &&
         ctest
@@ -156,7 +157,7 @@ jobs:
       shell: msys2 {0}
       run: make install -j3
 
-    # Lis all files in tree
+    # List all files in tree
     - name: Tree
       shell: msys2 {0}
       run: tree
