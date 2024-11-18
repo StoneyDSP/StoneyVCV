@@ -58,13 +58,35 @@ TEST_CASE( "Vector<double_t, 2>", "[double_2]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::double_2) == 16);
+        REQUIRE(sizeof(::StoneyDSP::SIMD::double_2) == 16);
 
-        StoneyDSP::SIMD::double_2 vector_of_two_doubles;
+        SECTION( "sizeof constructed instances" ) {
 
-        // sizeof class members
-        REQUIRE(vector_of_two_doubles.size == 2);
-        REQUIRE(sizeof(vector_of_two_doubles.v) == 16);
+            // Call the default constructor
+            ::StoneyDSP::SIMD::double_2 constructor_default;
+
+            // Call the value constructor
+            ::StoneyDSP::SIMD::double_2 constructor_value {
+                (::StoneyDSP::double_t)0.0
+            };
+
+            // Call the scalar constructor
+            ::StoneyDSP::SIMD::double_2 constructor_scalar {
+                (::StoneyDSP::double_t)0.0,
+                (::StoneyDSP::double_t)0.0
+            };
+
+            REQUIRE(sizeof(constructor_value) == sizeof(constructor_default));
+            REQUIRE(sizeof(constructor_scalar) == sizeof(constructor_default));
+        }
+
+        ::StoneyDSP::SIMD::double_2 vector_of_two_doubles;
+
+        SECTION( "sizeof class members" ) {
+            // sizeof class members
+            REQUIRE(vector_of_two_doubles.size == 2);
+            REQUIRE(sizeof(vector_of_two_doubles.v) == 16);
+        }
     }
 }
 
@@ -75,7 +97,31 @@ TEST_CASE( "Vector<float_t, 4>", "[float_4]" ) {
         // sizeof class
         REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
 
-        ::StoneyDSP::SIMD::float_4 vector_of_four_floats;
+        SECTION( "sizeof constructed instances" ) {
+
+            // Call the default constructor
+            ::StoneyDSP::SIMD::float_4 constructor_default;
+
+            // Call the value constructor
+            ::StoneyDSP::SIMD::float_4 constructor_value {
+                (::StoneyDSP::float_t)0.0f
+            };
+
+            // Call the scalar constructor
+            ::StoneyDSP::SIMD::float_4 constructor_scalar {
+                (::StoneyDSP::float_t)0.0f,
+                (::StoneyDSP::float_t)0.0f,
+                (::StoneyDSP::float_t)0.0f,
+                (::StoneyDSP::float_t)0.0f
+            };
+
+            REQUIRE(sizeof(constructor_value) == sizeof(constructor_default));
+            REQUIRE(sizeof(constructor_scalar) == sizeof(constructor_default));
+        }
+
+        ::StoneyDSP::SIMD::float_4 vector_of_four_floats {
+            (::StoneyDSP::float_t)0.0f
+        };
 
         // sizeof class members
         REQUIRE(vector_of_four_floats.size == 4);
@@ -90,6 +136,40 @@ TEST_CASE( "Vector<int8_t, 16>", "[int_8]" ) {
         // sizeof class
         REQUIRE(sizeof(StoneyDSP::SIMD::int8_16) == 16);
 
+        SECTION( "sizeof constructed instances" ) {
+
+            // Call the default constructor
+            ::StoneyDSP::SIMD::int8_16 constructor_default;
+
+            // Call the value constructor
+            ::StoneyDSP::SIMD::int8_16 constructor_value {
+                (::StoneyDSP::int8_t)0
+            };
+
+            // Call the scalar constructor
+            ::StoneyDSP::SIMD::int8_16 constructor_scalar {
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0,
+                (::StoneyDSP::int8_t)0
+            };
+
+            REQUIRE(sizeof(constructor_value) == sizeof(constructor_default));
+            REQUIRE(sizeof(constructor_scalar) == sizeof(constructor_default));
+        }
+
         StoneyDSP::SIMD::int8_16 vector_of_sixteen_8bit_integers;
 
         // sizeof class members
@@ -103,7 +183,33 @@ TEST_CASE( "Vector<int16_t, 8>", "[int_16]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
+        REQUIRE(sizeof(StoneyDSP::SIMD::int16_8) == 16);
+
+        SECTION( "sizeof constructed instances" ) {
+
+            // Call the default constructor
+            ::StoneyDSP::SIMD::int16_8 constructor_default;
+
+            // Call the value constructor
+            ::StoneyDSP::SIMD::int16_8 constructor_value {
+                (::StoneyDSP::int16_t)0
+            };
+
+            // Call the scalar constructor
+            ::StoneyDSP::SIMD::int16_8 constructor_scalar {
+                (::StoneyDSP::int16_t)0,
+                (::StoneyDSP::int16_t)0,
+                (::StoneyDSP::int16_t)0,
+                (::StoneyDSP::int16_t)0,
+                (::StoneyDSP::int16_t)0,
+                (::StoneyDSP::int16_t)0,
+                (::StoneyDSP::int16_t)0,
+                (::StoneyDSP::int16_t)0
+            };
+
+            REQUIRE(sizeof(constructor_value) == sizeof(constructor_default));
+            REQUIRE(sizeof(constructor_scalar) == sizeof(constructor_default));
+        }
 
         ::StoneyDSP::SIMD::int16_8 vector_of_eight_16bit_integers;
 
@@ -118,7 +224,26 @@ TEST_CASE( "Vector<int32_t, 4>", "[int_32]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
+        REQUIRE(sizeof(StoneyDSP::SIMD::int32_4) == 16);
+
+        SECTION( "sizeof constructed instances" ) {
+
+            // Call the default constructor
+            ::StoneyDSP::SIMD::int32_4 constructor_default;
+
+            // Call the value constructor
+            ::StoneyDSP::SIMD::int32_4 constructor_value {
+                (::StoneyDSP::int32_t)0
+            };
+
+            // Call the scalar constructor
+            ::StoneyDSP::SIMD::int32_4 constructor_scalar {
+                (::StoneyDSP::int32_t)0,
+                (::StoneyDSP::int32_t)0,
+                (::StoneyDSP::int32_t)0,
+                (::StoneyDSP::int32_t)0
+            };
+        }
 
         ::StoneyDSP::SIMD::int32_4 vector_of_four_32bit_integers;
 
@@ -134,7 +259,24 @@ TEST_CASE( "Vector<int64_t, 2>", "[int_64]" ) {
     SECTION( "size tests" ) {
 
         // sizeof class
-        REQUIRE(sizeof(StoneyDSP::SIMD::float_4) == 16);
+        REQUIRE(sizeof(StoneyDSP::SIMD::int64_2) == 16);
+
+        SECTION( "sizeof constructed instances" ) {
+
+            // Call the default constructor
+            ::StoneyDSP::SIMD::int64_2 constructor_default;
+
+            // Call the value constructor
+            ::StoneyDSP::SIMD::int64_2 constructor_value {
+                (::StoneyDSP::int64_t)0
+            };
+
+            // Call the scalar constructor
+            ::StoneyDSP::SIMD::int64_2 constructor_scalar {
+                (::StoneyDSP::int64_t)0,
+                (::StoneyDSP::int64_t)0
+            };
+        }
 
         ::StoneyDSP::SIMD::int64_2 vector_of_two_64bit_integers;
 
