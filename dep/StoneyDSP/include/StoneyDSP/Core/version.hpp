@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file plugin.hpp
+ * @file version.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -31,64 +31,39 @@
 
 #pragma once
 
-#define PLUGIN_HPP_INCLUDED 1
+#define STONEYDSP_VERSION_HPP_INCLUDED 1
 
 //==============================================================================
-
-#if !__has_include(<rack.hpp>)
- #error "Cannot find required header 'rack.hpp' - did you set $RACK_DIR?"
-#else
-
-#include <rack.hpp>
-
-#include "StoneyDSP/Core.hpp"
-#include "StoneyDSP/SIMD.hpp"
-#include "StoneyDSP/DSP.hpp"
-
-//==============================================================================
-
-namespace StoneyDSP
-{
-/** @addtogroup StoneyDSP
- *  @{
- */
 
 /**
- * @brief The `VCVRack` namespace.
- * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @copyright Copyright (c) 2024
- *
- */
-namespace VCVRack
-{
-/** @addtogroup VCVRack
- *  @{
+ * Current StoneyDSP version number.
+ * See also `StoneyDSP::SystemStats::getStoneyDSPVersion()` for a string
+ * version.
  */
 
-//==============================================================================
-
-// Declare the Plugin, defined in plugin.cpp
-extern rack::plugin::Plugin* pluginInstance;
-
-//==============================================================================
-
-// Declare each Model, defined in each module source file
-#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 1)
- // EXPERIMENTAL MODULES HERE...
-#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0)
- #warning "No modules found..."
+#ifndef STONEYDSP_VERSION_MAJOR
+ #define STONEYDSP_VERSION_MAJOR 0
+#endif
+#ifndef STONEYDSP_VERSION_MINOR
+ #define STONEYDSP_VERSION_MINOR 0
+#endif
+#ifndef STONEYDSP_BUILDNUMBER
+ #define STONEYDSP_BUILDNUMBER "97523734eecfd71a62c33d8875a80bc91b493c76"
 #endif
 
-//==============================================================================
-
-  /// @} group VCVRack
-} // namespace VCVRack
-
-  /// @} group StoneyDSP
-} // namespace StoneyDSP
-
-//==============================================================================
-
+#ifndef STONEYDSP_VERSION
+ /**
+  * Current StoneyDSP Library version number.
+  *
+  * - Bits 16 to 32 = major version.
+  * - Bits 8 to 16 = minor version.
+  * - Bits 0 to 8 = point release.
+  *
+  * See also `StoneyDSP::SystemStats::getStoneyDSPVersion()` for a string
+  * version.
+  */
+ #define STONEYDSP_VERSION (                                                   \
+     (STONEYDSP_VERSION_MAJOR << 16) +                                         \
+     (STONEYDSP_VERSION_MINOR << 8 ) +                                         \
+      STONEYDSP_BUILDNUMBER)
 #endif
-
-//==============================================================================

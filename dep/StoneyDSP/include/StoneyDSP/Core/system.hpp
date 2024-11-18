@@ -31,7 +31,7 @@
 
 #pragma once
 
-#define STONEYDSP_SYSTEM_HPP_INCLUDED
+#define STONEYDSP_SYSTEM_HPP_INCLUDED 1
 
 //==============================================================================
 

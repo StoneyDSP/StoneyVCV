@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file simd.hpp
+ * @file Vector.hpp
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @brief
  * @version 0.0.0
@@ -33,10 +33,12 @@
 
 #pragma once
 
-#define STONEYDSP_SIMD_HPP_INCLUDED 1
+#define STONEYDSP_SIMD_VECTOR_HPP_INCLUDED 1
 
-#ifndef STONEYDSP_HPP_INCLUDED
- #include "StoneyDSP.hpp"
+//==============================================================================
+
+#ifndef STONEYDSP_CORE_HPP_INCLUDED
+ #include "StoneyDSP/Core.hpp"
 #endif
 
 //==============================================================================
@@ -162,12 +164,13 @@ using int_t = ::StoneyDSP::SIMD::__INT_T;
 //==============================================================================
 
 /**
- * @brief
+ * @brief The `Vector` template, for using SIMD instructions on intrinsic
+ * data operations.
  *
  * @tparam TYPE
  * @tparam SIZE
  */
-template <typename TYPE, int SIZE>
+template <typename TYPE, ::StoneyDSP::size_t SIZE>
 struct Vector;
 
 //==============================================================================
@@ -179,7 +182,7 @@ struct Vector;
  * @tparam
  */
 template <>
-struct Vector<::StoneyDSP::double_t, 2>;
+struct Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>;
 
 /**
  * @brief A `Vector` of four single-precision floating point numbers
@@ -188,7 +191,7 @@ struct Vector<::StoneyDSP::double_t, 2>;
  * @tparam
  */
 template <>
-struct Vector<::StoneyDSP::float_t, 4>;
+struct Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>;
 
 /**
  * @brief A `Vector` of sixteen 8-bit integer numbers
@@ -197,7 +200,7 @@ struct Vector<::StoneyDSP::float_t, 4>;
  * @tparam
  */
 template <>
-struct Vector<::StoneyDSP::int8_t, 16>;
+struct Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>;
 
 /**
  * @brief A `Vector` of eight 16-bit integer numbers
@@ -206,7 +209,7 @@ struct Vector<::StoneyDSP::int8_t, 16>;
  * @tparam
  */
 template <>
-struct Vector<::StoneyDSP::int16_t, 8>;
+struct Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>;
 
 /**
  * @brief A `Vector` of four 32-bit integer numbers
@@ -215,7 +218,7 @@ struct Vector<::StoneyDSP::int16_t, 8>;
  * @tparam
  */
 template <>
-struct Vector<::StoneyDSP::int32_t, 4>;
+struct Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>;
 
 #if STONEYDSP_USING_INT64_2
 
@@ -226,7 +229,7 @@ struct Vector<::StoneyDSP::int32_t, 4>;
  * @tparam
  */
 template <>
-struct Vector<::StoneyDSP::int64_t, 2>;
+struct Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>;
 
 #endif
 
@@ -236,44 +239,44 @@ struct Vector<::StoneyDSP::int64_t, 2>;
  * @brief An array of two 64-bit double precision values.
  *
  */
-using double_2 = Vector<::StoneyDSP::double_t, 2>;
+using double_2 = Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>;
 
 /**
  * @brief An array of four 32-bit floating point values.
  *
  */
-using float_4 = Vector<::StoneyDSP::float_t, 4>;
+using float_4 = Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>;
 
 /**
  * @brief An array of sixteen 8-bit integer values.
  *
  */
-using int8_16 = Vector<::StoneyDSP::int8_t, 16>;
+using int8_16 = Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>;
 
 /**
  * @brief An array of eight 16-bit integer values.
  *
  */
-using int16_8 = Vector<::StoneyDSP::int16_t, 8>;
+using int16_8 = Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>;
 
 /**
  * @brief An array of four 32-bit integer values.
  *
  */
-using int32_4 = Vector<::StoneyDSP::int32_t, 4>;
+using int32_4 = Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>;
 
 #if STONEYDSP_USING_INT64_2
 /**
  * @brief An array of two 64-bit integer values.
  *
  */
-using int64_2 = Vector<::StoneyDSP::int64_t, 2>;
+using int64_2 = Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>;
 #endif
 
 //==============================================================================
 
 template <>
-struct Vector<::StoneyDSP::double_t, 2> {
+struct Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> {
 public:
 
 	using type = ::StoneyDSP::double_t;
@@ -281,7 +284,7 @@ public:
     /**
      * @brief The number of scalars contained by this `Vector`.
      */
-    constexpr static ::StoneyDSP::int32_t size = 2;
+    constexpr static ::StoneyDSP::size_t size = 2U;
 
     union {
         /**
@@ -405,7 +408,7 @@ public:
      * @param i
      * @return double&
      */
-	::StoneyDSP::double_t& operator[](::StoneyDSP::uint32_t i) {
+	::StoneyDSP::double_t& operator[](::StoneyDSP::size_t i) {
 		return s[i];
 	}
 
@@ -418,28 +421,28 @@ public:
      * @param i
      * @return const double&
      */
-	const ::StoneyDSP::double_t& operator[](::StoneyDSP::uint32_t i) const {
+	const ::StoneyDSP::double_t& operator[](::StoneyDSP::size_t i) const {
 		return s[i];
 	}
 
     // Conversions =============================================================
 
-    Vector(Vector<::StoneyDSP::float_t, 4> a);
-    Vector(Vector<::StoneyDSP::int8_t, 16> a);
-    Vector(Vector<::StoneyDSP::int16_t, 8> a);
-	Vector(Vector<::StoneyDSP::int32_t, 4> a);
+    Vector(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    Vector(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+    Vector(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+	Vector(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    Vector(Vector<::StoneyDSP::int64_t, 2> a);
+    Vector(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
 	// Casts ===================================================================
 
-    static Vector cast(Vector<::StoneyDSP::float_t, 4> a);
-    static Vector cast(Vector<::StoneyDSP::int8_t, 16> a);
-    static Vector cast(Vector<::StoneyDSP::int16_t, 8> a);
-	static Vector cast(Vector<::StoneyDSP::int32_t, 4> a);
+    static Vector cast(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    static Vector cast(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+    static Vector cast(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+	static Vector cast(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    static Vector cast(Vector<::StoneyDSP::int64_t, 2> a);
+    static Vector cast(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
     //==========================================================================
@@ -453,7 +456,7 @@ private:
 //==============================================================================
 
 template <>
-struct Vector<::StoneyDSP::float_t, 4> {
+struct Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> {
 public:
 
 	using type = ::StoneyDSP::float_t;
@@ -461,7 +464,7 @@ public:
     /**
      * @brief The number of scalars contained by this `Vector`.
      */
-    constexpr static ::StoneyDSP::int32_t size = 4;
+    constexpr static ::StoneyDSP::size_t size = 4U;
 
     union {
         /**
@@ -508,7 +511,12 @@ public:
 	 * @param x3
 	 * @param x4
 	 */
-	Vector(::StoneyDSP::float_t x1, ::StoneyDSP::float_t x2, ::StoneyDSP::float_t x3, ::StoneyDSP::float_t x4) {
+	Vector(
+        ::StoneyDSP::float_t x1,
+        ::StoneyDSP::float_t x2,
+        ::StoneyDSP::float_t x3,
+        ::StoneyDSP::float_t x4
+    ) {
 		v = _mm_setr_ps(x1, x2, x3, x4);
 	}
 
@@ -566,7 +574,14 @@ public:
      * @return `Vector<float, 4>`
      */
 	static Vector mask() {
-		return Vector(_mm_castsi128_ps(_mm_cmpeq_epi32(_mm_setzero_si128(), _mm_setzero_si128())));
+		return Vector(
+            _mm_castsi128_ps(
+                _mm_cmpeq_epi32(
+                    _mm_setzero_si128(),
+                    _mm_setzero_si128()
+                )
+            )
+        );
 	}
 
     //==========================================================================
@@ -580,7 +595,7 @@ public:
      * @param i
      * @return float&
      */
-	::StoneyDSP::float_t& operator[](::StoneyDSP::uint32_t i) {
+	::StoneyDSP::float_t& operator[](::StoneyDSP::size_t i) {
 		return s[i];
 	}
 
@@ -593,28 +608,28 @@ public:
      * @param i
      * @return const float&
      */
-	const ::StoneyDSP::float_t& operator[](::StoneyDSP::uint32_t i) const {
+	const ::StoneyDSP::float_t& operator[](::StoneyDSP::size_t i) const {
 		return s[i];
 	}
 
     // Conversions =============================================================
 
-    Vector(Vector<::StoneyDSP::double_t, 2> a);
-    Vector(Vector<::StoneyDSP::int8_t, 16> a);
-    Vector(Vector<::StoneyDSP::int16_t, 8> a);
-	Vector(Vector<::StoneyDSP::int32_t, 4> a);
+    Vector(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    Vector(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+    Vector(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+	Vector(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    Vector(Vector<::StoneyDSP::int64_t, 2> a);
+    Vector(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
 	// Casts ===================================================================
 
-    static Vector cast(Vector<::StoneyDSP::double_t, 2> a);
-    static Vector cast(Vector<::StoneyDSP::int8_t, 16> a);
-    static Vector cast(Vector<::StoneyDSP::int16_t, 8> a);
-	static Vector cast(Vector<::StoneyDSP::int32_t, 4> a);
+    static Vector cast(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    static Vector cast(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+    static Vector cast(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+	static Vector cast(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    static Vector cast(Vector<::StoneyDSP::int64_t, 2> a);
+    static Vector cast(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
     //==========================================================================
@@ -627,7 +642,7 @@ private:
 //==============================================================================
 
 template <>
-struct Vector<::StoneyDSP::int8_t, 16>
+struct Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>
 {
 public:
 
@@ -636,7 +651,7 @@ public:
     /**
      * @brief The number of scalars contained by this `Vector`.
      */
-    constexpr static ::StoneyDSP::int32_t size = 16;
+    constexpr static ::StoneyDSP::size_t size = 16U;
 
     union {
         /**
@@ -695,7 +710,24 @@ public:
 	 * @param x15
 	 * @param x16
 	 */
-	Vector(::StoneyDSP::int8_t x1, ::StoneyDSP::int8_t x2, ::StoneyDSP::int8_t x3, ::StoneyDSP::int8_t x4, ::StoneyDSP::int8_t x5, ::StoneyDSP::int8_t x6, ::StoneyDSP::int8_t x7, ::StoneyDSP::int8_t x8, int8_t x9, ::StoneyDSP::int8_t x10, ::StoneyDSP::int8_t x11, ::StoneyDSP::int8_t x12, ::StoneyDSP::int8_t x13, ::StoneyDSP::int8_t x14, ::StoneyDSP::int8_t x15, ::StoneyDSP::int8_t x16) {
+	Vector(
+        ::StoneyDSP::int8_t x1,
+        ::StoneyDSP::int8_t x2,
+        ::StoneyDSP::int8_t x3,
+        ::StoneyDSP::int8_t x4,
+        ::StoneyDSP::int8_t x5,
+        ::StoneyDSP::int8_t x6,
+        ::StoneyDSP::int8_t x7,
+        ::StoneyDSP::int8_t x8,
+        ::StoneyDSP::int8_t x9,
+        ::StoneyDSP::int8_t x10,
+        ::StoneyDSP::int8_t x11,
+        ::StoneyDSP::int8_t x12,
+        ::StoneyDSP::int8_t x13,
+        ::StoneyDSP::int8_t x14,
+        ::StoneyDSP::int8_t x15,
+        ::StoneyDSP::int8_t x16
+    ) {
 		v = _mm_setr_epi8(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16);
 	}
 
@@ -780,7 +812,7 @@ public:
      * @param i
      * @return int8_t&
      */
-	::StoneyDSP::int8_t& operator[](::StoneyDSP::uint32_t i) {
+	::StoneyDSP::int8_t& operator[](::StoneyDSP::size_t i) {
 		return s[i];
 	}
 
@@ -793,28 +825,28 @@ public:
      * @param i
      * @return const int8_t&
      */
-	const ::StoneyDSP::int8_t& operator[](::StoneyDSP::uint32_t i) const {
+	const ::StoneyDSP::int8_t& operator[](::StoneyDSP::size_t i) const {
 		return s[i];
 	}
 
     // Conversions =============================================================
 
-    Vector(Vector<::StoneyDSP::double_t, 2> a);
-    Vector(Vector<::StoneyDSP::float_t, 4> a);
-    Vector(Vector<::StoneyDSP::int16_t, 8> a);
-	Vector(Vector<::StoneyDSP::int32_t, 4> a);
+    Vector(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    Vector(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    Vector(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+	Vector(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    Vector(Vector<::StoneyDSP::int64_t, 2> a);
+    Vector(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
 	// Casts ===================================================================
 
-    static Vector cast(Vector<::StoneyDSP::double_t, 2> a);
-    static Vector cast(Vector<::StoneyDSP::float_t, 4> a);
-    static Vector cast(Vector<::StoneyDSP::int16_t, 8> a);
-	static Vector cast(Vector<::StoneyDSP::int32_t, 4> a);
+    static Vector cast(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    static Vector cast(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    static Vector cast(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+	static Vector cast(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    static Vector cast(Vector<::StoneyDSP::int64_t, 2> a);
+    static Vector cast(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
     //==========================================================================
@@ -827,7 +859,7 @@ private:
 //==============================================================================
 
 template <>
-struct Vector<::StoneyDSP::int16_t, 8> {
+struct Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> {
 public:
 
 	using type = ::StoneyDSP::int16_t;
@@ -835,7 +867,7 @@ public:
     /**
      * @brief The number of scalars contained by this `Vector`.
      */
-    constexpr static ::StoneyDSP::int32_t size = 8;
+    constexpr static ::StoneyDSP::size_t size = 8U;
 
     union {
         /**
@@ -886,7 +918,16 @@ public:
 	 * @param x7
 	 * @param x8
 	 */
-	Vector(::StoneyDSP::int16_t x1, ::StoneyDSP::int16_t x2, ::StoneyDSP::int16_t x3, ::StoneyDSP::int16_t x4, ::StoneyDSP::int16_t x5, ::StoneyDSP::int16_t x6, ::StoneyDSP::int16_t x7, ::StoneyDSP::int16_t x8) {
+	Vector(
+        ::StoneyDSP::int16_t x1,
+        ::StoneyDSP::int16_t x2,
+        ::StoneyDSP::int16_t x3,
+        ::StoneyDSP::int16_t x4,
+        ::StoneyDSP::int16_t x5,
+        ::StoneyDSP::int16_t x6,
+        ::StoneyDSP::int16_t x7,
+        ::StoneyDSP::int16_t x8
+    ) {
 		v = _mm_setr_epi16(x1, x2, x3, x4, x5, x6, x7, x8);
 	}
 
@@ -977,7 +1018,7 @@ public:
      * @param i
      * @return int16_t&
      */
-	::StoneyDSP::int16_t& operator[](::StoneyDSP::uint32_t i) {
+	::StoneyDSP::int16_t& operator[](::StoneyDSP::size_t i) {
 		return s[i];
 	}
 
@@ -990,28 +1031,28 @@ public:
      * @param i
      * @return const int16_t&
      */
-	const ::StoneyDSP::int16_t& operator[](::StoneyDSP::uint32_t i) const {
+	const ::StoneyDSP::int16_t& operator[](::StoneyDSP::size_t i) const {
 		return s[i];
 	}
 
     // Conversions =============================================================
 
-    Vector(Vector<::StoneyDSP::double_t, 2> a);
-    Vector(Vector<::StoneyDSP::float_t, 4> a);
-    Vector(Vector<::StoneyDSP::int8_t, 16> a);
-	Vector(Vector<::StoneyDSP::int32_t, 4> a);
+    Vector(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    Vector(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    Vector(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+	Vector(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    Vector(Vector<::StoneyDSP::int64_t, 2> a);
+    Vector(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
 	// Casts ===================================================================
 
-    static Vector cast(Vector<::StoneyDSP::double_t, 2> a);
-    static Vector cast(Vector<::StoneyDSP::float_t, 4> a);
-    static Vector cast(Vector<::StoneyDSP::int8_t, 16> a);
-	static Vector cast(Vector<::StoneyDSP::int32_t, 4> a);
+    static Vector cast(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    static Vector cast(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    static Vector cast(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+	static Vector cast(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 #if STONEYDSP_USING_INT64_2
-    static Vector cast(Vector<::StoneyDSP::int64_t, 2> a);
+    static Vector cast(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
     //==========================================================================
@@ -1024,7 +1065,7 @@ private:
 //==============================================================================
 
 template <>
-struct Vector<::StoneyDSP::int32_t, 4>
+struct Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>
 {
 public:
 
@@ -1033,7 +1074,7 @@ public:
     /**
      * @brief The number of scalars contained by this `Vector`.
      */
-    constexpr static ::StoneyDSP::int32_t size = 4;
+    constexpr static ::StoneyDSP::size_t size = 4U;
 
         union {
         /**
@@ -1080,7 +1121,12 @@ public:
 	 * @param x3
 	 * @param x4
 	 */
-	Vector(::StoneyDSP::int32_t x1, ::StoneyDSP::int32_t x2, ::StoneyDSP::int32_t x3, ::StoneyDSP::int32_t x4) {
+	Vector(
+        ::StoneyDSP::int32_t x1,
+        ::StoneyDSP::int32_t x2,
+        ::StoneyDSP::int32_t x3,
+        ::StoneyDSP::int32_t x4)
+    {
 		v = _mm_setr_epi32(x1, x2, x3, x4);
 	}
 
@@ -1171,7 +1217,7 @@ public:
      * @param i
      * @return int32_t&
      */
-	::StoneyDSP::int32_t& operator[](::StoneyDSP::uint32_t i) {
+	::StoneyDSP::int32_t& operator[](::StoneyDSP::size_t i) {
 		return s[i];
 	}
 
@@ -1184,28 +1230,28 @@ public:
      * @param i
      * @return const int32_t&
      */
-	const ::StoneyDSP::int32_t& operator[](::StoneyDSP::uint32_t i) const {
+	const ::StoneyDSP::int32_t& operator[](::StoneyDSP::size_t i) const {
 		return s[i];
 	}
 
     // Conversions =============================================================
 
-    Vector(Vector<::StoneyDSP::double_t, 2> a);
-    Vector(Vector<::StoneyDSP::float_t, 4> a);
-    Vector(Vector<::StoneyDSP::int8_t, 16> a);
-	Vector(Vector<::StoneyDSP::int16_t, 8> a);
+    Vector(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    Vector(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    Vector(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+	Vector(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
 #if STONEYDSP_USING_INT64_2
-    Vector(Vector<::StoneyDSP::int64_t, 2> a);
+    Vector(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
 	// Casts ===================================================================
 
-    static Vector cast(Vector<::StoneyDSP::double_t, 2> a);
-    static Vector cast(Vector<::StoneyDSP::float_t, 4> a);
-    static Vector cast(Vector<::StoneyDSP::int8_t, 16> a);
-	static Vector cast(Vector<::StoneyDSP::int16_t, 8> a);
+    static Vector cast(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    static Vector cast(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    static Vector cast(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+	static Vector cast(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
 #if STONEYDSP_USING_INT64_2
-    static Vector cast(Vector<::StoneyDSP::int64_t, 2> a);
+    static Vector cast(Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a);
 #endif
 
     //==========================================================================
@@ -1220,14 +1266,14 @@ private:
 #if STONEYDSP_USING_INT64_2
 
 template <>
-struct Vector<::StoneyDSP::int64_t, 2>
+struct Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>
 {
 public:
 
 	using type = ::StoneyDSP::int64_t;
 
     /** @brief The number of scalars contained by this `Vector`. */
-    constexpr static ::StoneyDSP::int32_t size = 2;
+    constexpr static ::StoneyDSP::size_t size = 2;
 
     /**
      * @brief Constructs an uninitialized `Vector<int64_t, 2>`.
@@ -1340,7 +1386,9 @@ public:
      * @return `Vector<int64_t, 2>`
      */
 	static Vector mask() {
-		return Vector(_mm_cmpeq_epi32(_mm_setzero_si128(), _mm_setzero_si128()));
+		return Vector(
+            _mm_cmpeq_epi32(_mm_setzero_si128(), _mm_setzero_si128())
+        );
 	}
 
     //==========================================================================
@@ -1354,7 +1402,7 @@ public:
      * @param i
      * @return int64_t&
      */
-	::StoneyDSP::int64_t& operator[](::StoneyDSP::uint32_t i) {
+	::StoneyDSP::int64_t& operator[](::StoneyDSP::size_t i) {
 		return s[i];
 	}
 
@@ -1367,25 +1415,25 @@ public:
      * @param i
      * @return const int64_t&
      */
-	const ::StoneyDSP::int64_t& operator[](::StoneyDSP::uint32_t i) const {
+	const ::StoneyDSP::int64_t& operator[](::StoneyDSP::size_t i) const {
 		return s[i];
 	}
 
     // Conversions =============================================================
 
-    Vector(Vector<::StoneyDSP::double_t, 2> a);
-    Vector(Vector<::StoneyDSP::float_t, 4> a);
-    Vector(Vector<::StoneyDSP::int8_t, 16> a);
-	Vector(Vector<::StoneyDSP::int16_t, 8> a);
-    Vector(Vector<::StoneyDSP::int32_t, 4> a);
+    Vector(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    Vector(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    Vector(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+	Vector(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+    Vector(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 
 	// Casts ===================================================================
 
-    static Vector cast(Vector<::StoneyDSP::double_t, 2> a);
-    static Vector cast(Vector<::StoneyDSP::float_t, 4> a);
-    static Vector cast(Vector<::StoneyDSP::int8_t, 16> a);
-	static Vector cast(Vector<::StoneyDSP::int16_t, 8> a);
-    static Vector cast(Vector<::StoneyDSP::int32_t, 4> a);
+    static Vector cast(Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a);
+    static Vector cast(Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a);
+    static Vector cast(Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a);
+	static Vector cast(Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a);
+    static Vector cast(Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a);
 
     //==========================================================================
 
@@ -1398,100 +1446,150 @@ private:
 
 // Conversions - double_2 ======================================================
 
-inline Vector<::StoneyDSP::double_t, 2>::Vector(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = _mm_cvtps_pd(a.v);
 }
-inline Vector<::StoneyDSP::double_t, 2>::Vector(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	v = _mm_cvtepi32_pd(a.v);
 }
-inline Vector<::StoneyDSP::double_t, 2>::Vector(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	v = _mm_cvtepi32_pd(a.v);
 }
-inline Vector<::StoneyDSP::double_t, 2>::Vector(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = _mm_cvtepi32_pd(a.v);
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::double_t, 2>::Vector(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = _mm_cvtepi32_pd(a.v);
 }
 #endif
 
 // Conversions - float_4 =======================================================
 
-inline Vector<::StoneyDSP::float_t, 4>::Vector(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = _mm_cvtpd_ps(a.v);
 }
-inline Vector<::StoneyDSP::float_t, 4>::Vector(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	v = _mm_cvtepi32_ps(a.v);
 }
-inline Vector<::StoneyDSP::float_t, 4>::Vector(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	v = _mm_cvtepi32_ps(a.v);
 }
-inline Vector<::StoneyDSP::float_t, 4>::Vector(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = _mm_cvtepi32_ps(a.v);
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::float_t, 4>::Vector(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = _mm_cvtepi32_ps(a.v);
 }
 #endif
 
 // Conversions - int8_16 =======================================================
 
-inline Vector<::StoneyDSP::int8_t, 16>::Vector(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::Vector(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = _mm_cvttpd_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int8_t, 16>::Vector(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::Vector(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = _mm_cvttps_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int8_t, 16>::Vector(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::Vector(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	v = a.v;
 }
-inline Vector<::StoneyDSP::int8_t, 16>::Vector(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16>::Vector(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = a.v;
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::int8_t, 16>::Vector(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::Vector(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = a.v;
 }
 #endif
 
 // Conversions - int16_8 =======================================================
 
-inline Vector<::StoneyDSP::int16_t, 8>::Vector(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::Vector(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = _mm_cvttpd_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int16_t, 8>::Vector(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::Vector(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = _mm_cvttps_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int16_t, 8>::Vector(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::Vector(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	v = a.v;
 }
-inline Vector<::StoneyDSP::int16_t, 8>::Vector(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::Vector(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = a.v;
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::int16_t, 8>::Vector(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::Vector(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = a.v;
 }
 #endif
 
 // Conversions - int32_4 =======================================================
 
-inline Vector<::StoneyDSP::int32_t, 4>::Vector(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = _mm_cvttpd_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int32_t, 4>::Vector(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = _mm_cvttps_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int32_t, 4>::Vector(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	v = a.v;
 }
-inline Vector<::StoneyDSP::int32_t, 4>::Vector(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	v = a.v;
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::int32_t, 4>::Vector(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::Vector(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = a.v;
 }
 #endif
@@ -1500,19 +1598,29 @@ inline Vector<::StoneyDSP::int32_t, 4>::Vector(Vector<::StoneyDSP::int64_t, 2> a
 
 #if STONEYDSP_USING_INT64_2
 
-inline Vector<::StoneyDSP::int64_t, 2>::Vector(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	v = _mm_cvttpd_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int64_t, 2>::Vector(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = _mm_cvttps_epi32(a.v);
 }
-inline Vector<::StoneyDSP::int64_t, 2>::Vector(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	v = a.v;
 }
-inline Vector<::StoneyDSP::int64_t, 2>::Vector(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	v = a.v;
 }
-inline Vector<::StoneyDSP::int64_t, 2>::Vector(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::Vector(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	v = a.v;
 }
 
@@ -1520,100 +1628,150 @@ inline Vector<::StoneyDSP::int64_t, 2>::Vector(Vector<::StoneyDSP::int32_t, 4> a
 
 // Casts - double_2 ============================================================
 
-inline Vector<::StoneyDSP::double_t, 2> Vector<::StoneyDSP::double_t, 2>::cast(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(_mm_castps_pd(a.v));
 }
-inline Vector<::StoneyDSP::double_t, 2> Vector<::StoneyDSP::double_t, 2>::cast(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	return Vector(_mm_castsi128_pd(a.v));
 }
-inline Vector<::StoneyDSP::double_t, 2> Vector<::StoneyDSP::double_t, 2>::cast(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	return Vector(_mm_castsi128_pd(a.v));
 }
-inline Vector<::StoneyDSP::double_t, 2> Vector<::StoneyDSP::double_t, 2>::cast(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(_mm_castsi128_pd(a.v));
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::double_t, 2> Vector<::StoneyDSP::double_t, 2>::cast(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(_mm_castsi128_pd(a.v));
 }
 #endif
 
 // Casts - float_4 =============================================================
 
-inline Vector<::StoneyDSP::float_t, 4> Vector<::StoneyDSP::float_t, 4>::cast(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(_mm_castpd_ps(a.v));
 }
-inline Vector<::StoneyDSP::float_t, 4> Vector<::StoneyDSP::float_t, 4>::cast(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	return Vector(_mm_castsi128_ps(a.v));
 }
-inline Vector<::StoneyDSP::float_t, 4> Vector<::StoneyDSP::float_t, 4>::cast(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	return Vector(_mm_castsi128_ps(a.v));
 }
-inline Vector<::StoneyDSP::float_t, 4> Vector<::StoneyDSP::float_t, 4>::cast(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(_mm_castsi128_ps(a.v));
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::float_t, 4> Vector<::StoneyDSP::float_t, 4>::cast(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(_mm_castsi128_ps(a.v));
 }
 #endif
 
 // Casts - int8_16 =============================================================
 
-inline Vector<::StoneyDSP::int8_t, 16> Vector<::StoneyDSP::int8_t, 16>::cast(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::cast(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(_mm_castpd_si128(a.v));
 }
-inline Vector<::StoneyDSP::int8_t, 16> Vector<::StoneyDSP::int8_t, 16>::cast(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::cast(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(_mm_castps_si128(a.v));
 }
-inline Vector<::StoneyDSP::int8_t, 16> Vector<::StoneyDSP::int8_t, 16>::cast(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::cast(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	return Vector(a.v);
 }
-inline Vector<::StoneyDSP::int8_t, 16> Vector<::StoneyDSP::int8_t, 16>::cast(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::cast(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(a.v);
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::int8_t, 16> Vector<::StoneyDSP::int8_t, 16>::cast(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::cast(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(a.v);
 }
 #endif
 
 // Casts - int16_8 =============================================================
 
-inline Vector<::StoneyDSP::int16_t, 8> Vector<::StoneyDSP::int16_t, 8>::cast(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::cast(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(_mm_castpd_si128(a.v));
 }
-inline Vector<::StoneyDSP::int16_t, 8> Vector<::StoneyDSP::int16_t, 8>::cast(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::cast(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(_mm_castps_si128(a.v));
 }
-inline Vector<::StoneyDSP::int16_t, 8> Vector<::StoneyDSP::int16_t, 8>::cast(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::cast(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	return Vector(a.v);
 }
-inline Vector<::StoneyDSP::int16_t, 8> Vector<::StoneyDSP::int16_t, 8>::cast(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::cast(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(a.v);
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::int16_t, 8> Vector<::StoneyDSP::int16_t, 8>::cast(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::cast(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(a.v);
 }
 #endif
 
 // Casts - int32_4 =============================================================
 
-inline Vector<::StoneyDSP::int32_t, 4> Vector<::StoneyDSP::int32_t, 4>::cast(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(_mm_castpd_si128(a.v));
 }
-inline Vector<::StoneyDSP::int32_t, 4> Vector<::StoneyDSP::int32_t, 4>::cast(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(_mm_castps_si128(a.v));
 }
-inline Vector<::StoneyDSP::int32_t, 4> Vector<::StoneyDSP::int32_t, 4>::cast(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	return Vector(a.v);
 }
-inline Vector<::StoneyDSP::int32_t, 4> Vector<::StoneyDSP::int32_t, 4>::cast(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	return Vector(a.v);
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::int32_t, 4> Vector<::StoneyDSP::int32_t, 4>::cast(Vector<::StoneyDSP::int64_t, 2> a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::cast(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(a.v);
 }
 #endif
@@ -1622,19 +1780,28 @@ inline Vector<::StoneyDSP::int32_t, 4> Vector<::StoneyDSP::int32_t, 4>::cast(Vec
 
 #if STONEYDSP_USING_INT64_2
 
-inline Vector<::StoneyDSP::int64_t, 2> Vector<::StoneyDSP::int64_t, 2>::cast(Vector<::StoneyDSP::double_t, 2> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> a)
+{
 	return Vector(_mm_castpd_si128(a.v));
 }
-inline Vector<::StoneyDSP::int64_t, 2> Vector<::StoneyDSP::int64_t, 2>::cast(Vector<::StoneyDSP::float_t, 4> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> a)
+{
 	return Vector(_mm_castps_si128(a.v));
 }
-inline Vector<::StoneyDSP::int64_t, 2> Vector<::StoneyDSP::int64_t, 2>::cast(Vector<::StoneyDSP::int8_t, 16> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> a)
+{
 	return Vector(a.v);
 }
-inline Vector<::StoneyDSP::int64_t, 2> Vector<::StoneyDSP::int64_t, 2>::cast(Vector<::StoneyDSP::int16_t, 8> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> a)
+{
 	return Vector(a.v);
 }
-inline Vector<::StoneyDSP::int64_t, 2> Vector<::StoneyDSP::int64_t, 2>::cast(Vector<::StoneyDSP::int32_t, 4> a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::cast(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> a) {
 	return Vector(a.v);
 }
 
@@ -1669,7 +1836,7 @@ inline Vector<::StoneyDSP::int64_t, 2> Vector<::StoneyDSP::int64_t, 2>::cast(Vec
  * @param b
  * @return Vector<double, 2>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator+, _mm_add_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator+, _mm_add_pd)
 
 /**
  * @brief
@@ -1678,7 +1845,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator+, _mm_add_pd)
  * @param b
  * @return Vector<double, 2>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator-, _mm_sub_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator-, _mm_sub_pd)
 
 /**
  * @brief
@@ -1687,7 +1854,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator-, _mm_sub_pd)
  * @param b
  * @return Vector<double, 2>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator*, _mm_mul_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator*, _mm_mul_pd)
 
 /**
  * @brief
@@ -1696,7 +1863,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator*, _mm_mul_pd)
  * @param b
  * @return Vector<double, 2>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator/, _mm_div_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator/, _mm_div_pd)
 
 //==============================================================================
 
@@ -1707,7 +1874,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator/, _mm_div_pd)
  * @param b
  * @return Vector<float, 4>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator+, _mm_add_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator+, _mm_add_ps)
 
 /**
  * @brief
@@ -1716,7 +1883,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator+, _mm_add_ps)
  * @param b
  * @return Vector<float, 4>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator-, _mm_sub_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator-, _mm_sub_ps)
 
 /**
  * @brief
@@ -1725,7 +1892,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator-, _mm_sub_ps)
  * @param b
  * @return Vector<float, 4>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator*, _mm_mul_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator*, _mm_mul_ps)
 
 /**
  * @brief
@@ -1734,7 +1901,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator*, _mm_mul_ps)
  * @param b
  * @return Vector<float, 4>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator/, _mm_div_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator/, _mm_div_ps)
 
 //==============================================================================
 
@@ -1745,7 +1912,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator/, _mm_div_ps)
  * @param b
  * @return Vector<int8_t, 16>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator+, _mm_add_epi8)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator+, _mm_add_epi8)
 
 /**
  * @brief
@@ -1754,9 +1921,9 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator+, _mm_add_epi8)
  * @param b
  * @return Vector<int8_t, 16>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator-, _mm_sub_epi8)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator*, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator/, NOT AVAILABLE IN SSE3)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator-, _mm_sub_epi8)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator*, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator/, NOT AVAILABLE IN SSE3)
 
 //==============================================================================
 
@@ -1767,7 +1934,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator-, _mm_sub_epi8)
  * @param b
  * @return Vector<int16_t, 8>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator+, _mm_add_epi16)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator+, _mm_add_epi16)
 
 /**
  * @brief
@@ -1776,9 +1943,9 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator+, _mm_add_epi16)
  * @param b
  * @return Vector<int16_t, 8>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator-, _mm_sub_epi16)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator*, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator/, NOT AVAILABLE IN SSE3)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator-, _mm_sub_epi16)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator*, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator/, NOT AVAILABLE IN SSE3)
 
 //==============================================================================
 
@@ -1789,7 +1956,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator-, _mm_sub_epi16)
  * @param b
  * @return Vector<int32_t, 4>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator+, _mm_add_epi32)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator+, _mm_add_epi32)
 
 /**
  * @brief
@@ -1798,9 +1965,9 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator+, _mm_add_epi32)
  * @param b
  * @return Vector<int32_t, 4>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator-, _mm_sub_epi32)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator*, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator/, NOT AVAILABLE IN SSE3)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator-, _mm_sub_epi32)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator*, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator/, NOT AVAILABLE IN SSE3)
 
 //==============================================================================
 
@@ -1813,7 +1980,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator-, _mm_sub_epi32)
  * @param b
  * @return Vector<int64_t, 2>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator+, _mm_add_epi64)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator+, _mm_add_epi64)
 
 /**
  * @brief
@@ -1822,9 +1989,9 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator+, _mm_add_epi64)
  * @param b
  * @return Vector<int64_t, 2>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator-, _mm_sub_epi64)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator*, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator/, NOT AVAILABLE IN SSE3)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator-, _mm_sub_epi64)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator*, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator/, NOT AVAILABLE IN SSE3)
 
 #endif
 
@@ -1844,150 +2011,162 @@ Subtract 1 from value if greater than or equal to 1.
 
 // ^
 
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator^, _mm_xor_pd)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator^, _mm_xor_ps)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator^, _mm_xor_si128)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator^, _mm_xor_si128)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator^, _mm_xor_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator^, _mm_xor_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator^, _mm_xor_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator^, _mm_xor_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator^, _mm_xor_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator^, _mm_xor_si128)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator^, _mm_xor_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator^, _mm_xor_si128)
 #endif
 
 //==============================================================================
 
 // &
 
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator&, _mm_and_pd)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator&, _mm_and_ps)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator&, _mm_and_si128)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator&, _mm_and_si128)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator&, _mm_and_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator&, _mm_and_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator&, _mm_and_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator&, _mm_and_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator&, _mm_and_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator&, _mm_and_si128)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator&, _mm_and_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator&, _mm_and_si128)
 #endif
 
 //==============================================================================
 
 // |
 
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator|, _mm_or_pd)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator|, _mm_or_ps)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator|, _mm_or_si128)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator|, _mm_or_si128)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator|, _mm_or_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator|, _mm_or_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator|, _mm_or_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator|, _mm_or_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator|, _mm_or_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator|, _mm_or_si128)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator|, _mm_or_si128)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator|, _mm_or_si128)
 #endif
 
 //==============================================================================
 
 // +=
 
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, 2, operator+=, operator+)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, 4, operator+=, operator+)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, 16, operator+=, operator+)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, 8, operator+=, operator+)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, 4, operator+=, operator+)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator+=, operator+)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator+=, operator+)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator+=, operator+)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator+=, operator+)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator+=, operator+)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, 2, operator+=, operator+)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator+=, operator+)
 #endif
 
 //==============================================================================
 
 // -=
 
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, 2, operator-=, operator-)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, 4, operator-=, operator-)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, 16, operator-=, operator-)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, 8, operator-=, operator-)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, 4, operator-=, operator-)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator-=, operator-)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator-=, operator-)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator-=, operator-)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator-=, operator-)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator-=, operator-)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, 2, operator-=, operator-)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator-=, operator-)
 #endif
 
 //==============================================================================
 
 // *=
 
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, 2, operator*=, operator*)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, 4, operator*=, operator*)
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, 16, operator*=, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, 8, operator*=, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, 4, operator*=, NOT AVAILABLE IN SSE3)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator*=, operator*)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator*=, operator*)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator*=, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator*=, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator*=, NOT AVAILABLE IN SSE3)
 #if STONEYDSP_USING_INT64_2
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, 2, operator*=, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator*=, NOT AVAILABLE IN SSE3)
 #endif
 
 //==============================================================================
 
 // /=
 
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, 2, operator/=, operator/)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, 4, operator/=, operator/)
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, 16, operator/=, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, 8, operator/=, NOT AVAILABLE IN SSE3)
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, 4, operator/=, NOT AVAILABLE IN SSE3)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator/=, operator/)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator/=, operator/)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator/=, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator/=, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator/=, NOT AVAILABLE IN SSE3)
 #if STONEYDSP_USING_INT64_2
-// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, 2, operator/=, NOT AVAILABLE IN SSE3)
+// DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator/=, NOT AVAILABLE IN SSE3)
 #endif
 
 //==============================================================================
 
 // ^⁼
 
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, 2, operator^=, operator^)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, 4, operator^=, operator^)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, 16, operator^=, operator^)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, 8, operator^=, operator^)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, 4, operator^=, operator^)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator^=, operator^)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator^=, operator^)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator^=, operator^)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator^=, operator^)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator^=, operator^)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, 2, operator^=, operator^)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator^=, operator^)
 #endif
 
 //==============================================================================
 
 // &=
 
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, 2, operator&=, operator&)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, 4, operator&=, operator&)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, 16, operator&=, operator&)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, 8, operator&=, operator&)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, 4, operator&=, operator&)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator&=, operator&)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator&=, operator&)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator&=, operator&)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator&=, operator&)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator&=, operator&)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, 2, operator&=, operator&)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator&=, operator&)
 #endif
 
 //==============================================================================
 
 // |=
 
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, 2, operator|=, operator|)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, 4, operator|=, operator|)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, 16, operator|=, operator|)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, 8, operator|=, operator|)
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, 4, operator|=, operator|)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator|=, operator|)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator|=, operator|)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator|=, operator|)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator|=, operator|)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator|=, operator|)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, 2, operator|=, operator|)
+DECLARE_VECTOR_OPERATOR_INCREMENT(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator|=, operator|)
 #endif
 
 //==============================================================================
 
 // >=
 
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator>=, _mm_cmpge_pd)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator>=, _mm_cmpge_ps)
-inline Vector<::StoneyDSP::int8_t, 16> operator>=(const Vector<::StoneyDSP::int8_t, 16>& a, const Vector<::StoneyDSP::int8_t, 16>& b) {
-	return Vector<::StoneyDSP::int8_t, 16>(_mm_cmpgt_epi8(a.v, b.v)) ^ Vector<::StoneyDSP::int8_t, 16>::mask();
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator>=, _mm_cmpge_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator>=, _mm_cmpge_ps)
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator>=(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a,
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& b)
+{
+	return Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>(_mm_cmpgt_epi8(a.v, b.v)) ^ Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::mask();
 }
-inline Vector<::StoneyDSP::int16_t, 8> operator>=(const Vector<::StoneyDSP::int16_t, 8>& a, const Vector<::StoneyDSP::int16_t, 8>& b) {
-	return Vector<::StoneyDSP::int16_t, 8>(_mm_cmpgt_epi16(a.v, b.v)) ^ Vector<::StoneyDSP::int16_t, 8>::mask();
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator>=(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a,
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& b)
+{
+	return Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>(_mm_cmpgt_epi16(a.v, b.v)) ^ Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::mask();
 }
-inline Vector<::StoneyDSP::int32_t, 4> operator>=(const Vector<::StoneyDSP::int32_t, 4>& a, const Vector<::StoneyDSP::int32_t, 4>& b) {
-	return Vector<::StoneyDSP::int32_t, 4>(_mm_cmpgt_epi32(a.v, b.v)) ^ Vector<::StoneyDSP::int32_t, 4>::mask();
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator>=(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a,
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& b)
+{
+	return Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>(_mm_cmpgt_epi32(a.v, b.v)) ^ Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::mask();
 }
 #if STONEYDSP_USING_INT64_2
-inline Vector<::StoneyDSP::int64_t, 2> operator>=(const Vector<::StoneyDSP::int64_t, 2>& a, const Vector<::StoneyDSP::int64_t, 2>& b) {
-	return Vector<::StoneyDSP::int64_t, 2>(_mm_cmpgt_epi64(a.v, b.v)) ^ Vector<::StoneyDSP::int64_t, 2>::mask();
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator>=(
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a,
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& b)
+{
+	return Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>(_mm_cmpgt_epi64(a.v, b.v)) ^ Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::mask();
 }
 #endif
 
@@ -1995,33 +2174,42 @@ inline Vector<::StoneyDSP::int64_t, 2> operator>=(const Vector<::StoneyDSP::int6
 
 // >
 
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator>, _mm_cmpgt_pd)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator>, _mm_cmpgt_ps)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator>, _mm_cmpgt_epi8)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator>, _mm_cmpgt_epi16)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator>, _mm_cmpgt_epi32)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator>, _mm_cmpgt_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator>, _mm_cmpgt_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator>, _mm_cmpgt_epi8)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator>, _mm_cmpgt_epi16)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator>, _mm_cmpgt_epi32)
 #if STONEYDSP_USING_INT64_2
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator>, _mm_cmpgt_epi64)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator>, _mm_cmpgt_epi64)
 #endif
 
 //==============================================================================
 
 // <=
 
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator<=, _mm_cmple_pd)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator<=, _mm_cmple_ps)
-inline Vector<::StoneyDSP::int8_t, 16> operator<=(const Vector<::StoneyDSP::int8_t, 16>& a, const Vector<::StoneyDSP::int8_t, 16>& b) {
-	return Vector<::StoneyDSP::int8_t, 16>(_mm_cmplt_epi8(a.v, b.v)) ^ Vector<::StoneyDSP::int8_t, 16>::mask();
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator<=, _mm_cmple_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator<=, _mm_cmple_ps)
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator<=(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a,
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& b)
+{
+	return Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>(_mm_cmplt_epi8(a.v, b.v)) ^ Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::mask();
 }
-inline Vector<::StoneyDSP::int16_t, 8> operator<=(const Vector<::StoneyDSP::int16_t, 8>& a, const Vector<::StoneyDSP::int16_t, 8>& b) {
-	return Vector<::StoneyDSP::int16_t, 8>(_mm_cmplt_epi16(a.v, b.v)) ^ Vector<::StoneyDSP::int16_t, 8>::mask();
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator<=(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a,
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& b)
+{
+	return Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>(_mm_cmplt_epi16(a.v, b.v)) ^ Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::mask();
 }
-inline Vector<::StoneyDSP::int32_t, 4> operator<=(const Vector<::StoneyDSP::int32_t, 4>& a, const Vector<::StoneyDSP::int32_t, 4>& b) {
-	return Vector<::StoneyDSP::int32_t, 4>(_mm_cmplt_epi32(a.v, b.v)) ^ Vector<::StoneyDSP::int32_t, 4>::mask();
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator<=(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a,
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& b)
+{
+	return Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>(_mm_cmplt_epi32(a.v, b.v)) ^ Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::mask();
 }
 #if STONEYDSP_USING_INT64_2
-// inline Vector<::StoneyDSP::int64_t, 2> operator<=(const Vector<::StoneyDSP::int64_t, 2>& a, const Vector<::StoneyDSP::int64_t, 2>& b) {
-// 	return Vector<::StoneyDSP::int64_t, 2>(_mm_cmplt_epi64(a.v, b.v)) ^ Vector<::StoneyDSP::int64_t, 2>::mask();
+// inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator<=(const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a, const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& b) {
+// 	return Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>(_mm_cmplt_epi64(a.v, b.v)) ^ Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::mask();
 // }
 #endif
 
@@ -2029,13 +2217,13 @@ inline Vector<::StoneyDSP::int32_t, 4> operator<=(const Vector<::StoneyDSP::int3
 
 // <
 
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator<, _mm_cmplt_pd)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator<, _mm_cmplt_ps)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, 16, operator<, _mm_cmplt_epi8)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, 8, operator<, _mm_cmplt_epi16)
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator<, _mm_cmplt_epi32)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator<, _mm_cmplt_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator<, _mm_cmplt_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U, operator<, _mm_cmplt_epi8)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U, operator<, _mm_cmplt_epi16)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U, operator<, _mm_cmplt_epi32)
 #if STONEYDSP_USING_INT64_2
-// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, 2, operator<, _mm_cmplt_epi64)
+// DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U, operator<, _mm_cmplt_epi64)
 #endif
 
 //==============================================================================
@@ -2049,7 +2237,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::int32_t, 4, operator<, _mm_cmplt_epi3
  * @param b
  * @return Vector<double, 2>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator!=, _mm_cmpneq_pd)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, (::StoneyDSP::size_t)2U, operator!=, _mm_cmpneq_pd)
 
 /**
  * @brief
@@ -2058,7 +2246,7 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::double_t, 2, operator!=, _mm_cmpneq_p
  * @param b
  * @return Vector<float, 4>
  */
-DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator!=, _mm_cmpneq_ps)
+DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, (::StoneyDSP::size_t)4U, operator!=, _mm_cmpneq_ps)
 
 /**
  * @brief
@@ -2067,8 +2255,11 @@ DECLARE_VECTOR_OPERATOR_INFIX(::StoneyDSP::float_t, 4, operator!=, _mm_cmpneq_ps
  * @param b
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator!=(const Vector<::StoneyDSP::int8_t, 16>& a, const Vector<::StoneyDSP::int8_t, 16>& b) {
-	return Vector<::StoneyDSP::int8_t, 16>(_mm_cmpeq_epi8(a.v, b.v)) ^ Vector<::StoneyDSP::int8_t, 16>::mask();
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator!=(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a,
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& b)
+{
+	return Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>(_mm_cmpeq_epi8(a.v, b.v)) ^ Vector<::StoneyDSP::int8_t, 16U>::mask();
 }
 
 /**
@@ -2078,8 +2269,11 @@ inline Vector<::StoneyDSP::int8_t, 16> operator!=(const Vector<::StoneyDSP::int8
  * @param b
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator!=(const Vector<::StoneyDSP::int16_t, 8>& a, const Vector<::StoneyDSP::int16_t, 8>& b) {
-	return Vector<::StoneyDSP::int16_t, 8>(_mm_cmpeq_epi16(a.v, b.v)) ^ Vector<::StoneyDSP::int16_t, 8>::mask();
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator!=(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a,
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& b)
+{
+	return Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>(_mm_cmpeq_epi16(a.v, b.v)) ^ Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::mask();
 }
 
 /**
@@ -2089,8 +2283,11 @@ inline Vector<::StoneyDSP::int16_t, 8> operator!=(const Vector<::StoneyDSP::int1
  * @param b
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator!=(const Vector<::StoneyDSP::int32_t, 4>& a, const Vector<::StoneyDSP::int32_t, 4>& b) {
-	return Vector<::StoneyDSP::int32_t, 4>(_mm_cmpeq_epi32(a.v, b.v)) ^ Vector<::StoneyDSP::int32_t, 4>::mask();
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator!=(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a,
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& b)
+{
+	return Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>(_mm_cmpeq_epi32(a.v, b.v)) ^ Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::mask();
 }
 
 #if STONEYDSP_USING_INT64_2
@@ -2102,8 +2299,11 @@ inline Vector<::StoneyDSP::int32_t, 4> operator!=(const Vector<::StoneyDSP::int3
  * @param b
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator!=(const Vector<::StoneyDSP::int64_t, 2>& a, const Vector<::StoneyDSP::int64_t, 2>& b) {
-	return Vector<::StoneyDSP::int64_t, 2>(_mm_cmpeq_epi64(a.v, b.v)) ^ Vector<::StoneyDSP::int64_t, 2>::mask();
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator!=(
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a,
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& b)
+{
+	return Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>(_mm_cmpeq_epi64(a.v, b.v)) ^ Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::mask();
 }
 
 #endif
@@ -2118,7 +2318,9 @@ inline Vector<::StoneyDSP::int64_t, 2> operator!=(const Vector<::StoneyDSP::int6
  * @param a
  * @return Vector<double, 2>
  */
-inline Vector<::StoneyDSP::double_t, 2> operator+(const Vector<::StoneyDSP::double_t, 2>& a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> operator+(
+    const Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return a;
 }
 
@@ -2128,7 +2330,9 @@ inline Vector<::StoneyDSP::double_t, 2> operator+(const Vector<::StoneyDSP::doub
  * @param a
  * @return Vector<float, 4>
  */
-inline Vector<::StoneyDSP::float_t, 4> operator+(const Vector<::StoneyDSP::float_t, 4>& a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> operator+(
+    const Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return a;
 }
 
@@ -2138,7 +2342,9 @@ inline Vector<::StoneyDSP::float_t, 4> operator+(const Vector<::StoneyDSP::float
  * @param a
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator+(const Vector<::StoneyDSP::int8_t, 16>& a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator+(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a)
+{
 	return a;
 }
 
@@ -2148,7 +2354,9 @@ inline Vector<::StoneyDSP::int8_t, 16> operator+(const Vector<::StoneyDSP::int8_
  * @param a
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator+(const Vector<::StoneyDSP::int16_t, 8>& a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator+(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a)
+{
 	return a;
 }
 
@@ -2158,7 +2366,9 @@ inline Vector<::StoneyDSP::int16_t, 8> operator+(const Vector<::StoneyDSP::int16
  * @param a
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator+(const Vector<::StoneyDSP::int32_t, 4>& a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator+(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return a;
 }
 
@@ -2170,7 +2380,9 @@ inline Vector<::StoneyDSP::int32_t, 4> operator+(const Vector<::StoneyDSP::int32
  * @param a
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator+(const Vector<::StoneyDSP::int64_t, 2>& a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator+(
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return a;
 }
 
@@ -2186,7 +2398,9 @@ inline Vector<::StoneyDSP::int64_t, 2> operator+(const Vector<::StoneyDSP::int64
  * @param a
  * @return Vector<double, 2>
  */
-inline Vector<::StoneyDSP::double_t, 2> operator-(const Vector<::StoneyDSP::double_t, 2>& a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> operator-(
+    const Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return (::StoneyDSP::double_t)0.0 - a;
 }
 
@@ -2196,7 +2410,9 @@ inline Vector<::StoneyDSP::double_t, 2> operator-(const Vector<::StoneyDSP::doub
  * @param a
  * @return Vector<float, 4>
  */
-inline Vector<::StoneyDSP::float_t, 4> operator-(const Vector<::StoneyDSP::float_t, 4>& a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> operator-(
+    const Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return (::StoneyDSP::float_t)0.0f - a;
 }
 
@@ -2206,7 +2422,9 @@ inline Vector<::StoneyDSP::float_t, 4> operator-(const Vector<::StoneyDSP::float
  * @param a
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator-(const Vector<::StoneyDSP::int8_t, 16>& a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator-(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a)
+{
 	return (::StoneyDSP::int8_t)0 - a;
 }
 
@@ -2216,7 +2434,9 @@ inline Vector<::StoneyDSP::int8_t, 16> operator-(const Vector<::StoneyDSP::int8_
  * @param a
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator-(const Vector<::StoneyDSP::int16_t, 8>& a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator-(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a)
+{
 	return (::StoneyDSP::int16_t)0 - a;
 }
 
@@ -2226,7 +2446,9 @@ inline Vector<::StoneyDSP::int16_t, 8> operator-(const Vector<::StoneyDSP::int16
  * @param a
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator-(const Vector<::StoneyDSP::int32_t, 4>& a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator-(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return (::StoneyDSP::int32_t)0 - a;
 }
 
@@ -2238,7 +2460,9 @@ inline Vector<::StoneyDSP::int32_t, 4> operator-(const Vector<::StoneyDSP::int32
  * @param a
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator-(const Vector<::StoneyDSP::int64_t, 2>& a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator-(
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return _mm_castpd_si128(_mm_setzero_pd()) - a;
 }
 
@@ -2254,7 +2478,9 @@ inline Vector<::StoneyDSP::int64_t, 2> operator-(const Vector<::StoneyDSP::int64
  * @param a
  * @return Vector<double, 2>&
  */
-inline Vector<::StoneyDSP::double_t, 2>& operator++(Vector<::StoneyDSP::double_t, 2>& a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& operator++(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return a += (::StoneyDSP::double_t)1.0;
 }
 
@@ -2264,7 +2490,9 @@ inline Vector<::StoneyDSP::double_t, 2>& operator++(Vector<::StoneyDSP::double_t
  * @param a
  * @return Vector<float, 4>&
  */
-inline Vector<::StoneyDSP::float_t, 4>& operator++(Vector<::StoneyDSP::float_t, 4>& a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& operator++(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return a += (::StoneyDSP::float_t)1.0f;
 }
 
@@ -2274,7 +2502,9 @@ inline Vector<::StoneyDSP::float_t, 4>& operator++(Vector<::StoneyDSP::float_t, 
  * @param a
  * @return Vector<int8_t, 16>&
  */
-inline Vector<::StoneyDSP::int8_t, 16>& operator++(Vector<::StoneyDSP::int8_t, 16>& a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& operator++(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a)
+{
 	return a += (::StoneyDSP::int8_t)1;
 }
 
@@ -2284,7 +2514,9 @@ inline Vector<::StoneyDSP::int8_t, 16>& operator++(Vector<::StoneyDSP::int8_t, 1
  * @param a
  * @return Vector<int16_t, 8>&
  */
-inline Vector<::StoneyDSP::int16_t, 8>& operator++(Vector<::StoneyDSP::int16_t, 8>& a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& operator++(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a)
+{
 	return a += (::StoneyDSP::int16_t)1;
 }
 
@@ -2294,7 +2526,9 @@ inline Vector<::StoneyDSP::int16_t, 8>& operator++(Vector<::StoneyDSP::int16_t, 
  * @param a
  * @return Vector<int32_t, 4>&
  */
-inline Vector<::StoneyDSP::int32_t, 4>& operator++(Vector<::StoneyDSP::int32_t, 4>& a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& operator++(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return a += (::StoneyDSP::int32_t)1;
 }
 
@@ -2306,7 +2540,9 @@ inline Vector<::StoneyDSP::int32_t, 4>& operator++(Vector<::StoneyDSP::int32_t, 
  * @param a
  * @return Vector<int64_t, 2>&
  */
-inline Vector<::StoneyDSP::int64_t, 2>& operator++(Vector<::StoneyDSP::int64_t, 2>& a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& operator++(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return a += _mm_castpd_si128(_mm_set1_pd(1.0));
 }
 
@@ -2322,7 +2558,9 @@ inline Vector<::StoneyDSP::int64_t, 2>& operator++(Vector<::StoneyDSP::int64_t, 
  * @param a
  * @return Vector<double, 2>&
  */
-inline Vector<::StoneyDSP::double_t, 2>& operator--(Vector<::StoneyDSP::double_t, 2>& a) {
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& operator--(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return a -= (::StoneyDSP::double_t)1.0;
 }
 
@@ -2332,7 +2570,9 @@ inline Vector<::StoneyDSP::double_t, 2>& operator--(Vector<::StoneyDSP::double_t
  * @param a
  * @return Vector<float, 4>&
  */
-inline Vector<::StoneyDSP::float_t, 4>& operator--(Vector<::StoneyDSP::float_t, 4>& a) {
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& operator--(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return a -= (::StoneyDSP::float_t)1.0f;
 }
 
@@ -2342,7 +2582,9 @@ inline Vector<::StoneyDSP::float_t, 4>& operator--(Vector<::StoneyDSP::float_t, 
  * @param a
  * @return Vector<int8_t, 16>&
  */
-inline Vector<::StoneyDSP::int8_t, 16>& operator--(Vector<::StoneyDSP::int8_t, 16>& a) {
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& operator--(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a)
+{
 	return a -= (::StoneyDSP::int8_t)1;
 }
 
@@ -2352,7 +2594,9 @@ inline Vector<::StoneyDSP::int8_t, 16>& operator--(Vector<::StoneyDSP::int8_t, 1
  * @param a
  * @return Vector<int16_t, 8>&
  */
-inline Vector<::StoneyDSP::int16_t, 8>& operator--(Vector<::StoneyDSP::int16_t, 8>& a) {
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& operator--(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a)
+{
 	return a -= (::StoneyDSP::int16_t)1;
 }
 
@@ -2362,7 +2606,9 @@ inline Vector<::StoneyDSP::int16_t, 8>& operator--(Vector<::StoneyDSP::int16_t, 
  * @param a
  * @return Vector<int32_t, 4>&
  */
-inline Vector<::StoneyDSP::int32_t, 4>& operator--(Vector<::StoneyDSP::int32_t, 4>& a) {
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& operator--(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a)
+{
 	return a -= (::StoneyDSP::int32_t)1;
 }
 
@@ -2374,7 +2620,9 @@ inline Vector<::StoneyDSP::int32_t, 4>& operator--(Vector<::StoneyDSP::int32_t, 
  * @param a
  * @return Vector<int64_t, 2>&
  */
-inline Vector<::StoneyDSP::int64_t, 2>& operator--(Vector<::StoneyDSP::int64_t, 2>& a) {
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& operator--(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a)
+{
 	return a -= _mm_castpd_si128(_mm_set1_pd(1.0));
 }
 
@@ -2390,8 +2638,10 @@ inline Vector<::StoneyDSP::int64_t, 2>& operator--(Vector<::StoneyDSP::int64_t, 
  * @param a
  * @return Vector<double, 2>
  */
-inline Vector<::StoneyDSP::double_t, 2> operator++(Vector<::StoneyDSP::double_t, 2>& a, int) {
-	Vector<::StoneyDSP::double_t, 2> b = a;
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> operator++(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& a, int)
+{
+	Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> b = a;
 	++a;
 	return b;
 }
@@ -2402,8 +2652,10 @@ inline Vector<::StoneyDSP::double_t, 2> operator++(Vector<::StoneyDSP::double_t,
  * @param a
  * @return Vector<float, 4>
  */
-inline Vector<::StoneyDSP::float_t, 4> operator++(Vector<::StoneyDSP::float_t, 4>& a, int) {
-	Vector<::StoneyDSP::float_t, 4> b = a;
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> operator++(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& a, int)
+{
+	Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> b = a;
 	++a;
 	return b;
 }
@@ -2414,8 +2666,10 @@ inline Vector<::StoneyDSP::float_t, 4> operator++(Vector<::StoneyDSP::float_t, 4
  * @param a
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator++(Vector<::StoneyDSP::int8_t, 16>& a, int) {
-	Vector<::StoneyDSP::int8_t, 16> b = a;
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator++(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a, int)
+{
+	Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> b = a;
 	++a;
 	return b;
 }
@@ -2426,8 +2680,10 @@ inline Vector<::StoneyDSP::int8_t, 16> operator++(Vector<::StoneyDSP::int8_t, 16
  * @param a
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator++(Vector<::StoneyDSP::int16_t, 8>& a, int) {
-	Vector<::StoneyDSP::int16_t, 8> b = a;
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator++(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a, int)
+{
+	Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> b = a;
 	++a;
 	return b;
 }
@@ -2438,8 +2694,10 @@ inline Vector<::StoneyDSP::int16_t, 8> operator++(Vector<::StoneyDSP::int16_t, 8
  * @param a
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator++(Vector<::StoneyDSP::int32_t, 4>& a, int) {
-	Vector<::StoneyDSP::int32_t, 4> b = a;
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator++(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a, int)
+{
+	Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> b = a;
 	++a;
 	return b;
 }
@@ -2452,8 +2710,10 @@ inline Vector<::StoneyDSP::int32_t, 4> operator++(Vector<::StoneyDSP::int32_t, 4
  * @param a
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator++(Vector<::StoneyDSP::int64_t, 2>& a, int) {
-	Vector<::StoneyDSP::int64_t, 2> b = a;
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator++(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a, int)
+{
+	Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> b = a;
 	++a;
 	return b;
 }
@@ -2470,8 +2730,10 @@ inline Vector<::StoneyDSP::int64_t, 2> operator++(Vector<::StoneyDSP::int64_t, 2
  * @param a
  * @return Vector<double, 2>
  */
-inline Vector<::StoneyDSP::double_t, 2> operator--(Vector<::StoneyDSP::double_t, 2>& a, int) {
-	Vector<::StoneyDSP::double_t, 2> b = a;
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> operator--(
+    Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& a, int)
+{
+	Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> b = a;
 	--a;
 	return b;
 }
@@ -2482,8 +2744,10 @@ inline Vector<::StoneyDSP::double_t, 2> operator--(Vector<::StoneyDSP::double_t,
  * @param a
  * @return Vector<float, 4>
  */
-inline Vector<::StoneyDSP::float_t, 4> operator--(Vector<::StoneyDSP::float_t, 4>& a, int) {
-	Vector<::StoneyDSP::float_t, 4> b = a;
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> operator--(
+    Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& a, int)
+{
+	Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> b = a;
 	--a;
 	return b;
 }
@@ -2494,8 +2758,10 @@ inline Vector<::StoneyDSP::float_t, 4> operator--(Vector<::StoneyDSP::float_t, 4
  * @param a
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator--(Vector<::StoneyDSP::int8_t, 16>& a, int) {
-	Vector<::StoneyDSP::int8_t, 16> b = a;
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator--(
+    Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a, int)
+{
+	Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> b = a;
 	--a;
 	return b;
 }
@@ -2506,8 +2772,10 @@ inline Vector<::StoneyDSP::int8_t, 16> operator--(Vector<::StoneyDSP::int8_t, 16
  * @param a
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator--(Vector<::StoneyDSP::int16_t, 8>& a, int) {
-	Vector<::StoneyDSP::int16_t, 8> b = a;
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator--(
+    Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a, int)
+{
+	Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> b = a;
 	--a;
 	return b;
 }
@@ -2518,8 +2786,10 @@ inline Vector<::StoneyDSP::int16_t, 8> operator--(Vector<::StoneyDSP::int16_t, 8
  * @param a
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator--(Vector<::StoneyDSP::int32_t, 4>& a, int) {
-	Vector<::StoneyDSP::int32_t, 4> b = a;
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator--(
+    Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a, int)
+{
+	Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> b = a;
 	--a;
 	return b;
 }
@@ -2532,8 +2802,10 @@ inline Vector<::StoneyDSP::int32_t, 4> operator--(Vector<::StoneyDSP::int32_t, 4
  * @param a
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator--(Vector<::StoneyDSP::int64_t, 2>& a, int) {
-	Vector<::StoneyDSP::int64_t, 2> b = a;
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator--(
+    Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a, int)
+{
+	Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> b = a;
 	--a;
 	return b;
 }
@@ -2550,8 +2822,10 @@ inline Vector<::StoneyDSP::int64_t, 2> operator--(Vector<::StoneyDSP::int64_t, 2
  * @param a
  * @return Vector<double, 2>
  */
-inline Vector<::StoneyDSP::double_t, 2> operator~(const Vector<::StoneyDSP::double_t, 2>& a) {
-	return a ^ Vector<::StoneyDSP::double_t, 2>::mask();
+inline Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U> operator~(
+    const Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>& a)
+{
+	return a ^ Vector<::StoneyDSP::double_t, (::StoneyDSP::size_t)2U>::mask();
 }
 
 /**
@@ -2560,8 +2834,10 @@ inline Vector<::StoneyDSP::double_t, 2> operator~(const Vector<::StoneyDSP::doub
  * @param a
  * @return Vector<float, 4>
  */
-inline Vector<::StoneyDSP::float_t, 4> operator~(const Vector<::StoneyDSP::float_t, 4>& a) {
-	return a ^ Vector<::StoneyDSP::float_t, 4>::mask();
+inline Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U> operator~(
+    const Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>& a)
+{
+	return a ^ Vector<::StoneyDSP::float_t, (::StoneyDSP::size_t)4U>::mask();
 }
 
 /**
@@ -2570,8 +2846,10 @@ inline Vector<::StoneyDSP::float_t, 4> operator~(const Vector<::StoneyDSP::float
  * @param a
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator~(const Vector<::StoneyDSP::int8_t, 16>& a) {
-	return a ^ Vector<::StoneyDSP::int8_t, 16>::mask();
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator~(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a)
+{
+	return a ^ Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>::mask();
 }
 
 /**
@@ -2580,8 +2858,10 @@ inline Vector<::StoneyDSP::int8_t, 16> operator~(const Vector<::StoneyDSP::int8_
  * @param a
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator~(const Vector<::StoneyDSP::int16_t, 8>& a) {
-	return a ^ Vector<::StoneyDSP::int16_t, 8>::mask();
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator~(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a)
+{
+	return a ^ Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>::mask();
 }
 
 /**
@@ -2590,8 +2870,10 @@ inline Vector<::StoneyDSP::int16_t, 8> operator~(const Vector<::StoneyDSP::int16
  * @param a
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator~(const Vector<::StoneyDSP::int32_t, 4>& a) {
-	return a ^ Vector<::StoneyDSP::int32_t, 4>::mask();
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator~(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a)
+{
+	return a ^ Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>::mask();
 }
 
 #if STONEYDSP_USING_INT64_2
@@ -2602,8 +2884,10 @@ inline Vector<::StoneyDSP::int32_t, 4> operator~(const Vector<::StoneyDSP::int32
  * @param a
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator~(const Vector<::StoneyDSP::int64_t, 2>& a) {
-	return a ^ Vector<::StoneyDSP::int64_t, 2>::mask();
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator~(
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a)
+{
+	return a ^ Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>::mask();
 }
 
 #endif
@@ -2619,8 +2903,13 @@ inline Vector<::StoneyDSP::int64_t, 2> operator~(const Vector<::StoneyDSP::int64
  * @param b
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator<<(const Vector<::StoneyDSP::int8_t, 16>& a, const int& b) {
-	return Vector<::StoneyDSP::int8_t, 16>(_mm_sll_epi32(a.v, _mm_cvtsi32_si128(b)));
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator<<(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>(
+        _mm_sll_epi32(a.v, _mm_cvtsi32_si128(b))
+    );
 }
 
 /**
@@ -2630,8 +2919,13 @@ inline Vector<::StoneyDSP::int8_t, 16> operator<<(const Vector<::StoneyDSP::int8
  * @param b
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator<<(const Vector<::StoneyDSP::int16_t, 8>& a, const int& b) {
-	return Vector<::StoneyDSP::int16_t, 8>(_mm_sll_epi32(a.v, _mm_cvtsi32_si128(b)));
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator<<(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>(
+        _mm_sll_epi32(a.v, _mm_cvtsi32_si128(b))
+    );
 }
 
 /**
@@ -2642,8 +2936,13 @@ inline Vector<::StoneyDSP::int16_t, 8> operator<<(const Vector<::StoneyDSP::int1
  * @param b
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator<<(const Vector<::StoneyDSP::int32_t, 4>& a, const int& b) {
-	return Vector<::StoneyDSP::int32_t, 4>(_mm_sll_epi32(a.v, _mm_cvtsi32_si128(b)));
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator<<(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>(
+        _mm_sll_epi32(a.v, _mm_cvtsi32_si128(b))
+    );
 }
 
 #if STONEYDSP_USING_INT64_2
@@ -2655,8 +2954,13 @@ inline Vector<::StoneyDSP::int32_t, 4> operator<<(const Vector<::StoneyDSP::int3
  * @param b
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator<<(const Vector<::StoneyDSP::int64_t, 2>& a, const int& b) {
-	return Vector<::StoneyDSP::int64_t, 2>(_mm_sll_epi64(a.v, _mm_cvtsi64_si128(b)));
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator<<(
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>(
+        _mm_sll_epi64(a.v, _mm_cvtsi64_si128(b))
+    );
 }
 
 #endif
@@ -2672,9 +2976,15 @@ inline Vector<::StoneyDSP::int64_t, 2> operator<<(const Vector<::StoneyDSP::int6
  * @param b
  * @return Vector<int8_t, 16>
  */
-inline Vector<::StoneyDSP::int8_t, 16> operator>>(const Vector<::StoneyDSP::int8_t, 16>& a, const int& b) {
-	return Vector<::StoneyDSP::int8_t, 16>(_mm_srl_epi32(a.v, _mm_cvtsi32_si128(b)));
+inline Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U> operator>>(
+    const Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int8_t, (::StoneyDSP::size_t)16U>(
+        _mm_srl_epi32(a.v, _mm_cvtsi32_si128(b))
+    );
 }
+
 /**
  * @brief
  *
@@ -2682,9 +2992,15 @@ inline Vector<::StoneyDSP::int8_t, 16> operator>>(const Vector<::StoneyDSP::int8
  * @param b
  * @return Vector<int16_t, 8>
  */
-inline Vector<::StoneyDSP::int16_t, 8> operator>>(const Vector<::StoneyDSP::int16_t, 8>& a, const int& b) {
-	return Vector<::StoneyDSP::int16_t, 8>(_mm_srl_epi32(a.v, _mm_cvtsi32_si128(b)));
+inline Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U> operator>>(
+    const Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int16_t, (::StoneyDSP::size_t)8U>(
+        _mm_srl_epi32(a.v, _mm_cvtsi32_si128(b))
+    );
 }
+
 /**
  * @brief
  *
@@ -2692,8 +3008,13 @@ inline Vector<::StoneyDSP::int16_t, 8> operator>>(const Vector<::StoneyDSP::int1
  * @param b
  * @return Vector<int32_t, 4>
  */
-inline Vector<::StoneyDSP::int32_t, 4> operator>>(const Vector<::StoneyDSP::int32_t, 4>& a, const int& b) {
-	return Vector<::StoneyDSP::int32_t, 4>(_mm_srl_epi32(a.v, _mm_cvtsi32_si128(b)));
+inline Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U> operator>>(
+    const Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int32_t, (::StoneyDSP::size_t)4U>(
+        _mm_srl_epi32(a.v, _mm_cvtsi32_si128(b))
+    );
 }
 
 #if STONEYDSP_USING_INT64_2
@@ -2705,8 +3026,13 @@ inline Vector<::StoneyDSP::int32_t, 4> operator>>(const Vector<::StoneyDSP::int3
  * @param b
  * @return Vector<int64_t, 2>
  */
-inline Vector<::StoneyDSP::int64_t, 2> operator>>(const Vector<::StoneyDSP::int64_t, 2>& a, const int& b) {
-	return Vector<::StoneyDSP::int64_t, 2>(_mm_srl_epi64(a.v, _mm_cvtsi64_si128(b)));
+inline Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U> operator>>(
+    const Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>& a,
+    const int& b
+) {
+	return Vector<::StoneyDSP::int64_t, (::StoneyDSP::size_t)2U>(
+        _mm_srl_epi64(a.v, _mm_cvtsi64_si128(b))
+    );
 }
 
 #endif

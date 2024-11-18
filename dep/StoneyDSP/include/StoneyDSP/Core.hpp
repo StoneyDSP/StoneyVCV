@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file StoneyDSP.hpp
+ * @file Core.hpp
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @brief
  * @version 0.0.0
@@ -31,7 +31,7 @@
 
 #pragma once
 
-#define STONEYDSP_HPP_INCLUDED
+#define STONEYDSP_CORE_HPP_INCLUDED 1
 
 //==============================================================================
 
@@ -44,10 +44,10 @@
   # define STONEYDSP_STRINGIFY(n) STONEYDSP_STRINGIFY_HELPER(n)
 #endif
 
-#include "StoneyDSP/version.hpp"
-#include "StoneyDSP/system.hpp"
-#include "StoneyDSP/common.hpp"
-// #include "StoneyDSP/exceptions.hpp"
+#include "StoneyDSP/Core/version.hpp"
+#include "StoneyDSP/Core/system.hpp"
+#include "StoneyDSP/Core/common.hpp"
+// #include "StoneyDSP/Core/exceptions.hpp"
 
 //==============================================================================
 
@@ -138,6 +138,12 @@ using byte_t = ::StoneyDSP::__BYTE_T;
 
 using byte = ::StoneyDSP::byte_t;
 
+using size_t = ::size_t;
+
+// using size_t = typeof(sizeof(0));
+
+// typedef typeof(sizeof(0)) size_t; // valid since C23
+
 //==============================================================================
 
 /** @brief The SystemStats class. */
@@ -178,7 +184,7 @@ void ignoreUnused (Types&&...) noexcept {}
 
 // StoneyDSP Library
 
-#include "StoneyDSP/simd.hpp"
-// #include "StoneyDSP/dsp.hpp"
+// #include "StoneyDSP/SIMD.hpp"
+// #include "StoneyDSP/DSP.hpp"
 
 //==============================================================================

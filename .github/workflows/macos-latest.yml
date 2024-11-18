@@ -39,12 +39,12 @@ jobs:
 #       uses: maxim-lobanov/setup-xcode@v1
 #       with:
 #         xcode-version: latest-stable
-    
+
     - name: Checkout StoneyVCV code
       uses: actions/checkout@v4
       with:
         submodules: true
-        
+
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's macOS Deps
       run: |
@@ -62,7 +62,7 @@ jobs:
       with:
         # vcpkg triplet to use
         triplet: x64-osx
-        # GitHub token to authenticate API requests. Recommended to use  github.token 
+        # GitHub token to authenticate API requests. Recommended to use  github.token
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
@@ -87,6 +87,8 @@ jobs:
         -DVCPG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
+        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
@@ -94,7 +96,7 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests
+        --target Tests_StoneyDSP
         -j3
 
     - name: Test
@@ -104,21 +106,21 @@ jobs:
         -j3
         --rerun-failed
         --output-on-failure
-        --verbose 
+        --verbose
         && cd ${{ github.workspace }}
 
     - name: Build
       run: >-
-        cmake 
+        cmake
         --build ${{ env.BUILD_DIR }}
-        --target plugin 
+        --target plugin
         -j3
 
     - name: Dist
       run: >-
-        cmake 
+        cmake
         --build ${{ env.BUILD_DIR }}
-        --target dist 
+        --target dist
         -j3
 
     - name: Install

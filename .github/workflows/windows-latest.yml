@@ -14,11 +14,12 @@ concurrency:
 env:
   DISPLAY: :0
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
-  CMAKE_BUILD_PARALLEL_LEVEL: 3 # Use up to 3 cpus to build StoneyDSP & tests
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   VCPKG_MANIFEST_MODE: ON
+  VCPKG_ROOT: "vcpkg"
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,17 +36,13 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
-      
+
     steps:
-    
+
     - name: Checkout StoneyVCV code
       uses: actions/checkout@v4
       with:
         submodules: true
-
-    - name: Install Ninja
-      shell: bash
-      run: choco install ninja sccache
 
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
@@ -65,21 +62,21 @@ jobs:
           tar
           unzip
           ccache
-          mingw-w64-x86_64-gcc 
-          mingw-w64-x86_64-gdb 
-          mingw-w64-x86_64-cmake 
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-gdb
+          mingw-w64-x86_64-cmake
           mingw-w64-x86_64-catch
           mingw-w64-x86_64-ninja
-          autoconf 
-          automake 
-          libtool 
-          mingw-w64-x86_64-jq 
-          python 
-          zstd 
+          autoconf
+          automake
+          libtool
+          mingw-w64-x86_64-jq
+          python
+          zstd
           mingw-w64-x86_64-pkgconf
           tree
           ninja
-        
+
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's Windows Deps
       shell: msys2 {0}
@@ -94,7 +91,7 @@ jobs:
       with:
         # vcpkg triplet to use
         triplet: x64-mingw-dynamic
-        # GitHub token to authenticate API requests. Recommended to use  github.token 
+        # GitHub token to authenticate API requests. Recommended to use  github.token
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
@@ -119,29 +116,28 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
         --compile-no-warning-as-error
         --no-warn-unused-cli
-        
+
     - name: Build Tests
       shell: msys2 {0}
       run: >-
         cmake
-        --build
-        ./build
-        --target Tests
+        --build ${{ env.BUILD_DIR }}
+        --target Tests_StoneyDSP
         -j3
 
     - name: Test
       shell: msys2 {0}
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: >-
         cd build &&
         ctest
         -j3
         --rerun-failed
         --output-on-failure
-        --verbose 
+        --verbose
         && cd ..
 
     - name: Build
@@ -156,7 +152,7 @@ jobs:
       shell: msys2 {0}
       run: make install -j3
 
-    # Lis all files in tree
+    # List all files in tree
     - name: Tree
       shell: msys2 {0}
       run: tree

@@ -1,7 +1,7 @@
 /***************************************************************************//**
- * @file StoneyDSP.cpp
+ * @file Core.cpp
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @brief
+ * @brief Catch2 unit tests for "StoneyDSP/Core.cpp"
  * @version 0.0.0
  * @date 2024-11-11
  *
@@ -35,17 +35,18 @@
  #include <catch2/catch_test_macros.hpp>
  #define STONEYDSP_HAS_CATCH2 1
 #elif __has_include("catch_amalgamated.hpp")
+ // portable copy
  #include "catch_amalgamated.hpp"
- #include "../dep/src/catch_amalgamated.cpp"
+ #include "../dep/Catch2/src/catch_amalgamated.cpp"
  #define STONEYDSP_HAS_CATCH2 1
 #else
  #warning "Can't find Catch2 headers for unit tests!"
 #endif
 
-#include "StoneyDSP.hpp"
+#include "StoneyDSP/Core.hpp"
 
-#ifndef STONEYDSP_HPP_INCLUDED
- #error "Couldn't find 'StoneyDSP.hpp'?"
+#ifndef STONEYDSP_CORE_HPP_INCLUDED
+ #error "Couldn't find 'StoneyDSP/Core.hpp'?"
 #endif
 
 #if STONEYDSP_HAS_CATCH2
@@ -126,4 +127,4 @@ TEST_CASE( "uint64_t", "[uint64_t]" ) {
 
 #endif // STONEYDSP_USING_INT64_2
 
-#endif
+#endif // STONEYDSP_HAS_CATCH2
