@@ -60,7 +60,7 @@ Create the distributable plugin package.
 make dist
 ```
 
-Your StoneyVCV package is created at dist/<slug>-<version>-<os>-<cpu>.vcvplugin.
+Your StoneyVCV package is created at `dist/<slug>-<version>-<os>-<cpu>.vcvplugin`.
 
 Or you may build, package, and install StoneyVCV to your Rack user folder in one step.
 
