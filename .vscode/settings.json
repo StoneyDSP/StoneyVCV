@@ -1,23 +1,37 @@
 {
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.trimAutoWhitespace": true,
+  "editor.insertSpaces": true,
   "editor.rulers": [80, 120, 160, 180, 200],
+  "makefile.configureOnOpen": false,
   "cmake.configureOnOpen": true,
   "cmake.configureOnEdit": false,
   "cmake.environment": {
     "RACK_DIR": "${env:RACK_DIR}",
-    "VCPKG_ROOT": "${env:VCPKG_ROOT}"
+    "VCPKG_ROOT": "${env:VCPKG_ROOT}",
+    "VCPKG_MANIFEST_MODE": "ON"
   },
+  "cmake.configureArgs": [
+    "-DVCPKG_ROOT=${env:VCPKG_ROOT}",
+    "-DRACK_DIR=${env:RACK_DIR}",
+    "-DVCPKG:MANIFEST_MODE:BOOL=${env:VCPKG_MANIFEST_MODE}",
+    "-DSTONEYDSP_BUILD_TESTS:BOOL=TRUE",
+    "-DSTONEYVCV_BUILD_TESTS:BOOL=FALSE"
+  ],
   "cmake.buildDirectory": "${workspaceFolder}/build",
-  "cmake.mergedCompileCommands": "${workspaceFolder}/build/compile_commands.merged.json",
   "cmake.loadCompileCommands": true,
   "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
   "C_Cpp.default.defines": [
-    "STONEYDSP_VERSION_MAJOR=0",
-    "STONEYDSP_VERSION_MINOR=1"
+    "STONEYVCV_VERSION_MAJOR=0",
+    "STONEYVCV_VERSION_MINOR=1"
   ],
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/include",
-    "${workspaceFolder}/dep/include",
+    "${workspaceFolder}/dep/StoneyDSP/include",
+    "${workspaceFolder}/dep/Catch2/include",
     "${env:RACK_DIR}/include",
     "${env:RACK_DIR}/dep/include"
   ],
@@ -25,6 +39,8 @@
   "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
   "C_Cpp.default.browse.path": [
     "${workspaceFolder}/include",
+    "${workspaceFolder}/dep/StoneyDSP/include",
+    "${workspaceFolder}/dep/Catch2/include",
     "${workspaceFolder}/dep/include",
     "${env:RACK_DIR}/include",
     "${env:RACK_DIR}/dep/include",
@@ -148,7 +164,7 @@
     "**.cmake": "cmake",
     ".editorconfig": "editorconfig",
     "config.guess": "shellscript",
-    "${workspaceFolder}/dep/src/StoneyDSP": "cpp",
+    "${workspaceFolder}/dep/StoneyDSP/src/StoneyDSP": "cpp",
     "string": "cpp",
     "cctype": "cpp",
     "clocale": "cpp",

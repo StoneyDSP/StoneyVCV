@@ -16,8 +16,9 @@
         "-std=c++11",
         "-Wsuggest-override",
         "-fPIC",
-        "-Iinclude",
-        "-Idep/include",
+        "-I${workspaceFolder}/include",
+        "-I${workspaceFolder}/dep/StoneyDSP/include",
+        "-I${workspaceFolder}/dep/Catch2/include",
         "-I{RACK_DIR}/include",
         "-I${RACK_DIR}/dep/include",
         "-fno-gnu-unique",
@@ -63,8 +64,9 @@
         "-std=c++11",
         "-stdlib=libc++",
         "-fPIC",
-        "-Iinclude",
-        "-Idep/include",
+        "-I${workspaceFolder}/include",
+        "-I${workspaceFolder}/dep/StoneyDSP/include",
+        "-I${workspaceFolder}/dep/Catch2/include",
         "-I{RACK_DIR}/include",
         "-I${RACK_DIR}/dep/include",
         "-MMD",
@@ -110,8 +112,9 @@
         "-std=c++11",
         "-Wsuggest-override",
         "-fPIC",
-        "-Iinclude",
-        "-Idep\\include",
+        "-I${workspaceFolder}\\include",
+        "-I${workspaceFolder}\\dep\\StoneyDSP\\include",
+        "-I${workspaceFolder}\\dep\\Catch2\\include",
         "-I{RACK_DIR}\\include",
         "-I${RACK_DIR}\\dep\\include",
         "-MMD",
@@ -142,7 +145,7 @@
       "cppStandard": "gnu++11",
       "configurationProvider": "ms-vscode.cmake-tools",
       "mergeConfigurations": true,
-      "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+      "compileCommands": "${workspaceFolder}\\build\\compile_commands.json"
     }
   ]
 }
