@@ -31,7 +31,7 @@
 
 #pragma once
 
-#define PLUGIN_HPP_INCLUDED
+#define PLUGIN_HPP_INCLUDED 1
 
 //==============================================================================
 
@@ -41,7 +41,9 @@
 
 #include <rack.hpp>
 
-#include "StoneyDSP/version.hpp"
+#include "StoneyDSP/Core.hpp"
+#include "StoneyDSP/SIMD.hpp"
+#include "StoneyDSP/DSP.hpp"
 
 //==============================================================================
 
@@ -71,9 +73,9 @@ extern rack::plugin::Plugin* pluginInstance;
 //==============================================================================
 
 // Declare each Model, defined in each module source file
-#if (STONEYDSP_VERSION_MAJOR >= 0) && (STONEYDSP_VERSION_MINOR >= 1)
+#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 1)
  // EXPERIMENTAL MODULES HERE...
-#elif (STONEYDSP_VERSION_MAJOR) >= 0 && (STONEYDSP_VERSION_MINOR >= 0)
+#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0)
  #warning "No modules found..."
 #endif
 
