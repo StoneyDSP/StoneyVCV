@@ -87,6 +87,8 @@ jobs:
         -DVCPG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
+        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
@@ -104,7 +106,7 @@ jobs:
         --target Tests_StoneyVCV
         -j3
 
-    - name: Run StoneyVCV Tests
+    - name: Run Tests
       run: >-
         cd ${{ env.BUILD_DIR }} &&
         ctest
