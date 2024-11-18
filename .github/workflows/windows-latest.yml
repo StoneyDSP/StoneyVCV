@@ -43,10 +43,6 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Ninja
-      shell: bash
-      run: choco install ninja sccache
-
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
@@ -122,19 +118,22 @@ jobs:
         --compile-no-warning-as-error
         --no-warn-unused-cli
         
-    - name: Build Tests
-      shell: msys2 {0}
+    - name: Build StoneyDSP Tests
       run: >-
         cmake
-        --build
-        ./build
-        --target Tests
+        --build ${{ env.BUILD_DIR }}
+        --target Tests_StoneyDSP
+        -j3
+
+    - name: Build StoneyVCV Tests
+      run: >-
+        cmake
+        --build ${{ env.BUILD_DIR }}
+        --target Tests_StoneyVCV
         -j3
 
     - name: Test
       shell: msys2 {0}
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: >-
         cd build &&
         ctest
