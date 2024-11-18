@@ -1,6 +1,6 @@
 /***************************************************************************//**
- * @file version.hpp
- * @author Nathan J. Hood <nathanjhood@googlemail.com>
+ * @file DSP.hpp
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @brief
  * @version 0.0.0
  * @date 2024-11-11
@@ -29,41 +29,57 @@
  *
  ******************************************************************************/
 
+//==============================================================================
+
 #pragma once
 
-#define STONEYDSP_VERSION_HPP_INCLUDED
+#define STONEYDSP_DSP_HPP_INCLUDED 1
+
+//==============================================================================
+
+#ifndef STONEYDSP_CORE_HPP_INCLUDED
+ #include "StoneyDSP/Core.hpp"
+#endif
+
+#ifndef STONEYDSP_SIMD_HPP_INCLUDED
+ #include "StoneyDSP/SIMD.hpp"
+#endif
+
+//==============================================================================
+
+namespace StoneyDSP {
+/** @addtogroup StoneyDSP
+ *  @{
+ */
 
 //==============================================================================
 
 /**
- * Current StoneyDSP version number.
- * See also `StoneyDSP::SystemStats::getStoneyDSPVersion()` for a string
- * version.
+ * @brief The `DSP` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @namespace StoneyDSP
+ *
+ */
+namespace DSP {
+/** @addtogroup DSP
+ *  @{
  */
 
-#ifndef STONEYDSP_VERSION_MAJOR
- #define STONEYDSP_VERSION_MAJOR 0
-#endif
-#ifndef STONEYDSP_VERSION_MINOR
- #define STONEYDSP_VERSION_MINOR 0
-#endif
-#ifndef STONEYDSP_BUILDNUMBER
- #define STONEYDSP_BUILDNUMBER "97523734eecfd71a62c33d8875a80bc91b493c76"
-#endif
 
-#ifndef STONEYDSP_VERSION
- /**
-  * Current StoneyDSP Library version number.
-  *
-  * - Bits 16 to 32 = major version.
-  * - Bits 8 to 16 = minor version.
-  * - Bits 0 to 8 = point release.
-  *
-  * See also `StoneyDSP::SystemStats::getStoneyDSPVersion()` for a string
-  * version.
-  */
- #define STONEYDSP_VERSION (                                                   \
-     (STONEYDSP_VERSION_MAJOR << 16) +                                         \
-     (STONEYDSP_VERSION_MINOR << 8 ) +                                         \
-      STONEYDSP_BUILDNUMBER)
-#endif
+//==============================================================================
+
+  /// @} group DSP
+} // namespace DSP
+
+//==============================================================================
+
+  /// @} group StoneyDSP
+} // namespace StoneyDSP
+
+//==============================================================================
+
+#include "StoneyDSP/DSP/Gain.hpp"
+#include "StoneyDSP/DSP/Oscillator.hpp"
+
+//==============================================================================
