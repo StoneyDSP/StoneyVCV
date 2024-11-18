@@ -1,6 +1,6 @@
 # StoneyVCV
 
-StoneyDSP modules for [VCV Rack](https://vcvrack.com/).
+StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 
 ---
 [![windows](https://github.com/StoneyDSP/StoneyVCV/actions/workflows/windows-latest.yml/badge.svg)](https://github.com/StoneyDSP/StoneyVCV/actions/workflows/windows-latest.yml)
@@ -12,10 +12,11 @@ StoneyDSP modules for [VCV Rack](https://vcvrack.com/).
 ## Contents
 
 - [StoneyVCV](#stoneyvcv)
-  - [Building StoneyVCV for VCV Rack 2](#building-stoneyvcv-for-vcv-rack-2)
+  - [Build and Install StoneyVCV for VCV Rack 2 with Make](#build-and-install-stoneyvcv-for-vcv-rack-2-with-make)
+  - [Develop, Test and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2](#develop-test-and-deploy-stoneyvcv-for-vcv-rack-2-with-cmake-and-catch2)
   - [Further Reading](#further-reading)
 
-## Building StoneyVCV for VCV Rack 2
+## Build and Install StoneyVCV for VCV Rack 2 with Make
 
 Complete the [Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) section of the [VCV Rack Plugin Development guide](https://vcvrack.com/manual/Building).
 
@@ -33,20 +34,7 @@ Download or clone the StoneyVCV source code, e.g.
 git clone https://github.com/StoneyDSP/StoneyVCV.git
 ```
 
-Clone the git repo’s submodules.
-
-```shell
-cd StoneyDSP
-git submodule update --init --recursive
-```
-
 If using the Rack SDK, unzip it and set the `RACK_DIR` environment variable by running `export RACK_DIR=<Rack SDK dir>`.
-
-Build StoneyVCV dependencies. (Some modules don’t require this step.)
-
-```shell
-make dep
-```
 
 Build StoneyVCV.
 
@@ -60,7 +48,7 @@ Create the distributable plugin package.
 make dist
 ```
 
-Your StoneyVCV package is created at `dist/<slug>-<version>-<os>-<cpu>.vcvplugin`.
+The StoneyVCV package is created at `dist/<slug>-<version>-<os>-<cpu>.vcvplugin`.
 
 Or you may build, package, and install StoneyVCV to your Rack user folder in one step.
 
@@ -70,12 +58,40 @@ make install
 
 ---
 
-## Building the tests for Catch2 with CMake
+## Develop, Test, and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2
+
+Note: you may need [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2. StoneyVCV is built and tested using the (Rack 2.5.2 SDK for all platforms)[]. We recommend setting the `VCPKG_ROOT` and `RACK_DIR` environment variables in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct envvironment.
+
+To configure the [StoneyDSP Library](https://github.com/StoneyDSP/StoneyDSP) with CMake and vcpkg:
+
+```shell
+cmake \
+  -S . \
+  -B build \
+  -DVCPKG_ROOT=${VCPKG_ROOT}
+  -DRACK_DIR=${RACK_DIR}
+  -DSTONEYDSP_BUILD_TESTS=TRUE
+```
+
+To build the tests executable:
+
+```shell
+cmake \
+  --build
+  --target Tests_StoneyDSP
+```
 
 To run unit tests with [Catch2](https://github.com/catch-org/catch2) and CTest:
 
 ```shell
-make test
+cd build
+```
+
+```shell
+ctest \
+  --rerun-failed \
+  --output-on-failure \
+  --verbose
 ```
 
 [See the documentation](https://github.com/StoneyDSP/StoneyVCV/blob/production/docs/BuildingTheTestsForCatch2WithCMake.md) for more detailed information.
