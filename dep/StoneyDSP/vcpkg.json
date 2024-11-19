@@ -14,10 +14,12 @@
       "platform": "osx & arm"
     },
     {
-      "name": "vcpkg-cmake"
+      "name": "vcpkg-cmake",
+      "host": true
     },
     {
-      "name": "vcpkg-cmake-config"
+      "name": "vcpkg-cmake-config",
+      "host": true
     }
   ]
 }
