@@ -73,11 +73,27 @@ set_target_properties(VCVRack::RackSDK PROPERTIES
     COMPATIBLE_INTERFACE_STRING "INTERFACE_VCVRACK_RACKSDK_MAJOR_VERSION"
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include;${_IMPORT_PREFIX}/dep/include"
-    INTERFACE_LINK_OPTIONS "-fno-gnu-unique;-static-libstdc++;-static-libgcc"
+    # INTERFACE_LINK_OPTIONS "-fno-gnu-unique;-static-libstdc++;-static-libgcc"
     IMPORTED_LOCATION "${_IMPORT_PREFIX}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME "TRUE"
 )
-
+if(UNIX AND NOT APPLE)
+    set_target_properties(VCVRack::RackSDK PROPERTIES
+        ## This prevents static variables in the DSO (dynamic shared
+        ## object) from being preserved after dlclose().
+        INTERFACE_LINK_OPTIONS "-fno-gnu-unique;-static-libstdc++;-static-libgcc"
+    )
+endif()
+if(APPLE)
+    set_target_properties(VCVRack::RackSDK PROPERTIES
+        INTERFACE_LINK_OPTIONS "-undefined dynamic_lookup"
+    )
+endif()
+if(WIN32)
+    set_target_properties(VCVRack::RackSDK PROPERTIES
+        INTERFACE_LINK_OPTIONS "-municode"
+    )
+endif()
 # Load information for each installed configuration.
 file(GLOB _cmake_config_files "${CMAKE_CURRENT_LIST_DIR}/VCVRackRackSDKTargets-*.cmake")
 foreach(_cmake_config_file IN LISTS _cmake_config_files)
