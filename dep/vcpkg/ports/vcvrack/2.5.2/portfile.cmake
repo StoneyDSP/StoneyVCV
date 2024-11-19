@@ -21,20 +21,15 @@ vcpkg_backup_env_variables(
     RACK_DIR
 )
 
-# message(FATAL_ERROR "$ENV{RACK_DIR}")
 
-vcpkg_configure_cmake(
+vcpkg_cmake_configure(
   SOURCE_PATH "${SOURCE_PATH}"
-  # PREFER_NINJA
   OPTIONS -DRACK_DIR="$ENV{RACK_DIR}"
 )
-vcpkg_install_cmake()
+vcpkg_cmake_install()
 vcpkg_cmake_config_fixup(
     PACKAGE_NAME VCVRack
     CONFIG_PATH "lib/cmake/VCVRack"
-    # [TOOLS_PATH <tools/${PORT}>]
-    # [DO_NOT_DELETE_PARENT_CONFIG_PATH]
-    # [NO_PREFIX_CORRECTION]
 )
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
