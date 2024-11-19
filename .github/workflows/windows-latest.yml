@@ -118,7 +118,7 @@ jobs:
         -DVCPKG_OVERLAY_PORTS=./dep/vcpkg/ports
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
@@ -127,7 +127,7 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests_StoneyDSP
+        --target Tests_StoneyVCV
         -j3
 
     - name: Test

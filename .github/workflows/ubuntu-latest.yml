@@ -82,7 +82,7 @@ jobs:
         -DVCPKG_OVERLAY_PORTS=${{ github.workspace }}/dep/vcpkg/ports
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         --compile-no-warning-as-error
         --no-warn-unused-cli
 

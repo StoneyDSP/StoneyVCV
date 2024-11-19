@@ -90,7 +90,7 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
