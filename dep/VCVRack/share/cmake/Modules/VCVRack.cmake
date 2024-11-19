@@ -260,6 +260,12 @@ target_include_directories(RackSDK
 target_compile_features(RackSDK INTERFACE cxx_std_11)
 target_compile_features(RackSDK INTERFACE c_std_11)
 
+if(APPLE)
+    target_link_options(RackSDK
+        INTERFACE
+            "-undefined dynamic_lookup"
+    )
+endif()
 if(UNIX AND NOT APPLE)
     target_link_options(RackSDK
         INTERFACE
