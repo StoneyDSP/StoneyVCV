@@ -20,7 +20,7 @@ env:
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   VCPKG_MANIFEST_MODE: ON
   VCPKG_ROOT: "vcpkg"
-  VCPKG_OVERLAY_PORTS: dep/vcpkg/ports
+  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\dep\vcpkg\ports
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
