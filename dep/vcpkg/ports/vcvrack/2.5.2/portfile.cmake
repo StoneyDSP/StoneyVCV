@@ -16,9 +16,17 @@ get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
 
 set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack")
 
+vcpkg_backup_env_variables(
+    VARS _RACK_DIR
+    RACK_DIR
+)
+
+# message(FATAL_ERROR "$ENV{RACK_DIR}")
+
 vcpkg_configure_cmake(
   SOURCE_PATH "${SOURCE_PATH}"
   # PREFER_NINJA
+  OPTIONS -DRACK_DIR="$ENV{RACK_DIR}"
 )
 vcpkg_install_cmake()
 vcpkg_cmake_config_fixup(
