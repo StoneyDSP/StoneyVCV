@@ -1,0 +1,23 @@
+{
+  "name": "stoneydsp",
+  "version": "0.0.0",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "catch2"
+    },
+    {
+      "name": "simde"
+    },
+    {
+      "name": "sse2neon",
+      "platform": "osx & arm"
+    },
+    {
+      "name": "vcpkg-cmake"
+    },
+    {
+      "name": "vcpkg-cmake-config"
+    }
+  ]
+}
