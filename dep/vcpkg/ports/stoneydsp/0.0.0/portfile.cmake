@@ -11,11 +11,6 @@
 #   PREFER_NINJA
 # )
 
-## Required...
-if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
-    message(FATAL_ERROR "You need to set $RACK_DIR")
-endif()
-
 function(get_this_dir)
     set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
 endfunction()
