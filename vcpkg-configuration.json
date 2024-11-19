@@ -1,15 +1,31 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
   "default-registry": {
-    "kind": "git",
-    "baseline": "66b4b34d99ab272fcf21f2bd12b616e371c6bb31",
-    "repository": "https://github.com/microsoft/vcpkg"
+    "kind": "filesystem",
+    "path": "dep/vcpkg",
+    "baseline": "2024-10-29"
   },
   "registries": [
+    {
+      "kind": "git",
+      "baseline": "66b4b34d99ab272fcf21f2bd12b616e371c6bb31",
+      "repository": "https://github.com/microsoft/vcpkg",
+      "packages": [
+        "7zip",
+        "catch2",
+        "simde",
+        "sse2neon",
+        "vcpkg-cmake",
+        "vcpkg-cmake-config"
+      ]
+    },
     {
       "kind": "artifact",
       "location": "https://github.com/microsoft/vcpkg-ce-catalog/archive/refs/heads/main.zip",
       "name": "microsoft"
     }
+  ],
+  "overlay-ports": [
+    "dep/vcpkg/ports"
   ]
 }
