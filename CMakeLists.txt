@@ -1,5 +1,3 @@
-#!/usr/bin/env cmake
-
 ## CMake Support...
 cmake_minimum_required(VERSION 3.14...3.29 FATAL_ERROR)
 
@@ -34,23 +32,25 @@ set(STONEYDSP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep/StoneyDSP")
 ## Locate CMake Modules...
 list(APPEND CMAKE_MODULE_PATH
     "${STONEYDSP_DIR}/share/cmake/Modules"
+    "${CMAKE_CURRENT_LIST_DIR}/dep/VCVRack/share/cmake/Modules"
     "${CMAKE_CURRENT_LIST_DIR}/dep/Catch2/share/cmake/Modules"
     "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules"
 )
+list(APPEND CMAKE_PREFIX_PATH
+    "${STONEYDSP_DIR}/share/cmake/Modules"
+    "${CMAKE_CURRENT_LIST_DIR}/dep/VCVRack/share/cmake/Modules"
+)
 
-if(NOT DEFINED STONEYVCV_VERSION_MAJOR)
-    set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
-endif()
-if(NOT DEFINED STONEYVCV_VERSION_MINOR)
-set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
-endif()
-
-project(STONEYVCV)
+#[==[STONEYVCV]==]
+project(STONEYVCV VERSION 2.1.0.0)
 
 #[==[Set StoneyDSP Library ABI version to use]==]
 set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
 set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
-include(StoneyDSP)
+# include(StoneyDSP)
+find_package(StoneyDSP 0.0 COMPONENTS Core SIMD DSP CONFIG REQUIRED)
+# include(VCVRack)
+find_package(VCVRack 2.5.2 COMPONENTS Rack RackSDK CONFIG REQUIRED)
 
 if(WIN32 AND NOT DEFINED CMAKE_EXTRA_GENERATOR)
     set(CMAKE_EXTRA_GENERATOR "mingw32-make")
@@ -62,19 +62,26 @@ enable_language(CXX)
 set(PLUGIN_HPP "plugin.hpp")
 set(PLUGIN_CPP "plugin.cpp")
 if(WIN32)
-    set(PLUGIN_LIB "plugin.dll")
+    set(PLUGIN_LIB_FILE_EXTENSION ".dll")
 elseif(UNIX AND NOT APPLE)
-    set(PLUGIN_LIB "plugin.dylib")
+    set(PLUGIN_LIB_FILE_EXTENSION ".dylib")
 else() # LINUX
-    set(PLUGIN_LIB "plugin.so")
+    set(PLUGIN_LIB_FILE_EXTENSION ".so")
 endif()
+set(PLUGIN_LIB "plugin${PLUGIN_LIB_FILE_EXTENSION}")
 
 configure_file("include/${PLUGIN_HPP}" "include/${PLUGIN_HPP}")
 # configure_file("include/VCA.hpp" "include/VCA.hpp")
 # configure_file("include/VCO.hpp" "include/VCO.hpp")
 
+set(STONEYVCV_TARGETS)
+
+#[==[StoneyVCV]==]
 add_library(StoneyVCV SHARED EXCLUDE_FROM_ALL)
 add_library(StoneyDSP::StoneyVCV ALIAS StoneyVCV)
+
+set_target_properties(StoneyVCV PROPERTIES VERSION 2.1.0)
+set_target_properties(StoneyVCV PROPERTIES SOVERSION 2.1.0)
 
 target_include_directories(StoneyVCV
     PUBLIC
@@ -96,7 +103,7 @@ target_sources(StoneyVCV
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
     FILES
-        # include/plugin.hpp
+        #[==[include/plugin.hpp]==]
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}>
         $<INSTALL_INTERFACE:include/${PLUGIN_HPP}>
 )
@@ -118,6 +125,8 @@ set_target_properties(StoneyVCV
 
 target_link_libraries(StoneyVCV
     PRIVATE
+        VCVRack::Rack
+        VCVRack::RackSDK
         StoneyDSP::Core
         StoneyDSP::SIMD
         StoneyDSP::DSP
@@ -125,68 +134,98 @@ target_link_libraries(StoneyVCV
 
 target_link_directories(StoneyVCV
     PUBLIC
+        ## Link to the Rack (or Rack-SDK) directory containing the Rack binaries
         "${RACK_DIR}"
 )
-target_link_options(StoneyVCV
-    PUBLIC
-        "-lRack"
-)
+# target_link_options(StoneyVCV
+#     PUBLIC
+#         ## Link to Rack itself
+#         "-lRack"
+# )
+if(UNIX)
+    if(APPLE)
+        target_link_options(StoneyVCV
+            PUBLIC
+                "-undefined dynamic_lookup"
+        )
+    else() # If we're Linux... (assumes GCC, as per Rack)
+        target_compile_options(StoneyVCV
+            PUBLIC
+                ## This prevents static variables in the DSO (dynamic shared
+                ## object) from being preserved after dlclose().
+                "-fno-gnu-unique"
 
-# Signal a basic C++11 feature to require C++11.
-target_compile_features(StoneyVCV INTERFACE cxx_nullptr)
+        )
+        target_link_options(StoneyVCV
+            PUBLIC
+                ## This prevents static variables in the DSO (dynamic shared
+                ## object) from being preserved after dlclose().
+                "-fno-gnu-unique"
+                ## When Rack loads a plugin, it symlinks /tmp/Rack2 to its
+                ## system dir, so the plugin can link to libRack.
+                "-Wl,-rpath=/tmp/Rack2"
+                ## Since the plugin's compiler could be a different version
+                ## than Rack's compiler, link libstdc++ and libgcc statically
+                ## to avoid ABI issues.
+                "-static-libstdc++"
+                "-static-libgcc"
+        )
+    endif() # APPLE / LINUX
+endif()
+if(WIN32)
+    target_link_options(StoneyVCV
+        PUBLIC
+            "-static-libstdc++"
+    )
+endif()
 
-# if(NOT DEFINED CMAKE_MAKE_PROGRAM)
-#     set(CMAKE_MAKE_PROGRAM "make" CACHE STRING "" FORCE)
-    set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
-    set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
-#     if(NOT DEFINED ENV{CI})
-#         set(CMAKE_COLOR_MAKEFILE TRUE CACHE BOOL "" FORCE)
-#     endif()
-# endif()
+set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
+set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
 
+#[==[plugin]==]
 add_custom_target(plugin ALL
     COMMAND "make"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    BYPRODUCTS "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-    SOURCES "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}" "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+    BYPRODUCTS
+        "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+    SOURCES
+        "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
+        "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
     JOB_SERVER_AWARE TRUE
-    # DEPENDS StoneyVCV
+    DEPENDS StoneyVCV
     USES_TERMINAL
 )
 
+#[==[dist]==]
 add_custom_target(dist
     COMMAND "make" "dist"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    BYPRODUCTS "${PROJECT_SOURCE_DIR}/dist"
-    SOURCES "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+    BYPRODUCTS
+        "${PROJECT_SOURCE_DIR}/dist"
+    SOURCES
+        "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
     JOB_SERVER_AWARE TRUE
     DEPENDS plugin
     USES_TERMINAL
 )
 
+#[==[clean]==] # Not supported...
 # add_custom_target(clean
 #     COMMAND "make" "clean"
 #     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 #     BYPRODUCTS "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-#     SOURCES "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}" "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+#     SOURCES
+#         "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
+#         "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
 #     JOB_SERVER_AWARE TRUE
 #     USES_TERMINAL
 # )
 
 ## Only build tests if this project is the top-level project...
+#[==[Tests_StoneyVCV]==]
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     find_package(Catch2 3 REQUIRED)
-
-    # Include(FetchContent)
-
-    # FetchContent_Declare(
-    #   Catch2
-    #   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    #   GIT_TAG        v3.4.0 # or a later release
-    # )
-
-    # FetchContent_MakeAvailable(Catch2)
 
     ## These tests can use the Catch2-provided main
     add_executable(Tests_StoneyVCV)
@@ -205,9 +244,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
-            # StoneyDSP::Core
-            # StoneyDSP::SIMD
-            # StoneyDSP::DSP
+            VCVRack::RackSDK
+            StoneyDSP::Core
+            StoneyDSP::SIMD
+            StoneyDSP::DSP
             StoneyDSP::StoneyVCV
             Catch2::Catch2WithMain
     )
@@ -222,5 +262,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     include(CTest)
     include(Catch)
     catch_discover_tests(Tests_StoneyVCV)
+
+    list(APPEND STONEYVCV_TARGETS Tests_StoneyVCV)
 
 endif()
