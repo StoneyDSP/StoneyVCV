@@ -29,6 +29,7 @@ env:
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "mac-x64+arm64"
   RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+  DYLD_LIBRARY_PATH: "${{ github.workspace }}/dep/Rack-SDK:${env.DYLD_LIBRARY_PATH}"
 
 jobs:
   macos:
