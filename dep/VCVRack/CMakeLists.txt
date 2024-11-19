@@ -353,7 +353,7 @@ configure_package_config_file (
 # generate the version file for the cmake config file
 write_basic_package_version_file (
 	"${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
-	VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_TWEAK}
+	VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_PATCH}
 	COMPATIBILITY AnyNewerVersion
 )
 ## pass our module along
@@ -369,3 +369,4 @@ install(
 )
 
 unset(_version)
+unset(_VCVRACK_SCRIPT)
