@@ -23,7 +23,7 @@ set(SOURCE_PATH "${__stoneyvcv_dir}/dep/StoneyDSP")
 
 vcpkg_configure_cmake(
   SOURCE_PATH "${SOURCE_PATH}"
-  PREFER_NINJA
+  # PREFER_NINJA
 )
 vcpkg_install_cmake()
 vcpkg_cmake_config_fixup(
