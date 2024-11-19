@@ -6,17 +6,28 @@
 #   HEAD_REF main
 # )
 
-# vcpkg_configure_cmake(
-#   SOURCE_PATH "${SOURCE_PATH}"
-#   PREFER_NINJA
-# )
+function(get_this_dir)
+    set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
+endfunction()
+
+get_this_dir()
+
+get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
+
+set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack")
 
 vcpkg_configure_cmake(
-  SOURCE_PATH "dep/VCVRack"
+  SOURCE_PATH "${SOURCE_PATH}"
   # PREFER_NINJA
 )
 vcpkg_install_cmake()
-vcpkg_fixup_cmake_targets()
+vcpkg_cmake_config_fixup(
+    PACKAGE_NAME VCVRack
+    CONFIG_PATH "lib/cmake/VCVRack"
+    # [TOOLS_PATH <tools/${PORT}>]
+    # [DO_NOT_DELETE_PARENT_CONFIG_PATH]
+    # [NO_PREFIX_CORRECTION]
+)
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 

@@ -16,12 +16,28 @@ if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     message(FATAL_ERROR "You need to set $RACK_DIR")
 endif()
 
+function(get_this_dir)
+    set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
+endfunction()
+
+get_this_dir()
+
+get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
+
+set(SOURCE_PATH "${__stoneyvcv_dir}/dep/StoneyDSP")
+
 vcpkg_configure_cmake(
-  SOURCE_PATH "dep/StoneyDSP"
+  SOURCE_PATH "${SOURCE_PATH}"
   PREFER_NINJA
 )
 vcpkg_install_cmake()
-vcpkg_fixup_cmake_targets()
+vcpkg_cmake_config_fixup(
+    PACKAGE_NAME StoneyDSP
+    CONFIG_PATH "lib/cmake/StoneyDSP"
+    # [TOOLS_PATH <tools/${PORT}>]
+    # [DO_NOT_DELETE_PARENT_CONFIG_PATH]
+    # NO_PREFIX_CORRECTION
+)
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 
