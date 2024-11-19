@@ -90,7 +90,7 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests_StoneyDSP
+        --target Tests_StoneyVCV
         -j3
 
     - name: Test
