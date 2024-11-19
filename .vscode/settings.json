@@ -15,10 +15,11 @@
   },
   "cmake.configureArgs": [
     "-DVCPKG_ROOT=${env:VCPKG_ROOT}",
+    "-DVCPKG_OVERLAY_PORTS=${workspaceFolder}/dep/vcpkg/ports",
     "-DRACK_DIR=${env:RACK_DIR}",
     "-DVCPKG:MANIFEST_MODE:BOOL=${env:VCPKG_MANIFEST_MODE}",
     "-DSTONEYDSP_BUILD_TESTS:BOOL=TRUE",
-    "-DSTONEYVCV_BUILD_TESTS:BOOL=FALSE"
+    "-DSTONEYVCV_BUILD_TESTS:BOOL=TRUE"
   ],
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.loadCompileCommands": true,
