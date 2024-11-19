@@ -20,6 +20,7 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "lin-x64"
@@ -78,6 +79,7 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-linux
         -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
         -DVCPKG_MANIFEST_MODE:STRING=ON
+        -DVCPKG_OVERLAY_PORTS:${{ github.workspace }}/dep/vcpkg/ports
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
         -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE

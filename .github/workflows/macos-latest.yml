@@ -18,6 +18,7 @@ env:
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_OSX_ARCHITECTURES: "x86_64"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   BUILD_TYPE: Release
   BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,6 +81,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
         -DRACK_DIR=${{ env.RACK_DIR }}
         -DVCPKG_MANIFEST_MODE:STRING=ON
+        -DVCPKG_OVERLAY_PORTS:${{ github.workspace }}/dep/vcpkg/ports
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache

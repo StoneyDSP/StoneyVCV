@@ -20,6 +20,7 @@ env:
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   VCPKG_MANIFEST_MODE: ON
   VCPKG_ROOT: "vcpkg"
+  VCPKG_OVERLAY_PORTS: dep/vcpkg/ports
   BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,7 +28,6 @@ env:
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "win-x64"
   RACK_DIR: dep/Rack-SDK
-  IPP_DIR: C:\Program Files (x86)\Intel\oneAPI\ipp\latest\lib\cmake\ipp
   MSYSTEM: "MINGW64"
 
 jobs:
@@ -115,6 +115,7 @@ jobs:
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
+        -DVCPKG_OVERLAY_PORTS:./dep/vcpkg/ports
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
         -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
