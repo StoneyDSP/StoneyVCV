@@ -319,11 +319,11 @@ list(APPEND VCVRACK_TARGETS Rack)
 
 ##
 
-export (
-  TARGETS ${VCVRACK_TARGETS}
-  FILE "share/cmake/VCVRackTargets.cmake"
-  NAMESPACE VCVRack::
-)
+# export (
+#   TARGETS ${VCVRACK_TARGETS}
+#   FILE "share/cmake/VCVRackTargets.cmake"
+#   NAMESPACE VCVRack::
+# )
 
 include (CMakePackageConfigHelpers)
 file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in" [==[
