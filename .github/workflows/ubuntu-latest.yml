@@ -79,7 +79,7 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-linux
         -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
         -DVCPKG_MANIFEST_MODE:STRING=ON
-        -DVCPKG_OVERLAY_PORTS:${{ github.workspace }}/dep/vcpkg/ports
+        -DVCPKG_OVERLAY_PORTS=${{ github.workspace }}/dep/vcpkg/ports
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
         -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE

@@ -115,7 +115,7 @@ jobs:
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
-        -DVCPKG_OVERLAY_PORTS:./dep/vcpkg/ports
+        -DVCPKG_OVERLAY_PORTS=./dep/vcpkg/ports
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
         -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
         -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
