@@ -242,6 +242,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
             # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
             # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
     )
+    target_link_directories(Tests_StoneyVCV
+        PRIVATE
+            "${RACK_DIR}"
+    )
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
             VCVRack::RackSDK
