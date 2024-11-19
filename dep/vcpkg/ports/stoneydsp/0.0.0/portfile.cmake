@@ -15,9 +15,6 @@
 if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     message(FATAL_ERROR "You need to set $RACK_DIR")
 endif()
-if(DEFINED CMAKE_CURRENT_LIST_DIR)
-    message(FATAL_ERROR "You r fukked $ENV{PWD}")
-endif()
 
 vcpkg_configure_cmake(
   SOURCE_PATH "dep/StoneyDSP"
