@@ -1,12 +1,16 @@
 cmake_minimum_required(VERSION 3.14...3.29 FATAL_ERROR)
 
-# project(VCVRack VERSION 2.5.2 LANGUAGES C;CXX)
+set(_version 2.5.2)
 
-# if(NOT DEFINED ENV{RACK_DIR})
-#     message(FATAL_ERROR "RACK_DIR is not defined")
-# else()
-#     set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "VCV Rack SDK directory" FORCE)
-# endif()
+## Required...
+if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+    message(FATAL_ERROR "You need to set $RACK_DIR")
+endif()
+
+## Take RACK_DIR from env, if not passed as -DRACK_DIR=...
+if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+    set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
+endif()
 
 #[=============================================================================[
 Internal helper (borrowed from CMakeRC).
@@ -48,25 +52,6 @@ endif()
 if(_VCV_RACK_PLUGIN_JSON_VERSION STREQUAL "")
     message(FATAL_ERROR "plugin.json#version is not defined")
 endif()
-
-# if(NOT DEFINED DISTRIBUTABLES)
-#     set(DISTRIBUTABLES "")
-# endif()
-# list(APPEND DISTRIBUTABLES "plugin.json")
-
-# if(NOT DEFINED FLAGS)
-#     set(FLAGS "")
-# endif()
-# list(APPEND FLAGS "-fPIC")
-# list(APPEND FLAGS "-I${RACK_DIR}/include")
-# list(APPEND FLAGS "-I${RACK_DIR}/dep/include")
-
-# if(NOT DEFINED LDFLAGS)
-#     set(LDFLAGS "")
-# endif()
-# list(APPEND FLAGS "-shared")
-# list(APPEND FLAGS "-L${RACK_DIR}")
-# list(APPEND FLAGS "-lRack")
 
 #[=============================================================================[
 Exposes a user-side helper function for creating a VCV Rack Plugin library,
@@ -236,3 +221,145 @@ function(vcv_rack_plugin_add_sources name)
     endforeach()
 
 endfunction()
+
+##
+
+set(_VCVRACK_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to current 'VCVRack.cmake' script")
+
+set(VCVRACK_TARGETS)
+
+#[==[Rack SDK]==]
+add_library(RackSDK SHARED IMPORTED GLOBAL)
+add_library(VCVRack::RackSDK ALIAS RackSDK)
+
+set_target_properties(RackSDK PROPERTIES VERSION 2.5.2)
+set_target_properties(RackSDK PROPERTIES SOVERSION 2.5.2)
+set_target_properties(RackSDK PROPERTIES INTERFACE_VCVRACK_RACKSDK_MAJOR_VERSION 2)
+set(VCVRACK_RACK_LIB_FILE_EXTENSION)
+if(APPLE)
+    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dylib")
+elseif(UNIX AND NOT APPLE) # Linux
+    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".so")
+endif()
+if(WIN_32)
+    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dll.a")
+endif()
+set_property(
+    TARGET RackSDK
+    PROPERTY
+    IMPORTED_LOCATION "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
+)
+
+target_include_directories(RackSDK
+    INTERFACE
+        "${RACK_DIR}/include"
+        "${RACK_DIR}/dep/include"
+)
+
+## Require C++11.
+target_compile_features(RackSDK INTERFACE cxx_std_11)
+target_compile_features(RackSDK INTERFACE c_std_11)
+
+if(UNIX AND NOT APPLE)
+    target_link_options(RackSDK
+        INTERFACE
+            ## This prevents static variables in the DSO (dynamic shared
+            ## object) from being preserved after dlclose().
+            "-fno-gnu-unique"
+            "-static-libstdc++" "-static-libgcc"
+    )
+endif()
+if(WIN32)
+    target_link_options(RackSDK
+        INTERFACE
+            "-municode"
+    )
+endif()
+set_target_properties(RackSDK
+    PROPERTIES
+    LINKER_LANGUAGE CXX
+)
+
+list(APPEND VCVRACK_TARGETS RackSDK)
+
+#[==[Rack]==]
+add_executable(Rack IMPORTED GLOBAL)
+add_executable(VCVRack::Rack ALIAS Rack)
+
+set_target_properties(Rack PROPERTIES VERSION 2.5.2)
+set_target_properties(Rack PROPERTIES SOVERSION 2.5.2)
+set_target_properties(Rack PROPERTIES INTERFACE_VCVRACK_RACK_MAJOR_VERSION 2)
+set_property(
+    TARGET Rack
+    PROPERTY
+    IMPORTED_LOCATION "${RACK_DIR}/Rack"
+)
+set_property(
+    TARGET Rack
+    PROPERTY
+    ENABLE_EXPORTS TRUE
+)
+set_target_properties(Rack
+    PROPERTIES
+        PREFIX ""
+        SUFFIX ""
+        LIBRARY_OUTPUT_NAME "Rack"
+        RUNTIME_OUTPUT_DIRECTORY "${RACK_DIR}"
+)
+target_link_libraries(Rack
+    INTERFACE
+        VCVRack::RackSDK
+)
+set_target_properties(Rack
+    PROPERTIES
+    LINKER_LANGUAGE CXX
+)
+
+list(APPEND VCVRACK_TARGETS Rack)
+
+##
+
+export (
+  TARGETS ${VCVRACK_TARGETS}
+  FILE "share/cmake/VCVRackTargets.cmake"
+  NAMESPACE VCVRack::
+)
+
+include (CMakePackageConfigHelpers)
+file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in" [==[
+@PACKAGE_INIT@
+
+include (${CMAKE_CURRENT_LIST_DIR}/VCVRackTargets.cmake)
+
+check_required_components (VCVRack)
+
+# Tell the user what to do
+message(STATUS "Linking with VCV Rack SDK")
+]==])
+
+# create cmake config file
+configure_package_config_file (
+    "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
+  INSTALL_DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+)
+# generate the version file for the cmake config file
+write_basic_package_version_file (
+	"${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
+	VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_TWEAK}
+	COMPATIBILITY AnyNewerVersion
+)
+## pass our module along
+file(COPY "${_VCVRACK_SCRIPT}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake")
+
+# install config files
+install(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+)
+
+unset(_version)
