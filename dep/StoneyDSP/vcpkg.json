@@ -2,24 +2,25 @@
   "name": "stoneydsp",
   "version": "0.0.0",
   "license": "MIT",
-  "dependencies": [
-    {
-      "name": "catch2"
+  "description": "The StoneyDSP C++ Audio Library",
+  "homepage": "https://github.com/StoneyDSP/StoneyDSP",
+  "features": {
+    "simd": {
+      "description": "SIMD support",
+      "dependencies": [
+        {
+          "name": "simde"
+        }
+      ]
     },
-    {
-      "name": "simde"
-    },
-    {
-      "name": "sse2neon",
-      "platform": "osx & arm"
-    },
-    {
-      "name": "vcpkg-cmake",
-      "host": true
-    },
-    {
-      "name": "vcpkg-cmake-config",
-      "host": true
+    "test": {
+      "description": "Test support",
+      "dependencies": [
+        {
+          "name": "catch2"
+        }
+      ]
     }
-  ]
+  },
+  "dependencies": []
 }
