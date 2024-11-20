@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 3.14...3.29 FATAL_ERROR)
 
 project(VCVRACK VERSION 2.5.2 LANGUAGES C;CXX)
 
-## Required...
+# # Required...
 if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     message(FATAL_ERROR "You need to set $RACK_DIR")
 endif()
 
-## Take RACK_DIR from env, if not passed as -DRACK_DIR=...
+# # Take RACK_DIR from env, if not passed as -DRACK_DIR=...
 if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
 endif()
@@ -22,22 +22,24 @@ include(GNUInstallDirs)
 
 #[=============================================================================[
 Internal helper (borrowed from CMakeRC).
-]=============================================================================]#
+]=============================================================================] #
 function(_vcv_rack_normalize_path var)
     set(path "${${var}}")
     file(TO_CMAKE_PATH "${path}" path)
+
     while(path MATCHES "//")
         string(REPLACE "//" "/" path "${path}")
     endwhile()
+
     string(REGEX REPLACE "/+$" "" path "${path}")
     set("${var}" "${path}" PARENT_SCOPE)
 endfunction()
 
 function(vcv_rack_get_plugin_json_slug)
     execute_process(
-      COMMAND "jq" "-r" ".slug" "plugin.json"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      OUTPUT_VARIABLE _VCV_RACK_PLUGIN_JSON_SLUG
+        COMMAND "jq" "-r" ".slug" "plugin.json"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT_VARIABLE _VCV_RACK_PLUGIN_JSON_SLUG
     )
     string(REGEX REPLACE "[\r\n\"]" "" _VCV_RACK_PLUGIN_JSON_SLUG "${_VCV_RACK_PLUGIN_JSON_SLUG}")
     set(_VCV_RACK_PLUGIN_JSON_SLUG ${_VCV_RACK_PLUGIN_JSON_SLUG} PARENT_SCOPE)
@@ -45,9 +47,9 @@ endfunction()
 
 function(vcv_rack_get_plugin_json_version)
     execute_process(
-      COMMAND "jq" "-r" ".version" "plugin.json"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      OUTPUT_VARIABLE _VCV_RACK_PLUGIN_JSON_VERSION
+        COMMAND "jq" "-r" ".version" "plugin.json"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT_VARIABLE _VCV_RACK_PLUGIN_JSON_VERSION
     )
     string(REGEX REPLACE "[\r\n\"]" "" _VCV_RACK_PLUGIN_JSON_VERSION "${_VCV_RACK_PLUGIN_JSON_VERSION}")
     set(_VCV_RACK_PLUGIN_JSON_VERSION ${_VCV_RACK_PLUGIN_JSON_VERSION} PARENT_SCOPE)
@@ -69,12 +71,11 @@ vcv_rack_create_plugin(<name> [<sources>])
 vcv_rack_create_plugin(<name> [ALIAS <alias>] [NAMESPACE <namespace>] [VCV_RACK_SDK_VERSION <version>] [<sources>])
 
 (This should wrap the CMakeLists.txt-side requirements for building a VCV Rack Plugin)
-]=============================================================================]#
-
+]=============================================================================] #
 function(vcv_rack_create_plugin name)
-        # Avoid duplicate target names
-        if(TARGET ${name})
-            message(SEND_ERROR "'vcv_rack_create_plugin()' given target '${name}' which already exists. Please choose a unique name for this target.")
+    # Avoid duplicate target names
+    if(TARGET ${name})
+        message(SEND_ERROR "'vcv_rack_create_plugin()' given target '${name}' which already exists. Please choose a unique name for this target.")
         return()
     endif()
 
@@ -92,6 +93,7 @@ function(vcv_rack_create_plugin name)
             message(SEND_ERROR "Library name is not a valid namespace. Specify the NAMESPACE argument")
             return()
         endif()
+
         set(ARG_NAMESPACE "${name}")
     else()
         if(NOT ARG_NAMESPACE MATCHES "${ns_re}")
@@ -101,7 +103,7 @@ function(vcv_rack_create_plugin name)
     endif()
 
     # TODO: This needs more/better validation...
-    if(DEFINED ARG_VCV_RACK_SDK_VERSION AND (ARG_VCV_RACK_SDK_VERSION LESS_EQUAL 0))
+    if(DEFINED ARG_VCV_RACK_SDK_VERSION AND(ARG_VCV_RACK_SDK_VERSION LESS_EQUAL 0))
         message(SEND_ERROR "VCV_RACK_SDK_VERSION for ${name} is not a valid Integer number (${VCV_RACK_SDK_VERSION})")
         return()
     endif()
@@ -111,6 +113,7 @@ function(vcv_rack_create_plugin name)
             # default NAPI version to use if none specified
             set(VCV_RACK_SDK_VERSION 8)
         endif()
+
         set(ARG_VCV_RACK_SDK_VERSION ${VCV_RACK_SDK_VERSION})
     endif()
 
@@ -125,12 +128,10 @@ function(vcv_rack_create_plugin name)
     endif()
 
     # Begin a new VCV Rack Plugin target
-
     add_library(${name} SHARED)
     add_library(${name_alt}::${name} ALIAS ${name})
 
     # target_link_libraries(${name} PRIVATE vcv-rack::rack-sdk)
-
     set_property(
         TARGET ${name}
         PROPERTY "${name}_IS_VCV_RACK_PLUGIN_LIBRARY" TRUE # Custom property
@@ -140,9 +141,9 @@ function(vcv_rack_create_plugin name)
         PROPERTIES
 
         LIBRARY_OUTPUT_NAME "${name}"
+
         # PREFIX ""
         # SUFFIX ".so"
-
         ARCHIVE_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib" # Actually we might not need to enforce an opinion here!
         LIBRARY_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib" # Instead, we call 'cmakejs_create_addon_bindings()'
         RUNTIME_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/bin" # on this target, and the user can just 'require()' that file!
@@ -155,7 +156,6 @@ function(vcv_rack_create_plugin name)
     )
 
     vcv_rack_plugin_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
-
 endfunction()
 
 #[=============================================================================[
@@ -165,10 +165,11 @@ vcv_rack_plugin_add_sources(<name> [items1...])
 vcv_rack_plugin_add_sources(<name> [BASE_DIRS <dirs>] [items1...])
 vcv_rack_plugin_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]])
 vcv_rack_plugin_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
-]=============================================================================]#
+]=============================================================================] #
 function(vcv_rack_plugin_add_sources name)
     # Check that this is a VCV Rack Plugin target
     get_target_property(is_plugin_lib ${name} ${name}_IS_VCV_RACK_PLUGIN_LIBRARY)
+
     if(NOT TARGET ${name} OR NOT is_plugin_lib)
         message(SEND_ERROR "'vcv_rack_plugin_add_sources()' called on '${name}' which is not an existing napi addon library")
         return()
@@ -183,15 +184,16 @@ function(vcv_rack_plugin_add_sources name)
         # Default base directory of the passed-in source file(s)
         set(ARG_BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
     endif()
+
     _vcv_rack_normalize_path(ARG_BASE_DIRS)
     get_filename_component(ARG_BASE_DIRS "${ARG_BASE_DIRS}" ABSOLUTE)
 
     # All remaining unparsed args 'should' be source files for this target, so...
     foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-
         _vcv_rack_normalize_path(input)
         get_filename_component(abs_in "${input}" ABSOLUTE)
         file(RELATIVE_PATH relpath "${ARG_BASE_DIRS}" "${abs_in}")
+
         if(relpath MATCHES "^\\.\\.")
             # For now we just error on files that exist outside of the source dir.
             message(SEND_ERROR "Cannot add file '${input}': File must be in a subdirectory of ${ARG_BASE_DIRS}")
@@ -201,6 +203,7 @@ function(vcv_rack_plugin_add_sources name)
         set(rel_file "${ARG_BASE_DIRS}/${relpath}")
         _vcv_rack_normalize_path(rel_file)
         get_filename_component(source_file "${input}" ABSOLUTE)
+
         # If we are here, source file is valid. Add IDE support
         source_group("${name}" FILES "${source_file}")
 
@@ -225,13 +228,10 @@ function(vcv_rack_plugin_add_sources name)
         foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
             target_sources(${name} PRIVATE "${source_file}")
         endforeach()
-
     endforeach()
-
 endfunction()
 
-##
-
+# #
 set(_VCVRACK_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to current 'VCVRack.cmake' script")
 
 set(VCVRACK_TARGETS)
@@ -244,6 +244,7 @@ set_target_properties(RackSDK PROPERTIES VERSION 2.5.2)
 set_target_properties(RackSDK PROPERTIES SOVERSION 2.5.2)
 set_target_properties(RackSDK PROPERTIES INTERFACE_VCVRACK_RACKSDK_MAJOR_VERSION 2)
 set(VCVRACK_RACK_LIB_FILE_EXTENSION)
+
 if(APPLE)
     set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dylib")
 elseif(UNIX AND NOT APPLE) # Linux
@@ -258,51 +259,130 @@ set_property(
     TARGET RackSDK
     PROPERTY
     IMPORTED_LOCATION "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
+)
+set_property(
+    TARGET RackSDK
+    PROPERTY
     IMPORTED_IMPLIB "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
 )
-file(
-    COPY "${RACK_DIR}/include"
-    DESTINATION "${PROJECT_BINARY_DIR}"
-)
-file(
-    COPY "${RACK_DIR}/dep"
-    DESTINATION "${PROJECT_BINARY_DIR}"
-)
-target_include_directories(RackSDK
-    INTERFACE
-        #
+
+file(COPY "${RACK_DIR}/include" DESTINATION "${PROJECT_BINARY_DIR}")
+
+set(__RACK_SDK_HEADERS_GLOB "")
+file(GLOB_RECURSE __RACK_SDK_HEADERS_GLOB CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/include/*.h*")
+
+message(DEBUG "${__RACK_SDK_HEADERS_GLOB}")
+
+foreach(FILE IN LISTS __RACK_SDK_HEADERS_GLOB)
+    get_filename_component(file_abs_path "${FILE}" ABSOLUTE)
+    get_filename_component(file_name "${FILE}" NAME)
+    file(
+        RELATIVE_PATH file_rel_path "${PROJECT_BINARY_DIR}" "${file_abs_path}"
+    )
+
+    # message(STATUS "file_abs_path: ${file_abs_path}")
+    # message(STATUS "file_rel_path: ${file_rel_path}")
+    # message(STATUS "file_name: ${file_name}")
+    target_sources(RackSDK INTERFACE
+        FILE_SET vcvrack_RACKSDK_INTERFACE_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
-        #
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/dep/include>
-        $<INSTALL_INTERFACE:dep/include>
+        FILES
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${file_rel_path}>
+        $<INSTALL_INTERFACE:${file_rel_path}>
+    )
+
+    # # Prevent annoying warnings about empty projects...
+    install(
+        FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_rel_path}"
+    )
+endforeach()
+
+unset(__RACK_SDK_HEADERS_GLOB)
+
+file(COPY "${RACK_DIR}/dep" DESTINATION "${PROJECT_BINARY_DIR}")
+
+set(__RACK_SDK_DEP_HEADERS_GLOB "")
+file(GLOB_RECURSE __RACK_SDK_DEP_HEADERS_GLOB CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/dep/*.h*")
+message(DEBUG "${__RACK_SDK_DEP_HEADERS_GLOB}")
+
+foreach(FILE IN LISTS __RACK_SDK_DEP_HEADERS_GLOB)
+    get_filename_component(file_abs_path "${FILE}" ABSOLUTE)
+    get_filename_component(file_name "${FILE}" NAME)
+    file(
+        RELATIVE_PATH file_rel_path "${PROJECT_BINARY_DIR}" "${file_abs_path}"
+    )
+
+    # message(STATUS "file_abs_path: ${file_abs_path}")
+    # message(STATUS "file_rel_path: ${file_rel_path}")
+    # message(STATUS "file_name: ${file_name}")
+    target_sources(RackSDK INTERFACE
+        FILE_SET vcvrack_RACKSDK_DEP_INTERFACE_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/dep>
+        $<INSTALL_INTERFACE:include/dep>
+        FILES
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${file_rel_path}>
+        $<INSTALL_INTERFACE:${file_rel_path}>
+    )
+
+    # # Prevent annoying warnings about empty projects...
+    install(
+        FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_rel_path}"
+    )
+endforeach()
+
+unset(__RACK_SDK_DEP_HEADERS_GLOB)
+
+install(IMPORTED_RUNTIME_ARTIFACTS RackSDK
+    RUNTIME_DEPENDENCY_SET RackSDKTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+
+    # EXPORT RackSDKTargets
+    # FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    # BUNDLE DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-## Require C++11.
+install(RUNTIME_DEPENDENCY_SET RackSDKTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+# # Require C++11.
 target_compile_features(RackSDK INTERFACE cxx_std_11)
 target_compile_features(RackSDK INTERFACE c_std_11)
 
 if(APPLE)
     target_link_options(RackSDK
         INTERFACE
-            "-undefined dynamic_lookup"
+        "-undefined dynamic_lookup"
     )
 endif()
+
 if(UNIX AND NOT APPLE)
     target_link_options(RackSDK
         INTERFACE
-            ## This prevents static variables in the DSO (dynamic shared
-            ## object) from being preserved after dlclose().
-            "-fno-gnu-unique"
-            "-static-libstdc++" "-static-libgcc"
+
+        # # This prevents static variables in the DSO (dynamic shared
+        # # object) from being preserved after dlclose().
+        "-fno-gnu-unique"
+        "-static-libstdc++" "-static-libgcc"
     )
 endif()
+
 if(WIN32)
     target_link_options(RackSDK
         INTERFACE
-            "-municode"
+        "-municode"
     )
 endif()
+
 set_target_properties(RackSDK
     PROPERTIES
     LINKER_LANGUAGE CXX
@@ -311,45 +391,55 @@ set_target_properties(RackSDK
 list(APPEND VCVRACK_TARGETS RackSDK)
 
 #[==[Rack]==]
-add_executable(Rack IMPORTED GLOBAL)
-add_executable(VCVRack::Rack ALIAS Rack)
+# add_executable(Rack IMPORTED GLOBAL)
+# add_executable(VCVRack::Rack ALIAS Rack)
 
-set_target_properties(Rack PROPERTIES VERSION 2.5.2)
-set_target_properties(Rack PROPERTIES SOVERSION 2.5.2)
-set_target_properties(Rack PROPERTIES INTERFACE_VCVRACK_RACK_MAJOR_VERSION 2)
-set_property(
-    TARGET Rack
-    PROPERTY
-    IMPORTED_LOCATION "${RACK_DIR}/Rack"
-    IMPORTED_IMPLIB "${RACK_DIR}/Rack"
-)
-set_property(
-    TARGET Rack
-    PROPERTY
-    ENABLE_EXPORTS TRUE
-)
-set_target_properties(Rack
-    PROPERTIES
-        PREFIX ""
-        SUFFIX ""
-        LIBRARY_OUTPUT_NAME "Rack"
-        RUNTIME_OUTPUT_DIRECTORY "${RACK_DIR}"
-)
-target_link_libraries(Rack
-    INTERFACE
-        VCVRack::RackSDK
-)
-set_target_properties(Rack
-    PROPERTIES
-    LINKER_LANGUAGE CXX
-)
+# set_target_properties(Rack PROPERTIES VERSION 2.5.2)
+# set_target_properties(Rack PROPERTIES SOVERSION 2.5.2)
+# set_target_properties(Rack PROPERTIES INTERFACE_VCVRACK_RACK_MAJOR_VERSION 2)
+# set_property(
+# TARGET Rack
+# PROPERTY
+# IMPORTED_LOCATION " ${RACK_DIR}/Rack "
 
-list(APPEND VCVRACK_TARGETS Rack)
+# # IMPORTED_IMPLIB " ${RACK_DIR}/Rack "
+# )
+# set_property(
+# TARGET Rack
+# PROPERTY
+# ENABLE_EXPORTS TRUE
+# )
+# set_target_properties(Rack
+# PROPERTIES
+# PREFIX " "
+# SUFFIX " "
+# LIBRARY_OUTPUT_NAME " Rack "
+# RUNTIME_OUTPUT_DIRECTORY " ${RACK_DIR} "
+# )
+# target_link_libraries(Rack
+# INTERFACE
+# VCVRack::RackSDK
+# )
+# set_target_properties(Rack
+# PROPERTIES
+# LINKER_LANGUAGE CXX
+# )
 
-##
+# install(IMPORTED_RUNTIME_ARTIFACTS Rack
 
-include (CMakePackageConfigHelpers)
-file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in" [==[
+# LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+
+# # EXPORT RackSDKTargets
+# # FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# # BUNDLE DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+# )
+
+# list(APPEND VCVRACK_TARGETS Rack)
+
+# #
+include(CMakePackageConfigHelpers)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in" [==[
 @PACKAGE_INIT@
 
 ## Required...
@@ -387,31 +477,34 @@ message(STATUS "Linking with VCVRack")
 ]==])
 
 # create cmake config file
-configure_package_config_file (
+configure_package_config_file(
     "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
-  INSTALL_DESTINATION
+    INSTALL_DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
-    ## Use custom 'check_required_components' macro
+
+    # # Use custom 'check_required_components' macro
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
+
 # generate the version file for the cmake config file
-write_basic_package_version_file (
-	"${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
-	VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_PATCH}
-	COMPATIBILITY AnyNewerVersion
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
+    VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_PATCH}
+    COMPATIBILITY AnyNewerVersion
 )
 file(
     COPY
-        "${RACK_DIR}/arch.mk"
-        "${RACK_DIR}/compile.mk"
-        "${RACK_DIR}/dep.mk"
-        "${RACK_DIR}/plugin.mk"
-        "${RACK_DIR}/CHANGELOG.html"
-        "${RACK_DIR}/README.html"
-        "${RACK_DIR}/LICENSE.html"
-        ## Put these under 'share' so the binary tree doesn't get messy...
-        ## *but* they won't work correctly if not installed in the correct place!
+    "${RACK_DIR}/arch.mk"
+    "${RACK_DIR}/compile.mk"
+    "${RACK_DIR}/dep.mk"
+    "${RACK_DIR}/plugin.mk"
+    "${RACK_DIR}/CHANGELOG.html"
+    "${RACK_DIR}/README.html"
+    "${RACK_DIR}/LICENSE.html"
+
+    # # Put these under 'share' so the binary tree doesn't get messy...
+    # # *but* they won't work correctly if not installed in the correct place!
     DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share"
 )
 file(
@@ -426,56 +519,27 @@ file(
 
 install(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/share/arch.mk"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/compile.mk"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/dep.mk"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/plugin.mk"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/CHANGELOG.html"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/README.html"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/LICENSE.html"
-## TODO: I tried to put these relative to 'include' so that the Makefiles work
-## It failed because vcpkg doesn't like having files at the package root...
-## I guess with vcpkg we could apply a patchfile to the makefile(s) to give
-## libRack the "vcpkg-correct" prefix "lib/"...
-        ## DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/../"
-        ## DESTINATION "${CMAKE_INSTALL_DATADIR}/VCVRack"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/arch.mk"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/compile.mk"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/dep.mk"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/plugin.mk"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/CHANGELOG.html"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/README.html"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/LICENSE.html"
+
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
 )
 
 # install config files
 install(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackSDKTargets.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackTargets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackSDKTargets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackTargets.cmake"
     DESTINATION
-        "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
 )
-
-## Prevent annoying warnings about empty projects...
-install(
-    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/vcvrack"
-)
-install(
-    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dep"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/vcvrack"
-)
-install(
-    FILES
-        "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
-    DESTINATION
-        "${CMAKE_INSTALL_LIBDIR}"
-)
-
-## would be better as a symlink???? (the VCV Rack SDK Makefiles need this here...)
-# install(
-#     FILES
-#         "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
-#     DESTINATION
-#         "${CMAKE_INSTALL_INCLUDEDIR}/../"
-# )
 
 unset(_version)
 unset(_VCVRACK_SCRIPT)
