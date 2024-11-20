@@ -14,6 +14,16 @@ endmacro()
 
 ####################################################################################
 
+## Required...
+if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+    message(FATAL_ERROR "You need to set $RACK_DIR")
+endif()
+
+## Take RACK_DIR from env, if not passed as -DRACK_DIR=...
+if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+    set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
+endif()
+
 include("${CMAKE_CURRENT_LIST_DIR}/VCVRackConfigVersion.cmake")
 
 set(_VCVRack_supported_components)
@@ -24,28 +34,16 @@ list(APPEND _VCVRack_supported_components
 ## Custom 'check_required_components' macro
 foreach(_requested_component ${VCVRack_FIND_COMPONENTS})
     if (NOT _requested_component IN_LIST _VCVRack_supported_components)
-      set(VCVRack_FOUND False)
-      set(VCVRack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
+        set(VCVRack_FOUND False)
+        set(VCVRack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
     endif()
     include("${CMAKE_CURRENT_LIST_DIR}/VCVRack${_requested_component}Targets.cmake")
     message(STATUS "Linking with VCVRack::${_requested_component}")
-  endforeach()
+endforeach()
 
 unset(_VCVRack_supported_components)
 
 ####################################################################################
-
-# include ("${CMAKE_CURRENT_LIST_DIR}/VCVRackTargets.cmake")
-
-## Required...
-if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
-    message(FATAL_ERROR "You need to set $RACK_DIR")
-endif()
-
-## Take RACK_DIR from env, if not passed as -DRACK_DIR=...
-if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
-    set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
-endif()
 
 # Tell the user what to do
 message(STATUS "Linking with VCVRack")

@@ -325,22 +325,42 @@ list(APPEND VCVRACK_TARGETS Rack)
 
 ##
 
-# export (
-#   TARGETS ${VCVRACK_TARGETS}
-#   FILE "share/cmake/VCVRackTargets.cmake"
-#   NAMESPACE VCVRack::
-# )
-
 include (CMakePackageConfigHelpers)
 file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in" [==[
 @PACKAGE_INIT@
 
-include (${CMAKE_CURRENT_LIST_DIR}/VCVRackTargets.cmake)
+## Required...
+if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+    message(FATAL_ERROR "You need to set $RACK_DIR")
+endif()
 
-check_required_components (VCVRack)
+## Take RACK_DIR from env, if not passed as -DRACK_DIR=...
+if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+    set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/VCVRackConfigVersion.cmake")
+
+set(_VCVRack_supported_components)
+list(APPEND _VCVRack_supported_components
+    @VCVRACK_TARGETS@
+)
+## Custom 'check_required_components' macro
+foreach(_requested_component ${VCVRack_FIND_COMPONENTS})
+    if (NOT _requested_component IN_LIST _VCVRack_supported_components)
+        set(VCVRack_FOUND False)
+        set(VCVRack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
+    endif()
+    include("${CMAKE_CURRENT_LIST_DIR}/VCVRack${_requested_component}Targets.cmake")
+    message(STATUS "Linking with VCVRack::${_requested_component}")
+endforeach()
+
+unset(_VCVRack_supported_components)
+
+####################################################################################
 
 # Tell the user what to do
-message(STATUS "Linking with VCV Rack SDK")
+message(STATUS "Linking with VCVRack")
 ]==])
 
 # create cmake config file
@@ -349,6 +369,8 @@ configure_package_config_file (
     "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
   INSTALL_DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+    ## Use custom 'check_required_components' macro
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
 # generate the version file for the cmake config file
 write_basic_package_version_file (
@@ -356,14 +378,27 @@ write_basic_package_version_file (
 	VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_PATCH}
 	COMPATIBILITY AnyNewerVersion
 )
-## pass our module along
-file(COPY "${_VCVRACK_SCRIPT}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake")
+# ## pass our module along
+# file(COPY "${_VCVRACK_SCRIPT}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake")
+
+file(
+    COPY "${CMAKE_CURRENT_SOURCE_DIR}/share/cmake/Modules/VCVRackRackSDKTargets.cmake"
+    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake"
+)
+
+file(
+    COPY "${CMAKE_CURRENT_SOURCE_DIR}/share/cmake/Modules/VCVRackRackTargets.cmake"
+    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake"
+)
+
 
 # install config files
 install(
     FILES
         "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackSDKTargets.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackTargets.cmake"
     DESTINATION
         "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
 )
