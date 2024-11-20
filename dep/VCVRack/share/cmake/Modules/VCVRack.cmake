@@ -12,6 +12,24 @@ if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
 endif()
 
+if(WIN32 AND NOT MINGW)
+    message(FATAL_ERROR [==[
+VCV Rack for Windows requires MSYS2 with the MinGW64 toolchain and shell....
+]==])
+endif()
+if(NOT UNIX OR MINGW)
+    message(FATAL_ERROR [==[
+VCV Rack supports the following platforms only:
+
+- MacOS
+- Linux
+- Windows (using MSYS2 with the MinGW64 toolchain and shell)
+
+]==])
+endif()
+
+include(GNUInstallDirs)
+
 #[=============================================================================[
 Internal helper (borrowed from CMakeRC).
 ]=============================================================================]#
@@ -248,12 +266,24 @@ set_property(
     TARGET RackSDK
     PROPERTY
     IMPORTED_LOCATION "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
+    IMPORTED_IMPLIB "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
 )
-
+file(
+    COPY "${RACK_DIR}/include"
+    DESTINATION "${PROJECT_BINARY_DIR}"
+)
+file(
+    COPY "${RACK_DIR}/dep"
+    DESTINATION "${PROJECT_BINARY_DIR}"
+)
 target_include_directories(RackSDK
     INTERFACE
-        "${RACK_DIR}/include"
-        "${RACK_DIR}/dep/include"
+        #
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        #
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/dep/include>
+        $<INSTALL_INTERFACE:dep/include>
 )
 
 ## Require C++11.
@@ -299,6 +329,7 @@ set_property(
     TARGET Rack
     PROPERTY
     IMPORTED_LOCATION "${RACK_DIR}/Rack"
+    IMPORTED_IMPLIB "${RACK_DIR}/Rack"
 )
 set_property(
     TARGET Rack
@@ -378,9 +409,19 @@ write_basic_package_version_file (
 	VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_PATCH}
 	COMPATIBILITY AnyNewerVersion
 )
-# ## pass our module along
-# file(COPY "${_VCVRACK_SCRIPT}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake")
-
+file(
+    COPY
+        "${RACK_DIR}/arch.mk"
+        "${RACK_DIR}/compile.mk"
+        "${RACK_DIR}/dep.mk"
+        "${RACK_DIR}/plugin.mk"
+        "${RACK_DIR}/CHANGELOG.html"
+        "${RACK_DIR}/README.html"
+        "${RACK_DIR}/LICENSE.html"
+        ## Put these under 'share' so the binary tree doesn't get messy...
+        ## *but* they won't work correctly if not installed in the correct place!
+    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share"
+)
 file(
     COPY "${CMAKE_CURRENT_SOURCE_DIR}/share/cmake/Modules/VCVRackRackSDKTargets.cmake"
     DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake"
@@ -391,6 +432,23 @@ file(
     DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake"
 )
 
+install(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/share/arch.mk"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/compile.mk"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/dep.mk"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/plugin.mk"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/CHANGELOG.html"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/README.html"
+        "${CMAKE_CURRENT_BINARY_DIR}/share/LICENSE.html"
+## TODO: I tried to put these relative to 'include' so that the Makefiles work
+## It failed because vcpkg doesn't like having files at the package root...
+## I guess with vcpkg we could apply a patchfile to the makefile(s) to give
+## libRack the "vcpkg-correct" prefix "lib/"...
+        ## DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/../"
+        ## DESTINATION "${CMAKE_INSTALL_DATADIR}/VCVRack"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+)
 
 # install config files
 install(
@@ -403,4 +461,29 @@ install(
         "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
 )
 
+## Prevent annoying warnings about empty projects...
+install(
+    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/../vcvrack"
+)
+install(
+    DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dep"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/../"
+)
+install(
+    FILES
+        "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}"
+)
+
+## would be better as a symlink???? (the VCV Rack SDK Makefiles need this here...)
+# install(
+#     FILES
+#         "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
+#     DESTINATION
+#         "${CMAKE_INSTALL_INCLUDEDIR}/../"
+# )
+
 unset(_version)
+unset(_VCVRACK_SCRIPT)
