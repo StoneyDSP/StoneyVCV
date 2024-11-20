@@ -24,7 +24,7 @@ vcpkg_backup_env_variables(
 
 vcpkg_cmake_configure(
   SOURCE_PATH "${SOURCE_PATH}"
-  OPTIONS -DRACK_DIR="$ENV{RACK_DIR}"
+  OPTIONS -DRACK_DIR="${_RACK_DIR}"
 )
 vcpkg_cmake_install()
 vcpkg_cmake_config_fixup(
