@@ -456,11 +456,11 @@ install(
 ## Prevent annoying warnings about empty projects...
 install(
     DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/../vcvrack"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/vcvrack"
 )
 install(
     DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/dep"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/../"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/vcvrack"
 )
 install(
     FILES
