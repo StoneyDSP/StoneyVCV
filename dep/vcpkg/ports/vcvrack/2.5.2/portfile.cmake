@@ -14,6 +14,12 @@ function(get_this_dir)
     set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
 endfunction()
 
+if(NOT VCPKG_TARGET_IS_MINGW AND NOT VCPKG_TARGET_IS_LINUX AND NOT VCPKG_TARGET_IS_OSX)
+    ## This needs another layer in case we're WINDOWS but not MINGW
+    ## or else this message will be confusing to Windows users...
+    message(FATAL_ERROR "VCV Rack SDK does not support the current platform...")
+endif()
+
 ## This can be further customized... does the Rack SDK have x86 profiles?
 set(VCVRACK_RACKSDK_FILE_URL)
 set(VCVRACK_RACKSDK_FILE_HASH)
@@ -66,7 +72,6 @@ vcpkg_cmake_config_fixup(
 )
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/lib" "${CURRENT_PACKAGES_DIR}/debug/lib")
 
 file(
     INSTALL "${SOURCE_PATH}/LICENSE"
