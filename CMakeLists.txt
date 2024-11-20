@@ -36,10 +36,6 @@ list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_LIST_DIR}/dep/Catch2/share/cmake/Modules"
     "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules"
 )
-list(APPEND CMAKE_PREFIX_PATH
-    "${STONEYDSP_DIR}/share/cmake/Modules"
-    "${CMAKE_CURRENT_LIST_DIR}/dep/VCVRack/share/cmake/Modules"
-)
 
 #[==[STONEYVCV]==]
 project(STONEYVCV VERSION 2.1.0.0)
