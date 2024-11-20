@@ -31,9 +31,9 @@ set(STONEYDSP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep/StoneyDSP")
 
 ## Locate CMake Modules...
 list(APPEND CMAKE_MODULE_PATH
-    "${STONEYDSP_DIR}/share/cmake/Modules"
-    "${CMAKE_CURRENT_LIST_DIR}/dep/VCVRack/share/cmake/Modules"
-    "${CMAKE_CURRENT_LIST_DIR}/dep/Catch2/share/cmake/Modules"
+    # "${STONEYDSP_DIR}/share/cmake/Modules"
+    # "${CMAKE_CURRENT_LIST_DIR}/dep/VCVRack/share/cmake/Modules"
+    # "${CMAKE_CURRENT_LIST_DIR}/dep/Catch2/share/cmake/Modules"
     "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules"
 )
 
@@ -46,7 +46,7 @@ set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
 # include(StoneyDSP)
 find_package(StoneyDSP 0.0 COMPONENTS Core SIMD DSP CONFIG REQUIRED)
 # include(VCVRack)
-find_package(VCVRack 2.5.2 COMPONENTS Rack RackSDK CONFIG REQUIRED)
+find_package(VCVRack 2.5.2 COMPONENTS RackSDK CONFIG REQUIRED)
 
 if(WIN32 AND NOT DEFINED CMAKE_EXTRA_GENERATOR)
     set(CMAKE_EXTRA_GENERATOR "mingw32-make")
@@ -121,7 +121,6 @@ set_target_properties(StoneyVCV
 
 target_link_libraries(StoneyVCV
     PRIVATE
-        VCVRack::Rack
         VCVRack::RackSDK
         StoneyDSP::Core
         StoneyDSP::SIMD
