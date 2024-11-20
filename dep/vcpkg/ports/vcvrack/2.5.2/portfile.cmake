@@ -70,9 +70,9 @@ if(VCPKG_TARGET_IS_MINGW)
         RESULT_VARIABLE _RACK_DIR #error_code
         # WORKING_DIRECTORY "${arg_WORKING_DIRECTORY}"
     )
-    if("${_RACK_DIR}" NOT STREQUAL "")
-        message(FATAL_ERROR "${error_variable}")
-    endif()
+    # if("${_RACK_DIR}" NOT STREQUAL "")
+    #     message(FATAL_ERROR "${error_variable}")
+    # endif()
     set(z_vcpkg_env_backup_RACK_DIR "${_RACK_DIR}" CACHE)
 endif()
 
