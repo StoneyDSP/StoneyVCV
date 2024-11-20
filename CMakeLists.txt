@@ -265,13 +265,16 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
 
     if(MINGW)
-        # target_link_options(Tests_StoneyVCV
-        # INTERFACE
-        # "-municode"
-        # )
+        target_compile_options(Tests_StoneyVCV
+            PUBLIC
+            "-municode"
+        )
         target_link_options(Tests_StoneyVCV
-            PRIVATE
-            "-DDO_NOT_USE_WMAIN"
+            PUBLIC
+            "-municode"
+
+            # "-DDO_NOT_USE_WMAIN"
+            "-DCATCH_PLATFORM_WINDOWS"
         )
     endif()
 
