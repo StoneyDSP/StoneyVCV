@@ -265,9 +265,13 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
 
     if(WIN32)
-        target_link_options(Tests_StoneyVCV
+        # target_link_options(Tests_StoneyVCV
+        # INTERFACE
+        # "-municode"
+        # )
+        target_compile_definitions(Tests_StoneyVCV
             INTERFACE
-            "-municode"
+            "-DDO_NOT_USE_WMAIN"
         )
     endif()
 
