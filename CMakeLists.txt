@@ -31,9 +31,6 @@ set(STONEYDSP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep/StoneyDSP")
 
 ## Locate CMake Modules...
 list(APPEND CMAKE_MODULE_PATH
-    # "${STONEYDSP_DIR}/share/cmake/Modules"
-    # "${CMAKE_CURRENT_LIST_DIR}/dep/VCVRack/share/cmake/Modules"
-    # "${CMAKE_CURRENT_LIST_DIR}/dep/Catch2/share/cmake/Modules"
     "${CMAKE_CURRENT_LIST_DIR}/share/cmake/Modules"
 )
 
