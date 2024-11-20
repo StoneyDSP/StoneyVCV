@@ -3,7 +3,7 @@
   "default-registry": {
     "kind": "filesystem",
     "path": "dep/vcpkg",
-    "baseline": "2024-11-20-93ee30925f7c93631ba1202d69d641a35518ad91"
+    "baseline": "2024-11-20-19182418287adcebe1e8ca0e9fa5fee6e8f41570"
   },
   "registries": [
     {
