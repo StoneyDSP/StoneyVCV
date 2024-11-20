@@ -62,7 +62,7 @@ if(APPLE)
 elseif(UNIX AND NOT APPLE) # Linux
     set(VCVRACK_RACK_LIB_FILE_EXTENSION ".so")
 endif()
-if(WIN_32)
+if(WIN32)
     set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dll.a")
 endif()
 
