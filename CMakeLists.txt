@@ -265,7 +265,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
 
     if(WIN32)
-        target_link_options(RackSDK
+        target_link_options(Tests_StoneyVCV
             INTERFACE
             "-municode"
         )
