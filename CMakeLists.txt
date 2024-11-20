@@ -47,27 +47,6 @@ find_package(StoneyDSP 0.0 COMPONENTS Core SIMD DSP CONFIG REQUIRED)
 # include(VCVRack)
 find_package(VCVRack 2.5.2 COMPONENTS RackSDK CONFIG REQUIRED)
 
-if(APPLE)
-    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dylib")
-elseif(UNIX AND NOT APPLE) # Linux
-    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".so")
-endif()
-
-if(WIN32)
-    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dll.a")
-endif()
-
-set_property(
-    TARGET RackSDK
-    PROPERTY
-    IMPORTED_LOCATION "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
-)
-set_property(
-    TARGET RackSDK
-    PROPERTY
-    IMPORTED_IMPLIB "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
-)
-
 if(WIN32 AND NOT DEFINED CMAKE_EXTRA_GENERATOR)
     set(CMAKE_EXTRA_GENERATOR "mingw32-make")
 endif()
