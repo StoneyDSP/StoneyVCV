@@ -27,7 +27,7 @@ env:
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "win-x64"
-  RACK_DIR: dep/Rack-SDK
+  RACK_DIR: ${{ github.workspace }}\dep\Rack-SDK
   MSYSTEM: "MINGW64"
 
 jobs:
@@ -110,7 +110,7 @@ jobs:
         -DCMAKE_C_FLAGS="-march=nehalem"
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=./install
-        -DRACK_DIR=${{ env.RACK_DIR }}
+        -DRACK_DIR=./dep/Rack-SDK
         -DVCPKG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
