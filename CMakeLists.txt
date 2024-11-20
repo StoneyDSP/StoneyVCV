@@ -264,6 +264,13 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         RUNTIME_OUTPUT_NAME "Tests_StoneyVCV"
     )
 
+    if(WIN32)
+        target_link_options(RackSDK
+            INTERFACE
+            "-municode"
+        )
+    endif()
+
     enable_testing()
 
     include(CTest)
