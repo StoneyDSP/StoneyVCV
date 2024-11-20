@@ -106,7 +106,6 @@ jobs:
         -S .
         -B ${{ env.BUILD_DIR }}
         -G "Ninja"
-        -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         -DCMAKE_C_FLAGS="-march=nehalem"
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
