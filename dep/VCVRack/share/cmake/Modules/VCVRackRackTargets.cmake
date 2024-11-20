@@ -62,7 +62,7 @@ set_property(TARGET VCVRack::Rack PROPERTY ENABLE_EXPORTS 1)
 
 set_target_properties(VCVRack::Rack PROPERTIES
   INTERFACE_LINK_LIBRARIES VCVRack::RackSDK
-  IMPORTED_LOCATION "/home/stoneydsp/dev/VCVRack/Rack-SDK/Rack"
+  IMPORTED_LOCATION "${_IMPORT_PREFIX}/Rack"
 )
 
 # Load information for each installed configuration.
