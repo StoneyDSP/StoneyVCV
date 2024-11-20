@@ -17,16 +17,6 @@ if(WIN32 AND NOT MINGW)
 VCV Rack for Windows requires MSYS2 with the MinGW64 toolchain and shell....
 ]==])
 endif()
-if(NOT UNIX OR MINGW)
-    message(FATAL_ERROR [==[
-VCV Rack supports the following platforms only:
-
-- MacOS
-- Linux
-- Windows (using MSYS2 with the MinGW64 toolchain and shell)
-
-]==])
-endif()
 
 include(GNUInstallDirs)
 
