@@ -279,6 +279,8 @@ foreach(FILE IN LISTS __RACK_SDK_HEADERS_GLOB)
     file(
         RELATIVE_PATH file_rel_path "${PROJECT_BINARY_DIR}" "${file_abs_path}"
     )
+    get_filename_component(file_directory_name "${file_rel_path}" DIRECTORY)
+    message(STATUS "${file_directory_name}")
 
     # message(STATUS "file_abs_path: ${file_abs_path}")
     # message(STATUS "file_rel_path: ${file_rel_path}")
@@ -297,7 +299,7 @@ foreach(FILE IN LISTS __RACK_SDK_HEADERS_GLOB)
     # # Prevent annoying warnings about empty projects...
     install(
         FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_rel_path}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_directory_name}"
     )
 endforeach()
 
@@ -312,9 +314,13 @@ message(DEBUG "${__RACK_SDK_DEP_HEADERS_GLOB}")
 foreach(FILE IN LISTS __RACK_SDK_DEP_HEADERS_GLOB)
     get_filename_component(file_abs_path "${FILE}" ABSOLUTE)
     get_filename_component(file_name "${FILE}" NAME)
+
     file(
         RELATIVE_PATH file_rel_path "${PROJECT_BINARY_DIR}" "${file_abs_path}"
     )
+
+    get_filename_component(file_directory_name "${file_rel_path}" DIRECTORY)
+    message(STATUS "${file_directory_name}")
 
     # message(STATUS "file_abs_path: ${file_abs_path}")
     # message(STATUS "file_rel_path: ${file_rel_path}")
@@ -333,7 +339,7 @@ foreach(FILE IN LISTS __RACK_SDK_DEP_HEADERS_GLOB)
     # # Prevent annoying warnings about empty projects...
     install(
         FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_rel_path}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_directory_name}"
     )
 endforeach()
 
