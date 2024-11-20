@@ -33,9 +33,9 @@ env:
 jobs:
   windows:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+    # defaults:
+    #   run:
+    #     shell: msys2 {0}
 
     steps:
 
@@ -86,19 +86,6 @@ jobs:
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
-    - name: Deps
-      uses: johnwason/vcpkg-action@v6
-      with:
-        # vcpkg triplet to use
-        triplet: x64-mingw-dynamic
-        # GitHub token to authenticate API requests. Recommended to use  github.token
-        token: ${{ github.token }}
-        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
-        manifest-dir: ${{ github.workspace }}
-        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: true
-        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
-
     - name: Configure Tests
       shell: msys2 {0}
       run: >-
@@ -111,7 +98,7 @@ jobs:
         -DCMAKE_CXX_FLAGS="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=./install
         -DRACK_DIR=./dep/Rack-SDK
-        -DVCPKG_ROOT=${{ env.VCPKG_ROOT }}
+        -DVCPKG_ROOT=./vcpkg
         -DVCPKG_MANIFEST_MODE=ON
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
