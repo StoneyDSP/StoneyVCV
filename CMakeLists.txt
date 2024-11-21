@@ -47,10 +47,6 @@ find_package(StoneyDSP 0.0 COMPONENTS Core SIMD DSP CONFIG REQUIRED)
 # include(VCVRack)
 find_package(VCVRack 2.5.2 COMPONENTS RackSDK CONFIG REQUIRED)
 
-if(WIN32 AND NOT DEFINED CMAKE_EXTRA_GENERATOR)
-    set(CMAKE_EXTRA_GENERATOR "mingw32-make")
-endif()
-
 enable_language(C)
 enable_language(CXX)
 
@@ -85,13 +81,6 @@ target_include_directories(StoneyVCV
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-
-target_include_directories(StoneyVCV
-    PUBLIC
-    "${RACK_DIR}/include"
-    "${RACK_DIR}/dep/include"
-)
-
 target_sources(StoneyVCV
     PUBLIC
     FILE_SET stoneyvcv_PUBLIC_HEADERS
@@ -122,25 +111,13 @@ set_target_properties(StoneyVCV
 )
 
 target_link_libraries(StoneyVCV
-    PRIVATE
+    PUBLIC
     VCVRack::RackSDK
     StoneyDSP::Core
     StoneyDSP::SIMD
     StoneyDSP::DSP
 )
 
-target_link_directories(StoneyVCV
-    PUBLIC
-
-    # # Link to the Rack (or Rack-SDK) directory containing the Rack binaries
-    "${RACK_DIR}"
-)
-
-# target_link_options(StoneyVCV
-# PUBLIC
-# ## Link to Rack itself
-# "-lRack"
-# )
 if(UNIX)
     if(APPLE)
         target_link_options(StoneyVCV
@@ -245,16 +222,14 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
         # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
     )
-    target_link_directories(Tests_StoneyVCV
-        PRIVATE
-        "${RACK_DIR}"
-    )
+
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
-        VCVRack::RackSDK
-        StoneyDSP::Core
-        StoneyDSP::SIMD
-        StoneyDSP::DSP
+
+        # VCVRack::RackSDK
+        # StoneyDSP::Core
+        # StoneyDSP::SIMD
+        # StoneyDSP::DSP
         StoneyDSP::StoneyVCV
         Catch2::Catch2WithMain
     )
@@ -264,20 +239,24 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         RUNTIME_OUTPUT_NAME "Tests_StoneyVCV"
     )
 
-    if(MINGW)
-        target_compile_options(Tests_StoneyVCV
-            PUBLIC
-            "-municode"
-        )
-        target_link_options(Tests_StoneyVCV
-            PUBLIC
-            "-municode"
+    # if(WIN32)
+    # target_compile_options(Tests_StoneyVCV
+    # PUBLIC
 
-            # "-DDO_NOT_USE_WMAIN"
-            "-DCATCH_PLATFORM_WINDOWS"
-        )
-    endif()
+    # "-municode"
+    # "-DCATCH_PLATFORM_WINDOWS=1"
+    # "-DCATCH_CONFIG_WCHAR=1"
+    # "-DDO_NOT_USE_WMAIN=1"
+    # )
+    # target_link_options(Tests_StoneyVCV
+    # PUBLIC
 
+    # "-municode"
+    # "-DCATCH_PLATFORM_WINDOWS=1"
+    # "-DCATCH_CONFIG_WCHAR=1"
+    # "-DDO_NOT_USE_WMAIN=1"
+    # )
+    # endif()
     enable_testing()
 
     include(CTest)
