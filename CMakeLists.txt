@@ -240,20 +240,20 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
 
     # if(WIN32)
-    # target_compile_options(Tests_StoneyVCV
-    # PUBLIC
+    # # target_compile_options(Tests_StoneyVCV
+    # # PUBLIC
 
-    # "-municode"
-    # "-DCATCH_PLATFORM_WINDOWS=1"
-    # "-DCATCH_CONFIG_WCHAR=1"
-    # "-DDO_NOT_USE_WMAIN=1"
-    # )
+    # # "-municode"
+    # # "-DCATCH_PLATFORM_WINDOWS=1"
+    # # "-DCATCH_CONFIG_WCHAR=1"
+    # # "-DDO_NOT_USE_WMAIN=1"
+    # # )
     # target_link_options(Tests_StoneyVCV
     # PUBLIC
 
-    # "-municode"
-    # "-DCATCH_PLATFORM_WINDOWS=1"
-    # "-DCATCH_CONFIG_WCHAR=1"
+    # # "-municode"
+    # # "-DCATCH_PLATFORM_WINDOWS=1"
+    # # "-DCATCH_CONFIG_WCHAR=1"
     # "-DDO_NOT_USE_WMAIN=1"
     # )
     # endif()
