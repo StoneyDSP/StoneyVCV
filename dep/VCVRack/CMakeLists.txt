@@ -280,11 +280,13 @@ foreach(FILE IN LISTS __RACK_SDK_HEADERS_GLOB)
         RELATIVE_PATH file_rel_path "${PROJECT_BINARY_DIR}" "${file_abs_path}"
     )
     get_filename_component(file_directory_name "${file_rel_path}" DIRECTORY)
-    message(STATUS "${file_directory_name}")
 
-    # message(STATUS "file_abs_path: ${file_abs_path}")
-    # message(STATUS "file_rel_path: ${file_rel_path}")
-    # message(STATUS "file_name: ${file_name}")
+    message(DEBUG "")
+    message(DEBUG "${file_directory_name}")
+    message(DEBUG "file_abs_path: ${file_abs_path}")
+    message(DEBUG "file_rel_path: ${file_rel_path}")
+    message(DEBUG "file_name: ${file_name}")
+    message(DEBUG "")
     target_sources(RackSDK INTERFACE
         FILE_SET vcvrack_RACKSDK_INTERFACE_HEADERS
         TYPE HEADERS
@@ -296,10 +298,15 @@ foreach(FILE IN LISTS __RACK_SDK_HEADERS_GLOB)
         $<INSTALL_INTERFACE:${file_rel_path}>
     )
 
-    # # Prevent annoying warnings about empty projects...
+    file(
+        RELATIVE_PATH file_install_path "${PROJECT_BINARY_DIR}/include" "${file_abs_path}"
+    )
+    get_filename_component(file_install_directory_name "${file_install_path}" DIRECTORY)
+
+    # Prevent annoying warnings about empty projects...
     install(
         FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_directory_name}"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${file_install_directory_name}"
     )
 endforeach()
 
@@ -320,26 +327,32 @@ foreach(FILE IN LISTS __RACK_SDK_DEP_HEADERS_GLOB)
     )
 
     get_filename_component(file_directory_name "${file_rel_path}" DIRECTORY)
-    message(STATUS "${file_directory_name}")
-
-    # message(STATUS "file_abs_path: ${file_abs_path}")
-    # message(STATUS "file_rel_path: ${file_rel_path}")
-    # message(STATUS "file_name: ${file_name}")
+    message(DEBUG "")
+    message(DEBUG "${file_directory_name}")
+    message(DEBUG "file_abs_path: ${file_abs_path}")
+    message(DEBUG "file_rel_path: ${file_rel_path}")
+    message(DEBUG "file_name: ${file_name}")
+    message(DEBUG "")
     target_sources(RackSDK INTERFACE
         FILE_SET vcvrack_RACKSDK_DEP_INTERFACE_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/dep>
-        $<INSTALL_INTERFACE:include/dep>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/dep/include>
+        $<INSTALL_INTERFACE:include/dep/include>
         FILES
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${file_rel_path}>
-        $<INSTALL_INTERFACE:${file_rel_path}>
+        $<INSTALL_INTERFACE:include/${file_rel_path}>
     )
 
-    # # Prevent annoying warnings about empty projects...
+    file(
+        RELATIVE_PATH file_install_path "${PROJECT_BINARY_DIR}/dep" "${file_abs_path}"
+    )
+
+    get_filename_component(file_install_directory_name "${file_install_path}" DIRECTORY)
+
     install(
         FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${file_directory_name}"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dep/${file_install_directory_name}"
     )
 endforeach()
 
@@ -348,7 +361,7 @@ unset(__RACK_SDK_DEP_HEADERS_GLOB)
 install(IMPORTED_RUNTIME_ARTIFACTS RackSDK
     RUNTIME_DEPENDENCY_SET RackSDKTargets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
 
     # EXPORT RackSDKTargets
     # FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -523,18 +536,18 @@ file(
     DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake"
 )
 
-install(
-    FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/share/arch.mk"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/compile.mk"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/dep.mk"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/plugin.mk"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/CHANGELOG.html"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/README.html"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/LICENSE.html"
+# install(
+# FILES
+# "${CMAKE_CURRENT_BINARY_DIR}/share/arch.mk"
+# "${CMAKE_CURRENT_BINARY_DIR}/share/compile.mk"
+# "${CMAKE_CURRENT_BINARY_DIR}/share/dep.mk"
+# "${CMAKE_CURRENT_BINARY_DIR}/share/plugin.mk"
+# "${CMAKE_CURRENT_BINARY_DIR}/share/CHANGELOG.html"
+# "${CMAKE_CURRENT_BINARY_DIR}/share/README.html"
+# "${CMAKE_CURRENT_BINARY_DIR}/share/LICENSE.html"
 
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
-)
+# DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+# )
 
 # install config files
 install(
