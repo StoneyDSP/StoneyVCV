@@ -4,7 +4,13 @@
   "files.trimTrailingWhitespace": true,
   "editor.trimAutoWhitespace": true,
   "editor.insertSpaces": true,
-  "editor.rulers": [80, 120, 160, 180, 200],
+  "editor.rulers": [
+    80,
+    120,
+    160,
+    180,
+    200
+  ],
   "makefile.configureOnOpen": false,
   "cmake.configureOnOpen": true,
   "cmake.configureOnEdit": false,
@@ -68,17 +74,17 @@
       "url": "https://json.schemastore.org/tsconfig"
     },
     {
-			"fileMatch": [
-				"**/vcpkg.json"
-			],
-			"url": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json"
-		},
-		{
-			"fileMatch": [
-				"**/vcpkg-configuration.json"
-			],
-			"url": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json"
-		}
+      "fileMatch": [
+        "**/vcpkg.json"
+      ],
+      "url": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json"
+    },
+    {
+      "fileMatch": [
+        "**/vcpkg-configuration.json"
+      ],
+      "url": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json"
+    }
   ],
   "[json]": {
     "editor.quickSuggestions": {
@@ -106,56 +112,57 @@
     },
     "editor.defaultFormatter": "vscode.markdown-language-features"
   },
+  "terminal.integrated.defaultProfile.windows": "MSYS2 MINGW64",
   "terminal.integrated.profiles.windows": {
-		"MSYS2 UCRT64": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -ucrt64"
-			]
-		},
-		"MSYS2 MINGW64": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -mingw64"
-			]
-		},
-		"MSYS2 CLANG64": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clang64"
-			]
-		},
-		"MSYS2 MINGW32": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -mingw32"
-			]
-		},
-		"MSYS2 CLANG32": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clang32"
-			]
-		},
-		"MSYS2 CLANGARM64": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clangarm64"
-			]
-		},
-		"MSYS2 MSYS64": {
-			"path": "cmd.exe",
-			"args": [
-				"/c",
-				"C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -msys2"
-			]
-		}
+    "MSYS2 UCRT64": {
+      "path": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -ucrt64"
+      ]
+    },
+    "MSYS2 MINGW64": {
+      "path": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -mingw64"
+      ]
+    },
+    "MSYS2 CLANG64": {
+      "path": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clang64"
+      ]
+    },
+    "MSYS2 MINGW32": {
+      "path": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -mingw32"
+      ]
+    },
+    "MSYS2 CLANG32": {
+      "path": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clang32"
+      ]
+    },
+    "MSYS2 CLANGARM64": {
+      "path": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clangarm64"
+      ]
+    },
+    "MSYS2 MSYS64": {
+      "path": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -msys2"
+      ]
+    }
   },
   "files.associations": {
     "**.vcvm": "json", // VCV Rack presets
