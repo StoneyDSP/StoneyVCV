@@ -2,9 +2,11 @@ function(_normalize_path var)
     message(STATUS "normalizing path: ${var}")
     set(path "${${var}}")
     file(TO_CMAKE_PATH "${path}" path)
+
     while(path MATCHES "//")
         string(REPLACE "//" "/" path "${path}")
     endwhile()
+
     string(REGEX REPLACE "/+$" "" path "${path}")
     set("${var}" "${path}" PARENT_SCOPE)
     message(STATUS "normalized path: ${var}")
@@ -15,14 +17,15 @@ function(get_this_dir)
 endfunction()
 
 if(NOT VCPKG_TARGET_IS_MINGW AND NOT VCPKG_TARGET_IS_LINUX AND NOT VCPKG_TARGET_IS_OSX)
-    ## This needs another layer in case we're WINDOWS but not MINGW
-    ## or else this message will be confusing to Windows users...
+    # # This needs another layer in case we're WINDOWS but not MINGW
+    # # or else this message will be confusing to Windows users...
     message(FATAL_ERROR "VCV Rack SDK does not support the current platform...")
 endif()
 
-## This can be further customized... does the Rack SDK have x86 profiles?
+# # This can be further customized... does the Rack SDK have x86 profiles?
 set(VCVRACK_RACKSDK_FILE_URL)
 set(VCVRACK_RACKSDK_FILE_HASH)
+
 if(VCPKG_TARGET_IS_MINGW)
     set(VCVRACK_RACKSDK_FILE_URL "win-x64")
     set(VCVRACK_RACKSDK_FILE_HASH "fad593f7c6d7679a105984b3b30d719b7767b846a9f3c0ef29644159e77d73eea99d02869a94f6d47c6a55330419304fab941634d81c92beae501f8141564074")
@@ -36,7 +39,7 @@ else()
     message(FATAL_ERROR "VCVRack: unsupported platform")
 endif()
 
-## This can be further customized... package version == archive version???
+# # This can be further customized... package version == archive version???
 vcpkg_download_distfile(ARCHIVE
     URLS "https://vcvrack.com/downloads/Rack-SDK-2.5.2-${VCVRACK_RACKSDK_FILE_URL}.zip"
     FILENAME "Rack-SDK-2.5.2-${VCVRACK_RACKSDK_FILE_URL}"
@@ -46,13 +49,14 @@ vcpkg_download_distfile(ARCHIVE
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH RACK_DIR
     ARCHIVE "${ARCHIVE}"
+
     # (Optional) A friendly name to use instead of the filename of the archive (e.g.: a version number or tag).
     # REF 1.0.0
     # (Optional) Read the docs for how to generate patches at:
     # https://github.com/microsoft/vcpkg-docs/blob/main/vcpkg/examples/patching.md
     # PATCHES
-    #   001_port_fixes.patch
-    #   002_more_port_fixes.patch
+    # 001_port_fixes.patch
+    # 002_more_port_fixes.patch
 )
 
 get_this_dir()
