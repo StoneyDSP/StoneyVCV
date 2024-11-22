@@ -4,25 +4,6 @@
   "description": "VCV Rack 2",
   "homepage": "https://github.com/VCVRack/Rack",
   "supports": "(linux & x64)|(osx & x64)|(osx & arm64)|(windows & mingw & x64)",
-  "default-features": [
-    "dep",
-    "sdk",
-    "lib"
-  ],
-  "features": {
-    "dep": {
-      "dependencies": [],
-      "description": ""
-    },
-    "sdk": {
-      "dependencies": [],
-      "description": ""
-    },
-    "lib": {
-      "dependencies": [],
-      "description": ""
-    }
-  },
   "dependencies": [
     {
       "name": "vcpkg-cmake",

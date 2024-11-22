@@ -10,22 +10,11 @@
     },
     {
       "name": "stoneydsp",
-      "version>=": "0.0.0",
-      "default-features": true,
-      "features": [
-        "simd",
-        "dsp"
-      ]
+      "version>=": "0.0.0"
     },
     {
       "name": "rack",
-      "version>=": "2.5.2",
-      "default-features": false,
-      "features": [
-        "dep",
-        "sdk",
-        "lib"
-      ]
+      "version>=": "2.5.2"
     },
     {
       "name": "vcpkg-cmake",
