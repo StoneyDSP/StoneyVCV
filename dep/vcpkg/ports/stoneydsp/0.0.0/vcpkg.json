@@ -5,6 +5,16 @@
   "description": "The StoneyDSP C++ Audio Library",
   "homepage": "https://github.com/StoneyDSP/StoneyDSP",
   "dependencies": [
-    "simde"
+    {
+      "name": "simde"
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
   ]
 }
