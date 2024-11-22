@@ -20,7 +20,7 @@
     {
       "name": "rack",
       "version>=": "2.5.2",
-      "default-features": true,
+      "default-features": false,
       "features": [
         "dep",
         "sdk",
