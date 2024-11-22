@@ -1,20 +1,20 @@
 # # CMake Support...
 cmake_minimum_required(VERSION 3.14...3.29 FATAL_ERROR)
 
-# # Required...
-if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
-    message(FATAL_ERROR "You need to set $RACK_DIR")
-endif()
+# # # Required...
+# if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+# message(FATAL_ERROR "You need to set $RACK_DIR")
+# endif()
 
 # # Recommended...
 if(NOT DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED VCPKG_ROOT)
     message(WARNING "You may need to set $VCPKG_ROOT to acquire Catch2...")
 endif()
 
-# # Take RACK_DIR from env, if not passed as -DRACK_DIR=...
-if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
-    set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
-endif()
+# # # Take RACK_DIR from env, if not passed as -DRACK_DIR=...
+# if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
+# set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
+# endif()
 
 # # Take VCPKG_ROOT from env, if not passed as -DVCPKG_ROOT=...
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED VCPKG_ROOT)
@@ -41,11 +41,16 @@ project(STONEYVCV VERSION 2.1.0.0)
 set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
 set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
 
-# include(StoneyDSP)
-find_package(StoneyDSP 0.0 COMPONENTS Core SIMD DSP CONFIG REQUIRED)
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-municode" _cxx_supports_municode)
 
-# include(VCVRack)
-find_package(VCVRack 2.5.2 COMPONENTS RackSDK CONFIG REQUIRED)
+# # Put these in the correct order of their dependencies on eachother internally
+# # to save tears
+find_package(StoneyDSP 0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
+
+# # Put these in the correct order of their dependencies on eachother internally
+# # to save tears
+find_package(rack 2.5.2 REQUIRED COMPONENTS dep sdk lib CONFIG)
 
 enable_language(C)
 enable_language(CXX)
@@ -112,7 +117,9 @@ set_target_properties(StoneyVCV
 
 target_link_libraries(StoneyVCV
     PUBLIC
-    VCVRack::RackSDK
+    rack::dep
+    rack::sdk
+    rack::lib
     StoneyDSP::Core
     StoneyDSP::SIMD
     StoneyDSP::DSP
@@ -226,10 +233,13 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
 
-        # VCVRack::RackSDK
-        # StoneyDSP::Core
-        # StoneyDSP::SIMD
-        # StoneyDSP::DSP
+        rack::dep
+        rack::sdk
+        rack::lib
+
+        StoneyDSP::Core
+        StoneyDSP::SIMD
+        StoneyDSP::DSP
         StoneyDSP::StoneyVCV
         Catch2::Catch2WithMain
     )
@@ -238,8 +248,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/test"
         RUNTIME_OUTPUT_NAME "Tests_StoneyVCV"
     )
+    target_compile_features(Tests_StoneyVCV PUBLIC cxx_std_17)
+    target_compile_features(Tests_StoneyVCV PUBLIC c_std_17)
 
-    # if(WIN32)
+    # if(MINGW)
     # # target_compile_options(Tests_StoneyVCV
     # # PUBLIC
 
@@ -248,14 +260,16 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     # # "-DCATCH_CONFIG_WCHAR=1"
     # # "-DDO_NOT_USE_WMAIN=1"
     # # )
-    # target_link_options(Tests_StoneyVCV
-    # PUBLIC
-
+    # # target_link_options(Tests_StoneyVCV
+    # # PUBLIC
+    # # "-lmingw32"
     # # "-municode"
     # # "-DCATCH_PLATFORM_WINDOWS=1"
     # # "-DCATCH_CONFIG_WCHAR=1"
-    # "-DDO_NOT_USE_WMAIN=1"
-    # )
+    # # "-D_UNICODE"
+
+    # # "-DDO_NOT_USE_WMAIN=1"
+    # # )
     # endif()
     enable_testing()
 
