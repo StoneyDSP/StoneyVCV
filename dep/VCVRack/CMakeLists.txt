@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.14...3.29 FATAL_ERROR)
 
-project(VCVRACK VERSION 2.5.2 LANGUAGES C;CXX)
-
 # # Required...
 if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     message(FATAL_ERROR "You need to set $RACK_DIR")
@@ -12,6 +10,20 @@ if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
 endif()
 
+set(PROJECT_VENDOR "VCV" CACHE STRING "" FORCE)
+set(RACK_VERSION_MAJOR 2 CACHE STRING "" FORCE)
+set(RACK_VERSION_MINOR 5 CACHE STRING "" FORCE)
+set(RACK_VERSION_PATCH 2 CACHE STRING "" FORCE)
+set(RACK_LANGUAGES "C" "CXX" CACHE STRING "" FORCE)
+
+set(RACK_VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH})
+
+project(RACK
+    VERSION ${RACK_VERSION}
+    LANGUAGES ${RACK_LANGUAGES}
+)
+
+# # Not known until first "project()..."
 if(WIN32 AND NOT MINGW)
     message(FATAL_ERROR [==[
 VCV Rack for Windows requires MSYS2 with the MinGW64 toolchain and shell....
@@ -19,498 +31,512 @@ VCV Rack for Windows requires MSYS2 with the MinGW64 toolchain and shell....
 endif()
 
 include(GNUInstallDirs)
+set(RACK_TARGETS)
 
-#[=============================================================================[
-Internal helper (borrowed from CMakeRC).
-]=============================================================================] #
-function(_vcv_rack_normalize_path var)
-    set(path "${${var}}")
-    file(TO_CMAKE_PATH "${path}" path)
+#[==[Rack SDK Deps]==]
+add_library(dep INTERFACE)
+add_library(rack::dep ALIAS dep)
 
-    while(path MATCHES "//")
-        string(REPLACE "//" "/" path "${path}")
-    endwhile()
+set_target_properties(dep
+    PROPERTIES
+    VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+    SOVERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
 
-    string(REGEX REPLACE "/+$" "" path "${path}")
-    set("${var}" "${path}" PARENT_SCOPE)
-endfunction()
+    RUNTIME_OUTPUT_DIRECTORY "bin"
+    LIBRARY_OUTPUT_DIRECTORY "lib"
+    ARCHIVE_OUTPUT_DIRECTORY "lib"
+    PDB_OUTPUT_DIRECTORY "bin"
 
-function(vcv_rack_get_plugin_json_slug)
-    execute_process(
-        COMMAND "jq" "-r" ".slug" "plugin.json"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        OUTPUT_VARIABLE _VCV_RACK_PLUGIN_JSON_SLUG
+    # Compatible Interface
+    INTERFACE_dep_MAJOR_VERSION ${RACK_VERSION_MAJOR}
+    INTERFACE_dep_MINOR_VERSION ${RACK_VERSION_MINOR}
+    INTERFACE_dep_PATCH_VERSION ${RACK_VERSION_PATCH}
+)
+set_property(TARGET dep APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_dep_MAJOR_VERSION
+)
+set_property(TARGET dep APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_dep_MINOR_VERSION
+)
+set_property(TARGET dep APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_dep_PATCH_VERSION
+)
+
+# file(COPY "${RACK_DIR}/dep" DESTINATION "${PROJECT_BINARY_DIR}/include")
+set(__rack_dep_headers_glob "")
+file(GLOB_RECURSE __rack_dep_headers_glob CONFIGURE_DEPENDS "${RACK_DIR}/dep/*.h*")
+
+# # This contains all the VCV Rack library headers... globs are a bit unsafe
+# # though, so...
+message(DEBUG "${__rack_dep_headers_glob}")
+
+# # Let's make a FILE_SET which we can export
+foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
+    get_filename_component(abs_path_to_file "${__rack_dep_header}" ABSOLUTE)
+    get_filename_component(name_of_file "${abs_path_to_file}" NAME)
+    file(RELATIVE_PATH rel_path_to_file "${RACK_DIR}" "${abs_path_to_file}")
+    get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
+
+    # #
+    configure_file("${RACK_DIR}/${rel_path_to_file}" "${rel_path_to_file}")
+    unset(abs_path_to_file)
+    unset(name_of_file)
+    unset(rel_path_to_file)
+    unset(name_of_file_dir)
+endforeach()
+
+unset(__rack_dep_headers_glob)
+file(GLOB_RECURSE __rack_dep_headers_glob CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/dep/*.h*")
+
+foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
+    get_filename_component(abs_path_to_file "${__rack_dep_header}" ABSOLUTE)
+    get_filename_component(name_of_file "${__rack_dep_header}" NAME)
+    file(
+        RELATIVE_PATH rel_path_to_file "${PROJECT_BINARY_DIR}" "${abs_path_to_file}"
     )
-    string(REGEX REPLACE "[\r\n\"]" "" _VCV_RACK_PLUGIN_JSON_SLUG "${_VCV_RACK_PLUGIN_JSON_SLUG}")
-    set(_VCV_RACK_PLUGIN_JSON_SLUG ${_VCV_RACK_PLUGIN_JSON_SLUG} PARENT_SCOPE)
-endfunction()
+    get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
+    message(DEBUG "")
+    message(DEBUG "name_of_file: ${name_of_file}") # "someheader.hpp"
+    message(DEBUG "name_of_file_dir: ${name_of_file_dir}") # "dep/include/somedep"
+    message(DEBUG "abs_path_to_file: ${abs_path_to_file}") # "C:/..." or "/home/.../
+    message(DEBUG "rel_path_to_file: ${rel_path_to_file}") # "dep/include/somedep/someheader.hpp"
+    message(DEBUG "")
 
-function(vcv_rack_get_plugin_json_version)
-    execute_process(
-        COMMAND "jq" "-r" ".version" "plugin.json"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        OUTPUT_VARIABLE _VCV_RACK_PLUGIN_JSON_VERSION
+    target_sources(dep INTERFACE
+        FILE_SET rack_DEP_INTERFACE_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/dep/include>
+        $<INSTALL_INTERFACE:dep/include>
+        FILES
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
+        $<INSTALL_INTERFACE:${rel_path_to_file}>
     )
-    string(REGEX REPLACE "[\r\n\"]" "" _VCV_RACK_PLUGIN_JSON_VERSION "${_VCV_RACK_PLUGIN_JSON_VERSION}")
-    set(_VCV_RACK_PLUGIN_JSON_VERSION ${_VCV_RACK_PLUGIN_JSON_VERSION} PARENT_SCOPE)
-endfunction()
+    unset(abs_path_to_file)
+    unset(name_of_file)
+    unset(rel_path_to_file)
+    unset(name_of_file_dir)
+endforeach()
 
-if(_VCV_RACK_PLUGIN_JSON_SLUG STREQUAL "")
-    message(FATAL_ERROR "plugin.json#slug is not defined")
-endif()
+# install the target and create export-set
+install(TARGETS dep
+    EXPORT DepExport
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILE_SET rack_DEP_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dep"
+)
 
-if(_VCV_RACK_PLUGIN_JSON_VERSION STREQUAL "")
-    message(FATAL_ERROR "plugin.json#version is not defined")
-endif()
+# generate and install export file
+install(EXPORT DepExport
+    FILE "rack-dep-targets.cmake"
+    NAMESPACE rack::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
+)
 
-#[=============================================================================[
-Exposes a user-side helper function for creating a VCV Rack Plugin library,
-linked to the Rack SDK library.
+export(
+    EXPORT DepExport
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-dep-targets.cmake"
+    NAMESPACE rack::
+)
 
-vcv_rack_create_plugin(<name> [<sources>])
-vcv_rack_create_plugin(<name> [ALIAS <alias>] [NAMESPACE <namespace>] [VCV_RACK_SDK_VERSION <version>] [<sources>])
-
-(This should wrap the CMakeLists.txt-side requirements for building a VCV Rack Plugin)
-]=============================================================================] #
-function(vcv_rack_create_plugin name)
-    # Avoid duplicate target names
-    if(TARGET ${name})
-        message(SEND_ERROR "'vcv_rack_create_plugin()' given target '${name}' which already exists. Please choose a unique name for this target.")
-        return()
-    endif()
-
-    set(options)
-    set(args ALIAS NAMESPACE VCV_RACK_SDK_VERSION)
-    set(list_args)
-    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
-
-    # Generate the identifier for the resource library's namespace
-    set(ns_re "[a-zA-Z_][a-zA-Z0-9_]*")
-
-    if(NOT DEFINED ARG_NAMESPACE)
-        # Check that the library name is also a valid namespace
-        if(NOT name MATCHES "${ns_re}")
-            message(SEND_ERROR "Library name is not a valid namespace. Specify the NAMESPACE argument")
-            return()
-        endif()
-
-        set(ARG_NAMESPACE "${name}")
-    else()
-        if(NOT ARG_NAMESPACE MATCHES "${ns_re}")
-            message(SEND_ERROR "NAMESPACE for ${name} is not a valid C++ namespace identifier (${ARG_NAMESPACE})")
-            return()
-        endif()
-    endif()
-
-    # TODO: This needs more/better validation...
-    if(DEFINED ARG_VCV_RACK_SDK_VERSION AND(ARG_VCV_RACK_SDK_VERSION LESS_EQUAL 0))
-        message(SEND_ERROR "VCV_RACK_SDK_VERSION for ${name} is not a valid Integer number (${VCV_RACK_SDK_VERSION})")
-        return()
-    endif()
-
-    if(NOT DEFINED ARG_VCV_RACK_SDK_VERSION)
-        if(NOT DEFINED VCV_RACK_SDK_VERSION)
-            # default NAPI version to use if none specified
-            set(VCV_RACK_SDK_VERSION 8)
-        endif()
-
-        set(ARG_VCV_RACK_SDK_VERSION ${VCV_RACK_SDK_VERSION})
-    endif()
-
-    if(ARG_ALIAS)
-        set(name_alt "${ARG_ALIAS}")
-    else()
-        set(name_alt "${ARG_NAMESPACE}")
-    endif()
-
-    if(VERBOSE)
-        message(STATUS "Configuring VCV Rack Plugin: ${name}")
-    endif()
-
-    # Begin a new VCV Rack Plugin target
-    add_library(${name} SHARED)
-    add_library(${name_alt}::${name} ALIAS ${name})
-
-    # target_link_libraries(${name} PRIVATE vcv-rack::rack-sdk)
-    set_property(
-        TARGET ${name}
-        PROPERTY "${name}_IS_VCV_RACK_PLUGIN_LIBRARY" TRUE # Custom property
-    )
-
-    set_target_properties(${name}
-        PROPERTIES
-
-        LIBRARY_OUTPUT_NAME "${name}"
-
-        # PREFIX ""
-        # SUFFIX ".so"
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib" # Actually we might not need to enforce an opinion here!
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/lib" # Instead, we call 'cmakejs_create_addon_bindings()'
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKEJS_BINARY_DIR}/bin" # on this target, and the user can just 'require()' that file!
-
-        # # Conventional C++-style debug settings might be useful to have...
-        # LIBRARY_OUTPUT_NAME_DEBUG "d${name}"
-        # ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
-        # LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/lib/Debug"
-        # RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKEJS_BINARY_DIR}/bin/Debug"
-    )
-
-    vcv_rack_plugin_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
-endfunction()
-
-#[=============================================================================[
-Add source files to an existing Napi Addon target.
-
-vcv_rack_plugin_add_sources(<name> [items1...])
-vcv_rack_plugin_add_sources(<name> [BASE_DIRS <dirs>] [items1...])
-vcv_rack_plugin_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]])
-vcv_rack_plugin_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
-]=============================================================================] #
-function(vcv_rack_plugin_add_sources name)
-    # Check that this is a VCV Rack Plugin target
-    get_target_property(is_plugin_lib ${name} ${name}_IS_VCV_RACK_PLUGIN_LIBRARY)
-
-    if(NOT TARGET ${name} OR NOT is_plugin_lib)
-        message(SEND_ERROR "'vcv_rack_plugin_add_sources()' called on '${name}' which is not an existing napi addon library")
-        return()
-    endif()
-
-    set(options)
-    set(args BASE_DIRS)
-    set(list_args INTERFACE PRIVATE PUBLIC)
-    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
-
-    if(NOT ARG_BASE_DIRS)
-        # Default base directory of the passed-in source file(s)
-        set(ARG_BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
-    endif()
-
-    _vcv_rack_normalize_path(ARG_BASE_DIRS)
-    get_filename_component(ARG_BASE_DIRS "${ARG_BASE_DIRS}" ABSOLUTE)
-
-    # All remaining unparsed args 'should' be source files for this target, so...
-    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-        _vcv_rack_normalize_path(input)
-        get_filename_component(abs_in "${input}" ABSOLUTE)
-        file(RELATIVE_PATH relpath "${ARG_BASE_DIRS}" "${abs_in}")
-
-        if(relpath MATCHES "^\\.\\.")
-            # For now we just error on files that exist outside of the source dir.
-            message(SEND_ERROR "Cannot add file '${input}': File must be in a subdirectory of ${ARG_BASE_DIRS}")
-            return()
-        endif()
-
-        set(rel_file "${ARG_BASE_DIRS}/${relpath}")
-        _vcv_rack_normalize_path(rel_file)
-        get_filename_component(source_file "${input}" ABSOLUTE)
-
-        # If we are here, source file is valid. Add IDE support
-        source_group("${name}" FILES "${source_file}")
-
-        if(DEFINED ARG_INTERFACE)
-            foreach(item IN LISTS ARG_INTERFACE)
-                target_sources(${name} INTERFACE "${source_file}")
-            endforeach()
-        endif()
-
-        if(DEFINED ARG_PRIVATE)
-            foreach(item IN LISTS ARG_PRIVATE)
-                target_sources(${name} PRIVATE "${source_file}")
-            endforeach()
-        endif()
-
-        if(DEFINED ARG_PUBLIC)
-            foreach(item IN LISTS ARG_PUBLIC)
-                target_sources(${name} PUBLIC "${source_file}")
-            endforeach()
-        endif()
-
-        foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-            target_sources(${name} PRIVATE "${source_file}")
-        endforeach()
-    endforeach()
-endfunction()
-
-# #
-set(_VCVRACK_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to current 'VCVRack.cmake' script")
-
-set(VCVRACK_TARGETS)
+# export(
+# TARGETS dep
+# FILE "share/cmake/rack-dep-targets.cmake"
+# NAMESPACE rack::
+# )
+list(APPEND RACK_TARGETS dep)
 
 #[==[Rack SDK]==]
-add_library(RackSDK SHARED IMPORTED GLOBAL)
-add_library(VCVRack::RackSDK ALIAS RackSDK)
+add_library(sdk INTERFACE)
+add_library(rack::sdk ALIAS sdk)
 
-set_target_properties(RackSDK PROPERTIES VERSION 2.5.2)
-set_target_properties(RackSDK PROPERTIES SOVERSION 2.5.2)
-set_target_properties(RackSDK PROPERTIES INTERFACE_VCVRACK_RACKSDK_MAJOR_VERSION 2)
-set(VCVRACK_RACK_LIB_FILE_EXTENSION)
+set_target_properties(sdk
+    PROPERTIES
+    VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+    SOVERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+
+    RUNTIME_OUTPUT_DIRECTORY "bin"
+    LIBRARY_OUTPUT_DIRECTORY "lib"
+    ARCHIVE_OUTPUT_DIRECTORY "lib"
+    PDB_OUTPUT_DIRECTORY "bin"
+
+    # Compatible Interface
+    INTERFACE_sdk_MAJOR_VERSION ${RACK_VERSION_MAJOR}
+    INTERFACE_sdk_MINOR_VERSION ${RACK_VERSION_MINOR}
+    INTERFACE_sdk_PATCH_VERSION ${RACK_VERSION_PATCH}
+)
+set_property(TARGET sdk APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_sdk_MAJOR_VERSION
+)
+set_property(TARGET sdk APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_sdk_MINOR_VERSION
+)
+set_property(TARGET sdk APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_sdk_PATCH_VERSION
+)
+
+set(__rack_sdk_headers_glob "")
+file(GLOB_RECURSE __rack_sdk_headers_glob CONFIGURE_DEPENDS "${RACK_DIR}/include/*.h*")
+
+# # This contains all the VCV Rack library headers... globs are a bit unsafe
+# # though, so...
+message(DEBUG "${__rack_sdk_headers_glob}")
+
+# # Let's make a FILE_SET which we can export
+foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
+    get_filename_component(abs_path_to_file "${__rack_sdk_header}" ABSOLUTE)
+    get_filename_component(name_of_file "${abs_path_to_file}" NAME)
+    file(RELATIVE_PATH rel_path_to_file "${RACK_DIR}" "${abs_path_to_file}")
+    get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
+
+    # #
+    configure_file("${RACK_DIR}/${rel_path_to_file}" "${rel_path_to_file}")
+    unset(abs_path_to_file)
+    unset(name_of_file)
+    unset(rel_path_to_file)
+    unset(name_of_file_dir)
+endforeach()
+
+unset(__rack_sdk_headers_glob)
+file(GLOB_RECURSE __rack_sdk_headers_glob CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/include/*.h*")
+
+foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
+    get_filename_component(abs_path_to_file "${__rack_sdk_header}" ABSOLUTE)
+    get_filename_component(name_of_file "${__rack_dep_header}" NAME)
+    file(
+        RELATIVE_PATH rel_path_to_file "${PROJECT_BINARY_DIR}" "${abs_path_to_file}"
+    )
+    get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
+    message(DEBUG "")
+    message(DEBUG "name_of_file: ${name_of_file}") # "someheader.hpp"
+    message(DEBUG "name_of_file_dir: ${name_of_file_dir}") # "include/somedep"
+    message(DEBUG "abs_path_to_file: ${abs_path_to_file}") # "C:/..." or "/home/.../
+    message(DEBUG "rel_path_to_file: ${rel_path_to_file}") # "include/somedep/someheader.hpp"
+    message(DEBUG "")
+
+    target_sources(sdk INTERFACE
+        FILE_SET rack_SDK_INTERFACE_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        FILES
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
+        $<INSTALL_INTERFACE:${rel_path_to_file}>
+    )
+    unset(abs_path_to_file)
+    unset(name_of_file)
+    unset(rel_path_to_file)
+    unset(name_of_file_dir)
+endforeach()
+
+target_link_libraries(sdk
+    INTERFACE
+    rack::dep
+)
+
+# install the target and create export-set
+install(TARGETS sdk
+    EXPORT SdkExport
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILE_SET rack_SDK_INTERFACE_HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# generate and install export file
+install(EXPORT SdkExport
+    FILE "rack-sdk-targets.cmake"
+    NAMESPACE rack::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
+)
+
+export(
+    TARGETS sdk
+    FILE "share/cmake/rack-sdk-targets.cmake"
+    NAMESPACE rack::
+)
+
+list(APPEND RACK_TARGETS sdk)
+
+#[==[Rack Library]==]
+add_library(lib SHARED IMPORTED GLOBAL)
+add_library(rack::lib ALIAS lib)
+
+set(RACK_LIB_FILE_EXTENSION)
 
 if(APPLE)
-    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dylib")
+    set(RACK_LIB_FILE_EXTENSION ".dylib")
 elseif(UNIX AND NOT APPLE) # Linux
-    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".so")
+    set(RACK_LIB_FILE_EXTENSIONN ".so")
 endif()
 
 if(WIN32)
-    set(VCVRACK_RACK_LIB_FILE_EXTENSION ".dll.a")
+    set(RACK_LIB_FILE_EXTENSION ".dll.a")
 endif()
 
 set_property(
-    TARGET RackSDK
+    TARGET lib
     PROPERTY
-    IMPORTED_LOCATION "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
+    IMPORTED_LOCATION "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
 )
 set_property(
-    TARGET RackSDK
+    TARGET lib
     PROPERTY
-    IMPORTED_IMPLIB "${RACK_DIR}/libRack${VCVRACK_RACK_LIB_FILE_EXTENSION}"
+    IMPORTED_IMPLIB "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
 )
 set_property(
-    TARGET RackSDK
+    TARGET lib
     PROPERTY
     INTERFACE_LINK_DIRECTORIES "${CMAKE_INSTALL_LIBDIR}"
 )
 set_property(
-    TARGET RackSDK
+    TARGET lib
     PROPERTY
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
-file(COPY "${RACK_DIR}/include" DESTINATION "${PROJECT_BINARY_DIR}")
-
-set(__RACK_SDK_HEADERS_GLOB "")
-file(GLOB_RECURSE __RACK_SDK_HEADERS_GLOB CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/include/*.h*")
-
-message(DEBUG "${__RACK_SDK_HEADERS_GLOB}")
-
-foreach(FILE IN LISTS __RACK_SDK_HEADERS_GLOB)
-    get_filename_component(file_abs_path "${FILE}" ABSOLUTE)
-    get_filename_component(file_name "${FILE}" NAME)
-    file(
-        RELATIVE_PATH file_rel_path "${PROJECT_BINARY_DIR}" "${file_abs_path}"
-    )
-    get_filename_component(file_directory_name "${file_rel_path}" DIRECTORY)
-
-    message(DEBUG "")
-    message(DEBUG "${file_directory_name}")
-    message(DEBUG "file_abs_path: ${file_abs_path}")
-    message(DEBUG "file_rel_path: ${file_rel_path}")
-    message(DEBUG "file_name: ${file_name}")
-    message(DEBUG "")
-    target_sources(RackSDK INTERFACE
-        FILE_SET vcvrack_RACKSDK_INTERFACE_HEADERS
-        TYPE HEADERS
-        BASE_DIRS
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-        FILES
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${file_rel_path}>
-        $<INSTALL_INTERFACE:${file_rel_path}>
-    )
-
-    file(
-        RELATIVE_PATH file_install_path "${PROJECT_BINARY_DIR}/include" "${file_abs_path}"
-    )
-    get_filename_component(file_install_directory_name "${file_install_path}" DIRECTORY)
-
-    # Prevent annoying warnings about empty projects...
-    install(
-        FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${file_install_directory_name}"
-    )
-endforeach()
-
-unset(__RACK_SDK_HEADERS_GLOB)
-
-file(COPY "${RACK_DIR}/dep" DESTINATION "${PROJECT_BINARY_DIR}")
-
-set(__RACK_SDK_DEP_HEADERS_GLOB "")
-file(GLOB_RECURSE __RACK_SDK_DEP_HEADERS_GLOB CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/dep/*.h*")
-message(DEBUG "${__RACK_SDK_DEP_HEADERS_GLOB}")
-
-foreach(FILE IN LISTS __RACK_SDK_DEP_HEADERS_GLOB)
-    get_filename_component(file_abs_path "${FILE}" ABSOLUTE)
-    get_filename_component(file_name "${FILE}" NAME)
-
-    file(
-        RELATIVE_PATH file_rel_path "${PROJECT_BINARY_DIR}" "${file_abs_path}"
-    )
-
-    get_filename_component(file_directory_name "${file_rel_path}" DIRECTORY)
-    message(DEBUG "")
-    message(DEBUG "${file_directory_name}")
-    message(DEBUG "file_abs_path: ${file_abs_path}")
-    message(DEBUG "file_rel_path: ${file_rel_path}")
-    message(DEBUG "file_name: ${file_name}")
-    message(DEBUG "")
-    target_sources(RackSDK INTERFACE
-        FILE_SET vcvrack_RACKSDK_DEP_INTERFACE_HEADERS
-        TYPE HEADERS
-        BASE_DIRS
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/dep/include>
-        $<INSTALL_INTERFACE:include/dep/include>
-        FILES
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${file_rel_path}>
-        $<INSTALL_INTERFACE:include/${file_rel_path}>
-    )
-
-    file(
-        RELATIVE_PATH file_install_path "${PROJECT_BINARY_DIR}/dep" "${file_abs_path}"
-    )
-
-    get_filename_component(file_install_directory_name "${file_install_path}" DIRECTORY)
-
-    install(
-        FILES "${PROJECT_BINARY_DIR}/${file_rel_path}"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dep/${file_install_directory_name}"
-    )
-endforeach()
-
-unset(__RACK_SDK_DEP_HEADERS_GLOB)
-
-install(IMPORTED_RUNTIME_ARTIFACTS RackSDK
-    RUNTIME_DEPENDENCY_SET RackSDKTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
-
-    # EXPORT RackSDKTargets
-    # FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    # BUNDLE DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+target_link_libraries(lib
+    INTERFACE
+    rack::dep
+    rack::sdk
 )
 
-install(RUNTIME_DEPENDENCY_SET RackSDKTargets
+install(
+    IMPORTED_RUNTIME_ARTIFACTS lib
+    RUNTIME_DEPENDENCY_SET LibExports
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-# # Require C++11.
-target_compile_features(RackSDK INTERFACE cxx_std_11)
-target_compile_features(RackSDK INTERFACE c_std_11)
+install(RUNTIME_DEPENDENCY_SET LibExports
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
-if(APPLE)
-    target_link_options(RackSDK
-        INTERFACE
-        "-undefined dynamic_lookup"
-    )
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-lib-targets.cmake" [==[
+# Generated by CMake
+
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.8)
+    message(FATAL_ERROR "CMake >= 2.8.0 required")
 endif()
 
+if(CMAKE_VERSION VERSION_LESS "3.0.0")
+    message(FATAL_ERROR "CMake >= 3.0.0 required")
+endif()
+
+cmake_policy(PUSH)
+cmake_policy(VERSION 3.0.0...3.28)
+
+# ----------------------------------------------------------------
+# Generated CMake target import file.
+# ----------------------------------------------------------------
+
+# Commands may need to know the format version.
+set(CMAKE_IMPORT_FILE_VERSION 1)
+
+# Protect against multiple inclusion, which would fail when already imported targets are added once more.
+set(_cmake_targets_defined "")
+set(_cmake_targets_not_defined "")
+set(_cmake_expected_targets "")
+
+foreach(_cmake_expected_target IN ITEMS rack::lib)
+    list(APPEND _cmake_expected_targets "${_cmake_expected_target}")
+
+    if(TARGET "${_cmake_expected_target}")
+        list(APPEND _cmake_targets_defined "${_cmake_expected_target}")
+    else()
+        list(APPEND _cmake_targets_not_defined "${_cmake_expected_target}")
+    endif()
+endforeach()
+
+unset(_cmake_expected_target)
+
+if(_cmake_targets_defined STREQUAL _cmake_expected_targets)
+    unset(_cmake_targets_defined)
+    unset(_cmake_targets_not_defined)
+    unset(_cmake_expected_targets)
+    unset(CMAKE_IMPORT_FILE_VERSION)
+    cmake_policy(POP)
+    return()
+endif()
+
+if(NOT _cmake_targets_defined STREQUAL "")
+    string(REPLACE ";" ", " _cmake_targets_defined_text "${_cmake_targets_defined}")
+    string(REPLACE ";" ", " _cmake_targets_not_defined_text "${_cmake_targets_not_defined}")
+    message(FATAL_ERROR "Some (but not all) targets in this export set were already defined.\nTargets Defined: ${_cmake_targets_defined_text}\nTargets not yet defined: ${_cmake_targets_not_defined_text}\n")
+endif()
+
+unset(_cmake_targets_defined)
+unset(_cmake_targets_not_defined)
+unset(_cmake_expected_targets)
+
+# Compute the installation prefix relative to this file.
+get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+if(_IMPORT_PREFIX STREQUAL "/")
+  set(_IMPORT_PREFIX "")
+endif()
+
+set(RACK_LIB_FILE_EXTENSION)
+
+if(APPLE)
+    set(RACK_LIB_FILE_EXTENSION ".dylib")
+elseif(UNIX AND NOT APPLE) # Linux
+    set(RACK_LIB_FILE_EXTENSION ".so")
+endif()
+
+if(WIN32)
+    set(RACK_LIB_FILE_EXTENSION ".dll.a")
+endif()
+
+# Create imported target rack::lib
+add_library(rack::lib SHARED IMPORTED GLOBAL)
+
+set_target_properties(rack::lib PROPERTIES
+    # COMPATIBLE_INTERFACE_STRING "INTERFACE_lib_MAJOR_VERSION"
+    INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
+    INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+    INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/lib"
+    IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}"
+    IMPORTED_IMPLIB "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}"
+    IMPORTED_NO_SONAME "TRUE"
+)
+
 if(UNIX AND NOT APPLE)
-    target_link_options(RackSDK
-        INTERFACE
+    set_target_properties(rack::lib PROPERTIES
 
         # # This prevents static variables in the DSO (dynamic shared
         # # object) from being preserved after dlclose().
-        "-fno-gnu-unique"
-        "-static-libstdc++" "-static-libgcc"
+        INTERFACE_LINK_OPTIONS "-fno-gnu-unique;-static-libstdc++;-static-libgcc"
+    )
+endif()
+
+if(APPLE)
+    set_target_properties(rack::lib PROPERTIES
+        INTERFACE_LINK_OPTIONS "-undefined dynamic_lookup"
     )
 endif()
 
 if(WIN32)
-    target_link_options(RackSDK
-        INTERFACE
-        "-municode"
+    set_target_properties(rack::lib PROPERTIES
+        INTERFACE_LINK_OPTIONS "-municode"
     )
 endif()
 
-set_target_properties(RackSDK
-    PROPERTIES
-    LINKER_LANGUAGE CXX
-)
+# Load information for each installed configuration.
+file(GLOB _cmake_config_files "${CMAKE_CURRENT_LIST_DIR}/rack-lib-targets-*.cmake")
 
-list(APPEND VCVRACK_TARGETS RackSDK)
+foreach(_cmake_config_file IN LISTS _cmake_config_files)
+    include("${_cmake_config_file}")
+endforeach()
 
-#[==[Rack]==]
-# add_executable(Rack IMPORTED GLOBAL)
-# add_executable(VCVRack::Rack ALIAS Rack)
+unset(_cmake_config_file)
+unset(_cmake_config_files)
 
-# set_target_properties(Rack PROPERTIES VERSION 2.5.2)
-# set_target_properties(Rack PROPERTIES SOVERSION 2.5.2)
-# set_target_properties(Rack PROPERTIES INTERFACE_VCVRACK_RACK_MAJOR_VERSION 2)
-# set_property(
-# TARGET Rack
-# PROPERTY
-# IMPORTED_LOCATION " ${RACK_DIR}/Rack "
+# Cleanup temporary variables.
+set(_IMPORT_PREFIX)
 
-# # IMPORTED_IMPLIB " ${RACK_DIR}/Rack "
+# Loop over all imported files and verify that they actually exist
+foreach(_cmake_target IN LISTS _cmake_import_check_targets)
+    if(CMAKE_VERSION VERSION_LESS "3.28"
+        OR NOT DEFINED _cmake_import_check_xcframework_for_${_cmake_target}
+        OR NOT IS_DIRECTORY "${_cmake_import_check_xcframework_for_${_cmake_target}}")
+        foreach(_cmake_file IN LISTS "_cmake_import_check_files_for_${_cmake_target}")
+            if(NOT EXISTS "${_cmake_file}")
+                message(FATAL_ERROR "The imported target \"${_cmake_target}\" references the file
+\"${_cmake_file}\"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+\"${CMAKE_CURRENT_LIST_FILE}\"
+but not all the files it references.
+")
+            endif()
+        endforeach()
+    endif()
+
+    unset(_cmake_file)
+    unset("_cmake_import_check_files_for_${_cmake_target}")
+endforeach()
+
+unset(_cmake_target)
+unset(_cmake_import_check_targets)
+
+# Make sure the targets which have been exported in some other
+# export set exist.
+unset(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
+foreach(_target "rack::dep" "rack::sdk" )
+  if(NOT TARGET "${_target}" )
+    set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets "${${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets} ${_target}")
+  endif()
+endforeach()
+
+if(DEFINED ${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
+  if(CMAKE_FIND_PACKAGE_NAME)
+    set( ${CMAKE_FIND_PACKAGE_NAME}_FOUND FALSE)
+    set( ${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE "The following imported targets are referenced, but are missing: ${${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets}")
+  else()
+    message(FATAL_ERROR "The following imported targets are referenced, but are missing: ${${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets}")
+  endif()
+endif()
+unset(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
+
+# Commands beyond this point should not need to know the version.
+set(CMAKE_IMPORT_FILE_VERSION)
+cmake_policy(POP)
+
+]==])
+
+# export(
+# TARGETS lib
+# FILE "share/cmake/rack-lib-targets.cmake"
+# NAMESPACE rack::
 # )
-# set_property(
-# TARGET Rack
-# PROPERTY
-# ENABLE_EXPORTS TRUE
-# )
-# set_target_properties(Rack
-# PROPERTIES
-# PREFIX " "
-# SUFFIX " "
-# LIBRARY_OUTPUT_NAME " Rack "
-# RUNTIME_OUTPUT_DIRECTORY " ${RACK_DIR} "
-# )
-# target_link_libraries(Rack
-# INTERFACE
-# VCVRack::RackSDK
-# )
-# set_target_properties(Rack
-# PROPERTIES
-# LINKER_LANGUAGE CXX
-# )
-
-# install(IMPORTED_RUNTIME_ARTIFACTS Rack
-
-# LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-# RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-
-# # EXPORT RackSDKTargets
-# # FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
-# # BUNDLE DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-# )
-
-# list(APPEND VCVRACK_TARGETS Rack)
+list(APPEND RACK_TARGETS lib)
 
 # #
 include(CMakePackageConfigHelpers)
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in" [==[
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-config.cmake.in" [==[
 @PACKAGE_INIT@
 
-## Required...
-if(NOT DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
-    message(FATAL_ERROR "You need to set $RACK_DIR")
-endif()
+include("${CMAKE_CURRENT_LIST_DIR}/rack-config-version.cmake")
 
-## Take RACK_DIR from env, if not passed as -DRACK_DIR=...
-if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
-    set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
-endif()
-
-include("${CMAKE_CURRENT_LIST_DIR}/VCVRackConfigVersion.cmake")
-
-set(_VCVRack_supported_components)
-list(APPEND _VCVRack_supported_components
-    @VCVRACK_TARGETS@
+set(_rack_supported_components)
+list(APPEND _rack_supported_components
+    @RACK_TARGETS@
 )
 ## Custom 'check_required_components' macro
-foreach(_requested_component ${VCVRack_FIND_COMPONENTS})
-    if (NOT _requested_component IN_LIST _VCVRack_supported_components)
-        set(VCVRack_FOUND False)
-        set(VCVRack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
+foreach(_requested_component ${rack_FIND_COMPONENTS})
+    if (NOT _requested_component IN_LIST _rack_supported_components)
+        message(FATAL_ERROR "Unsupported component: ${_requested_component}")
+        set(rack_FOUND False)
+        set(rack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
     endif()
-    include("${CMAKE_CURRENT_LIST_DIR}/VCVRack${_requested_component}Targets.cmake")
-    message(STATUS "Linking with VCVRack::${_requested_component}")
+    include("${CMAKE_CURRENT_LIST_DIR}/rack-${_requested_component}-targets.cmake")
+    message(STATUS "Linking with rack::${_requested_component}")
 endforeach()
 
-unset(_VCVRack_supported_components)
+unset(_rack_supported_components)
 
 ####################################################################################
 
 # Tell the user what to do
-message(STATUS "Linking with VCVRack")
+message(STATUS "Linking with rack")
 ]==])
 
 # create cmake config file
 configure_package_config_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/VCVRackConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/rack-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config.cmake"
     INSTALL_DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
 
     # # Use custom 'check_required_components' macro
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
@@ -518,57 +544,17 @@ configure_package_config_file(
 
 # generate the version file for the cmake config file
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
-    VERSION ${VCVRACK_VERSION_MAJOR}.${VCVRACK_VERSION_MINOR}.${VCVRACK_VERSION_PATCH}
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config-version.cmake"
+    VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
     COMPATIBILITY AnyNewerVersion
 )
-file(
-    COPY
-    "${RACK_DIR}/arch.mk"
-    "${RACK_DIR}/compile.mk"
-    "${RACK_DIR}/dep.mk"
-    "${RACK_DIR}/plugin.mk"
-    "${RACK_DIR}/CHANGELOG.html"
-    "${RACK_DIR}/README.html"
-    "${RACK_DIR}/LICENSE.html"
-
-    # # Put these under 'share' so the binary tree doesn't get messy...
-    # # *but* they won't work correctly if not installed in the correct place!
-    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share"
-)
-file(
-    COPY "${CMAKE_CURRENT_SOURCE_DIR}/share/cmake/Modules/VCVRackRackSDKTargets.cmake"
-    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake"
-)
-
-file(
-    COPY "${CMAKE_CURRENT_SOURCE_DIR}/share/cmake/Modules/VCVRackRackTargets.cmake"
-    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/share/cmake"
-)
-
-# install(
-# FILES
-# "${CMAKE_CURRENT_BINARY_DIR}/share/arch.mk"
-# "${CMAKE_CURRENT_BINARY_DIR}/share/compile.mk"
-# "${CMAKE_CURRENT_BINARY_DIR}/share/dep.mk"
-# "${CMAKE_CURRENT_BINARY_DIR}/share/plugin.mk"
-# "${CMAKE_CURRENT_BINARY_DIR}/share/CHANGELOG.html"
-# "${CMAKE_CURRENT_BINARY_DIR}/share/README.html"
-# "${CMAKE_CURRENT_BINARY_DIR}/share/LICENSE.html"
-
-# DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
-# )
 
 # install config files
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackConfigVersion.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackSDKTargets.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/VCVRackRackTargets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config-version.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-lib-targets.cmake"
     DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/cmake/VCVRack"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
 )
-
-unset(_version)
-unset(_VCVRACK_SCRIPT)
