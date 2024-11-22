@@ -8,10 +8,10 @@ get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
 
 set(SOURCE_PATH "${__stoneyvcv_dir}/dep/StoneyDSP")
 
-vcpkg_cmake_configure(
+vcpkg_configure_cmake(
     SOURCE_PATH "${SOURCE_PATH}"
 )
-vcpkg_cmake_install()
+vcpkg_install_cmake()
 vcpkg_cmake_config_fixup(
     PACKAGE_NAME StoneyDSP
     CONFIG_PATH "lib/cmake/StoneyDSP"
