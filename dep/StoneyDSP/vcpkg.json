@@ -13,6 +13,14 @@
         }
       ]
     },
+    "dsp": {
+      "description": "DSP module",
+      "dependencies": [
+        {
+          "name": "simde"
+        }
+      ]
+    },
     "test": {
       "description": "Test support",
       "dependencies": [
