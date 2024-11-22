@@ -2,6 +2,7 @@
   "name": "stoneyvcv",
   "version": "2.0.0",
   "license": "MIT",
+  "supports": "(linux & x64)|(osx & x64)|(osx & arm64)|(windows & mingw & x64)",
   "dependencies": [
     {
       "name": "catch2",
@@ -9,11 +10,22 @@
     },
     {
       "name": "stoneydsp",
-      "version>=": "0.0.0"
+      "version>=": "0.0.0",
+      "default-features": true,
+      "features": [
+        "simd",
+        "dsp"
+      ]
     },
     {
-      "name": "vcvrack",
-      "version>=": "2.5.2"
+      "name": "rack",
+      "version>=": "2.5.2",
+      "default-features": true,
+      "features": [
+        "dep",
+        "sdk",
+        "lib"
+      ]
     },
     {
       "name": "vcpkg-cmake",
