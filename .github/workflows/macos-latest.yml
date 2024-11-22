@@ -13,13 +13,11 @@ concurrency:
 
 env:
   DISPLAY: :0
-  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_OSX_ARCHITECTURES: "x86_64"
+  VCPKG_OSX_ARCHITECTURES: "x86_64;arm64"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
-  BUILD_TYPE: Release
   BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
@@ -28,8 +26,8 @@ env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "mac-x64+arm64"
-  RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-  DYLD_LIBRARY_PATH: "${{ github.workspace }}/dep/Rack-SDK"
+  # RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+  # DYLD_LIBRARY_PATH: "${{ github.workspace }}/dep/Rack-SDK"
 
 jobs:
   macos:
@@ -51,10 +49,11 @@ jobs:
     - name: Install VCV's macOS Deps
       run: |
         brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache ninja tree
-        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
+
+# curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+# cd dep
+# unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+# cd ..
 
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
@@ -78,15 +77,12 @@ jobs:
         -S ${{ github.workspace }}
         -B ${{ env.BUILD_DIR }}
         -G "Ninja"
-        -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
-        -DRACK_DIR=${{ env.RACK_DIR }}
         -DVCPKG_MANIFEST_MODE:STRING=ON
         -DVCPKG_OVERLAY_PORTS=${{ github.workspace }}/dep/vcpkg/ports
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
-        -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64
+        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64;arm64"
         -DVCPG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx

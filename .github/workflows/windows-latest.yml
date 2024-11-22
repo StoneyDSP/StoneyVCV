@@ -13,7 +13,6 @@ concurrency:
 
 env:
   DISPLAY: :0
-  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
@@ -21,13 +20,11 @@ env:
   VCPKG_MANIFEST_MODE: ON
   VCPKG_ROOT: "vcpkg"
   VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\dep\vcpkg\ports
-  BUILD_TYPE: Release
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "win-x64"
-  RACK_DIR: ${{ github.workspace }}\dep\Rack-SDK
   MSYSTEM: "MINGW64"
 
 jobs:
@@ -77,27 +74,27 @@ jobs:
           tree
           ninja
 
-      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    - name: Install VCV's Windows Deps
-      shell: msys2 {0}
-      run: |
-        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
+#   # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+# - name: Install VCV's Windows Deps
+#   shell: msys2 {0}
+#   run: |
+#     curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+#     cd dep
+#     unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+#     cd ..
 
-    - name: Deps
-      uses: johnwason/vcpkg-action@v6
-      with:
-        # vcpkg triplet to use
-        triplet: x64-mingw-dynamic
-        # GitHub token to authenticate API requests. Recommended to use  github.token
-        token: ${{ github.token }}
-        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
-        manifest-dir: ${{ github.workspace }}
-        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: false
-        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
+    # - name: Deps
+    #   uses: johnwason/vcpkg-action@v6
+    #   with:
+    #     # vcpkg triplet to use
+    #     triplet: x64-mingw-dynamic
+    #     # GitHub token to authenticate API requests. Recommended to use  github.token
+    #     token: ${{ github.token }}
+    #     # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+    #     manifest-dir: ${{ github.workspace }}
+    #     # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+    #     github-binarycache: false
+    #     pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
     - name: Configure Tests
       shell: msys2 {0}
