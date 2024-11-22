@@ -5,6 +5,6 @@
   "description": "The StoneyDSP C++ Audio Library",
   "homepage": "https://github.com/StoneyDSP/StoneyDSP",
   "dependencies": [
-    "simd"
+    "simde"
   ]
 }
