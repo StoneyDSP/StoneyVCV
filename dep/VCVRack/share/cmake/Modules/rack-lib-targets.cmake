@@ -90,26 +90,30 @@ set_target_properties(rack::lib PROPERTIES
     IMPORTED_NO_SONAME "TRUE"
 )
 
-if(UNIX AND NOT APPLE)
-    set_target_properties(rack::lib PROPERTIES
+# Some of these flags tend to make their linkees (consumers) tricky
+# to work with; We are currently aware of these requirements, but
+# still exploring the best way to integrate them into the buildsystem...
 
-        # # This prevents static variables in the DSO (dynamic shared
-        # # object) from being preserved after dlclose().
-        INTERFACE_LINK_OPTIONS "-fno-gnu-unique;-static-libstdc++;-static-libgcc"
-    )
-endif()
+# if(UNIX AND NOT APPLE)
+# set_target_properties(rack::lib PROPERTIES
 
-if(APPLE)
-    set_target_properties(rack::lib PROPERTIES
-        INTERFACE_LINK_OPTIONS "-undefined dynamic_lookup"
-    )
-endif()
+# # # This prevents static variables in the DSO (dynamic shared
+# # # object) from being preserved after dlclose().
+# INTERFACE_LINK_OPTIONS "-fno-gnu-unique;-static-libstdc++;-static-libgcc"
+# )
+# endif()
 
-if(WIN32)
-    set_target_properties(rack::lib PROPERTIES
-        INTERFACE_LINK_OPTIONS "-municode"
-    )
-endif()
+# if(APPLE)
+# set_target_properties(rack::lib PROPERTIES
+# INTERFACE_LINK_OPTIONS "-undefined dynamic_lookup"
+# )
+# endif()
+
+# if(WIN32)
+# set_target_properties(rack::lib PROPERTIES
+# INTERFACE_LINK_OPTIONS "-municode"
+# )
+# endif()
 
 # Load information for each installed configuration.
 file(GLOB _cmake_config_files "${CMAKE_CURRENT_LIST_DIR}/rack-lib-targets-*.cmake")
