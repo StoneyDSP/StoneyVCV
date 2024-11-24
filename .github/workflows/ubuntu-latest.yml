@@ -68,15 +68,13 @@ jobs:
         cmake
         -S ${{ github.workspace }}
         -B ${{ env.BUILD_DIR }}
-        -G "Ninja"
-        -DCMAKE_CXX_FLAGS:STRING="-march=nehalem"
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
         -DVCPKG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_HOST_TRIPLET:STRING=x64-linux
         -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
-        -DVCPKG_MANIFEST_MODE:STRING=ON
-        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
@@ -115,9 +113,9 @@ jobs:
     # - name: Install
     #   run: make install -j3
 
-    # # List all files in tree
-    # - name: Tree
-    #   run: tree
+    # List all files in tree
+    - name: Tree
+      run: tree
 
     - name: Upload Build
       uses: actions/upload-artifact@v4

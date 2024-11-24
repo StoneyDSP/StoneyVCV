@@ -77,18 +77,15 @@ jobs:
         cmake
         -S ${{ github.workspace }}
         -B ${{ env.BUILD_DIR }}
-        -G "Ninja"
         -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
-        -DVCPKG_MANIFEST_MODE:STRING=ON
-        -DVCPKG_OVERLAY_PORTS=${{ github.workspace }}/dep/vcpkg/ports
+        -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64"
-        -DVCPG_ROOT=${{ env.VCPKG_ROOT }}
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
-        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli
 

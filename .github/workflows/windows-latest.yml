@@ -100,21 +100,14 @@ jobs:
       shell: msys2 {0}
       run: >-
         cmake
-        -S .
-        -B ${{ env.BUILD_DIR }}
-        -G "Ninja"
-        -DCMAKE_C_FLAGS="-march=nehalem"
-        -DCMAKE_CXX_FLAGS="-march=nehalem"
+        -S ${PWD}
+        -B ${PWD}/build
         -DCMAKE_INSTALL_PREFIX=${PWD}/install
-        -DRACK_DIR=${PWD}/dep/Rack-SDK
-        -DVCPKG_ROOT=${PWD}/vcpkg
-        -DVCPKG_MANIFEST_MODE=ON
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
-        -DVCPKG_OVERLAY_PORTS=${PWD}/dep/vcpkg/ports
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
