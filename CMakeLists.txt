@@ -3,24 +3,21 @@ cmake_minimum_required(VERSION 3.14...3.31 FATAL_ERROR)
 #[==[STONEYVCV]==]
 project(STONEYVCV VERSION 2.1.0.0)
 
-#[==[Set StoneyDSP Library ABI version to use]==]
-set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
-set(STONEYDSP_VERSION_MINOR 1 CACHE STRING "" FORCE)
-
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-municode" _cxx_supports_municode)
-
-# # Put these in the correct order of their dependencies on eachother internally
-# # to save tears
-find_package(StoneyDSP 0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
-
-# # Put these in the correct order of their dependencies on eachother internally
-# # to save tears
-find_package(rack 2.5.2 REQUIRED COMPONENTS dep sdk lib CONFIG)
-
 enable_language(C)
 enable_language(CXX)
 
+# Put components in the correct order of their dependencies on eachother
+# to save tears...
+find_package(StoneyDSP 0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
+find_package(rack 2.5.2 REQUIRED COMPONENTS dep sdk lib CONFIG)
+
+# These props are helpful to have around...
+get_target_property(rack_inc_dir rack::lib INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(rack_link_dir rack::lib INTERFACE_LINK_DIRECTORIES)
+get_target_property(rack_implib rack::lib IMPORTED_IMPLIB)
+get_target_property(rack_implib_location rack::lib IMPORTED_LOCATION)
+
+# Gather project files...
 set(PLUGIN_HPP "plugin.hpp")
 set(PLUGIN_CPP "plugin.cpp")
 
