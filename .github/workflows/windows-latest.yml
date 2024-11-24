@@ -114,7 +114,7 @@ jobs:
       shell: msys2 {0}
       run: >-
         cd build &&
-        PATH="${PWD}/build/vcpkg_installed/x64-mingw-dynamic/bin":"${PATH}" ctest
+        LD_LIBRARY_PATH=${PWD}/build/vcpkg_installed/x64-mingw-dynamic/bin:${LD_LIBRARY_PATH} ctest
         -j3
         --rerun-failed
         --output-on-failure
