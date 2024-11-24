@@ -17,7 +17,7 @@ env:
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_DEFAULT_TRIPLET: "x64-osx"
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-osx"
-  VCPKG_OSX_ARCHITECTURES: "x86_64;arm64"
+  VCPKG_OSX_ARCHITECTURES: "x86_64"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   BUILD_DIR: ${{ github.workspace }}/build
@@ -74,7 +74,7 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
-        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64;arm64"
+        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64"
         -DVCPKG_HOST_TRIPLET:STRING=x64-osx
         -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
