@@ -15,43 +15,45 @@
   "cmake.configureOnOpen": true,
   "cmake.configureOnEdit": false,
   "cmake.environment": {
-    "RACK_DIR": "${env:RACK_DIR}",
     "VCPKG_ROOT": "${env:VCPKG_ROOT}",
     "VCPKG_MANIFEST_MODE": "ON"
   },
   "cmake.configureArgs": [
     "-DVCPKG_ROOT=${env:VCPKG_ROOT}",
     "-DVCPKG_OVERLAY_PORTS=${workspaceFolder}/dep/vcpkg/ports",
-    "-DRACK_DIR=${env:RACK_DIR}",
-    "-DVCPKG:MANIFEST_MODE:BOOL=${env:VCPKG_MANIFEST_MODE}",
+    "-DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic",
+    "-DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic",
+    "-DCMAKE_TOOLCHAIN_FILE:STRING=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+    // "-DVCPKG_MANIFEST_MODE:BOOL=${env:VCPKG_MANIFEST_MODE}",
     "-DSTONEYDSP_BUILD_TESTS:BOOL=TRUE",
-    "-DSTONEYVCV_BUILD_TESTS:BOOL=TRUE"
+    "-DSTONEYVCV_BUILD_TESTS:BOOL=TRUE",
+    "-Wno-dev"
   ],
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.loadCompileCommands": true,
   "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
   "C_Cpp.default.defines": [
-    "STONEYVCV_VERSION_MAJOR=0",
-    "STONEYVCV_VERSION_MINOR=1"
+    // "STONEYVCV_VERSION_MAJOR=0",
+    // "STONEYVCV_VERSION_MINOR=1"
   ],
-  "C_Cpp.default.includePath": [
-    "${workspaceFolder}/include",
-    "${workspaceFolder}/dep/StoneyDSP/include",
-    "${workspaceFolder}/dep/Catch2/include",
-    "${env:RACK_DIR}/include",
-    "${env:RACK_DIR}/dep/include"
-  ],
+  // "C_Cpp.default.includePath": [
+  //   "${workspaceFolder}/include",
+  //   // "${workspaceFolder}/dep/StoneyDSP/include",
+  //   // "${workspaceFolder}/dep/Catch2/include",
+  //   // "${env:RACK_DIR}/include",
+  //   // "${env:RACK_DIR}/dep/include"
+  // ],
   "C_Cpp.default.browse.databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
   "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
-  "C_Cpp.default.browse.path": [
-    "${workspaceFolder}/include",
-    "${workspaceFolder}/dep/StoneyDSP/include",
-    "${workspaceFolder}/dep/Catch2/include",
-    "${workspaceFolder}/dep/include",
-    "${env:RACK_DIR}/include",
-    "${env:RACK_DIR}/dep/include",
-  ],
+  // "C_Cpp.default.browse.path": [
+  //   "${workspaceFolder}/include",
+  //   // "${workspaceFolder}/dep/StoneyDSP/include",
+  //   // "${workspaceFolder}/dep/Catch2/include",
+  //   // "${workspaceFolder}/dep/include",
+  //   // "${env:RACK_DIR}/include",
+  //   // "${env:RACK_DIR}/dep/include",
+  // ],
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.default.cStandard": "c11",
   "C_Cpp.default.cppStandard": "c++11",
