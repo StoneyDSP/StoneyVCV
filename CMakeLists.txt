@@ -85,7 +85,10 @@ target_link_libraries(StoneyVCV
     StoneyDSP::SIMD
     StoneyDSP::DSP
 )
-
+target_link_options(Tests_StoneyVCV
+    PRIVATE
+    "-fPIC"
+)
 if(UNIX)
     if(APPLE)
         target_link_options(StoneyVCV
@@ -196,6 +199,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         rack::lib
         StoneyDSP::StoneyVCV
         Catch2::Catch2WithMain
+    )
+    target_link_options(Tests_StoneyVCV
+        PRIVATE
+        "-fPIC"
     )
     set_target_properties(Tests_StoneyVCV
         PROPERTIES
