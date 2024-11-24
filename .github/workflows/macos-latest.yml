@@ -49,6 +49,7 @@ jobs:
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's macOS Deps
       run: |
+        brew unlink pkg-config@0.29.2
         brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache ninja tree
 
 # curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
