@@ -85,7 +85,7 @@ target_link_libraries(StoneyVCV
     StoneyDSP::SIMD
     StoneyDSP::DSP
 )
-target_link_options(Tests_StoneyVCV
+target_link_options(StoneyVCV
     PRIVATE
     "-fPIC"
 )
