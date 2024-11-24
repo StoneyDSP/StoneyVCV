@@ -15,7 +15,9 @@ env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_OSX_ARCHITECTURES: "x86_64"
+  VCPKG_DEFAULT_TRIPLET: "arm64-osx"
+  VCPKG_DEFAULT_HOST_TRIPLET: "arm64-osx"
+  VCPKG_OSX_ARCHITECTURES: "x86_64;arm64"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   BUILD_DIR: ${{ github.workspace }}/build
@@ -36,11 +38,6 @@ jobs:
 
     steps:
 
-#     - name: Use latest Xcode on system (macOS)
-#       uses: maxim-lobanov/setup-xcode@v1
-#       with:
-#         xcode-version: latest-stable
-
     - name: Checkout StoneyVCV code
       uses: actions/checkout@v4
       with:
@@ -52,11 +49,6 @@ jobs:
         brew unlink pkg-config@0.29.2
         brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache ninja tree
 
-# curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-# cd dep
-# unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-# cd ..
-
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
@@ -64,7 +56,7 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: x64-osx
+        triplet: arm64-osx
         # GitHub token to authenticate API requests. Recommended to use  github.token
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
@@ -82,9 +74,9 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
-        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64"
-        -DVCPKG_HOST_TRIPLET:STRING=x64-osx
-        -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
+        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64;arm64"
+        -DVCPKG_HOST_TRIPLET:STRING=arm64-osx
+        -DVCPKG_TARGET_TRIPLET:STRING=arm64-osx
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         -G "Ninja"
         --compile-no-warning-as-error
@@ -106,6 +98,11 @@ jobs:
         --output-on-failure
         --verbose
         && cd ${{ github.workspace }}
+
+    # curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+    # cd dep
+    # unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+    # cd ..
 
     # - name: Build
     #   run: >-

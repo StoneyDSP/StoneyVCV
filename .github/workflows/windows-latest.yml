@@ -74,15 +74,6 @@ jobs:
           tree
           ninja
 
-#   # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-# - name: Install VCV's Windows Deps
-#   shell: msys2 {0}
-#   run: |
-#     curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-#     cd dep
-#     unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-#     cd ..
-
     - name: Deps
       uses: johnwason/vcpkg-action@v6
       with:
@@ -129,6 +120,15 @@ jobs:
         --output-on-failure
         --verbose
         && cd ..
+
+    #   # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    # - name: Install VCV's Windows Deps
+    #   shell: msys2 {0}
+    #   run: |
+    #     curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+    #     cd dep
+    #     unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+    #     cd ..
 
     # - name: Build
     #   shell: msys2 {0}
