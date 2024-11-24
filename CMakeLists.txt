@@ -80,8 +80,6 @@ set_target_properties(StoneyVCV
 
 target_link_libraries(StoneyVCV
     PUBLIC
-    rack::dep
-    rack::sdk
     rack::lib
     StoneyDSP::Core
     StoneyDSP::SIMD
@@ -129,35 +127,35 @@ if(WIN32)
     )
 endif()
 
-set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
-set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
+# set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
+# set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
 
-#[==[plugin]==]
-add_custom_target(plugin ALL
-    COMMAND "make"
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    BYPRODUCTS
-    "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-    SOURCES
-    "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
-    "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
-    JOB_SERVER_AWARE TRUE
-    DEPENDS StoneyVCV
-    USES_TERMINAL
-)
+# #[==[plugin]==]
+# add_custom_target(plugin ALL
+#     COMMAND "make"
+#     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+#     BYPRODUCTS
+#     "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+#     SOURCES
+#     "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
+#     "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+#     JOB_SERVER_AWARE TRUE
+#     DEPENDS StoneyVCV
+#     USES_TERMINAL
+# )
 
-#[==[dist]==]
-add_custom_target(dist
-    COMMAND "make" "dist"
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    BYPRODUCTS
-    "${PROJECT_SOURCE_DIR}/dist"
-    SOURCES
-    "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-    JOB_SERVER_AWARE TRUE
-    DEPENDS plugin
-    USES_TERMINAL
-)
+# #[==[dist]==]
+# add_custom_target(dist
+#     COMMAND "make" "dist"
+#     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+#     BYPRODUCTS
+#     "${PROJECT_SOURCE_DIR}/dist"
+#     SOURCES
+#     "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+#     JOB_SERVER_AWARE TRUE
+#     DEPENDS plugin
+#     USES_TERMINAL
+# )
 
 #[==[clean]==] # Not supported...
 # add_custom_target(clean
@@ -195,14 +193,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
-
-        rack::dep
-        rack::sdk
         rack::lib
-
-        StoneyDSP::Core
-        StoneyDSP::SIMD
-        StoneyDSP::DSP
         StoneyDSP::StoneyVCV
         Catch2::Catch2WithMain
     )
@@ -214,26 +205,6 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     target_compile_features(Tests_StoneyVCV PUBLIC cxx_std_17)
     target_compile_features(Tests_StoneyVCV PUBLIC c_std_17)
 
-    # if(MINGW)
-    # # target_compile_options(Tests_StoneyVCV
-    # # PUBLIC
-
-    # # "-municode"
-    # # "-DCATCH_PLATFORM_WINDOWS=1"
-    # # "-DCATCH_CONFIG_WCHAR=1"
-    # # "-DDO_NOT_USE_WMAIN=1"
-    # # )
-    # # target_link_options(Tests_StoneyVCV
-    # # PUBLIC
-    # # "-lmingw32"
-    # # "-municode"
-    # # "-DCATCH_PLATFORM_WINDOWS=1"
-    # # "-DCATCH_CONFIG_WCHAR=1"
-    # # "-D_UNICODE"
-
-    # # "-DDO_NOT_USE_WMAIN=1"
-    # # )
-    # endif()
     enable_testing()
 
     include(CTest)
