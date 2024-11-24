@@ -209,7 +209,9 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     include(CTest)
     include(Catch)
-    catch_discover_tests(Tests_StoneyVCV)
+    catch_discover_tests(Tests_StoneyVCV
+        DL_PATHS "${rack_link_dir}"
+    )
 
     list(APPEND STONEYVCV_TARGETS Tests_StoneyVCV)
 endif()
