@@ -137,22 +137,22 @@ jobs:
         --verbose
         && cd ..
 
-    - name: Build
-      shell: msys2 {0}
-      run: cmake --build ./build --target plugin -j3
+    # - name: Build
+    #   shell: msys2 {0}
+    #   run: cmake --build ./build --target plugin -j3
 
-    - name: Dist
-      shell: msys2 {0}
-      run: cmake --build ./build --target dist -j3
+    # - name: Dist
+    #   shell: msys2 {0}
+    #   run: cmake --build ./build --target dist -j3
 
-    - name: Install
-      shell: msys2 {0}
-      run: make install -j3
+    # - name: Install
+    #   shell: msys2 {0}
+    #   run: make install -j3
 
-    # List all files in tree
-    - name: Tree
-      shell: msys2 {0}
-      run: tree
+    # # List all files in tree
+    # - name: Tree
+    #   shell: msys2 {0}
+    #   run: tree
 
     - name: Upload Build
       uses: actions/upload-artifact@v4
