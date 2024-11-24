@@ -216,22 +216,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     include(CTest)
     include(Catch)
+    set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
     set(dl_paths "${rack_link_dir}")
-    if(WIN32)
-        if(MINGW)
-            set(dl_paths_variable_name LD_LIBRARY_PATH)
-        else()
-            set(dl_paths_variable_name PATH)
-        endif()
-    elseif(APPLE)
-        set(dl_paths_variable_name DYLD_LIBRARY_PATH)
-    else()
-        set(dl_paths_variable_name LD_LIBRARY_PATH)
-    endif()
-    cmake_path(CONVERT "${dl_paths}" TO_NATIVE_PATH_LIST paths)
-    set(ENV{${dl_paths_variable_name}} "${paths}")
     catch_discover_tests(Tests_StoneyVCV
-        DL_PATHS "${paths}"
+        DL_PATHS "${dl_paths}"
     )
 
     list(APPEND STONEYVCV_TARGETS Tests_StoneyVCV)
