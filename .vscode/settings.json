@@ -6,54 +6,29 @@
   "editor.insertSpaces": true,
   "editor.rulers": [
     80,
-    120,
-    160,
-    180,
-    200
+    160
   ],
   "makefile.configureOnOpen": false,
-  "cmake.configureOnOpen": true,
+  "cmake.configureOnOpen": false,
   "cmake.configureOnEdit": false,
   "cmake.environment": {
-    "VCPKG_ROOT": "${env:VCPKG_ROOT}",
-    "VCPKG_MANIFEST_MODE": "ON"
+    "VCPKG_ROOT": "${env:VCPKG_ROOT}"
   },
   "cmake.configureArgs": [
-    "-DVCPKG_ROOT=${env:VCPKG_ROOT}",
-    "-DVCPKG_OVERLAY_PORTS=${workspaceFolder}/dep/vcpkg/ports",
-    "-DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic",
-    "-DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic",
+    "-DVCPKG_HOST_TRIPLET:STRING=x64-linux",
+    "-DVCPKG_TARGET_TRIPLET:STRING=x64-linux",
     "-DCMAKE_TOOLCHAIN_FILE:STRING=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-    // "-DVCPKG_MANIFEST_MODE:BOOL=${env:VCPKG_MANIFEST_MODE}",
-    "-DSTONEYDSP_BUILD_TESTS:BOOL=TRUE",
     "-DSTONEYVCV_BUILD_TESTS:BOOL=TRUE",
+    "--no-warn-unused-cli",
+    "--compile-no-warn-as-error",
     "-Wno-dev"
   ],
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.loadCompileCommands": true,
   "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
-  "C_Cpp.default.defines": [
-    // "STONEYVCV_VERSION_MAJOR=0",
-    // "STONEYVCV_VERSION_MINOR=1"
-  ],
-  // "C_Cpp.default.includePath": [
-  //   "${workspaceFolder}/include",
-  //   // "${workspaceFolder}/dep/StoneyDSP/include",
-  //   // "${workspaceFolder}/dep/Catch2/include",
-  //   // "${env:RACK_DIR}/include",
-  //   // "${env:RACK_DIR}/dep/include"
-  // ],
   "C_Cpp.default.browse.databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
   "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
-  // "C_Cpp.default.browse.path": [
-  //   "${workspaceFolder}/include",
-  //   // "${workspaceFolder}/dep/StoneyDSP/include",
-  //   // "${workspaceFolder}/dep/Catch2/include",
-  //   // "${workspaceFolder}/dep/include",
-  //   // "${env:RACK_DIR}/include",
-  //   // "${env:RACK_DIR}/dep/include",
-  // ],
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.default.cStandard": "c11",
   "C_Cpp.default.cppStandard": "c++11",
@@ -116,46 +91,11 @@
   },
   "terminal.integrated.defaultProfile.windows": "MSYS2 MINGW64",
   "terminal.integrated.profiles.windows": {
-    "MSYS2 UCRT64": {
-      "path": "cmd.exe",
-      "args": [
-        "/c",
-        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -ucrt64"
-      ]
-    },
     "MSYS2 MINGW64": {
       "path": "cmd.exe",
       "args": [
         "/c",
         "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -mingw64"
-      ]
-    },
-    "MSYS2 CLANG64": {
-      "path": "cmd.exe",
-      "args": [
-        "/c",
-        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clang64"
-      ]
-    },
-    "MSYS2 MINGW32": {
-      "path": "cmd.exe",
-      "args": [
-        "/c",
-        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -mingw32"
-      ]
-    },
-    "MSYS2 CLANG32": {
-      "path": "cmd.exe",
-      "args": [
-        "/c",
-        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clang32"
-      ]
-    },
-    "MSYS2 CLANGARM64": {
-      "path": "cmd.exe",
-      "args": [
-        "/c",
-        "C:\\msys64\\msys2_shell.cmd -defterm -here -no-start -clangarm64"
       ]
     },
     "MSYS2 MSYS64": {
@@ -167,6 +107,7 @@
     }
   },
   "files.associations": {
+    "${workspaceFolder}/dep/StoneyDSP/src/StoneyDSP": "cpp",
     "**.vcvm": "json", // VCV Rack presets
     "**.d.ts": "typescript",
     "*.css": "tailwindcss",
@@ -174,7 +115,6 @@
     "**.cmake": "cmake",
     ".editorconfig": "editorconfig",
     "config.guess": "shellscript",
-    "${workspaceFolder}/dep/StoneyDSP/src/StoneyDSP": "cpp",
     "string": "cpp",
     "cctype": "cpp",
     "clocale": "cpp",
