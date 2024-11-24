@@ -62,12 +62,11 @@ set_property(TARGET dep APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_dep_PATCH_VERSION
 )
 
-# file(COPY "${RACK_DIR}/dep" DESTINATION "${PROJECT_BINARY_DIR}/include")
 set(__rack_dep_headers_glob "")
 file(GLOB_RECURSE __rack_dep_headers_glob CONFIGURE_DEPENDS "${RACK_DIR}/dep/*.h*")
 
-# # This contains all the VCV Rack library headers... globs are a bit unsafe
-# # though, so...
+# This contains all the VCV Rack library headers... globs are a bit unsafe
+# though, so...
 message(DEBUG "${__rack_dep_headers_glob}")
 
 # # Let's make a FILE_SET which we can export
@@ -271,7 +270,7 @@ set(RACK_LIB_FILE_EXTENSION)
 if(APPLE)
     set(RACK_LIB_FILE_EXTENSION ".dylib")
 elseif(UNIX AND NOT APPLE) # Linux
-    set(RACK_LIB_FILE_EXTENSIONN ".so")
+    set(RACK_LIB_FILE_EXTENSION ".so")
 endif()
 
 if(WIN32)
@@ -316,6 +315,9 @@ set_property(TARGET lib APPEND PROPERTY
 )
 set_property(TARGET lib APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_lib_PATCH_VERSION
+)
+set_target_properties(lib PROPERTIES
+    INTERFACE_LINK_OPTIONS "-static"
 )
 target_link_libraries(lib
     INTERFACE
@@ -419,6 +421,7 @@ set_target_properties(rack::lib PROPERTIES
     SOVERSION @RACK_VERSION_MAJOR@.@RACK_VERSION_MINOR@.@RACK_VERSION_PATCH@
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+    INTERFACE_LINK_OPTIONS "-static"
     INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/bin"
     INTERFACE_LINK_LIBRARIES "rack::sdk"
     IMPORTED_LOCATION "${_IMPORT_PREFIX}/bin/libRack${RACK_LIB_FILE_EXTENSION}"
