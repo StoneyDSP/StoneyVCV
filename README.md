@@ -60,17 +60,22 @@ make install
 
 ## Develop, Test, and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2
 
-Note: you may need [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2. StoneyVCV is built and tested using the (Rack 2.5.2 SDK for all platforms)[]. We recommend setting the `VCPKG_ROOT` and `RACK_DIR` environment variables in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct envvironment.
+Note: I recommend using [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2. StoneyVCV is built and tested using the Rack 2.5.2 SDK for all platforms. We use vcpkg to fetch a fresh copy of the correct SDK files when you ru the below command; the files are parsed into CMake targets, which interface with our testing targets. 
 
-To configure the [StoneyDSP Library](https://github.com/StoneyDSP/StoneyDSP) with CMake and vcpkg:
+We recommend setting the `VCPKG_ROOT` environment variable in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct envvironment. *(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as '/c/Users/...')*
+
+We recommend *not* setting the `RACK_DIR` environment variable when running the below command, as it may interfere with vcpkg.
+
+To configure the StoneyDSP C++ library, Rack SDK, and Catch2 unit tests, all with CMake and vcpkg:
 
 ```shell
-cmake \
-  -S . \
-  -B build \
-  -DVCPKG_ROOT=${VCPKG_ROOT}
-  -DRACK_DIR=${RACK_DIR}
-  -DSTONEYDSP_BUILD_TESTS=TRUE
+cmake                                                                        \
+  -S .                                                                       \
+  -B ./build                                                                 \
+  -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"    \
+  -DVCPKG_HOST_TRIPLET="x64-linux"   # or "x64-osx" or "x64-mingw-dynamic"   \
+  -DVCPKG_TARGET_TRIPLET="x64-linux" # or "x64-osx" or "x64-mingw-dynamic"   \
+  -DSTONEYVCV_BUILD_TESTS=TRUE
 ```
 
 To build the tests executable:
@@ -78,7 +83,7 @@ To build the tests executable:
 ```shell
 cmake \
   --build
-  --target Tests_StoneyDSP
+  --target Tests_StoneyVCV
 ```
 
 To run unit tests with [Catch2](https://github.com/catch-org/catch2) and CTest:
@@ -94,7 +99,9 @@ ctest \
   --verbose
 ```
 
-[See the documentation](https://github.com/StoneyDSP/StoneyVCV/blob/production/docs/BuildingTheTestsForCatch2WithCMake.md) for more detailed information.
+The unit tests executable should run in the terminal, and eventually indicate the success rate of all the tests combined.
+
+The GitHub Workflows in our repository may be a useful reference, if any doubts.
 
 ---
 
