@@ -275,7 +275,7 @@ elseif(UNIX AND NOT APPLE) # Linux
     set(RACK_LIB_FILE_EXTENSION ".so")
 endif()
 
-if(WIN32)
+if(MINGW)
     set(RACK_LIB_FILE_EXTENSION ".dll.a")
     set(RACK_LIB_FILE_DESTINATION "bin")
     set(RACK_LIB_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
@@ -291,7 +291,7 @@ if(WIN32)
     set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack.dll")
 else()
     set(dll_dir "${RACK_DIR}")
-    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack${RACK_LIB_FILE_EXTENSION}")
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
 set_target_properties(lib
@@ -427,7 +427,7 @@ elseif(UNIX AND NOT APPLE) # Linux
     set(RACK_LIB_FILE_EXTENSION ".so")
 endif()
 
-if(WIN32)
+if(MINGW)
     set(RACK_LIB_FILE_EXTENSION ".dll.a")
 endif()
 
@@ -436,7 +436,7 @@ if(WIN32)
     set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack.dll")
 else()
     set(dll_dir "${_IMPORT_PREFIX}")
-    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack${RACK_LIB_FILE_EXTENSION}")
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
 # Create imported target rack::lib
