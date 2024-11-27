@@ -284,30 +284,28 @@ else()
     set(RACK_LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
 endif()
 
-set_property(
-    TARGET lib
-    PROPERTY
-    IMPORTED_LOCATION "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
-)
-set_property(
-    TARGET lib
-    PROPERTY
-    IMPORTED_IMPLIB "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
-)
-set_property(
-    TARGET lib
-    PROPERTY
-    INTERFACE_LINK_DIRECTORIES "${RACK_LIB_INSTALL_DIR}"
-)
-set_property(
-    TARGET lib
-    PROPERTY
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_INSTALL_INCLUDEDIR}"
-)
+if(WIN32)
+    cmake_path(CONVERT "$ENV{ProgramFiles}\\VCV\\Rack2Free" TO_CMAKE_PATH_LIST dll_dir)
+else()
+    set(dll_dir "${RACK_DIR}")
+endif()
+
 set_target_properties(lib
     PROPERTIES
     VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
     SOVERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+
+    ENABLE_EXPORTS TRUE
+
+    #
+    INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
+    INTERFACE_LINK_DIRECTORIES "${RACK_LIB_INSTALL_DIR}"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_INSTALL_INCLUDEDIR}"
+
+    #
+    IMPORTED_LOCATION "${dll_dir}/libRack.dll"
+    IMPORTED_IMPLIB "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
+    IMPORTED_NO_SONAME TRUE
 
     # Compatible Interface
     INTERFACE_lib_MAJOR_VERSION ${RACK_VERSION_MAJOR}
@@ -323,15 +321,22 @@ set_property(TARGET lib APPEND PROPERTY
 set_property(TARGET lib APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_lib_PATCH_VERSION
 )
+
+if(WIN32)
+    install(
+        FILES "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
+        DESTINATION "${RACK_LIB_INSTALL_DIR}"
+    )
+endif()
+
 # set_property(TARGET lib APPEND PROPERTY
-#     INTERFACE_LINK_OPTIONS "-fPIC"
+# INTERFACE_LINK_OPTIONS "-fPIC"
 # )
 # set_property(TARGET lib APPEND PROPERTY
-#     INTERFACE_LINK_OPTIONS "-shared"
+# INTERFACE_LINK_OPTIONS "-shared"
 # )
 target_link_libraries(lib
     INTERFACE
-    rack::dep
     rack::sdk
 )
 
@@ -342,11 +347,10 @@ install(
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install(RUNTIME_DEPENDENCY_SET LibExports
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
+# install(RUNTIME_DEPENDENCY_SET LibExports
+# LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+# RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+# )
 file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-lib-targets.cmake" CONTENT [==[
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.8)
     message(FATAL_ERROR "CMake >= 2.8.0 required")
@@ -423,18 +427,25 @@ if(WIN32)
     set(RACK_LIB_FILE_EXTENSION ".dll.a")
 endif()
 
+if(WIN32)
+    cmake_path(CONVERT "$ENV{ProgramFiles}\\VCV\\Rack2Free" TO_CMAKE_PATH_LIST dll_dir)
+else()
+    set(dll_dir "${RACK_DIR}")
+endif()
+
 # Create imported target rack::lib
 add_library(rack::lib SHARED IMPORTED GLOBAL)
 
 set_target_properties(rack::lib PROPERTIES
     VERSION @RACK_VERSION_MAJOR@.@RACK_VERSION_MINOR@.@RACK_VERSION_PATCH@
     SOVERSION @RACK_VERSION_MAJOR@.@RACK_VERSION_MINOR@.@RACK_VERSION_PATCH@
+    ENABLE_EXPORTS TRUE
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
     # INTERFACE_LINK_OPTIONS "-fPIC;-shared"
     INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@"
     INTERFACE_LINK_LIBRARIES "rack::sdk"
-    IMPORTED_LOCATION "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@/libRack${RACK_LIB_FILE_EXTENSION}"
+    IMPORTED_LOCATION "${dll_dir}/libRack.dll"
     IMPORTED_IMPLIB "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@/libRack${RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME "TRUE"
     COMPATIBLE_INTERFACE_STRING "INTERFACE_lib_MAJOR_VERSION;INTERFACE_lib_MINOR_VERSION;INTERFACE_lib_PATCH_VERSION"
@@ -486,7 +497,7 @@ unset(_cmake_import_check_targets)
 # Make sure the targets which have been exported in some other
 # export set exist.
 unset(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
-foreach(_target "rack::dep" "rack::sdk" )
+foreach(_target "rack::sdk" )
   if(NOT TARGET "${_target}" )
     set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets "${${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets} ${_target}")
   endif()
