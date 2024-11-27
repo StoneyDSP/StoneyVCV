@@ -435,8 +435,7 @@ if(WIN32)
     cmake_path(CONVERT "$ENV{ProgramFiles}\\VCV\\Rack2Free" TO_CMAKE_PATH_LIST dll_dir)
     set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack.dll")
 else()
-    set(dll_dir "${_IMPORT_PREFIX}")
-    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
+    set(RACK_DLL_IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
 # Create imported target rack::lib
