@@ -1,6 +1,7 @@
 # Artefact directories
 #
 /vcpkg_installed
+/install
 /build
 /dist
 /bin

@@ -13,17 +13,15 @@ concurrency:
 
 env:
   DISPLAY: :0
-  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
-  BUILD_TYPE: Release
   BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "lin-x64"
-  RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
 
 jobs:
   ubuntu:
@@ -40,14 +38,6 @@ jobs:
     - name: Install VCV's Linux Deps
       run: |
         sudo apt-get update && sudo apt install unzip git gdb curl cmake libx11-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev zlib1g-dev libasound2-dev libgtk2.0-dev libgtk-3-dev libjack-jackd2-dev jq zstd libpulse-dev pkg-config ninja-build ccache tree
-        sudo /usr/bin/Xvfb $DISPLAY &
-        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
-
-    - name: Set Up Build Cache
-      uses: mozilla-actions/sccache-action@v0.0.4
 
     - name: vcpkg install
       uses: johnwason/vcpkg-action@v6
@@ -59,7 +49,7 @@ jobs:
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: true
+        github-binarycache: false
         pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
     - name: Configure Tests
@@ -67,28 +57,21 @@ jobs:
         cmake
         -S ${{ github.workspace }}
         -B ${{ env.BUILD_DIR }}
-        -G "Ninja"
-        -DCMAKE_BUILD_TYPE:STRING=${{ env.BUILD_TYPE }}
-        -DCMAKE_CXX_FLAGS:STRING="-march=nehalem"
-        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
-        -DCMAKE_C_COMPILER_LAUNCHER:STRING=ccache
-        -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache
-        -DRACK_DIR=${{ env.RACK_DIR }}
-        -DVCPKG_ROOT=${{ env.VCPKG_ROOT }}
+        -DCMAKE_INSTALL_PREFIX:PATH=${{ github.workspace }}/install
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
         -DVCPKG_HOST_TRIPLET:STRING=x64-linux
         -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
-        -DVCPKG_MANIFEST_MODE:STRING=ON
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli
+        --fresh
 
     - name: Build Tests
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests_StoneyDSP
+        --target Tests_StoneyVCV
         -j3
 
     - name: Test
@@ -101,22 +84,28 @@ jobs:
         --verbose
         && cd ${{ github.workspace }}
 
+    # If tests succeeded; deploy plugin bundle
+
+    - name: Fetch Rack SDK
+      run: |
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
 
     - name: Build
-      run: >-
-        cmake
-        --build ${{ env.BUILD_DIR }}
-        --target plugin
-        -j3
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make build -j3
 
     - name: Dist
-      run: >-
-        cmake
-        --build ${{ env.BUILD_DIR }}
-        --target dist
-        -j3
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dist -j3
 
     - name: Install
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make install -j3
 
     # List all files in tree

@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/**
  * @file plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -31,10 +31,6 @@
 
 #include "plugin.hpp"
 
-
-// Include StoneyDSP library here, for a single global linkage object
-#include "../dep/StoneyDSP/src/StoneyDSP"
-
 /** @brief The `StoneyDSP` VCV Rack Plugin instance. */
 ::rack::plugin::Plugin* StoneyDSP::VCVRack::pluginInstance;
 
@@ -45,15 +41,15 @@
  */
 void init(::rack::plugin::Plugin* p) {
 
-	::StoneyDSP::VCVRack::pluginInstance = p;
+    ::StoneyDSP::VCVRack::pluginInstance = p;
 
 #if STONEYVCV_VERSION_MAJOR >= 0 && STONEYVCV_VERSION_MINOR >= 1
     // EXPERIMENTAL MODULES HERE...
 #elif STONEYVCV_VERSION_MAJOR >= 0 && STONEYVCV_VERSION_MINOR >= 0
-    #warning "No modules found..."
+#warning "No modules found..."
 #endif
 
-	// Any other plugin initialization may go here.
-	// As an alternative, consider lazy-loading assets and lookup tables when
+    // Any other plugin initialization may go here.
+    // As an alternative, consider lazy-loading assets and lookup tables when
     // your module is created to reduce startup times of Rack.
 }
