@@ -82,7 +82,7 @@ To build the tests executable:
 
 ```shell
 cmake \
-  --build
+  --build ./build
   --target Tests_StoneyVCV
 ```
 
@@ -97,6 +97,10 @@ ctest \
   --rerun-failed \
   --output-on-failure \
   --verbose
+```
+
+```shell
+cd ..
 ```
 
 The unit tests executable should run in the terminal, and eventually indicate the success rate of all the tests combined.
