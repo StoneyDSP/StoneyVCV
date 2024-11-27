@@ -15,9 +15,9 @@ env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_DEFAULT_TRIPLET: "x64-osx"
-  VCPKG_DEFAULT_HOST_TRIPLET: "x64-osx"
-  VCPKG_OSX_ARCHITECTURES: "x86_64"
+  VCPKG_DEFAULT_TRIPLET: "arm64-osx"
+  VCPKG_DEFAULT_HOST_TRIPLET: "arm64-osx"
+  VCPKG_OSX_ARCHITECTURES: "arm64"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   BUILD_DIR: ${{ github.workspace }}/build
@@ -26,11 +26,9 @@ env:
   SCCACHE_CACHE_MULTIARCH: 1
   SCCACHE_RECACHE: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
+  RACK_SDK_VERSION: 2.5.2
+  RACK_SDK_PLATFORM: "mac-x64+arm64"
 
-  # RACK_SDK_VERSION: 2.5.2
-  # RACK_SDK_PLATFORM: "mac-x64+arm64"
-  # RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-  # DYLD_LIBRARY_PATH: "${{ github.workspace }}/dep/Rack-SDK"
 
 jobs:
   macos:
@@ -55,13 +53,13 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: x64-osx
+        triplet: arm64-osx
         # GitHub token to authenticate API requests. Recommended to use  github.token
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: true
+        github-binarycache: false
         pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake sse2neon
 
     - name: Configure Tests
@@ -73,9 +71,9 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_C_COMPILER_LAUNCHER:STRING=sccache
         -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=sccache
-        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64"
-        -DVCPKG_HOST_TRIPLET:STRING=x64-osx
-        -DVCPKG_TARGET_TRIPLET:STRING=x64-osx
+        -DCMAKE_OSX_ARCHITECTURES:STRING="arm64-osx"
+        -DVCPKG_HOST_TRIPLET:STRING=arm64-osx
+        -DVCPKG_TARGET_TRIPLET:STRING=arm64-osx
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
         -G "Ninja"
         --compile-no-warning-as-error
@@ -98,31 +96,33 @@ jobs:
         --verbose
         && cd ${{ github.workspace }}
 
-    # curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-    # cd dep
-    # unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-    # cd ..
+    # If tests succeeded; deploy plugin bundle
 
-    # - name: Build
-    #   run: >-
-    #     cmake
-    #     --build ${{ env.BUILD_DIR }}
-    #     --target plugin
-    #     -j3
+    - name: Fetch Rack SDK
+      run: |
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
 
-    # - name: Dist
-    #   run: >-
-    #     cmake
-    #     --build ${{ env.BUILD_DIR }}
-    #     --target dist
-    #     -j3
+    - name: Build
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make build -j3
 
-    # - name: Install
-    #   run: make install -j3
+    - name: Dist
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dist -j3
 
-    # # List all files in tree
-    # - name: List
-    #   run: tree
+    - name: Install
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make install -j3
+
+    # List all files in tree
+    - name: List
+      run: tree
 
     - name: Upload Build
       uses: actions/upload-artifact@v4

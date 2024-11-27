@@ -130,31 +130,36 @@ jobs:
         --verbose
         && cd ..
 
-    #   # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    # - name: Install VCV's Windows Deps
-    #   shell: msys2 {0}
-    #   run: |
-    #     curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-    #     cd dep
-    #     unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-    #     cd ..
+    - name: Fetch Rack SDK
+      shell: msys2 {0}
+      run: |
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
 
-    # - name: Build
-    #   shell: msys2 {0}
-    #   run: cmake --build ./build --target plugin -j3
+    - name: Build
+      shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make build -j3
 
-    # - name: Dist
-    #   shell: msys2 {0}
-    #   run: cmake --build ./build --target dist -j3
+    - name: Dist
+      shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dist -j3
 
-    # - name: Install
-    #   shell: msys2 {0}
-    #   run: make install -j3
+    - name: Install
+      shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make install -j3
 
-    # # List all files in tree
-    # - name: Tree
-    #   shell: msys2 {0}
-    #   run: tree
+    # List all files in tree
+    - name: Tree
+      shell: msys2 {0}
+      run: tree
 
     - name: Upload Build
       uses: actions/upload-artifact@v4

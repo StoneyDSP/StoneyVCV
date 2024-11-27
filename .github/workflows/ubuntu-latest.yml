@@ -20,9 +20,8 @@ env:
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   SCCACHE_GHA_ENABLED: "true"
-
-  # RACK_SDK_VERSION: 2.5.2
-  # RACK_SDK_PLATFORM: "lin-x64"
+  RACK_SDK_VERSION: 2.5.2
+  RACK_SDK_PLATFORM: "lin-x64"
 
 jobs:
   ubuntu:
@@ -90,27 +89,29 @@ jobs:
         --verbose
         && cd ${{ github.workspace }}
 
-    # curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-    # cd dep
-    # unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-    # cd ..
+    # If tests succeeded; deploy plugin bundle
 
-    # - name: Build
-    #   run: >-
-    #     cmake
-    #     --build ${{ env.BUILD_DIR }}
-    #     --target plugin
-    #     -j3
+    - name: Fetch Rack SDK
+      run: |
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
 
-    # - name: Dist
-    #   run: >-
-    #     cmake
-    #     --build ${{ env.BUILD_DIR }}
-    #     --target dist
-    #     -j3
+    - name: Build
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make build -j3
 
-    # - name: Install
-    #   run: make install -j3
+    - name: Dist
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dist -j3
+
+    - name: Install
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make install -j3
 
     # List all files in tree
     - name: Tree
