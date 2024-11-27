@@ -1,0 +1,21 @@
+{
+  "name": "stoneydsp",
+  "version": "0.0.0",
+  "license": "MIT",
+  "description": "The StoneyDSP C++ Audio Library",
+  "homepage": "https://github.com/StoneyDSP/StoneyDSP",
+  "port-version": 0,
+  "dependencies": [
+    {
+      "name": "simde"
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

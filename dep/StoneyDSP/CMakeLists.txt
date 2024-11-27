@@ -1,12 +1,13 @@
-#!/usr/bin/env cmake
-cmake_minimum_required(VERSION 3.14...3.29 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14...3.31 FATAL_ERROR)
 
 if(NOT DEFINED STONEYDSP_VERSION_MAJOR)
     set(STONEYDSP_VERSION_MAJOR 0 CACHE STRING "" FORCE)
 endif()
+
 if(NOT DEFINED STONEYDSP_VERSION_MINOR)
     set(STONEYDSP_VERSION_MINOR 0 CACHE STRING "" FORCE)
 endif()
+
 if(NOT DEFINED STONEYDSP_VERSION_MINOR)
     set(STONEYDSP_VERSION_MINOR 0 CACHE STRING "" FORCE)
 endif()
@@ -55,8 +56,8 @@ set_property(
 
 target_include_directories(Core
     INTERFACE
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
 foreach(__header IN LISTS STONEYDSP_CORE_HEADERS)
@@ -66,14 +67,15 @@ foreach(__header IN LISTS STONEYDSP_CORE_HEADERS)
         FILE_SET stoneydsp_CORE_PUBLIC_HEADERS
         TYPE HEADERS
         BASE_DIRS
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-            $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         FILES
-            #[==[include/StoneyDSP/__header]==]
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${__header}>
-            $<INSTALL_INTERFACE:${__header}>
+        #[==[include/StoneyDSP/__header]==]
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${__header}>
+        $<INSTALL_INTERFACE:${__header}>
     )
 endforeach()
+
 # install the target and create export-set
 install(TARGETS Core
     EXPORT StoneyDSPCoreTargets
@@ -83,23 +85,24 @@ install(TARGETS Core
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILE_SET stoneydsp_CORE_PUBLIC_HEADERS
 )
+
 # generate and install export file
 install(EXPORT StoneyDSPCoreTargets
     FILE "StoneyDSPCoreTargets.cmake"
     NAMESPACE StoneyDSP::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
 )
-export (
+export(
     TARGETS Core
     FILE "share/cmake/StoneyDSPCoreTargets.cmake"
     NAMESPACE StoneyDSP::
 )
 set_target_properties(Core
     PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "bin"
-        LIBRARY_OUTPUT_DIRECTORY "lib"
-        ARCHIVE_OUTPUT_DIRECTORY "lib"
-        PDB_OUTPUT_DIRECTORY     "bin"
+    RUNTIME_OUTPUT_DIRECTORY "bin"
+    LIBRARY_OUTPUT_DIRECTORY "lib"
+    ARCHIVE_OUTPUT_DIRECTORY "lib"
+    PDB_OUTPUT_DIRECTORY "bin"
 )
 list(APPEND STONEYDSP_TARGETS Core)
 
@@ -119,8 +122,8 @@ set_property(
 
 target_include_directories(SIMD
     INTERFACE
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 set(STONEYDSP_SIMD_HEADERS)
 set(STONEYDSP_SIMD_VECTOR_HPP "include/StoneyDSP/SIMD/Vector.hpp")
@@ -129,6 +132,7 @@ list(APPEND STONEYDSP_SIMD_HEADERS
     "${STONEYDSP_SIMD_VECTOR_HPP}"
     "${STONEYDSP_SIMD_HPP}"
 )
+
 foreach(__header IN LISTS STONEYDSP_SIMD_HEADERS)
     configure_file("${STONEYDSP_DIR}/${__header}" "${__header}")
     target_sources(SIMD
@@ -136,14 +140,15 @@ foreach(__header IN LISTS STONEYDSP_SIMD_HEADERS)
         FILE_SET stoneydsp_SIMD_PUBLIC_HEADERS
         TYPE HEADERS
         BASE_DIRS
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-            $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         FILES
-            #[==[include/StoneyDSP/__header]==]
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${__header}>
-            $<INSTALL_INTERFACE:${__header}>
+        #[==[include/StoneyDSP/__header]==]
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${__header}>
+        $<INSTALL_INTERFACE:${__header}>
     )
 endforeach()
+
 # install the target and create export-set
 install(TARGETS SIMD
     EXPORT StoneyDSPSIMDTargets
@@ -153,27 +158,28 @@ install(TARGETS SIMD
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILE_SET stoneydsp_SIMD_PUBLIC_HEADERS
 )
+
 # generate and install export file
 install(EXPORT StoneyDSPSIMDTargets
     FILE "StoneyDSPSIMDTargets.cmake"
     NAMESPACE StoneyDSP::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
 )
-export (
+export(
     TARGETS SIMD
     FILE "share/cmake/StoneyDSPSIMDTargets.cmake"
     NAMESPACE StoneyDSP::
 )
 set_target_properties(SIMD
     PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "bin"
-        LIBRARY_OUTPUT_DIRECTORY "lib"
-        ARCHIVE_OUTPUT_DIRECTORY "lib"
-        PDB_OUTPUT_DIRECTORY     "bin"
+    RUNTIME_OUTPUT_DIRECTORY "bin"
+    LIBRARY_OUTPUT_DIRECTORY "lib"
+    ARCHIVE_OUTPUT_DIRECTORY "lib"
+    PDB_OUTPUT_DIRECTORY "bin"
 )
 target_link_libraries(SIMD
     INTERFACE
-        StoneyDSP::Core
+    StoneyDSP::Core
 )
 list(APPEND STONEYDSP_TARGETS SIMD)
 
@@ -208,12 +214,12 @@ foreach(__header IN LISTS STONEYDSP_DSP_HEADERS)
         FILE_SET stoneydsp_DSP_PUBLIC_HEADERS
         TYPE HEADERS
         BASE_DIRS
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-            $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         FILES
-            #[==[include/StoneyDSP/__header]==]
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${__header}>
-            $<INSTALL_INTERFACE:${__header}>
+        #[==[include/StoneyDSP/__header]==]
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${__header}>
+        $<INSTALL_INTERFACE:${__header}>
     )
 endforeach()
 
@@ -242,23 +248,23 @@ export(
 
 set_target_properties(DSP
     PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "bin"
-        LIBRARY_OUTPUT_DIRECTORY "lib"
-        ARCHIVE_OUTPUT_DIRECTORY "lib"
-        PDB_OUTPUT_DIRECTORY     "bin"
+    RUNTIME_OUTPUT_DIRECTORY "bin"
+    LIBRARY_OUTPUT_DIRECTORY "lib"
+    ARCHIVE_OUTPUT_DIRECTORY "lib"
+    PDB_OUTPUT_DIRECTORY "bin"
 )
 
 target_link_libraries(DSP
     INTERFACE
-        StoneyDSP::Core
-        StoneyDSP::SIMD
+    StoneyDSP::Core
+    StoneyDSP::SIMD
 )
 
 list(APPEND STONEYDSP_TARGETS DSP)
 
 #[==[StoneyDSPConfig.cmake]==]
-include (CMakePackageConfigHelpers)
-file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSPConfig.cmake.in" [==[
+include(CMakePackageConfigHelpers)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSPConfig.cmake.in" [==[
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/StoneyDSPConfigVersion.cmake")
@@ -290,7 +296,8 @@ configure_package_config_file(
     "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSPConfig.cmake"
     INSTALL_DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
-    ## Use custom 'check_required_components' macro
+
+    # # Use custom 'check_required_components' macro
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
 
@@ -303,37 +310,37 @@ write_basic_package_version_file(
 
 install(
     FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSPConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSPConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSPConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSPConfigVersion.cmake"
     DESTINATION
-        "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
 )
 
 #[==[Test]==]
-## Only build tests if this project is the top-level project...
+# # Only build tests if this project is the top-level project...
 if(STONEYDSP_IS_TOP_LEVEL AND STONEYDSP_BUILD_TESTS)
-
     find_package(Catch2 3 REQUIRED)
 
-    ## These tests can use the Catch2-provided main
+    # # These tests can use the Catch2-provided main
     add_executable(Tests_StoneyDSP)
     add_executable(StoneyDSP::Tests_StoneyDSP ALIAS Tests_StoneyDSP)
     target_sources(Tests_StoneyDSP
         PRIVATE
-            "${STONEYDSP_DIR}/test/StoneyDSP/SIMD.cpp"
-            "${STONEYDSP_DIR}/test/StoneyDSP/Core.cpp"
+        "${STONEYDSP_DIR}/test/StoneyDSP/SIMD.cpp"
+        "${STONEYDSP_DIR}/test/StoneyDSP/Core.cpp"
     )
     target_link_libraries(Tests_StoneyDSP
         PRIVATE
-            StoneyDSP::Core
-            StoneyDSP::SIMD
-            # StoneyDSP::DSP
-            Catch2::Catch2WithMain
+        StoneyDSP::Core
+        StoneyDSP::SIMD
+
+        # StoneyDSP::DSP
+        Catch2::Catch2WithMain
     )
     set_target_properties(Tests_StoneyDSP
         PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/test/StoneyDSP"
-            RUNTIME_OUTPUT_NAME "Tests_StoneyDSP"
+        RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/test/StoneyDSP"
+        RUNTIME_OUTPUT_NAME "Tests_StoneyDSP"
     )
 
     enable_testing()
@@ -341,5 +348,4 @@ if(STONEYDSP_IS_TOP_LEVEL AND STONEYDSP_BUILD_TESTS)
     include(CTest)
     include(Catch)
     catch_discover_tests(Tests_StoneyDSP)
-
 endif()
