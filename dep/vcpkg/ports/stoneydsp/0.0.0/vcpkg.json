@@ -4,6 +4,7 @@
   "license": "MIT",
   "description": "The StoneyDSP C++ Audio Library",
   "homepage": "https://github.com/StoneyDSP/StoneyDSP",
+  "port-version": 0,
   "dependencies": [
     {
       "name": "simde"
