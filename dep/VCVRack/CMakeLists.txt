@@ -291,7 +291,7 @@ if(WIN32)
     set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack.dll")
 else()
     set(dll_dir "${RACK_DIR}")
-    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
 set_target_properties(lib
