@@ -1,0 +1,28 @@
+# The StoneyDSP C++ Audio Library
+
+Copyright (C) 2024 Nathan J. Hood <nathanjhood@googlemail.com>
+
+THIS SOURCE CODE IS PROVIDED 'AS-IS', WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTY. IN NO EVENT WILL THE AUTHOR BE HELD LIABLE FOR ANY DAMAGES
+ARISING FROM THE USE OF THIS SOFTWARE.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this source code must not be misrepresented; you must not
+  claim that you wrote the original source code. If you use this source code
+  in a product, an acknowledgment in the product documentation would be
+  appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be
+  misrepresented as being the original source code.
+
+3. This notice may not be removed or altered from any source distribution.
+
+For more information, visit the website:
+[www.stoneydsp.com](https://www.stoneydsp.com)
+
+FULL STONEYDSP TERMS:
+- [STONEYDSP END-USER LICENSE AGREEMENT](https://www.stoneydsp.com/licence)
+- [STONEYDSP PRIVACY POLICY](https://www.stoneydsp.com/privacy-policy)

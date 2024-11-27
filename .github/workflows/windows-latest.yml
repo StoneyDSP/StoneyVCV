@@ -13,29 +13,26 @@ concurrency:
 
 env:
   DISPLAY: :0
-  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
   VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   VCPKG_MANIFEST_MODE: ON
   VCPKG_ROOT: "vcpkg"
-  BUILD_TYPE: Release
+  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\dep\vcpkg\ports
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "win-x64"
-  RACK_DIR: dep/Rack-SDK
-  IPP_DIR: C:\Program Files (x86)\Intel\oneAPI\ipp\latest\lib\cmake\ipp
   MSYSTEM: "MINGW64"
 
 jobs:
   windows:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+    # defaults:
+    #   run:
+    #     shell: msys2 {0}
 
     steps:
 
@@ -44,8 +41,14 @@ jobs:
       with:
         submodules: true
 
-    - name: Set Up Build Cache
-      uses: mozilla-actions/sccache-action@v0.0.4
+    - name: Install winget
+      uses: Cyberboss/install-winget@v1
+      # with:
+      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   wget_release_id: latest
+
+    - name: Install VCVRack2Free
+      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
 
     - name: Use MSYS2
       uses: msys2/setup-msys2@v2
@@ -77,15 +80,6 @@ jobs:
           tree
           ninja
 
-      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    - name: Install VCV's Windows Deps
-      shell: msys2 {0}
-      run: |
-        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
-
     - name: Deps
       uses: johnwason/vcpkg-action@v6
       with:
@@ -96,28 +90,21 @@ jobs:
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
         manifest-dir: ${{ github.workspace }}
         # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: true
+        github-binarycache: false
         pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
     - name: Configure Tests
       shell: msys2 {0}
       run: >-
         cmake
-        -S .
-        -B ${{ env.BUILD_DIR }}
-        -G "Ninja"
-        -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
-        -DCMAKE_C_FLAGS="-march=nehalem"
-        -DCMAKE_CXX_FLAGS="-march=nehalem"
-        -DCMAKE_INSTALL_PREFIX=./install
-        -DRACK_DIR=${{ env.RACK_DIR }}
-        -DVCPKG_ROOT=${{ env.VCPKG_ROOT }}
-        -DVCPKG_MANIFEST_MODE=ON
+        -S ${PWD}
+        -B ${PWD}/build
+        -DCMAKE_INSTALL_PREFIX=${PWD}/install
+        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=./vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DSTONEYDSP_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_BUILD_TESTS:BOOL=FALSE
+        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli
 
@@ -126,7 +113,7 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests_StoneyDSP
+        --target Tests_StoneyVCV
         -j3
 
     - name: Test
@@ -140,16 +127,30 @@ jobs:
         --verbose
         && cd ..
 
+    - name: Fetch Rack SDK
+      shell: msys2 {0}
+      run: |
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
+
     - name: Build
       shell: msys2 {0}
-      run: cmake --build ./build --target plugin -j3
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make build -j3
 
     - name: Dist
       shell: msys2 {0}
-      run: cmake --build ./build --target dist -j3
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dist -j3
 
     - name: Install
       shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make install -j3
 
     # List all files in tree

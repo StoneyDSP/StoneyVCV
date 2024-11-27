@@ -2,8 +2,11 @@
 # directories above
 RACK_DIR ?= ../..
 
+FLAGS += -DSTONEYVCV_VERSION_MAJOR=0
+FLAGS += -DSTONEYVCV_VERSION_MINOR=1
+
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += -Iinclude -Idep/StoneyDSP/include -DSTONEYVCV_VERSION_MAJOR=0 -DSTONEYVCV_VERSION_MINOR=1 -DSTONEYVCV_BUILD_TESTS=FALSE
+FLAGS += -Iinclude -Idep/StoneyDSP/include
 CFLAGS +=
 CXXFLAGS +=
 
