@@ -78,17 +78,24 @@ set_target_properties(StoneyVCV
     LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
 )
 
+# target_link_directories(StoneyVCV
+# PUBLIC
+# "${rack_link_dir}"
+# )
 target_link_libraries(StoneyVCV
     PUBLIC
+
     rack::lib
     StoneyDSP::Core
     StoneyDSP::SIMD
     StoneyDSP::DSP
 )
-target_link_options(StoneyVCV
-    PRIVATE
-    "-fPIC"
-)
+
+# target_link_options(StoneyVCV
+# PRIVATE
+# "-fPIC"
+# "-shared"
+# )
 if(UNIX)
     if(APPLE)
         target_link_options(StoneyVCV
@@ -135,29 +142,29 @@ endif()
 
 # #[==[plugin]==]
 # add_custom_target(plugin ALL
-#     COMMAND "make"
-#     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-#     BYPRODUCTS
-#     "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-#     SOURCES
-#     "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
-#     "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
-#     JOB_SERVER_AWARE TRUE
-#     DEPENDS StoneyVCV
-#     USES_TERMINAL
+# COMMAND "make"
+# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+# BYPRODUCTS
+# "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+# SOURCES
+# "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
+# "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+# JOB_SERVER_AWARE TRUE
+# DEPENDS StoneyVCV
+# USES_TERMINAL
 # )
 
 # #[==[dist]==]
 # add_custom_target(dist
-#     COMMAND "make" "dist"
-#     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-#     BYPRODUCTS
-#     "${PROJECT_SOURCE_DIR}/dist"
-#     SOURCES
-#     "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-#     JOB_SERVER_AWARE TRUE
-#     DEPENDS plugin
-#     USES_TERMINAL
+# COMMAND "make" "dist"
+# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+# BYPRODUCTS
+# "${PROJECT_SOURCE_DIR}/dist"
+# SOURCES
+# "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+# JOB_SERVER_AWARE TRUE
+# DEPENDS plugin
+# USES_TERMINAL
 # )
 
 #[==[clean]==] # Not supported...
@@ -175,7 +182,7 @@ endif()
 # # Only build tests if this project is the top-level project...
 #[==[Tests_StoneyVCV]==]
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
-    find_package(Catch2 3 REQUIRED)
+    find_package(Catch2 3.5.2 REQUIRED)
 
     # # These tests can use the Catch2-provided main
     add_executable(Tests_StoneyVCV)
@@ -196,13 +203,10 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
+
         rack::lib
         StoneyDSP::StoneyVCV
         Catch2::Catch2WithMain
-    )
-    target_link_options(Tests_StoneyVCV
-        PRIVATE
-        "-fPIC"
     )
     set_target_properties(Tests_StoneyVCV
         PROPERTIES
@@ -216,11 +220,13 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     include(CTest)
     include(Catch)
+
     set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
-    set(dl_paths "${rack_link_dir}")
-    catch_discover_tests(Tests_StoneyVCV
-        DL_PATHS "${dl_paths}"
-    )
+
+    set(dl_paths)
+    list(APPEND dl_paths "${rack_link_dir}")
+
+    catch_discover_tests(Tests_StoneyVCV)
 
     list(APPEND STONEYVCV_TARGETS Tests_StoneyVCV)
 endif()
