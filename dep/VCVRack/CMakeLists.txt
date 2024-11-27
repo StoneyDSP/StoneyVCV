@@ -284,10 +284,14 @@ else()
     set(RACK_LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
 endif()
 
+set(RACK_DLL_IMPORTED_LOCATION)
+
 if(WIN32)
     cmake_path(CONVERT "$ENV{ProgramFiles}\\VCV\\Rack2Free" TO_CMAKE_PATH_LIST dll_dir)
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack.dll")
 else()
     set(dll_dir "${RACK_DIR}")
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
 set_target_properties(lib
@@ -303,7 +307,7 @@ set_target_properties(lib
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_INSTALL_INCLUDEDIR}"
 
     #
-    IMPORTED_LOCATION "${dll_dir}/libRack.dll"
+    IMPORTED_LOCATION "${RACK_DLL_IMPORTED_LOCATION}"
     IMPORTED_IMPLIB "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME TRUE
 
@@ -429,8 +433,10 @@ endif()
 
 if(WIN32)
     cmake_path(CONVERT "$ENV{ProgramFiles}\\VCV\\Rack2Free" TO_CMAKE_PATH_LIST dll_dir)
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack.dll")
 else()
-    set(dll_dir "${RACK_DIR}")
+    set(dll_dir "${_IMPORT_PREFIX}")
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
 # Create imported target rack::lib
@@ -445,7 +451,7 @@ set_target_properties(rack::lib PROPERTIES
     # INTERFACE_LINK_OPTIONS "-fPIC;-shared"
     INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@"
     INTERFACE_LINK_LIBRARIES "rack::sdk"
-    IMPORTED_LOCATION "${dll_dir}/libRack.dll"
+    IMPORTED_LOCATION "${RACK_DLL_IMPORTED_LOCATION}"
     IMPORTED_IMPLIB "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@/libRack${RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME "TRUE"
     COMPATIBLE_INTERFACE_STRING "INTERFACE_lib_MAJOR_VERSION;INTERFACE_lib_MINOR_VERSION;INTERFACE_lib_PATCH_VERSION"
