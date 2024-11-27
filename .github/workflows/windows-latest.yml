@@ -44,6 +44,15 @@ jobs:
     - name: Set Up Build Cache
       uses: mozilla-actions/sccache-action@v0.0.4
 
+    - name: Install winget
+      uses: Cyberboss/install-winget@v1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        wget_release_id: latest
+
+    - name: Install VCVRack2Free
+      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
+
     - name: Use MSYS2
       uses: msys2/setup-msys2@v2
       with:
@@ -114,7 +123,7 @@ jobs:
       shell: msys2 {0}
       run: >-
         cd build &&
-        LD_LIBRARY_PATH=${PWD}/build/vcpkg_installed/x64-mingw-dynamic/bin:${LD_LIBRARY_PATH} ctest
+        ctest
         -j3
         --rerun-failed
         --output-on-failure
