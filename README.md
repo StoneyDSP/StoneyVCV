@@ -34,6 +34,10 @@ Download or clone the StoneyVCV source code, e.g.
 git clone https://github.com/StoneyDSP/StoneyVCV.git
 ```
 
+```shell
+cd StoneyVCV
+```
+
 If using the Rack SDK, unzip it and set the `RACK_DIR` environment variable by running `export RACK_DIR=<Rack SDK dir>`.
 
 Build StoneyVCV.
@@ -60,13 +64,23 @@ make install
 
 ## Develop, Test, and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2
 
-Note: I recommend using [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2. StoneyVCV is built and tested using the Rack 2.5.2 SDK for all platforms. We use vcpkg to fetch a fresh copy of the correct SDK files when you ru the below command; the files are parsed into CMake targets, which interface with our testing targets. 
+Note: I recommend using [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2. StoneyVCV is built and tested using the Rack 2.5.2 SDK for all platforms. We use vcpkg to fetch a fresh copy of the correct SDK files when you run the below commands; the files are parsed into CMake targets, which interface with our testing targets.
 
-We recommend setting the `VCPKG_ROOT` environment variable in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct envvironment. *(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as '/c/Users/...')*
+We recommend setting the `VCPKG_ROOT` environment variable in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct environment. *(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as '/c/Users/...')*
 
-We recommend *not* setting the `RACK_DIR` environment variable when running the below command, as it may interfere with vcpkg.
+We recommend *not* setting the `RACK_DIR` environment variable when running the below commands, as it may interfere with vcpkg.
 
-To configure the StoneyDSP C++ library, Rack SDK, and Catch2 unit tests, all with CMake and vcpkg:
+Download or clone the StoneyVCV source code, e.g.
+
+```shell
+git clone https://github.com/StoneyDSP/StoneyVCV.git
+```
+
+```shell
+cd StoneyVCV
+```
+
+Configure the StoneyDSP C++ library, Rack SDK, and Catch2 unit tests, along with StoneyVCV, with CMake and vcpkg:
 
 ```shell
 cmake                                                                        \
@@ -106,6 +120,8 @@ cd ..
 The unit tests executable should run in the terminal, and eventually indicate the success rate of all the tests combined.
 
 The GitHub Workflows in our repository may be a useful reference, if any doubts.
+
+Please feel welcome to submit pull requests of any changes you feel are useful, interesting, or appropriate, along with any technical notes and/or subjective reasoning; you may use [one of our PR templates](https://github.com/StoneyDSP/StoneyVCV/issues/new/choose) to help you get started - [all community contributions are gratefully recieved](https://github.com/StoneyDSP/StoneyVCV/blob/production/.github/CONTRIBUTING.md).
 
 ---
 
