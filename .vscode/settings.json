@@ -20,7 +20,7 @@
     "-DCMAKE_TOOLCHAIN_FILE:STRING=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
     "-DSTONEYVCV_BUILD_TESTS:BOOL=TRUE",
     "--no-warn-unused-cli",
-    "--compile-no-warn-as-error",
+    "--compile-no-warning-as-error",
     "-Wno-dev"
   ],
   "cmake.sourceDirectory": "${workspaceFolder}",
