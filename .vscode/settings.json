@@ -36,9 +36,12 @@
   "C_Cpp.default.cppStandard": "c++11",
   "C_Cpp.vcpkg.enabled": false,
   "C_Cpp.files.exclude": {
+    "**/.github": true,
     "**/.vscode": true,
     "**/.vs": true,
-    "**/doc": true,
+    "**/docs": true,
+    "**/share": true,
+    "**/install": true,
     "**/build": true,
     "**/dist": true,
     "**/bin": true
