@@ -12,11 +12,14 @@ StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 ## Contents
 
 - [StoneyVCV](#stoneyvcv)
+  - [Requirements](#requirements)
   - [Build and Install StoneyVCV for VCV Rack 2 with Make](#build-and-install-stoneyvcv-for-vcv-rack-2-with-make)
   - [Develop, Test and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2](#develop-test-and-deploy-stoneyvcv-for-vcv-rack-2-with-cmake-and-catch2)
   - [Further Reading](#further-reading)
 
-## Build and Install StoneyVCV for VCV Rack 2 with Make
+---
+
+## Requirements
 
 Complete the [Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) section of the [VCV Rack Plugin Development guide](https://vcvrack.com/manual/Building).
 
@@ -27,6 +30,10 @@ StoneyVCV can be built in three ways:
 - [Build Rack from source](https://vcvrack.com/manual/Building#Building-Rack) and build StoneyVCV in the `plugins/` folder. (Recommended for advanced developers.)
 
 - Build for all architectures with one command using the [VCV Rack Plugin Toolchain](https://github.com/VCVRack/rack-plugin-toolchain). Native (Linux) or Docker (Linux, Mac, Windows). *Recommended 15 GB disk space, 8 GB RAM.*
+
+---
+
+## Build and Install StoneyVCV for VCV Rack 2 with Make
 
 Download or clone the StoneyVCV source code, e.g.
 
