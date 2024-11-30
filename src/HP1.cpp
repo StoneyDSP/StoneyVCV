@@ -75,7 +75,7 @@
 
 //==============================================================================
 
-namespace StoneyVCV {
+namespace StoneyDSP {
 
 namespace VCVRack {
 
