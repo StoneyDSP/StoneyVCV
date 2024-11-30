@@ -11,13 +11,36 @@
    sodipodi:docname="HP1-dark.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2291">
+      <stop
+         style="stop-color:#2b2b2b;stop-opacity:1;"
+         offset="0"
+         id="stop2287" />
+      <stop
+         style="stop-color:#2b2b2b;stop-opacity:0;"
+         offset="1"
+         id="stop2289" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2291"
+       id="linearGradient2293"
+       x1="2.7289679"
+       y1="168.70656"
+       x2="2.5462642"
+       y2="296.67227"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -62,7 +85,7 @@
      id="layer1"
      transform="translate(0,-168.49998)">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:#2b2b2b;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient2293);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect420"
        width="5.0799999"
        height="128.5"
