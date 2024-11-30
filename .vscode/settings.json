@@ -23,22 +23,52 @@
     "--compile-no-warning-as-error",
     "-Wno-dev"
   ],
+  "cmake.debugConfig": {
+		"cwd": "${workspaceFolder}",
+		"symbolSearchPath": "${workspaceFolder}/include",
+		"miDebuggerPath": "${workspaceFolder}/share/gdbinit",
+		"MIMode": "gdb",
+		"console": "newExternalWindow",
+		"stopAtEntry": false,
+		"logging": {
+			"engineLogging": false,
+			"exceptions": true,
+			"moduleLoad": true,
+			"trace": false,
+			"traceResponse": false,
+			"programOutput": true
+		}
+	},
   "cmake.sourceDirectory": "${workspaceFolder}",
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.installPrefix": "${workspaceFolder}/install",
   "cmake.loadCompileCommands": true,
   "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/include",
+  ],
+  "C_Cpp.default.defines": [
+    "STONEYVCV_VERSION_MAJOR=0",
+    "STONEYVCV_VERSION_MINOR=0",
+    "STONEYVCV_VERSION_PATCH=1",
+    "STONEYVCV_VERSION_TWEAK=0",
+    "STONEYVCV_EXPERIMENTAL"
+  ],
   "C_Cpp.default.browse.databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
   "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.mergeConfigurations": true,
   "C_Cpp.default.cStandard": "c11",
   "C_Cpp.default.cppStandard": "c++11",
   "C_Cpp.vcpkg.enabled": false,
   "C_Cpp.files.exclude": {
+    "**/.github": true,
     "**/.vscode": true,
     "**/.vs": true,
-    "**/doc": true,
+    "**/docs": true,
+    "**/share": true,
+    "**/install": true,
     "**/build": true,
     "**/dist": true,
     "**/bin": true
@@ -63,6 +93,12 @@
         "**/vcpkg-configuration.json"
       ],
       "url": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json"
+    },
+    {
+      "fileMatch": [
+        "**/plugin.json"
+      ],
+      "url": "plugin.schema.json"
     }
   ],
   "[json]": {
