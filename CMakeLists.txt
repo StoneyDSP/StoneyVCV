@@ -12,6 +12,7 @@ set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FOR
 set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
+option(STONEYVCV_BUILD_MODULE_HP1 "" TRUE)
 
 # Put components in the correct order of their dependencies on eachother
 # to save tears...
@@ -108,7 +109,6 @@ if(DEFINED STONEYVCV_EXPERIMENTAL)
 endif()
 target_link_libraries(StoneyVCV
     PUBLIC
-
     rack::lib
     StoneyDSP::Core
     StoneyDSP::SIMD
@@ -159,6 +159,27 @@ if(WIN32)
         PUBLIC
         "-static-libstdc++"
     )
+endif()
+
+#[==[HP1]==]
+if(STONEYVCV_BUILD_MODULE_HP1)
+
+set(STONEYVCV_HP1_HPP "HP1.hpp")
+configure_file("include/${STONEYVCV_HP1_HPP}" "include/${STONEYVCV_HP1_HPP}")
+target_sources(StoneyVCV
+    PUBLIC
+    FILE_SET stoneyvcv_PUBLIC_HEADERS
+    TYPE HEADERS
+    BASE_DIRS
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    FILES
+    #[==[include/plugin.hpp]==]
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP1_HPP}>
+    $<INSTALL_INTERFACE:include/${STONEYVCV_HP1_HPP}>
+)
+target_sources(StoneyVCV PRIVATE "src/HP1.cpp")
+
 endif()
 
 # set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
@@ -220,14 +241,11 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     target_sources(Tests_StoneyVCV
         PRIVATE
         "${PROJECT_SOURCE_DIR}/test/plugin.cpp"
-
-        # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
-        # "${PROJECT_SOURCE_DIR}/test/VCA.cpp"
+        "${PROJECT_SOURCE_DIR}/test/HP1.cpp"
     )
 
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
-
         rack::lib
         StoneyDSP::StoneyVCV
         Catch2::Catch2WithMain
