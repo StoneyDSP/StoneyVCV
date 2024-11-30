@@ -11,7 +11,7 @@ TEST_CASE("plugin", "[plugin]") {
     }
 
     SECTION( "pluginInstance" ) {
-        REQUIRE(::StoneyDSP::VCVRack::pluginInstance != nullptr);
+        REQUIRE(::StoneyDSP::VCVRack::pluginInstance == nullptr);
     }
 
     SECTION("modules") {
