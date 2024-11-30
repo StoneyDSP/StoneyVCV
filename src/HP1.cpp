@@ -53,8 +53,14 @@
 {
     setModule(module);
     setPanel(::rack::createPanel(
-        ::rack::asset::plugin(::StoneyDSP::VCVRack::pluginInstance, "res/HP1-light.svg"),
-        ::rack::asset::plugin(::StoneyDSP::VCVRack::pluginInstance, "res/HP1-dark.svg")
+        // Light-mode panel
+        ::rack::asset::plugin(
+            ::StoneyDSP::VCVRack::pluginInstance, "res/HP1-light.svg"
+        ),
+        // Dark-mode panel
+        ::rack::asset::plugin(
+            ::StoneyDSP::VCVRack::pluginInstance, "res/HP1-dark.svg"
+        )
     ));
 }
 
@@ -64,7 +70,7 @@
 /**
  *
  */
-::rack::plugin::Model* ::StoneyDSP::VCVRack::createHP1() // STONEYDSP_NOEXCEPT(false)
+::rack::plugin::Model* ::StoneyDSP::VCVRack::createHP1()
 {
 
     ::rack::plugin::Model* modelHP1 = ::rack::createModel<
