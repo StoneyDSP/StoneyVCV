@@ -1,26 +1,30 @@
-// #include "plugin.hpp"
-
-// #ifndef PLUGIN_HPP_INCLUDED
-// #error "Couldn't find 'plugin.hpp'?"
-// #endif
-
-// #undef WARN
-
-#include <rack.hpp>
-
-// #define CATCH_CONFIG_MAIN
-
-#if __has_include(<catch2/catch_test_macros.hpp>)
 #include <catch2/catch_test_macros.hpp>
-#define STONEYDSP_HAS_CATCH2 1
-#else
-#warning "Can't find Catch2 headers for unit tests!"
-#endif
 
-#if STONEYDSP_HAS_CATCH2
+#include "plugin.hpp"
 
 // Tests go here...
 
-TEST_CASE("placeholder", "[plugin]") { REQUIRE(true == true); }
+TEST_CASE("plugin", "[plugin]") {
 
-#endif // STONEYDSP_HAS_CATCH2
+    SECTION( "files" ) {
+        REQUIRE(STONEYVCV_PLUGIN_HPP_INCLUDED == 1);
+    }
+
+    SECTION( "pluginInstance" ) {
+        REQUIRE(::StoneyDSP::VCVRack::pluginInstance == nullptr);
+    }
+
+    SECTION("modules") {
+#ifdef STONEYVCV_EXPERIMENTAL
+    // EXPERIMENTAL MODULES HERE...
+#endif
+
+#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+        SECTION( "HP1" ) {
+            REQUIRE(::StoneyDSP::VCVRack::modelHP1 != nullptr);
+        }
+#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
+    #warning "No modules found..."
+#endif
+    }
+}
