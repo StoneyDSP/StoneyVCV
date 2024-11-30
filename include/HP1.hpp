@@ -92,6 +92,35 @@ private:
 
 //==============================================================================
 
+using Widget = ::rack::Widget;
+
+struct HP1Widget final : Widget
+{
+public:
+    HP1Widget();
+    ~HP1Widget();
+    /**
+     * @brief Advances the module by one frame.
+     *
+     */
+    void step() override;
+    /**
+     * @brief Draws the widget to the NanoVG context.
+     * When overriding, call the superclass's draw(args) to recurse to
+     * children.
+     *
+     * @param args
+     */
+    void draw(const ::StoneyDSP::VCVRack::Widget::DrawArgs &args) override;
+    ::rack::FramebufferWidget *hp1WidgetFrameBuffer;
+    Widget *panelBorder;
+private:
+    STONEYDSP_DECLARE_NON_COPYABLE(HP1Widget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP1Widget)
+};
+
+//==============================================================================
+
 using ModuleWidget = ::rack::app::ModuleWidget;
 
 /**
@@ -103,6 +132,8 @@ struct HP1ModuleWidget final : ModuleWidget
 public:
     HP1ModuleWidget(::StoneyDSP::VCVRack::HP1Module *module);
     ~HP1ModuleWidget();
+    ::StoneyDSP::VCVRack::HP1Widget *hp1Widget;
+    ::rack::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1ModuleWidget)
