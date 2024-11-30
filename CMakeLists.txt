@@ -1,14 +1,21 @@
 cmake_minimum_required(VERSION 3.14...3.31 FATAL_ERROR)
 
 #[==[STONEYVCV]==]
-project(STONEYVCV VERSION 2.1.0.0)
+project(STONEYVCV VERSION 2.0.1.0)
 
 enable_language(C)
 enable_language(CXX)
 
+set(STONEYVCV_VERSION_MAJOR "${CMAKE_PROJECT_VERSION_MAJOR}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION_MINOR "${CMAKE_PROJECT_VERSION_MINOR}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
+
+
 # Put components in the correct order of their dependencies on eachother
 # to save tears...
-find_package(StoneyDSP 0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
+find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 find_package(rack 2.5.2 REQUIRED COMPONENTS dep sdk lib CONFIG)
 
 # These props are helpful to have around...
@@ -16,6 +23,15 @@ get_target_property(rack_inc_dir rack::lib INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(rack_link_dir rack::lib INTERFACE_LINK_DIRECTORIES)
 get_target_property(rack_implib rack::lib IMPORTED_IMPLIB)
 get_target_property(rack_implib_location rack::lib IMPORTED_LOCATION)
+
+set(STONEYVCV_TARGETS)
+
+#[==[StoneyVCV]==]
+add_library(StoneyVCV SHARED EXCLUDE_FROM_ALL)
+add_library(StoneyDSP::StoneyVCV ALIAS StoneyVCV)
+
+set_target_properties(StoneyVCV PROPERTIES VERSION 2.1.0)
+set_target_properties(StoneyVCV PROPERTIES SOVERSION 2.1.0)
 
 # Gather project files...
 set(PLUGIN_HPP "plugin.hpp")
@@ -32,17 +48,6 @@ endif()
 set(PLUGIN_LIB "plugin${PLUGIN_LIB_FILE_EXTENSION}")
 
 configure_file("include/${PLUGIN_HPP}" "include/${PLUGIN_HPP}")
-
-# configure_file("include/VCA.hpp" "include/VCA.hpp")
-# configure_file("include/VCO.hpp" "include/VCO.hpp")
-set(STONEYVCV_TARGETS)
-
-#[==[StoneyVCV]==]
-add_library(StoneyVCV SHARED EXCLUDE_FROM_ALL)
-add_library(StoneyDSP::StoneyVCV ALIAS StoneyVCV)
-
-set_target_properties(StoneyVCV PROPERTIES VERSION 2.1.0)
-set_target_properties(StoneyVCV PROPERTIES SOVERSION 2.1.0)
 
 target_include_directories(StoneyVCV
     PUBLIC
@@ -65,9 +70,6 @@ target_sources(StoneyVCV
 target_sources(StoneyVCV
     PRIVATE
     "src/${PLUGIN_CPP}"
-
-    # "src/VCA.cpp"
-    # "src/VCO.cpp"
 )
 
 set_target_properties(StoneyVCV
@@ -76,12 +78,34 @@ set_target_properties(StoneyVCV
     LIBRARY_OUTPUT_NAME "plugin"
     ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
     LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
+    # Compatible Interface
+    INTERFACE_StoneyVCV_MAJOR_VERSION ${STONEYVCV_VERSION_MAJOR}
+    INTERFACE_StoneyVCV_MINOR_VERSION ${STONEYVCV_VERSION_MINOR}
+    INTERFACE_StoneyVCV_PATCH_VERSION ${STONEYVCV_VERSION_PATCH}
 )
-
-# target_link_directories(StoneyVCV
-# PUBLIC
-# "${rack_link_dir}"
-# )
+set_property(TARGET StoneyVCV APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_StoneyVCV_MAJOR_VERSION
+)
+set_property(TARGET StoneyVCV APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_StoneyVCV_MINOR_VERSION
+)
+set_property(TARGET StoneyVCV APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_StoneyVCV_PATCH_VERSION
+)
+target_compile_definitions(StoneyVCV
+    PUBLIC
+    "STONEYVCV_VERSION_MAJOR=${STONEYVCV_VERSION_MAJOR}"
+    "STONEYVCV_VERSION_MINOR=${STONEYVCV_VERSION_MINOR}"
+    "STONEYVCV_VERSION_PATCH=${STONEYVCV_VERSION_PATCH}"
+    "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
+    "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
+)
+if(DEFINED STONEYVCV_EXPERIMENTAL)
+    target_compile_definitions(StoneyVCV
+        PUBLIC
+        "STONEYVCV_EXPERIMENTAL=${STONEYVCV_EXPERIMENTAL}"
+    )
+endif()
 target_link_libraries(StoneyVCV
     PUBLIC
 
