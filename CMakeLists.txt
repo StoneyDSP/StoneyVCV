@@ -182,48 +182,6 @@ target_sources(StoneyVCV PRIVATE "src/HP1.cpp")
 
 endif()
 
-# set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
-# set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
-
-# #[==[plugin]==]
-# add_custom_target(plugin ALL
-# COMMAND "make"
-# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-# BYPRODUCTS
-# "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-# SOURCES
-# "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
-# "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
-# JOB_SERVER_AWARE TRUE
-# DEPENDS StoneyVCV
-# USES_TERMINAL
-# )
-
-# #[==[dist]==]
-# add_custom_target(dist
-# COMMAND "make" "dist"
-# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-# BYPRODUCTS
-# "${PROJECT_SOURCE_DIR}/dist"
-# SOURCES
-# "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-# JOB_SERVER_AWARE TRUE
-# DEPENDS plugin
-# USES_TERMINAL
-# )
-
-#[==[clean]==] # Not supported...
-# add_custom_target(clean
-# COMMAND "make" "clean"
-# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-# BYPRODUCTS "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
-# SOURCES
-# "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
-# "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
-# JOB_SERVER_AWARE TRUE
-# USES_TERMINAL
-# )
-
 # # Only build tests if this project is the top-level project...
 #[==[Tests_StoneyVCV]==]
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
