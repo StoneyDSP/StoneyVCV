@@ -31,11 +31,12 @@
 
 #pragma once
 
-#define STONEYDSP_STONEYVCV_HP1_HPP_INCLUDED 1
+#define STONEYVCV_HP1_HPP_INCLUDED 1
 
 //==============================================================================
 
 #include <rack.hpp>
+#include <StoneyDSP/Core.hpp>
 
 #include "plugin.hpp"
 
@@ -68,6 +69,12 @@ struct HP1 final : Module
 public:
 
     using ProcessArgs = ::StoneyDSP::VCVRack::Module::ProcessArgs;
+
+    HP1();
+    ~HP1();
+private:
+    STONEYDSP_DECLARE_NON_COPYABLE(HP1)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP1)
 };
 
 //==============================================================================
@@ -81,7 +88,7 @@ using ModuleWidget = ::rack::app::ModuleWidget;
 struct HP1ModuleWidget final : ModuleWidget
 {
 public:
-    HP1ModuleWidget(::StoneyDSP::VCVRack::HP1* module);
+    HP1ModuleWidget(::StoneyDSP::VCVRack::HP1 *module);
     ~HP1ModuleWidget();
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
