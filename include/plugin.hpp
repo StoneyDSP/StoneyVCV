@@ -31,48 +31,44 @@
 
 #pragma once
 
-#define PLUGIN_HPP_INCLUDED 1
+#define STONEYVCV_PLUGIN_HPP_INCLUDED 1
 
 //==============================================================================
 
-#if !__has_include(<rack.hpp>)
-#error "Cannot find required header 'rack.hpp' - did you set $RACK_DIR?"
-#else
-
 #include <rack.hpp>
-
-#include "StoneyDSP/Core.hpp"
-#include "StoneyDSP/DSP.hpp"
-#include "StoneyDSP/SIMD.hpp"
+#include <StoneyDSP/Core.hpp>
+#include <StoneyDSP/DSP.hpp>
+#include <StoneyDSP/SIMD.hpp>
 
 //==============================================================================
 
 namespace StoneyDSP {
 
-    namespace VCVRack {
+namespace VCVRack {
 
-        //==============================================================================
+//==============================================================================
 
-        // Declare the Plugin, defined in plugin.cpp
-        extern rack::plugin::Plugin* pluginInstance;
+// Declare the Plugin, defined in plugin.cpp
+extern ::rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
 // Declare each Model, defined in each module source file
-#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 1)
-        // EXPERIMENTAL MODULES HERE...
-#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0)
-#warning "No modules found..."
+
+#ifdef STONEYVCV_EXPERIMENTAL
+    // EXPERIMENTAL MODULES HERE...
 #endif
 
-        //==============================================================================
-
-    } // namespace VCVRack
-
-} // namespace StoneyDSP
+#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+    extern ::rack::plugin::Model* modelHP1;
+#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
+    #warning "No modules found..."
+#endif
 
 //==============================================================================
 
-#endif
+} // namespace VCVRack
+
+} // namespace StoneyDSP
 
 //==============================================================================
