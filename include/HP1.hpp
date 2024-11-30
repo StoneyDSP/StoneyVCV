@@ -70,6 +70,19 @@ public:
 
     using ProcessArgs = ::StoneyDSP::VCVRack::Module::ProcessArgs;
 
+    enum ParamsId {
+        PARAMS_LEN
+    };
+	enum InputsId {
+		INPUTS_LEN
+	};
+	enum OutputsId {
+		OUTPUTS_LEN
+	};
+	enum LightsId {
+		LIGHTS_LEN
+	};
+
     HP1();
     ~HP1();
 private:

@@ -36,9 +36,29 @@
 //==============================================================================
 
 ::StoneyDSP::VCVRack::HP1::HP1()
-{}
+{
+    // Configure the number of Params, Outputs, Inputs, and Lights.
+    config(
+        ::StoneyDSP::VCVRack::HP1::PARAMS_LEN,   // numParams
+        ::StoneyDSP::VCVRack::HP1::INPUTS_LEN,   // numInputs
+        ::StoneyDSP::VCVRack::HP1::OUTPUTS_LEN,  // numOutputs
+        ::StoneyDSP::VCVRack::HP1::LIGHTS_LEN    // numLights
+    );
+}
 
 ::StoneyDSP::VCVRack::HP1::~HP1()
+{}
+
+::StoneyDSP::VCVRack::HP1ModuleWidget::HP1ModuleWidget(::StoneyDSP::VCVRack::HP1* module)
+{
+    setModule(module);
+    setPanel(::rack::createPanel(
+        ::rack::asset::plugin(::StoneyDSP::VCVRack::pluginInstance, "res/HP1-light.svg"),
+        ::rack::asset::plugin(::StoneyDSP::VCVRack::pluginInstance, "res/HP1-dark.svg")
+    ));
+}
+
+::StoneyDSP::VCVRack::HP1ModuleWidget::~HP1ModuleWidget()
 {}
 
 /**
