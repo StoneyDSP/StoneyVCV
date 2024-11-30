@@ -35,21 +35,21 @@
 
 //==============================================================================
 
-::StoneyDSP::VCVRack::HP1::HP1()
+::StoneyDSP::VCVRack::HP1Module::HP1Module()
 {
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
-        ::StoneyDSP::VCVRack::HP1::PARAMS_LEN,   // numParams
-        ::StoneyDSP::VCVRack::HP1::INPUTS_LEN,   // numInputs
-        ::StoneyDSP::VCVRack::HP1::OUTPUTS_LEN,  // numOutputs
-        ::StoneyDSP::VCVRack::HP1::LIGHTS_LEN    // numLights
+        ::StoneyDSP::VCVRack::HP1Module::PARAMS_LEN,   // numParams
+        ::StoneyDSP::VCVRack::HP1Module::INPUTS_LEN,   // numInputs
+        ::StoneyDSP::VCVRack::HP1Module::OUTPUTS_LEN,  // numOutputs
+        ::StoneyDSP::VCVRack::HP1Module::LIGHTS_LEN    // numLights
     );
 }
 
-::StoneyDSP::VCVRack::HP1::~HP1()
+::StoneyDSP::VCVRack::HP1Module::~HP1Module()
 {}
 
-::StoneyDSP::VCVRack::HP1ModuleWidget::HP1ModuleWidget(::StoneyDSP::VCVRack::HP1* module)
+::StoneyDSP::VCVRack::HP1ModuleWidget::HP1ModuleWidget(::StoneyDSP::VCVRack::HP1Module* module)
 {
     setModule(module);
     setPanel(::rack::createPanel(
@@ -67,7 +67,10 @@
 ::rack::plugin::Model* ::StoneyDSP::VCVRack::createHP1() // STONEYDSP_NOEXCEPT(false)
 {
 
-    ::rack::plugin::Model* modelHP1 = ::rack::createModel<::StoneyDSP::VCVRack::HP1, ::StoneyDSP::VCVRack::HP1ModuleWidget>("HP1");
+    ::rack::plugin::Model* modelHP1 = ::rack::createModel<
+        ::StoneyDSP::VCVRack::HP1Module,
+        ::StoneyDSP::VCVRack::HP1ModuleWidget
+    >("HP1");
 
     // STONEYDSP_THROW_IF_FAILED_VOID(modelHP1 == nullptr, bad_alloc);
     return modelHP1;

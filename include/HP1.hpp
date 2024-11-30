@@ -61,10 +61,10 @@ namespace VCVRack
 using Module = ::rack::engine::Module;
 
 /**
- * @brief The `HP1` struct.
+ * @brief The `HP1Module` struct.
  *
  */
-struct HP1 final : Module
+struct HP1Module final : Module
 {
 public:
 
@@ -83,11 +83,11 @@ public:
 		LIGHTS_LEN
 	};
 
-    HP1();
-    ~HP1();
+    HP1Module();
+    ~HP1Module();
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(HP1)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP1)
+    STONEYDSP_DECLARE_NON_COPYABLE(HP1Module)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP1Module)
 };
 
 //==============================================================================
@@ -101,7 +101,7 @@ using ModuleWidget = ::rack::app::ModuleWidget;
 struct HP1ModuleWidget final : ModuleWidget
 {
 public:
-    HP1ModuleWidget(::StoneyDSP::VCVRack::HP1 *module);
+    HP1ModuleWidget(::StoneyDSP::VCVRack::HP1Module *module);
     ~HP1ModuleWidget();
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
