@@ -49,6 +49,42 @@
 ::StoneyDSP::VCVRack::HP1Module::~HP1Module()
 {}
 
+//==============================================================================
+
+::StoneyDSP::VCVRack::HP1Widget::HP1Widget()
+{
+    // Widgets
+    hp1WidgetFrameBuffer = new ::rack::FramebufferWidget;
+    hp1WidgetFrameBuffer->setSize(box.size);
+    addChild(hp1WidgetFrameBuffer);
+
+    panelBorder = ::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f));
+    panelBorder->setSize(box.size);
+    hp1WidgetFrameBuffer->addChild(panelBorder);
+}
+
+::StoneyDSP::VCVRack::HP1Widget::~HP1Widget()
+{}
+
+void ::StoneyDSP::VCVRack::HP1Widget::step()
+{
+    panelBorder->box.size = box.size;
+    ::StoneyDSP::VCVRack::Widget::step();
+}
+
+void ::StoneyDSP::VCVRack::HP1Widget::draw(const ::StoneyDSP::VCVRack::Widget::DrawArgs &args)
+{
+
+    ::nvgBeginPath(args.vg);
+    ::nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
+    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? ::nvgRGB(42, 42, 42) : ::nvgRGB(235, 235, 235);
+    ::nvgFillColor(args.vg, bg);
+    ::nvgFill(args.vg);
+    ::StoneyDSP::VCVRack::Widget::draw(args);
+}
+
+//==============================================================================
+
 ::StoneyDSP::VCVRack::HP1ModuleWidget::HP1ModuleWidget(::StoneyDSP::VCVRack::HP1Module* module)
 {
     setModule(module);
@@ -62,6 +98,14 @@
             ::StoneyDSP::VCVRack::pluginInstance, "res/HP1-dark.svg"
         )
     ));
+    // Widgets
+    hp1ModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
+    hp1ModuleWidgetFrameBuffer->setSize(box.size);
+    addChild(hp1ModuleWidgetFrameBuffer);
+    //
+    hp1Widget = ::rack::createWidget<::StoneyDSP::VCVRack::HP1Widget>(::rack::math::Vec(0.0f, 0.0f));
+    hp1Widget->setSize(box.size);
+    hp1ModuleWidgetFrameBuffer->addChild(hp1Widget);
 }
 
 ::StoneyDSP::VCVRack::HP1ModuleWidget::~HP1ModuleWidget()
