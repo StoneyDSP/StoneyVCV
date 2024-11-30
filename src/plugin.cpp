@@ -31,8 +31,16 @@
 
 #include "plugin.hpp"
 
+namespace StoneyDSP {
+
+namespace VCVRack {
+
 /** @brief The `StoneyDSP` VCV Rack Plugin instance. */
-::rack::plugin::Plugin* StoneyDSP::VCVRack::pluginInstance;
+::rack::plugin::Plugin* pluginInstance;
+
+}
+
+}
 
 /**
  * @brief The `StoneyDSP` VCV Rack Plugin Initialiser.
