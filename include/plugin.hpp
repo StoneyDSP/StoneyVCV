@@ -44,7 +44,7 @@
 
 namespace StoneyDSP {
 
-namespace VCVRack {
+namespace StoneyVCV {
 
 //==============================================================================
 
@@ -67,7 +67,7 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
-} // namespace VCVRack
+} // namespace StoneyVCV
 
 } // namespace StoneyDSP
 
