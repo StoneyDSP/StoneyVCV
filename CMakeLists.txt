@@ -170,40 +170,40 @@ if(STONEYVCV_BUILD_MODULES)
 
 #[==[HP1]==]
 if(STONEYVCV_BUILD_MODULE_HP1)
-set(STONEYVCV_HP1_HPP "HP1.hpp")
-configure_file("include/${STONEYVCV_HP1_HPP}" "include/${STONEYVCV_HP1_HPP}")
-target_sources(StoneyVCV
-    PUBLIC
-    FILE_SET stoneyvcv_PUBLIC_HEADERS
-    TYPE HEADERS
-    BASE_DIRS
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    FILES
-    #[==[include/plugin.hpp]==]
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP1_HPP}>
-    $<INSTALL_INTERFACE:include/${STONEYVCV_HP1_HPP}>
-)
-target_sources(StoneyVCV PRIVATE "src/HP1.cpp")
+    set(STONEYVCV_HP1_HPP "HP1.hpp")
+    configure_file("include/${STONEYVCV_HP1_HPP}" "include/${STONEYVCV_HP1_HPP}")
+    target_sources(StoneyVCV
+        PUBLIC
+        FILE_SET stoneyvcv_PUBLIC_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        FILES
+        #[==[include/plugin.hpp]==]
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP1_HPP}>
+        $<INSTALL_INTERFACE:include/${STONEYVCV_HP1_HPP}>
+    )
+    target_sources(StoneyVCV PRIVATE "src/HP1.cpp")
 endif(STONEYVCV_BUILD_MODULE_HP1)
 
 #[==[HP2]==]
 if(STONEYVCV_BUILD_MODULE_HP2)
-set(STONEYVCV_HP2_HPP "HP2.hpp")
-configure_file("include/${STONEYVCV_HP2_HPP}" "include/${STONEYVCV_HP2_HPP}")
-target_sources(StoneyVCV
-    PUBLIC
-    FILE_SET stoneyvcv_PUBLIC_HEADERS
-    TYPE HEADERS
-    BASE_DIRS
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    FILES
-    #[==[include/plugin.hpp]==]
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP2_HPP}>
-    $<INSTALL_INTERFACE:include/${STONEYVCV_HP2_HPP}>
-)
-target_sources(StoneyVCV PRIVATE "src/HP2.cpp")
+    set(STONEYVCV_HP2_HPP "HP2.hpp")
+    configure_file("include/${STONEYVCV_HP2_HPP}" "include/${STONEYVCV_HP2_HPP}")
+    target_sources(StoneyVCV
+        PUBLIC
+        FILE_SET stoneyvcv_PUBLIC_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        FILES
+        #[==[include/plugin.hpp]==]
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP2_HPP}>
+        $<INSTALL_INTERFACE:include/${STONEYVCV_HP2_HPP}>
+    )
+    target_sources(StoneyVCV PRIVATE "src/HP2.cpp")
 endif(STONEYVCV_BUILD_MODULE_HP2)
 
 #[==[HP4]==]
@@ -227,6 +227,47 @@ endif(STONEYVCV_BUILD_MODULE_HP4)
 
 endif(STONEYVCV_BUILD_MODULES)
 
+# set(CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "" FORCE)
+# set(CMAKE_AUTOGEN_VERBOSE TRUE CACHE BOOL "" FORCE)
+
+# #[==[plugin]==]
+# add_custom_target(plugin ALL
+# COMMAND "make"
+# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+# BYPRODUCTS
+# "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+# SOURCES
+# "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
+# "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+# JOB_SERVER_AWARE TRUE
+# DEPENDS StoneyVCV
+# USES_TERMINAL
+# )
+
+# #[==[dist]==]
+# add_custom_target(dist
+# COMMAND "make" "dist"
+# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+# BYPRODUCTS
+# "${PROJECT_SOURCE_DIR}/dist"
+# SOURCES
+# "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+# JOB_SERVER_AWARE TRUE
+# DEPENDS plugin
+# USES_TERMINAL
+# )
+
+#[==[clean]==] # Not supported...
+# add_custom_target(clean
+# COMMAND "make" "clean"
+# WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+# BYPRODUCTS "${PROJECT_SOURCE_DIR}/${PLUGIN_LIB}"
+# SOURCES
+# "${PROJECT_SOURCE_DIR}/src/${PLUGIN_CPP}"
+# "${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}"
+# JOB_SERVER_AWARE TRUE
+# USES_TERMINAL
+# )
 
 # # Only build tests if this project is the top-level project...
 #[==[Tests_StoneyVCV]==]
@@ -245,9 +286,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     target_sources(Tests_StoneyVCV
         PRIVATE
         "${PROJECT_SOURCE_DIR}/test/plugin.cpp"
-        "${PROJECT_SOURCE_DIR}/test/HP1.cpp"
     )
-
     target_link_libraries(Tests_StoneyVCV
         PRIVATE
         rack::lib
@@ -261,6 +300,24 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     target_compile_features(Tests_StoneyVCV PUBLIC cxx_std_17)
     target_compile_features(Tests_StoneyVCV PUBLIC c_std_17)
+    if(STONEYVCV_BUILD_MODULE_HP4)
+        target_sources(Tests_StoneyVCV
+        PRIVATE
+        "${PROJECT_SOURCE_DIR}/test/HP4.cpp"
+    )
+    endif(STONEYVCV_BUILD_MODULE_HP4)
+    if(STONEYVCV_BUILD_MODULE_HP2)
+        target_sources(Tests_StoneyVCV
+        PRIVATE
+        "${PROJECT_SOURCE_DIR}/test/HP2.cpp"
+    )
+    endif(STONEYVCV_BUILD_MODULE_HP2)
+    if(STONEYVCV_BUILD_MODULE_HP1)
+        target_sources(Tests_StoneyVCV
+        PRIVATE
+        "${PROJECT_SOURCE_DIR}/test/HP1.cpp"
+    )
+    endif(STONEYVCV_BUILD_MODULE_HP1)
 
     enable_testing()
 
