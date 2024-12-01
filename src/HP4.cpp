@@ -76,9 +76,13 @@ void ::StoneyDSP::StoneyVCV::HP4Widget::step()
 
 void ::StoneyDSP::StoneyVCV::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::Widget::DrawArgs &args)
 {
+    NVGcolor bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
+    NVGcolor bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
+
+    //
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
-    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? ::nvgRGB(42, 42, 42) : ::nvgRGB(235, 235, 235);
+    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
     ::nvgFillColor(args.vg, bg);
     ::nvgFill(args.vg);
     ::StoneyDSP::StoneyVCV::Widget::draw(args);
