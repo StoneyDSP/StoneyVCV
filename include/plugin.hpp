@@ -44,7 +44,7 @@
 
 namespace StoneyDSP {
 
-namespace VCVRack {
+namespace StoneyVCV {
 
 //==============================================================================
 
@@ -60,6 +60,7 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+    extern ::rack::plugin::Model* modelHP2;
     extern ::rack::plugin::Model* modelHP1;
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
@@ -67,7 +68,7 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
-} // namespace VCVRack
+} // namespace StoneyVCV
 
 } // namespace StoneyDSP
 

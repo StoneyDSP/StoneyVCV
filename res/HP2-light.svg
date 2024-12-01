@@ -2,13 +2,13 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="5.0799999mm"
+   width="10.16mm"
    height="128.5mm"
-   viewBox="0 0 5.0800003 128.50002"
+   viewBox="0 0 10.160001 128.50002"
    version="1.1"
    id="svg8"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
-   sodipodi:docname="HP1-light.svg"
+   sodipodi:docname="HP2-light.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -39,7 +39,8 @@
        y1="168.02272"
        x2="2.7760534"
        y2="296.70047"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="scale(2,1)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -85,16 +86,16 @@
      id="layer1"
      transform="translate(0,-168.49998)">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:#ebebeb;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;vector-effect:none;fill:#ebebeb;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.374907;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect1138"
-       width="5.0799999"
+       width="10.16"
        height="128.5"
        x="5.9211732e-17"
        y="168.49997" />
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient830);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient830);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.374907;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="gradient420"
-       width="5.0799999"
+       width="10.16"
        height="128.5"
        x="5.9211732e-17"
        y="168.49997"

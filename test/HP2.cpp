@@ -1,5 +1,5 @@
 /**
- * @file HP1.cpp
+ * @file HP2.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -31,26 +31,26 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "HP1.hpp"
+#include "HP2.hpp"
 
 // Tests go here...
 
-TEST_CASE("HP1", "[HP1]") {
+TEST_CASE("HP2", "[HP2]") {
 
     SECTION("files") {
-        REQUIRE(STONEYVCV_HP1_HPP_INCLUDED == 1);
+        REQUIRE(STONEYVCV_HP2_HPP_INCLUDED == 1);
     }
 
     SECTION("instance") {
-        REQUIRE(::StoneyDSP::StoneyVCV::modelHP1 != nullptr);
+        REQUIRE(::StoneyDSP::StoneyVCV::modelHP2 != nullptr);
     }
 
-    SECTION("HP1Module") {
+    SECTION("HP2Module") {
         SECTION("properties") {
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::PARAMS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::INPUTS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::OUTPUTS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::LIGHTS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::PARAMS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::INPUTS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::OUTPUTS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::LIGHTS_LEN == 0);
         }
     }
 

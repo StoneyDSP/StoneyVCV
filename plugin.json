@@ -19,7 +19,17 @@
       "slug": "HP1",
       "name": "HP1",
       "description": "1hp Panel Spacer",
-      "tags": []
+      "tags": [
+        "Blank"
+      ]
+    },
+    {
+      "slug": "HP2",
+      "name": "HP2",
+      "description": "2hp Panel Spacer",
+      "tags": [
+        "Blank"
+      ]
     }
   ]
 }
