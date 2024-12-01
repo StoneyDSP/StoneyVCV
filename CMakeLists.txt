@@ -17,6 +17,7 @@ set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 option(STONEYVCV_BUILD_MODULES "" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP1 "" ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP2 "" ON "STONEYVCV_BUILD_MODULES" ON)
+cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4 "" ON "STONEYVCV_BUILD_MODULES" ON)
 
 # Put components in the correct order of their dependencies on eachother
 # to save tears...
@@ -204,6 +205,25 @@ target_sources(StoneyVCV
 )
 target_sources(StoneyVCV PRIVATE "src/HP2.cpp")
 endif(STONEYVCV_BUILD_MODULE_HP2)
+
+#[==[HP4]==]
+if(STONEYVCV_BUILD_MODULE_HP4)
+    set(STONEYVCV_HP4_HPP "HP4.hpp")
+    configure_file("include/${STONEYVCV_HP4_HPP}" "include/${STONEYVCV_HP4_HPP}")
+    target_sources(StoneyVCV
+        PUBLIC
+        FILE_SET stoneyvcv_PUBLIC_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        FILES
+        #[==[include/plugin.hpp]==]
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP4_HPP}>
+        $<INSTALL_INTERFACE:include/${STONEYVCV_HP4_HPP}>
+    )
+    target_sources(StoneyVCV PRIVATE "src/HP4.cpp")
+endif(STONEYVCV_BUILD_MODULE_HP4)
 
 endif(STONEYVCV_BUILD_MODULES)
 
