@@ -56,6 +56,7 @@ void init(::rack::plugin::Plugin* p) {
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+    p->addModel(::StoneyDSP::StoneyVCV::modelHP2);
     p->addModel(::StoneyDSP::StoneyVCV::modelHP1);
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
