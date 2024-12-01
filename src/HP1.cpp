@@ -46,29 +46,31 @@
     );
 }
 
-::StoneyDSP::StoneyVCV::HP1Module::~HP1Module()
-{}
+// ::StoneyDSP::StoneyVCV::HP1Module::~HP1Module()
+// {}
 
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::HP1Widget::HP1Widget()
+// :   hp1WidgetFrameBuffer(new ::rack::FramebufferWidget),
+//     panelBorder(::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f)))
 {
-    // Widgets
-    hp1WidgetFrameBuffer = new ::rack::FramebufferWidget;
-    hp1WidgetFrameBuffer->setSize(box.size);
-    addChild(hp1WidgetFrameBuffer);
-
-    panelBorder = ::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f));
-    panelBorder->setSize(box.size);
-    hp1WidgetFrameBuffer->addChild(panelBorder);
+    // // Widgets
+    // hp1WidgetFrameBuffer = new ::rack::FramebufferWidget;
+    // hp1WidgetFrameBuffer->setSize(box.size);
+    // addChild(hp1WidgetFrameBuffer);
+    // //
+    // panelBorder = ::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f));
+    // panelBorder->setSize(box.size);
+    // hp1WidgetFrameBuffer->addChild(panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::HP1Widget::~HP1Widget()
-{}
+// ::StoneyDSP::StoneyVCV::HP1Widget::~HP1Widget()
+// {}
 
 void ::StoneyDSP::StoneyVCV::HP1Widget::step()
 {
-    panelBorder->box.size = box.size;
+    // panelBorder->box.size = box.size;
     ::StoneyDSP::StoneyVCV::Widget::step();
 }
 
@@ -85,6 +87,8 @@ void ::StoneyDSP::StoneyVCV::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::Widge
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::HP1ModuleWidget::HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1Module* module)
+// :   hp1Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP1Widget>(::rack::math::Vec(0.0F, 0.0F))),
+//     hp1ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget)
 {
     setModule(module);
     setPanel(::rack::createPanel(
@@ -97,18 +101,27 @@ void ::StoneyDSP::StoneyVCV::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::Widge
             ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP1-dark.svg"
         )
     ));
-    // Widgets
-    hp1ModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
-    hp1ModuleWidgetFrameBuffer->setSize(box.size);
-    addChild(hp1ModuleWidgetFrameBuffer);
-    //
-    hp1Widget = ::rack::createWidget<::StoneyDSP::StoneyVCV::HP1Widget>(::rack::math::Vec(0.0F, 0.0F));
-    hp1Widget->setSize(box.size);
-    hp1ModuleWidgetFrameBuffer->addChild(hp1Widget);
+    // // Widgets
+    // hp1ModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
+    // hp1ModuleWidgetFrameBuffer->setSize(box.size);
+    // addChild(hp1ModuleWidgetFrameBuffer);
+    // //
+    // hp1Widget = ::rack::createWidget<::StoneyDSP::StoneyVCV::HP1Widget>(::rack::math::Vec(0.0F, 0.0F));
+    // hp1Widget->setSize(box.size);
+    // hp1ModuleWidgetFrameBuffer->addChild(hp1Widget);
+    // // Screws
+    // ::rack::math::Vec screwT1Pos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, 0.0F); // top-middle
+    // ::rack::math::Vec screwB1Pos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, ::rack::RACK_GRID_HEIGHT - ::rack::RACK_GRID_WIDTH); // bottom-middle
+    // //
+    // ::rack::componentlibrary::ThemedScrew *screwT1 = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwT1Pos);
+    // ::rack::componentlibrary::ThemedScrew *screwB1 = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwB1Pos);
+    // //
+    // addChild(screwT1);
+    // addChild(screwB1);
 }
 
-::StoneyDSP::StoneyVCV::HP1ModuleWidget::~HP1ModuleWidget()
-{}
+// ::StoneyDSP::StoneyVCV::HP1ModuleWidget::~HP1ModuleWidget()
+// {}
 
 /**
  *
