@@ -67,3 +67,12 @@ void init(::rack::plugin::Plugin* p) {
     // As an alternative, consider lazy-loading assets and lookup tables when
     // your module is created to reduce startup times of Rack.
 }
+
+namespace StoneyDSP {
+namespace StoneyVCV {
+namespace Panels {
+::NVGcolor bgBlack = ::nvgRGBA(42, 42, 42, 255);
+::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
+}
+}
+}

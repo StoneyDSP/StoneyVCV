@@ -53,7 +53,7 @@
      inkscape:cx="36.870568"
      inkscape:cy="243.95184"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      units="mm"
      inkscape:snap-bbox="true"
@@ -84,7 +84,8 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-168.49998)">
+     transform="translate(0,-168.49998)"
+     style="display:inline">
     <rect
        style="display:inline;opacity:1;vector-effect:none;fill:#ebebeb;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.530199;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect1138"
@@ -105,5 +106,14 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="components"
-     style="display:none" />
+     style="display:none">
+    <rect
+       style="display:none;fill:#ffff00;fill-rule:evenodd;stroke-width:0.264583"
+       id="rect879"
+       height="128.5"
+       x="0.06472934"
+       y="0.67339391"
+       width="0"
+       inkscape:label="widget" />
+  </g>
 </svg>
