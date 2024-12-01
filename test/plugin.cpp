@@ -51,6 +51,12 @@ TEST_CASE("plugin", "[plugin]") {
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+        SECTION( "HP4" ) {
+            REQUIRE(::StoneyDSP::StoneyVCV::modelHP4 != nullptr);
+        }
+        SECTION( "HP2" ) {
+            REQUIRE(::StoneyDSP::StoneyVCV::modelHP2 != nullptr);
+        }
         SECTION( "HP1" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::modelHP1 != nullptr);
         }
