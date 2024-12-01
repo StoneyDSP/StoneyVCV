@@ -67,6 +67,11 @@ extern ::rack::plugin::Plugin* pluginInstance;
     #warning "No modules found..."
 #endif
 
+namespace Panels {
+extern ::NVGcolor bgBlack;
+extern ::NVGcolor bgWhite;
+}
+
 //==============================================================================
 
 } // namespace StoneyVCV
