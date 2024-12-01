@@ -19,7 +19,9 @@
       "slug": "HP1",
       "name": "HP1",
       "description": "1hp Panel Spacer",
-      "tags": []
+      "tags": [
+        "Blank"
+      ]
     }
   ]
 }

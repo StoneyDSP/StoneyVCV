@@ -85,12 +85,20 @@
      id="layer1"
      transform="translate(0,-168.49998)">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient2293);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       id="rect420"
+       style="display:inline;opacity:1;vector-effect:none;fill:#2b2b2b;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="rect828"
        width="5.0799999"
        height="128.5"
        x="5.9211732e-17"
        y="168.49997" />
+    <rect
+       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient2293);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="gradient420"
+       width="5.0799999"
+       height="128.5"
+       x="5.9211732e-17"
+       y="168.49997"
+       inkscape:label="gradient420" />
   </g>
   <g
      inkscape:groupmode="layer"
