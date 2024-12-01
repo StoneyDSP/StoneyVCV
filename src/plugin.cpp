@@ -33,7 +33,7 @@
 
 namespace StoneyDSP {
 
-namespace VCVRack {
+namespace StoneyVCV {
 
 /** @brief The `StoneyDSP` VCV Rack Plugin instance. */
 ::rack::plugin::Plugin* pluginInstance;
@@ -49,14 +49,14 @@ namespace VCVRack {
  */
 void init(::rack::plugin::Plugin* p) {
 
-    ::StoneyDSP::VCVRack::pluginInstance = p;
+    ::StoneyDSP::StoneyVCV::pluginInstance = p;
 
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-    p->addModel(::StoneyDSP::VCVRack::modelHP1);
+    p->addModel(::StoneyDSP::StoneyVCV::modelHP1);
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
