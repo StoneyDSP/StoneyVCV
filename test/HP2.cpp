@@ -1,5 +1,5 @@
 /**
- * @file plugin.cpp
+ * @file HP2.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -29,40 +29,29 @@
  *
  ******************************************************************************/
 
-#include "plugin.hpp"
+#include <catch2/catch_test_macros.hpp>
 
-namespace StoneyDSP {
+#include "HP2.hpp"
 
-namespace StoneyVCV {
+// Tests go here...
 
-/** @brief The `StoneyDSP` VCV Rack Plugin instance. */
-::rack::plugin::Plugin* pluginInstance;
+TEST_CASE("HP2", "[HP2]") {
 
-}
+    SECTION("files") {
+        REQUIRE(STONEYVCV_HP2_HPP_INCLUDED == 1);
+    }
 
-}
+    SECTION("instance") {
+        REQUIRE(::StoneyDSP::StoneyVCV::modelHP2 != nullptr);
+    }
 
-/**
- * @brief The `StoneyDSP` VCV Rack Plugin Initialiser.
- *
- * @param p
- */
-void init(::rack::plugin::Plugin* p) {
+    SECTION("HP2Module") {
+        SECTION("properties") {
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::PARAMS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::INPUTS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::OUTPUTS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::LIGHTS_LEN == 0);
+        }
+    }
 
-    ::StoneyDSP::StoneyVCV::pluginInstance = p;
-
-#ifdef STONEYVCV_EXPERIMENTAL
-    // EXPERIMENTAL MODULES HERE...
-#endif
-
-#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-    p->addModel(::StoneyDSP::StoneyVCV::modelHP2);
-    p->addModel(::StoneyDSP::StoneyVCV::modelHP1);
-#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
-    #warning "No modules found..."
-#endif
-
-    // Any other plugin initialization may go here.
-    // As an alternative, consider lazy-loading assets and lookup tables when
-    // your module is created to reduce startup times of Rack.
 }
