@@ -208,7 +208,7 @@ endif(STONEYVCV_BUILD_MODULE_HP2)
 
 #[==[HP4]==]
 if(STONEYVCV_BUILD_MODULE_HP4)
-    set(STONEYVCV_HP2_HPP "HP4.hpp")
+    set(STONEYVCV_HP4_HPP "HP4.hpp")
     configure_file("include/${STONEYVCV_HP4_HPP}" "include/${STONEYVCV_HP4_HPP}")
     target_sources(StoneyVCV
         PUBLIC
