@@ -50,9 +50,9 @@ namespace StoneyDSP
 
 //==============================================================================
 
-namespace VCVRack
+namespace StoneyVCV
 {
-/** @addtogroup VCVRack
+/** @addtogroup StoneyVCV
  *  @{
  */
 
@@ -68,7 +68,7 @@ struct HP1Module final : Module
 {
 public:
 
-    using ProcessArgs = ::StoneyDSP::VCVRack::Module::ProcessArgs;
+    using ProcessArgs = ::StoneyDSP::StoneyVCV::Module::ProcessArgs;
 
     enum ParamsId {
         PARAMS_LEN
@@ -111,7 +111,7 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::VCVRack::Widget::DrawArgs &args) override;
+    void draw(const ::StoneyDSP::StoneyVCV::Widget::DrawArgs &args) override;
     ::rack::FramebufferWidget *hp1WidgetFrameBuffer;
     Widget *panelBorder;
 private:
@@ -130,9 +130,9 @@ using ModuleWidget = ::rack::app::ModuleWidget;
 struct HP1ModuleWidget final : ModuleWidget
 {
 public:
-    HP1ModuleWidget(::StoneyDSP::VCVRack::HP1Module *module);
+    HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1Module *module);
     ~HP1ModuleWidget();
-    ::StoneyDSP::VCVRack::HP1Widget *hp1Widget;
+    ::StoneyDSP::StoneyVCV::HP1Widget *hp1Widget;
     ::rack::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
@@ -150,8 +150,8 @@ private:
 
 //==============================================================================
 
-  /// @} group VCVRack
-} // namespace VCVRack
+  /// @} group StoneyVCV
+} // namespace StoneyVCV
 
 //==============================================================================
 
