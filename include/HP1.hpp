@@ -84,7 +84,7 @@ public:
 	};
 
     HP1Module();
-    ~HP1Module();
+    // ~HP1Module();
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Module)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1Module)
@@ -98,7 +98,7 @@ struct HP1Widget final : Widget
 {
 public:
     HP1Widget();
-    ~HP1Widget();
+    // ~HP1Widget();
     /**
      * @brief Advances the module by one frame.
      *
@@ -112,8 +112,8 @@ public:
      * @param args
      */
     void draw(const ::StoneyDSP::StoneyVCV::Widget::DrawArgs &args) override;
-    ::rack::FramebufferWidget *hp1WidgetFrameBuffer;
-    Widget *panelBorder;
+    // ::rack::FramebufferWidget *hp1WidgetFrameBuffer;
+    // Widget *panelBorder;
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Widget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1Widget)
@@ -131,9 +131,9 @@ struct HP1ModuleWidget final : ModuleWidget
 {
 public:
     HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1Module *module);
-    ~HP1ModuleWidget();
-    ::StoneyDSP::StoneyVCV::HP1Widget *hp1Widget;
-    ::rack::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
+    // ~HP1ModuleWidget();
+    // ::StoneyDSP::StoneyVCV::HP1Widget *hp1Widget;
+    // ::rack::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1ModuleWidget)
