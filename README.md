@@ -12,11 +12,14 @@ StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 ## Contents
 
 - [StoneyVCV](#stoneyvcv)
+  - [Requirements](#requirements)
   - [Build and Install StoneyVCV for VCV Rack 2 with Make](#build-and-install-stoneyvcv-for-vcv-rack-2-with-make)
   - [Develop, Test and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2](#develop-test-and-deploy-stoneyvcv-for-vcv-rack-2-with-cmake-and-catch2)
   - [Further Reading](#further-reading)
 
-## Build and Install StoneyVCV for VCV Rack 2 with Make
+---
+
+## Requirements
 
 Complete the [Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) section of the [VCV Rack Plugin Development guide](https://vcvrack.com/manual/Building).
 
@@ -28,6 +31,10 @@ StoneyVCV can be built in three ways:
 
 - Build for all architectures with one command using the [VCV Rack Plugin Toolchain](https://github.com/VCVRack/rack-plugin-toolchain). Native (Linux) or Docker (Linux, Mac, Windows). *Recommended 15 GB disk space, 8 GB RAM.*
 
+---
+
+## Build and Install StoneyVCV for VCV Rack 2 with Make
+
 Download or clone the StoneyVCV source code, e.g.
 
 ```shell
@@ -38,7 +45,9 @@ git clone https://github.com/StoneyDSP/StoneyVCV.git
 cd StoneyVCV
 ```
 
-If using the Rack SDK, unzip it and set the `RACK_DIR` environment variable by running `export RACK_DIR=<Rack SDK dir>`.
+If using the Rack SDK workflow, unzip it and set the `RACK_DIR` environment variable by running `export RACK_DIR="path/to/unzipped/Rack-SDK"` in the terminal, before running the next commands.
+
+*(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as '/c/Users/...')*
 
 Build StoneyVCV.
 
@@ -64,7 +73,9 @@ make install
 
 ## Develop, Test, and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2
 
-Note: I recommend using [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2. StoneyVCV is built and tested using the Rack 2.5.2 SDK for all platforms. We use vcpkg to fetch a fresh copy of the correct SDK files when you run the below commands; the files are parsed into CMake targets, which interface with our testing targets.
+Note: We recommend using [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2.
+
+StoneyVCV is built and tested using the Rack SDK v2.5.2 for all platforms. We use vcpkg to fetch a fresh copy of the correct SDK files when the below commands are run as shown; the fetched SDK files are parsed into CMake targets, which interface with our testing targets.
 
 We recommend setting the `VCPKG_ROOT` environment variable in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct environment. *(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as '/c/Users/...')*
 
@@ -87,16 +98,18 @@ cmake                                                                        \
   -S .                                                                       \
   -B ./build                                                                 \
   -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"    \
-  -DVCPKG_HOST_TRIPLET="x64-linux"   # or "x64-osx" or "x64-mingw-dynamic"   \
-  -DVCPKG_TARGET_TRIPLET="x64-linux" # or "x64-osx" or "x64-mingw-dynamic"   \
+  -DVCPKG_HOST_TRIPLET="x64-linux"                                           \
+  -DVCPKG_TARGET_TRIPLET="x64-linux"                                         \
   -DSTONEYVCV_BUILD_TESTS=TRUE
 ```
+
+*(NOTE: vckpg triplets should be one of: `"x64-linux"` for Linux, or `"x64-osx"` for MacOS, or `"x64-mingw-dynamic"` for Windows)*
 
 To build the tests executable:
 
 ```shell
-cmake \
-  --build ./build
+cmake                                                                        \
+  --build ./build                                                            \
   --target Tests_StoneyVCV
 ```
 
@@ -107,9 +120,9 @@ cd build
 ```
 
 ```shell
-ctest \
-  --rerun-failed \
-  --output-on-failure \
+ctest                                                                        \
+  --rerun-failed                                                             \
+  --output-on-failure                                                        \
   --verbose
 ```
 

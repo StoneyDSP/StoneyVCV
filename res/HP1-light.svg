@@ -50,7 +50,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="36.870568"
-     inkscape:cy="191.42391"
+     inkscape:cy="243.95184"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -85,12 +85,20 @@
      id="layer1"
      transform="translate(0,-168.49998)">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient830);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       id="rect420"
+       style="display:inline;opacity:1;vector-effect:none;fill:#ebebeb;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="rect1138"
        width="5.0799999"
        height="128.5"
        x="5.9211732e-17"
        y="168.49997" />
+    <rect
+       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient830);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="gradient420"
+       width="5.0799999"
+       height="128.5"
+       x="5.9211732e-17"
+       y="168.49997"
+       inkscape:label="gradient420" />
   </g>
   <g
      inkscape:groupmode="layer"
