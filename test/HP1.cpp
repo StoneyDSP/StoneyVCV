@@ -37,7 +37,21 @@
 
 TEST_CASE("HP1", "[HP1]") {
 
-    SECTION("files") { REQUIRE(STONEYVCV_HP1_HPP_INCLUDED == 1); }
+    SECTION("files") {
+        REQUIRE(STONEYVCV_HP1_HPP_INCLUDED == 1);
+    }
 
-    SECTION("instance") { REQUIRE(::StoneyDSP::VCVRack::modelHP1 != nullptr); }
+    SECTION("instance") {
+        REQUIRE(::StoneyDSP::StoneyVCV::modelHP1 != nullptr);
+    }
+
+    SECTION("HP1Module") {
+        SECTION("properties") {
+            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::PARAMS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::INPUTS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::OUTPUTS_LEN == 0);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::LIGHTS_LEN == 0);
+        }
+    }
+
 }
