@@ -6,13 +6,17 @@ project(STONEYVCV VERSION 2.0.1.0)
 enable_language(C)
 enable_language(CXX)
 
+include(CMakeDependentOption)
+
 set(STONEYVCV_VERSION_MAJOR "${CMAKE_PROJECT_VERSION_MAJOR}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION_MINOR "${CMAKE_PROJECT_VERSION_MINOR}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
-option(STONEYVCV_BUILD_MODULE_HP1 "" TRUE)
+option(STONEYVCV_BUILD_MODULES "" ON)
+cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP1 "" ON "STONEYVCV_BUILD_MODULES" ON)
+cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP2 "" ON "STONEYVCV_BUILD_MODULES" ON)
 
 # Put components in the correct order of their dependencies on eachother
 # to save tears...
@@ -44,7 +48,7 @@ elseif(UNIX AND NOT APPLE)
     set(PLUGIN_LIB_FILE_EXTENSION ".dylib")
 else() # LINUX
     set(PLUGIN_LIB_FILE_EXTENSION ".so")
-endif()
+endif(WIN32)
 
 set(PLUGIN_LIB "plugin${PLUGIN_LIB_FILE_EXTENSION}")
 
@@ -106,7 +110,7 @@ if(DEFINED STONEYVCV_EXPERIMENTAL)
         PUBLIC
         "STONEYVCV_EXPERIMENTAL=${STONEYVCV_EXPERIMENTAL}"
     )
-endif()
+endif(DEFINED STONEYVCV_EXPERIMENTAL)
 target_link_libraries(StoneyVCV
     PUBLIC
     rack::lib
@@ -151,19 +155,20 @@ if(UNIX)
             "-static-libstdc++"
             "-static-libgcc"
         )
-    endif() # APPLE / LINUX
-endif()
+    endif(APPLE)
+endif(UNIX)
 
 if(WIN32)
     target_link_options(StoneyVCV
         PUBLIC
         "-static-libstdc++"
     )
-endif()
+endif(WIN32)
+
+if(STONEYVCV_BUILD_MODULES)
 
 #[==[HP1]==]
 if(STONEYVCV_BUILD_MODULE_HP1)
-
 set(STONEYVCV_HP1_HPP "HP1.hpp")
 configure_file("include/${STONEYVCV_HP1_HPP}" "include/${STONEYVCV_HP1_HPP}")
 target_sources(StoneyVCV
@@ -179,8 +184,29 @@ target_sources(StoneyVCV
     $<INSTALL_INTERFACE:include/${STONEYVCV_HP1_HPP}>
 )
 target_sources(StoneyVCV PRIVATE "src/HP1.cpp")
+endif(STONEYVCV_BUILD_MODULE_HP1)
 
-endif()
+#[==[HP2]==]
+if(STONEYVCV_BUILD_MODULE_HP2)
+set(STONEYVCV_HP2_HPP "HP2.hpp")
+configure_file("include/${STONEYVCV_HP2_HPP}" "include/${STONEYVCV_HP2_HPP}")
+target_sources(StoneyVCV
+    PUBLIC
+    FILE_SET stoneyvcv_PUBLIC_HEADERS
+    TYPE HEADERS
+    BASE_DIRS
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    FILES
+    #[==[include/plugin.hpp]==]
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP2_HPP}>
+    $<INSTALL_INTERFACE:include/${STONEYVCV_HP2_HPP}>
+)
+target_sources(StoneyVCV PRIVATE "src/HP2.cpp")
+endif(STONEYVCV_BUILD_MODULE_HP2)
+
+endif(STONEYVCV_BUILD_MODULES)
+
 
 # # Only build tests if this project is the top-level project...
 #[==[Tests_StoneyVCV]==]
