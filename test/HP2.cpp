@@ -48,7 +48,7 @@ public:
     static constexpr int NUM_INPUTS = 0;
     static constexpr int NUM_OUTPUTS = 0;
     static constexpr int NUM_LIGHTS = 0;
-    HP4Spec() : slug("HP2") {};
+    HP2Spec() : slug("HP2") {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP2Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(HP2Spec)
