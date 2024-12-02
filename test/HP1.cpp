@@ -61,7 +61,7 @@ private:
 
 TEST_CASE("HP1", "[HP1]") {
 
-    std::shared_ptr<::StoneyDSP::StoneyVCV::HP1spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP1Spec>();
+    std::shared_ptr<::StoneyDSP::StoneyVCV::HP1Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP1Spec>();
 
     SECTION("files") {
         REQUIRE(STONEYVCV_HP1_HPP_INCLUDED == 1);
