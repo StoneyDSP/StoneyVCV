@@ -185,6 +185,7 @@ if(STONEYVCV_BUILD_MODULE_HP1)
         $<INSTALL_INTERFACE:include/${STONEYVCV_HP1_HPP}>
     )
     target_sources(StoneyVCV PRIVATE "src/HP1.cpp")
+    target_compile_definitions(StoneyVCV PUBLIC "-DSTONEYVCV_BUILD_HP1=1")
 endif(STONEYVCV_BUILD_MODULE_HP1)
 
 #[==[HP2]==]
@@ -204,6 +205,7 @@ if(STONEYVCV_BUILD_MODULE_HP2)
         $<INSTALL_INTERFACE:include/${STONEYVCV_HP2_HPP}>
     )
     target_sources(StoneyVCV PRIVATE "src/HP2.cpp")
+    target_compile_definitions(StoneyVCV PUBLIC "-DSTONEYVCV_BUILD_HP2=1")
 endif(STONEYVCV_BUILD_MODULE_HP2)
 
 #[==[HP4]==]
@@ -223,6 +225,7 @@ if(STONEYVCV_BUILD_MODULE_HP4)
         $<INSTALL_INTERFACE:include/${STONEYVCV_HP4_HPP}>
     )
     target_sources(StoneyVCV PRIVATE "src/HP4.cpp")
+    target_compile_definitions(StoneyVCV PUBLIC "-DSTONEYVCV_BUILD_HP4=1")
 endif(STONEYVCV_BUILD_MODULE_HP4)
 
 endif(STONEYVCV_BUILD_MODULES)
@@ -272,6 +275,9 @@ endif(STONEYVCV_BUILD_MODULES)
 # # Only build tests if this project is the top-level project...
 #[==[Tests_StoneyVCV]==]
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
+
+    target_compile_definitions(StoneyVCV PUBLIC "-DSTONEYVCV_BUILD_TESTS=1")
+
     find_package(Catch2 3.5.2 REQUIRED)
 
     # # These tests can use the Catch2-provided main
