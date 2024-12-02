@@ -29,29 +29,66 @@
  *
  ******************************************************************************/
 
+#if (STONEYVCV_BUILD_HP1 == 1) && (STONEYVCV_BUILD_TESTS == 1)
+
 #include <catch2/catch_test_macros.hpp>
+// for floating point comparisons
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "HP1.hpp"
+
+// Spec goes here...
+
+namespace StoneyDSP {
+namespace StoneyVCV {
+struct HP1Spec final {
+public:
+    std::string slug;
+    static constexpr int NUM_PARAMS = 0;
+    static constexpr int NUM_INPUTS = 0;
+    static constexpr int NUM_OUTPUTS = 0;
+    static constexpr int NUM_LIGHTS = 0;
+    HP1Spec() : slug("HP1") {};
+private:
+    // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP1Spec)
+    STONEYDSP_DECLARE_NON_COPYABLE(HP1Spec)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP1Spec)
+};
+}
+}
 
 // Tests go here...
 
 TEST_CASE("HP1", "[HP1]") {
 
+    std::shared_ptr<::StoneyDSP::StoneyVCV::HP1spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP1Spec>();
+
     SECTION("files") {
         REQUIRE(STONEYVCV_HP1_HPP_INCLUDED == 1);
     }
-
-    SECTION("instance") {
-        REQUIRE(::StoneyDSP::StoneyVCV::modelHP1 != nullptr);
-    }
-
     SECTION("HP1Module") {
-        SECTION("properties") {
+        SECTION("statics") {
             REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::PARAMS_LEN == 0);
             REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::INPUTS_LEN == 0);
             REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::OUTPUTS_LEN == 0);
             REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::LIGHTS_LEN == 0);
         }
+        SECTION( "methods" ) {
+            ::StoneyDSP::StoneyVCV::HP1Module* test_hp1Module = new ::StoneyDSP::StoneyVCV::HP1Module;
+            REQUIRE( test_hp1Module->getNumParams() == spec.get()->NUM_PARAMS );
+            REQUIRE( test_hp1Module->getNumInputs() == spec.get()->NUM_INPUTS );
+            REQUIRE( test_hp1Module->getNumOutputs() == spec.get()->NUM_OUTPUTS );
+            REQUIRE( test_hp1Module->getNumLights() == spec.get()->NUM_LIGHTS );
+            delete test_hp1Module;
+        }
+    }
+    SECTION("instance") {
+        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP1 != nullptr );
+        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP1->slug == spec.get()->slug );
     }
 
+    spec.reset();
+
 }
+
+#endif
