@@ -4,7 +4,12 @@ Unofficial CMake targets for [VCV Rack 2 SDK](https://vcvrack.com/manual/PluginD
 
 Created by [StoneyDSP](https://github.com/StoneyDSP) (no affiliation with VCV Rack or its' creators).
 
-## What is this for?
+- [What is this?](#what-is-this)
+- [How does this work?](#how-does-this-work)
+- [How can I use it?](#how-can-i-use-it)
+- [Why?](#why)
+
+## What is this?
 
 This is an empty project containing primarily a `CMakeLists.txt` file and some license information.
 
@@ -56,8 +61,16 @@ Optionally, to examine the CMake `install` routine's output, build the `ìnstall
 cmake --build ./build --target insall
 ```
 
-## What is it for?
+## Why?
 
 The above allows us to "acquire" the VCVRack SDK files as if it were a "package" dependency in another project (i.e., in a VCV Rack plugin project) via [vcpkg package manager for C and C++](https://github.com/microsoft/vcpkg).
 
-To facilitate the above, [a vcpkg portfile need only download the SDK zip file, and pass along the unzipped output directory as `RACK_DIR`](https://github.com/StoneyDSP/StoneyVCV/blob/production/dep/vcpkg/ports/rack/2.5.2/portfile.cmake)...
+To facilitate the above, [a vcpkg portfile can simply download the SDK zip file, unzip it, and pass along the unzipped output directory as `RACK_DIR`](https://github.com/StoneyDSP/StoneyVCV/blob/production/dep/vcpkg/ports/rack/2.5.2/portfile.cmake) when configuring this as a CMake package dependency...
+
+### *NOTE*
+
+The files under `share/` and `include/` are not actually in use; those are just reference material, and a helper to silence some warnings from vcpkg, respectively. Everything of interest is in either the `CMakeLists.txt`, `vcpkg.json`, or elsewhere...
+
+## Further Reading
+
+- [CMake Importing and Exporting Guide](https://cmake.org/cmake/help/latest/guide/importing-exporting/index.html)

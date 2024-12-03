@@ -7,7 +7,6 @@
     "ms-vscode.cpptools-themes",
     "ms-vscode.cmake-tools",
     "josetr.cmake-language-support-vscode"
-
 	],
 	"unwantedRecommendations": [
     "twxs.cmake",
