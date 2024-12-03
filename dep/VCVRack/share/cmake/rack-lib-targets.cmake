@@ -59,7 +59,6 @@ get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
-
 if(_IMPORT_PREFIX STREQUAL "/")
     set(_IMPORT_PREFIX "")
 endif()
@@ -72,48 +71,37 @@ elseif(UNIX AND NOT APPLE) # Linux
     set(RACK_LIB_FILE_EXTENSION ".so")
 endif()
 
-if(WIN32)
+if(MINGW)
     set(RACK_LIB_FILE_EXTENSION ".dll.a")
+endif()
+
+if(WIN32)
+    cmake_path(CONVERT "$ENV{ProgramFiles}\\VCV\\Rack2Free" TO_CMAKE_PATH_LIST dll_dir)
+    set(RACK_DLL_IMPORTED_LOCATION "${dll_dir}/libRack.dll")
+else()
+    set(RACK_DLL_IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
 # Create imported target rack::lib
 add_library(rack::lib SHARED IMPORTED GLOBAL)
 
 set_target_properties(rack::lib PROPERTIES
-
-    # COMPATIBLE_INTERFACE_STRING "INTERFACE_lib_MAJOR_VERSION"
+    VERSION 2.5.2
+    SOVERSION 2.5.2
+    ENABLE_EXPORTS TRUE
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+    # INTERFACE_LINK_OPTIONS "-fPIC;-shared"
     INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/lib"
-    IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}"
+    INTERFACE_LINK_LIBRARIES "rack::sdk"
+    IMPORTED_LOCATION "${RACK_DLL_IMPORTED_LOCATION}"
     IMPORTED_IMPLIB "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME "TRUE"
+    COMPATIBLE_INTERFACE_STRING "INTERFACE_lib_MAJOR_VERSION;INTERFACE_lib_MINOR_VERSION;INTERFACE_lib_PATCH_VERSION"
+    INTERFACE_lib_MAJOR_VERSION 2
+    INTERFACE_lib_MINOR_VERSION 5
+    INTERFACE_lib_PATCH_VERSION 2
 )
-
-# Some of these flags tend to make their linkees (consumers) tricky
-# to work with; We are currently aware of these requirements, but
-# still exploring the best way to integrate them into the buildsystem...
-
-# if(UNIX AND NOT APPLE)
-# set_target_properties(rack::lib PROPERTIES
-
-# # # This prevents static variables in the DSO (dynamic shared
-# # # object) from being preserved after dlclose().
-# INTERFACE_LINK_OPTIONS "-fno-gnu-unique;-static-libstdc++;-static-libgcc"
-# )
-# endif()
-
-# if(APPLE)
-# set_target_properties(rack::lib PROPERTIES
-# INTERFACE_LINK_OPTIONS "-undefined dynamic_lookup"
-# )
-# endif()
-
-# if(WIN32)
-# set_target_properties(rack::lib PROPERTIES
-# INTERFACE_LINK_OPTIONS "-municode"
-# )
-# endif()
 
 # Load information for each installed configuration.
 file(GLOB _cmake_config_files "${CMAKE_CURRENT_LIST_DIR}/rack-lib-targets-*.cmake")
