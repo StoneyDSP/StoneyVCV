@@ -74,6 +74,22 @@ extern ::NVGcolor bgWhite;
 
 //==============================================================================
 
+#if (STONEYVCV_BUILD_TESTS == 1)
+struct Spec {
+public:
+    std::string slug;
+    static constexpr int NUM_PARAMS = 0;
+    static constexpr int NUM_INPUTS = 0;
+    static constexpr int NUM_OUTPUTS = 0;
+    static constexpr int NUM_LIGHTS = 0;
+    Spec() : slug("SPEC") {};
+private:
+    // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(Spec)
+    STONEYDSP_DECLARE_NON_COPYABLE(Spec)
+    STONEYDSP_DECLARE_NON_MOVEABLE(Spec)
+};
+#endif
+
 } // namespace StoneyVCV
 
 } // namespace StoneyDSP
