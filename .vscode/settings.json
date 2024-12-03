@@ -145,13 +145,13 @@
     }
   },
   "files.associations": {
-    "${workspaceFolder}/dep/StoneyDSP/src/StoneyDSP": "cpp",
-    "**.vcvm": "json", // VCV Rack presets
     "**.d.ts": "typescript",
     "*.css": "tailwindcss",
     "**.bash**": "shellscript",
     "**.cmake": "cmake",
     ".editorconfig": "editorconfig",
+    "${workspaceFolder}/dep/StoneyDSP/src/StoneyDSP": "cpp",
+    "**.vcvm": "json",
     "config.guess": "shellscript",
     "string": "cpp",
     "cctype": "cpp",
@@ -226,6 +226,8 @@
     "typeinfo": "cpp",
     "valarray": "cpp",
     "variant": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "charconv": "cpp",
+    "shared_mutex": "cpp"
   }
 }
