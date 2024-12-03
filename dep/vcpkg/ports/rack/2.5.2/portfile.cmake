@@ -1,3 +1,13 @@
+# VCV Rack's Rack-SDK as a vcpkg package? yep - here's how;
+# We have a CMakeLists.txt file in a nearby directory, which tells CMake
+# how to scoop up the contents of '${RACK_DIR}', and to parse everything
+# into three logical CMake targets: deps, sdk (headers), and lib (dynamic
+# library).
+
+# For this to be a vcpkg thing, we just need to use a vcpkg helper function
+# to download the SDK from the Rack website, unzip it, and then configure
+# the VCVRack CMake project with those contents...
+
 function(_normalize_path var)
     message(STATUS "normalizing path: ${var}")
     set(path "${${var}}")
@@ -17,12 +27,10 @@ function(get_this_dir)
 endfunction()
 
 if(NOT VCPKG_TARGET_IS_MINGW AND NOT VCPKG_TARGET_IS_LINUX AND NOT VCPKG_TARGET_IS_OSX)
-    # # This needs another layer in case we're WINDOWS but not MINGW
-    # # or else this message will be confusing to Windows users...
     message(FATAL_ERROR "VCV Rack SDK does not support the current platform...")
 endif()
 
-# # This can be further customized... does the Rack SDK have x86 profiles?
+# This can be further customized... does the Rack SDK have x86 profiles?
 set(VCVRACK_RACKSDK_FILE_URL)
 set(VCVRACK_RACKSDK_FILE_HASH)
 
@@ -39,7 +47,7 @@ else()
     message(FATAL_ERROR "VCVRack: unsupported platform")
 endif()
 
-# # This can be further customized... package version == archive version???
+# This can be further customized... package version == archive version???
 vcpkg_download_distfile(ARCHIVE
     URLS "https://vcvrack.com/downloads/Rack-SDK-2.5.2-${VCVRACK_RACKSDK_FILE_URL}.zip"
     FILENAME "Rack-SDK-2.5.2-${VCVRACK_RACKSDK_FILE_URL}"
@@ -49,22 +57,14 @@ vcpkg_download_distfile(ARCHIVE
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH RACK_DIR
     ARCHIVE "${ARCHIVE}"
-
-    # (Optional) A friendly name to use instead of the filename of the archive (e.g.: a version number or tag).
-    # REF 1.0.0
-    # (Optional) Read the docs for how to generate patches at:
-    # https://github.com/microsoft/vcpkg-docs/blob/main/vcpkg/examples/patching.md
-    # PATCHES
-    # 001_port_fixes.patch
-    # 002_more_port_fixes.patch
 )
 
+# Dirty hack to use the local 'CMakeLists.txt' file under 'dep/VCVRack'...
 get_this_dir()
-
 get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
-
 set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack")
 
+# Configure 'dep/VCVRack/CMakeLists.txt' using the unzipped Rack SDK
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS -DRACK_DIR="${RACK_DIR}"
@@ -75,11 +75,12 @@ vcpkg_cmake_config_fixup(
     CONFIG_PATH "lib/cmake/rack"
 )
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
-# file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/lib")
-# file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
-# file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/lib")
 file(
     INSTALL "${SOURCE_PATH}/LICENSE"
     DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
     RENAME copyright
 )
+
+# The rack SDK is now a vcpkg package named "rack" - you can add "rack" to your
+# vcpkg.json dependencies and point vcpkg-configuration.json at this registry
+# in order to pick it up!
