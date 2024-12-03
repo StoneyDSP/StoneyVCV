@@ -5,8 +5,7 @@
       "name": "Linux",
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
-        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/dep/include"
+        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include"
       ],
       "defines": [
         "${default}"
@@ -17,7 +16,6 @@
         "-fPIC",
         "-I${workspaceFolder}/include",
         "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include/dep/include",
         "-fno-gnu-unique",
         "-MMD",
         "-MP",
@@ -53,8 +51,7 @@
       "name": "Mac",
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
-        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/dep/include"
+        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include"
       ],
       "defines": [
         "${default}"
@@ -65,7 +62,6 @@
         "-fPIC",
         "-I${workspaceFolder}/include",
         "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include/dep/include",
         "-MMD",
         "-MP",
         "-g",
@@ -100,8 +96,7 @@
       "name": "Windows",
       "includePath": [
         "${default}",
-        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
-        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include\\dep\\include"
+        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include"
       ],
       "defines": [
         "${default}",
@@ -113,7 +108,6 @@
         "-fPIC",
         "-I${workspaceFolder}\\include",
         "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
-        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include\\dep\\include",
         "-MMD",
         "-MP",
         "-g",
