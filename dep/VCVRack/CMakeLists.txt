@@ -10,7 +10,7 @@ if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
 endif()
 
-set(PROJECT_VENDOR "VCVRack" CACHE STRING "" FORCE)
+set(PROJECT_VENDOR "VCV" CACHE STRING "" FORCE)
 set(RACK_VERSION_MAJOR 2 CACHE STRING "" FORCE)
 set(RACK_VERSION_MINOR 5 CACHE STRING "" FORCE)
 set(RACK_VERSION_PATCH 2 CACHE STRING "" FORCE)
@@ -23,7 +23,7 @@ project(RACK
     LANGUAGES ${RACK_LANGUAGES}
 )
 
-# # Not known until first "project()..."
+# Not known until first "project()..."
 if(WIN32 AND NOT MINGW)
     message(FATAL_ERROR [==[
 VCV Rack for Windows requires MSYS2 with the MinGW64 toolchain and shell....
@@ -69,23 +69,21 @@ file(GLOB_RECURSE __rack_dep_headers_glob CONFIGURE_DEPENDS "${RACK_DIR}/dep/*.h
 # though, so...
 message(DEBUG "${__rack_dep_headers_glob}")
 
-# # Let's make a FILE_SET which we can export
+# Let's make a FILE_SET which we can export
 foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
     get_filename_component(abs_path_to_file "${__rack_dep_header}" ABSOLUTE)
     get_filename_component(name_of_file "${abs_path_to_file}" NAME)
-    file(RELATIVE_PATH rel_path_to_file "${RACK_DIR}" "${abs_path_to_file}")
-    get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
+    file(RELATIVE_PATH rel_path_to_file "${RACK_DIR}/dep/include" "${abs_path_to_file}") # dep/include/somedep/someheader.hpp
 
-    # #
-    configure_file("${RACK_DIR}/${rel_path_to_file}" "${rel_path_to_file}")
+    #
+    configure_file("${RACK_DIR}/dep/include/${rel_path_to_file}" "include/dep/${rel_path_to_file}")
     unset(abs_path_to_file)
     unset(name_of_file)
     unset(rel_path_to_file)
-    unset(name_of_file_dir)
 endforeach()
 
 unset(__rack_dep_headers_glob)
-file(GLOB_RECURSE __rack_dep_headers_glob CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/dep/*.h*")
+file(GLOB_RECURSE __rack_dep_headers_glob CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/include/dep/*.h*")
 
 foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
     get_filename_component(abs_path_to_file "${__rack_dep_header}" ABSOLUTE)
@@ -96,17 +94,17 @@ foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
     get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
     message(DEBUG "")
     message(DEBUG "name_of_file: ${name_of_file}") # "someheader.hpp"
-    message(DEBUG "name_of_file_dir: ${name_of_file_dir}") # "dep/include/somedep"
+    message(DEBUG "name_of_file_dir: ${name_of_file_dir}") # "include/dep/somedep"
     message(DEBUG "abs_path_to_file: ${abs_path_to_file}") # "C:/..." or "/home/.../
-    message(DEBUG "rel_path_to_file: ${rel_path_to_file}") # "dep/include/somedep/someheader.hpp"
+    message(DEBUG "rel_path_to_file: ${rel_path_to_file}") # "include/dep/somedep/someheader.hpp"
     message(DEBUG "")
 
     target_sources(dep INTERFACE
         FILE_SET rack_DEP_INTERFACE_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/dep/include>
-        $<INSTALL_INTERFACE:include/dep/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/dep>
+        $<INSTALL_INTERFACE:include/dep>
         FILES
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
         $<INSTALL_INTERFACE:${rel_path_to_file}>
@@ -120,11 +118,12 @@ endforeach()
 # install the target and create export-set
 install(TARGETS dep
     EXPORT DepExport
+    COMPONENT dep
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILE_SET rack_DEP_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dep/include"
+    FILE_SET rack_DEP_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dep"
 )
 
 # generate and install export file
@@ -145,6 +144,7 @@ export(
 # FILE "share/cmake/rack-dep-targets.cmake"
 # NAMESPACE rack::
 # )
+
 list(APPEND RACK_TARGETS dep)
 
 #[==[Rack SDK]==]
@@ -179,27 +179,25 @@ set_property(TARGET sdk APPEND PROPERTY
 set(__rack_sdk_headers_glob "")
 file(GLOB_RECURSE __rack_sdk_headers_glob CONFIGURE_DEPENDS "${RACK_DIR}/include/*.h*")
 
-# # This contains all the VCV Rack library headers... globs are a bit unsafe
-# # though, so...
+# This contains all the VCV Rack library headers... globs are a bit unsafe
+# though, so...
 message(DEBUG "${__rack_sdk_headers_glob}")
 
-# # Let's make a FILE_SET which we can export
+# Let's make a FILE_SET which we can export
 foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
     get_filename_component(abs_path_to_file "${__rack_sdk_header}" ABSOLUTE)
     get_filename_component(name_of_file "${abs_path_to_file}" NAME)
-    file(RELATIVE_PATH rel_path_to_file "${RACK_DIR}" "${abs_path_to_file}")
-    get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
+    file(RELATIVE_PATH rel_path_to_file "${RACK_DIR}/include" "${abs_path_to_file}")
 
-    # #
-    configure_file("${RACK_DIR}/${rel_path_to_file}" "${rel_path_to_file}")
+    configure_file("${RACK_DIR}/include/${rel_path_to_file}" "include/rack/${rel_path_to_file}")
     unset(abs_path_to_file)
     unset(name_of_file)
     unset(rel_path_to_file)
-    unset(name_of_file_dir)
+
 endforeach()
 
 unset(__rack_sdk_headers_glob)
-file(GLOB_RECURSE __rack_sdk_headers_glob CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/include/*.h*")
+file(GLOB_RECURSE __rack_sdk_headers_glob CONFIGURE_DEPENDS "${PROJECT_BINARY_DIR}/include/rack/*.h*")
 
 foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
     get_filename_component(abs_path_to_file "${__rack_sdk_header}" ABSOLUTE)
@@ -210,17 +208,17 @@ foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
     get_filename_component(name_of_file_dir "${rel_path_to_file}" DIRECTORY)
     message(DEBUG "")
     message(DEBUG "name_of_file: ${name_of_file}") # "someheader.hpp"
-    message(DEBUG "name_of_file_dir: ${name_of_file_dir}") # "include/somedep"
+    message(DEBUG "name_of_file_dir: ${name_of_file_dir}") # "include/rack/someobject"
     message(DEBUG "abs_path_to_file: ${abs_path_to_file}") # "C:/..." or "/home/.../
-    message(DEBUG "rel_path_to_file: ${rel_path_to_file}") # "include/somedep/someheader.hpp"
+    message(DEBUG "rel_path_to_file: ${rel_path_to_file}") # "include/rack/someobject/someheader.hpp"
     message(DEBUG "")
 
     target_sources(sdk INTERFACE
         FILE_SET rack_SDK_INTERFACE_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack>
+        $<INSTALL_INTERFACE:include/rack>
         FILES
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
         $<INSTALL_INTERFACE:${rel_path_to_file}>
@@ -239,11 +237,12 @@ target_link_libraries(sdk
 # install the target and create export-set
 install(TARGETS sdk
     EXPORT SdkExport
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILE_SET rack_SDK_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    COMPONENT sdk
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET rack_SDK_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/rack"
 )
 
 # generate and install export file
@@ -301,12 +300,10 @@ set_target_properties(lib
 
     ENABLE_EXPORTS TRUE
 
-    #
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
     INTERFACE_LINK_DIRECTORIES "${RACK_LIB_INSTALL_DIR}"
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_INSTALL_INCLUDEDIR}"
 
-    #
     IMPORTED_LOCATION "${RACK_DLL_IMPORTED_LOCATION}"
     IMPORTED_IMPLIB "${RACK_DIR}/libRack${RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME TRUE
@@ -339,6 +336,7 @@ endif()
 # set_property(TARGET lib APPEND PROPERTY
 # INTERFACE_LINK_OPTIONS "-shared"
 # )
+
 target_link_libraries(lib
     INTERFACE
     rack::sdk
@@ -347,6 +345,7 @@ target_link_libraries(lib
 install(
     IMPORTED_RUNTIME_ARTIFACTS lib
     RUNTIME_DEPENDENCY_SET LibExports
+    COMPONENT lib
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
@@ -355,6 +354,7 @@ install(
 # LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 # RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 # )
+
 file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-lib-targets.cmake" CONTENT [==[
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.8)
     message(FATAL_ERROR "CMake >= 2.8.0 required")
@@ -529,9 +529,9 @@ cmake_policy(POP)
 # FILE "share/cmake/rack-lib-targets.cmake"
 # NAMESPACE rack::
 # )
+
 list(APPEND RACK_TARGETS lib)
 
-# #
 include(CMakePackageConfigHelpers)
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-config.cmake.in" [==[
 @PACKAGE_INIT@
@@ -568,7 +568,7 @@ configure_package_config_file(
     INSTALL_DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
 
-    # # Use custom 'check_required_components' macro
+    # Use custom 'check_required_components' macro
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
 
