@@ -41,7 +41,7 @@
 
 namespace StoneyDSP {
 namespace StoneyVCV {
-struct HP1Spec final {
+struct HP1Spec final : ::StoneyDSP::StoneyVCV::Spec {
 public:
     std::string slug;
     static constexpr int NUM_PARAMS = 0;
@@ -56,17 +56,17 @@ private:
 };
 }
 }
-
 // Tests go here...
 
-TEST_CASE("HP1", "[HP1]") {
+TEST_CASE( "HP1", "[HP1]" ) {
+
 
     std::shared_ptr<::StoneyDSP::StoneyVCV::HP1Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP1Spec>();
 
     SECTION( "files" ) {
-        REQUIRE( STONEYVCV_HP1_HPP_INCLUDED == 1 );
+        REQUIRE(STONEYVCV_HP1_HPP_INCLUDED == 1);
     }
-    SECTION("HP1Module") {
+    SECTION( "HP1Module" ) {
         SECTION( "statics" ) {
             REQUIRE( ::StoneyDSP::StoneyVCV::HP1Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
             REQUIRE( ::StoneyDSP::StoneyVCV::HP1Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
@@ -82,7 +82,11 @@ TEST_CASE("HP1", "[HP1]") {
             delete test_hp1Module;
         }
     }
-    SECTION("instance") {
+    // SECTION( "HP1ModuleWidget" ) {
+    //     ::StoneyDSP::StoneyVCV::HP1Module* test_hp1Module = new ::StoneyDSP::StoneyVCV::HP1Module;
+    //     ::StoneyDSP::StoneyVCV::HP1ModuleWidget* test_hp1ModuleWidget = new ::StoneyDSP::StoneyVCV::HP1ModuleWidget(test_hp1Module);
+    // }
+    SECTION( "instance" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::modelHP1 != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::modelHP1->slug == spec.get()->slug );
     }

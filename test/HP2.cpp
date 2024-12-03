@@ -41,7 +41,7 @@
 
 namespace StoneyDSP {
 namespace StoneyVCV {
-struct HP2Spec final {
+struct HP2Spec final : ::StoneyDSP::StoneyVCV::Spec {
 public:
     std::string slug;
     static constexpr int NUM_PARAMS = 0;
