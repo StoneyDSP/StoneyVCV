@@ -59,19 +59,19 @@ private:
 
 // Tests go here...
 
-TEST_CASE("HP2", "[HP2]") {
+TEST_CASE( "HP2", "[HP2]" ) {
 
     std::shared_ptr<::StoneyDSP::StoneyVCV::HP2Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP2Spec>();
 
-    SECTION("files") {
-        REQUIRE(STONEYVCV_HP2_HPP_INCLUDED == 1);
+    SECTION( "files" ) {
+        REQUIRE( STONEYVCV_HP2_HPP_INCLUDED == 1 );
     }
-    SECTION("HP2Module") {
-        SECTION("statics") {
-            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::PARAMS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::INPUTS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::OUTPUTS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP2Module::LIGHTS_LEN == 0);
+    SECTION( "HP2Module" ) {
+        SECTION( "statics" ) {
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::HP2Module* test_hp2Module = new ::StoneyDSP::StoneyVCV::HP2Module;
