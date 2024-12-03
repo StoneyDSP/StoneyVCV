@@ -36,6 +36,8 @@ jobs:
 
     steps:
 
+      # REQUIREMENTS
+
     - name: Checkout StoneyVCV code
       uses: actions/checkout@v4
       with:
@@ -45,6 +47,8 @@ jobs:
     - name: Install VCV's macOS Deps
       run: |
         brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache ninja tree
+
+      # DEVELOPER WORKFLOW
 
     - name: Deps
       uses: johnwason/vcpkg-action@v6
@@ -78,7 +82,7 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --target Tests_StoneyVCV
+        --target tests
         -j3
 
     - name: Test
@@ -91,7 +95,7 @@ jobs:
         --verbose
         && cd ${{ github.workspace }}
 
-    # If tests succeeded; deploy plugin bundle
+      # DEPLOYMENT WORKFLOW
 
     - name: Fetch Rack SDK
       run: |
