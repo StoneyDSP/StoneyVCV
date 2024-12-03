@@ -71,10 +71,10 @@
 void ::StoneyDSP::StoneyVCV::HP4Widget::step()
 {
     // panelBorder->box.size = box.size;
-    ::StoneyDSP::StoneyVCV::Widget::step();
+    ::rack::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::Widget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::HP4Widget::draw(const ::rack::Widget::DrawArgs &args)
 {
     NVGcolor bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
     NVGcolor bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
@@ -85,7 +85,7 @@ void ::StoneyDSP::StoneyVCV::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::Widge
     ::NVGcolor bg = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
     ::nvgFillColor(args.vg, bg);
     ::nvgFill(args.vg);
-    ::StoneyDSP::StoneyVCV::Widget::draw(args);
+    ::rack::Widget::draw(args);
 }
 
 //==============================================================================

@@ -58,17 +58,15 @@ namespace StoneyVCV
 
 //==============================================================================
 
-using Module = ::rack::engine::Module;
-
 /**
  * @brief The `HP2Module` struct.
  *
  */
-struct HP2Module final : Module
+struct HP2Module final : ::rack::engine::Module
 {
 public:
 
-    using ProcessArgs = ::StoneyDSP::StoneyVCV::Module::ProcessArgs;
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     enum ParamsId {
         PARAMS_LEN
@@ -92,9 +90,7 @@ private:
 
 //==============================================================================
 
-using Widget = ::rack::Widget;
-
-struct HP2Widget final : Widget
+struct HP2Widget final : ::rack::Widget
 {
 public:
     HP2Widget();
@@ -111,7 +107,7 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::Widget::DrawArgs &args) override;
+    void draw(const ::rack::Widget::DrawArgs &args) override;
     // ::rack::FramebufferWidget *hp2WidgetFrameBuffer;
     // Widget *panelBorder;
 private:
@@ -121,13 +117,11 @@ private:
 
 //==============================================================================
 
-using ModuleWidget = ::rack::app::ModuleWidget;
-
 /**
  * @brief The `HP2ModuleWidget` struct.
  *
  */
-struct HP2ModuleWidget final : ModuleWidget
+struct HP2ModuleWidget final : ::rack::app::ModuleWidget
 {
 public:
     HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2Module *module);
