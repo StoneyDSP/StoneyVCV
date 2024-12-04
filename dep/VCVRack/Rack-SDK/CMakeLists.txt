@@ -178,17 +178,17 @@ set_property(TARGET core APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_core_PATCH_VERSION
 )
 
-configure_file("include/rack.hpp" "include/rack.hpp")
-target_sources(core INTERFACE
-    FILE_SET rack_sdk_CORE_INTERFACE_HEADERS
-    TYPE HEADERS
-    BASE_DIRS
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    FILES
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack.hpp>
-    $<INSTALL_INTERFACE:include/rack.hpp>
-)
+# configure_file("include/rack.hpp" "include/rack.hpp")
+# target_sources(core INTERFACE
+#     FILE_SET rack_sdk_CORE_INTERFACE_HEADERS
+#     TYPE HEADERS
+#     BASE_DIRS
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+#     $<INSTALL_INTERFACE:include>
+#     FILES
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack.hpp>
+#     $<INSTALL_INTERFACE:include/rack.hpp>
+# )
 
 set(__rack_sdk_headers_glob "")
 file(GLOB_RECURSE __rack_sdk_headers_glob CONFIGURE_DEPENDS "${RACK_DIR}/include/*.h*")
