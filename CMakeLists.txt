@@ -29,10 +29,10 @@ find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 
 # These props are helpful to have around...
-get_target_property(rack_inc_dir rack::lib INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(rack_link_dir rack::lib INTERFACE_LINK_DIRECTORIES)
-get_target_property(rack_implib rack::lib IMPORTED_IMPLIB)
-get_target_property(rack_implib_location rack::lib IMPORTED_LOCATION)
+get_target_property(rack_inc_dir rack-sdk::lib INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(rack_link_dir rack-sdk::lib INTERFACE_LINK_DIRECTORIES)
+get_target_property(rack_implib rack-sdk::lib IMPORTED_IMPLIB)
+get_target_property(rack_implib_location rack-sdk::lib IMPORTED_LOCATION)
 
 set(STONEYVCV_TARGETS)
 

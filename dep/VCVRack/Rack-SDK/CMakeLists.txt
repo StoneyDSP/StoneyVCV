@@ -550,6 +550,10 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-sdk-config.cmake.in" [==[
 
 include("${CMAKE_CURRENT_LIST_DIR}/rack-sdk-config-version.cmake")
 
+message(STATUS "rack_sdk_FIND_COMPONENTS ${rack_sdk_FIND_COMPONENTS}")
+message(STATUS "rack-sdk_FIND_COMPONENTS ${rack-sdk_FIND_COMPONENTS}")
+message(STATUS "RACK_SDK_FIND_COMPONENTS ${RACK_SDK_FIND_COMPONENTS}")
+
 set(_rack_sdk_supported_components)
 list(APPEND _rack_sdk_supported_components
     @RACK_SDK_TARGETS@
