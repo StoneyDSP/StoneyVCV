@@ -72,7 +72,7 @@ vcpkg_cmake_configure(
 vcpkg_cmake_install()
 vcpkg_cmake_config_fixup(
     PACKAGE_NAME rack-sdk
-    CONFIG_PATH "lib/cmake/rack"
+    CONFIG_PATH "lib/cmake/rack-sdk"
 )
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(
