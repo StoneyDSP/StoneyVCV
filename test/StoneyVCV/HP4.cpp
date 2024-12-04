@@ -35,7 +35,7 @@
 // for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "HP4.hpp"
+#include "StoneyVCV/HP4.hpp"
 
 // Spec goes here...
 
