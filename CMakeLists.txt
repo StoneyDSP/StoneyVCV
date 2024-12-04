@@ -26,7 +26,7 @@ cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4 "" ON "STONEYVCV_BUILD_MODULES
 # Put components in the correct order of their dependencies on eachother
 # to save tears...
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
-find_package(rack 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
+find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 
 # These props are helpful to have around...
 get_target_property(rack_inc_dir rack::lib INTERFACE_INCLUDE_DIRECTORIES)
