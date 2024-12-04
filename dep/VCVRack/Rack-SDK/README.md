@@ -15,7 +15,7 @@ This is an empty project containing primarily a `CMakeLists.txt` file and some l
 
 The `CMakeLists.txt` file is designed to find a local copy of the Rack SDK using the variable named `RACK_DIR`; once found, the `CMakeLists.txt` file instructs CMake how to arrange the SDK files into logical CMake-style "targets".
 
-Developers who are building plugins (suites of "modules") for VCV Rack 2 may use these "targets" in their own CMake projects, by using `target_link_libraries(yourTarget PRIVATE rack::sdk)`, and such forth.
+Developers who are building plugins (suites of "modules") for VCV Rack 2 may use these "targets" in their own CMake projects, by using `find_package(rack-sdk)`, followed by `target_link_libraries(yourTarget PRIVATE unofficial-vcvrack::rack-sdk::lib)`, and such forth, in their project's `CMakeLists.txt` file.
 
 This provides a way of setting up the C++ toolchain - the compiler, linker, and other tools - in a CMake project to create library files (and test executables) which are compatible with the VCV Rack 2 runtime (the Rack executable).
 
@@ -23,9 +23,9 @@ This provides a way of setting up the C++ toolchain - the compiler, linker, and 
 
 This CMake project expects that you have an unmodified copy of the correct Rack 2 SDK on your filesystem, for the correct platform. The location of this Rack SDK copy is passed in to CMake when configuring the VCVRack project (`-DRACK_DIR="path/to/unzipped/Rack-SDK"`), and in return, CMake will generate three targets for linkage:
 
-- `rack::dep` - the header file contents of `<RACK_SDK>/dep/include`
-- `rack::sdk` - the header file contents of `<RACK_SDK>/include`
-- `rack::lib` - the `libRack.{so,dylib,dll,dll.a}` library file
+- `unofficial-vcvrack::rack-sdk::dep` - the header file contents of `<RACK_SDK>/dep/include`
+- `unofficial-vcvrack::rack-sdk::core` - the header file contents of `<RACK_SDK>/include`
+- `unofficial-vcvrack::rack-sdk::lib` - the `libRack.{so,dylib,dll,dll.a}` library file
 
 All three targets are passed to CMake's "install" routine, which makes them relocatable within the context of the CMake buildsystem. This allows CMake to relocate and/or make copies of the SDK files, and do whatever it likes to do with them, without causing any breakages.
 
