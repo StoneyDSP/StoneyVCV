@@ -1,0 +1,9 @@
+{
+  "versions": [
+    {
+      "version": "2.5.2",
+      "port-version": 0,
+      "path": "$/ports/rack-sdk/2.5.2"
+    }
+  ]
+}

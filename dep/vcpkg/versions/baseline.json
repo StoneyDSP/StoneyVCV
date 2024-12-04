@@ -4,7 +4,7 @@
       "baseline": "0.0.0",
       "port-version": 0
     },
-    "rack": {
+    "rack-sdk": {
       "baseline": "2.5.2",
       "port-version": 0
     }

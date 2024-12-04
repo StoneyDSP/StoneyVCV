@@ -9,7 +9,7 @@
     160
   ],
   "makefile.configureOnOpen": false,
-  "cmake.configureOnOpen": false,
+  "cmake.configureOnOpen": true,
   "cmake.configureOnEdit": false,
   "cmake.environment": {
     "VCPKG_ROOT": "${env:VCPKG_ROOT}"
@@ -21,7 +21,8 @@
     "-DSTONEYVCV_BUILD_TESTS:BOOL=TRUE",
     "--no-warn-unused-cli",
     "--compile-no-warning-as-error",
-    "-Wno-dev"
+    "-Wno-dev",
+    "--fresh"
   ],
   "cmake.debugConfig": {
 		"cwd": "${workspaceFolder}",
