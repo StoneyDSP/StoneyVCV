@@ -29,10 +29,10 @@ find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 
 # These props are helpful to have around...
-get_target_property(rack_inc_dir rack-sdk::lib INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(rack_link_dir rack-sdk::lib INTERFACE_LINK_DIRECTORIES)
-get_target_property(rack_implib rack-sdk::lib IMPORTED_IMPLIB)
-get_target_property(rack_implib_location rack-sdk::lib IMPORTED_LOCATION)
+get_target_property(rack_inc_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(rack_link_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_LINK_DIRECTORIES)
+get_target_property(rack_implib unofficial-vcvrack::rack-sdk::lib IMPORTED_IMPLIB)
+get_target_property(rack_implib_unofficial-vcvrack::location rack-sdk::lib IMPORTED_LOCATION)
 
 set(STONEYVCV_TARGETS)
 
@@ -113,7 +113,7 @@ if(DEFINED STONEYVCV_EXPERIMENTAL)
 endif(DEFINED STONEYVCV_EXPERIMENTAL)
 target_link_libraries(plugin
     PUBLIC
-    rack::lib
+    unofficial-vcvrack::rack-sdk::lib
     StoneyDSP::Core
     StoneyDSP::SIMD
     StoneyDSP::DSP
@@ -210,7 +210,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     target_link_libraries(tests
         PRIVATE
-        rack::lib
+        unofficial-vcvrack::rack-sdk::lib
         StoneyDSP::StoneyVCV::plugin
         Catch2::Catch2WithMain
     )
@@ -266,7 +266,7 @@ if(STONEYVCV_BUILD_MODULE_HP1)
     )
     target_link_libraries(HP1
         PUBLIC
-        rack::core
+        unofficial-vcvrack::rack-sdk::core
         StoneyDSP::Core
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP1)
@@ -330,7 +330,7 @@ if(STONEYVCV_BUILD_MODULE_HP2)
     )
     target_link_libraries(HP2
         PUBLIC
-        rack::core
+        unofficial-vcvrack::rack-sdk::core
         StoneyDSP::Core
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP2)
@@ -394,7 +394,7 @@ if(STONEYVCV_BUILD_MODULE_HP4)
     )
     target_link_libraries(HP4
         PUBLIC
-        rack::core
+        unofficial-vcvrack::rack-sdk::core
         StoneyDSP::Core
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP4)

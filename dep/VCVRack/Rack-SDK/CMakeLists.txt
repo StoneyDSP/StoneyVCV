@@ -10,7 +10,7 @@ if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
     set(RACK_DIR "$ENV{RACK_DIR}" CACHE STRING "" FORCE)
 endif()
 
-set(PROJECT_VENDOR "VCV" CACHE STRING "" FORCE)
+set(PROJECT_VENDOR "VCV" CACHE STRING "" FORCE) # UNOFFICIAL!
 set(RACK_SDK_VERSION_MAJOR 2 CACHE STRING "" FORCE)
 set(RACK_SDK_VERSION_MINOR 5 CACHE STRING "" FORCE)
 set(RACK_SDK_VERSION_PATCH 2 CACHE STRING "" FORCE)
@@ -36,6 +36,7 @@ set(RACK_SDK_TARGETS)
 #[==[Rack SDK Deps]==]
 add_library(dep INTERFACE)
 add_library(rack-sdk::dep ALIAS dep)
+add_library(unofficial-vcvrack::rack-sdk::dep ALIAS dep)
 
 set_target_properties(dep
     PROPERTIES
@@ -129,20 +130,20 @@ install(TARGETS dep
 # generate and install export file
 install(EXPORT DepExport
     FILE "rack-sdk-dep-targets.cmake"
-    NAMESPACE rack-sdk::
+    NAMESPACE unofficial-vcvrack::rack-sdk::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 )
 
 export(
     EXPORT DepExport
     FILE "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-dep-targets.cmake"
-    NAMESPACE rack-sdk::
+    NAMESPACE unofficial-vcvrack::rack-sdk::
 )
 
 # export(
 # TARGETS dep
 # FILE "share/cmake/rack-sdk-dep-targets.cmake"
-# NAMESPACE rack-sdk::
+# NAMESPACE unofficial-vcvrack::rack-sdk::
 # )
 
 list(APPEND RACK_SDK_TARGETS dep)
@@ -150,6 +151,7 @@ list(APPEND RACK_SDK_TARGETS dep)
 #[==[Rack SDK]==]
 add_library(core INTERFACE)
 add_library(rack-sdk::core ALIAS core)
+add_library(unofficial-vcvrack::rack-sdk::core ALIAS core)
 
 set_target_properties(core
     PROPERTIES
@@ -243,7 +245,7 @@ endforeach()
 
 target_link_libraries(core
     INTERFACE
-    rack-sdk::dep
+    unofficial-vcvrack::rack-sdk::dep
 )
 
 # install the target and create export-set
@@ -260,14 +262,14 @@ install(TARGETS core
 # generate and install export file
 install(EXPORT CoreExport
     FILE "rack-sdk-core-targets.cmake"
-    NAMESPACE rack-sdk::
+    NAMESPACE unofficial-vcvrack::rack-sdk::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 )
 
 export(
     TARGETS core
     FILE "share/cmake/rack-sdk-core-targets.cmake"
-    NAMESPACE rack-sdk::
+    NAMESPACE unofficial-vcvrack::rack-sdk::
 )
 
 list(APPEND RACK_SDK_TARGETS core)
@@ -351,7 +353,7 @@ endif()
 
 target_link_libraries(lib
     INTERFACE
-    rack-sdk::core
+    unofficial-vcvrack::rack-sdk::core
 )
 
 install(
@@ -391,7 +393,7 @@ set(_cmake_targets_defined "")
 set(_cmake_targets_not_defined "")
 set(_cmake_expected_targets "")
 
-foreach(_cmake_expected_target IN ITEMS rack-sdk::lib)
+foreach(_cmake_expected_target IN ITEMS unofficial-vcvrack::rack-sdk::lib)
     list(APPEND _cmake_expected_targets "${_cmake_expected_target}")
 
     if(TARGET "${_cmake_expected_target}")
@@ -450,10 +452,10 @@ else()
     set(RACK_DLL_IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
-# Create imported target rack-sdk::lib
-add_library(rack-sdk::lib SHARED IMPORTED GLOBAL)
+# Create imported target unofficial-vcvrack::rack-sdk::lib
+add_library(unofficial-vcvrack::rack-sdk::lib SHARED IMPORTED GLOBAL)
 
-set_target_properties(rack-sdk::lib PROPERTIES
+set_target_properties(unofficial-vcvrack::rack-sdk::lib PROPERTIES
     VERSION @RACK_SDK_VERSION_MAJOR@.@RACK_SDK_VERSION_MINOR@.@RACK_SDK_VERSION_PATCH@
     SOVERSION @RACK_SDK_VERSION_MAJOR@.@RACK_SDK_VERSION_MINOR@.@RACK_SDK_VERSION_PATCH@
     ENABLE_EXPORTS TRUE
@@ -461,7 +463,7 @@ set_target_properties(rack-sdk::lib PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
     # INTERFACE_LINK_OPTIONS "-fPIC;-shared"
     INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@"
-    INTERFACE_LINK_LIBRARIES "rack-sdk::core"
+    INTERFACE_LINK_LIBRARIES "unofficial-vcvrack::rack-sdk::core"
     IMPORTED_LOCATION "${RACK_DLL_IMPORTED_LOCATION}"
     IMPORTED_IMPLIB "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@/libRack${RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME "TRUE"
@@ -514,7 +516,7 @@ unset(_cmake_import_check_targets)
 # Make sure the targets which have been exported in some other
 # export set exist.
 unset(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
-foreach(_target "rack-sdk::core" )
+foreach(_target "unofficial-vcvrack::rack-sdk::core" )
   if(NOT TARGET "${_target}" )
     set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets "${${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets} ${_target}")
   endif()
@@ -539,7 +541,7 @@ cmake_policy(POP)
 # export(
 # TARGETS lib
 # FILE "share/cmake/rack-sdk-lib-targets.cmake"
-# NAMESPACE rack-sdk::
+# NAMESPACE unofficial-vcvrack::rack-sdk::
 # )
 
 list(APPEND RACK_SDK_TARGETS lib)
@@ -562,7 +564,7 @@ foreach(_requested_component ${rack-sdk_FIND_COMPONENTS})
         set(rack-sdk_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
     endif()
     include("${CMAKE_CURRENT_LIST_DIR}/rack-sdk-${_requested_component}-targets.cmake")
-    message(STATUS "Linking with rack-sdk::${_requested_component}")
+    message(STATUS "Linking with unofficial-vcvrack::rack-sdk::${_requested_component}")
 endforeach()
 
 unset(_rack_sdk_supported_components)
@@ -570,7 +572,7 @@ unset(_rack_sdk_supported_components)
 ####################################################################################
 
 # Tell the user what to do
-message(STATUS "Linking with rack-sdk")
+message(STATUS "Linking with unofficial-vcvrack::rack-sdk")
 ]==])
 
 # create cmake config file
