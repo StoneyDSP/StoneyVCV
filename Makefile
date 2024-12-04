@@ -1,7 +1,8 @@
 # If RACK_DIR is not defined when calling the Makefile, default to two
-# directories above
+# directories above, i.e., `Rack-SDK/plugins/<we are here>`
 RACK_DIR ?= ../..
 
+# Build version?
 STONEYVCV_VERSION_MAJOR ?= 2
 STONEYVCV_VERSION_MINOR ?= 0
 STONEYVCV_VERSION_PATCH ?= 1
@@ -11,6 +12,22 @@ FLAGS += -DSTONEYVCV_VERSION_MAJOR=$(STONEYVCV_VERSION_MAJOR)
 FLAGS += -DSTONEYVCV_VERSION_MINOR=$(STONEYVCV_VERSION_MINOR)
 FLAGS += -DSTONEYVCV_VERSION_PATCH=$(STONEYVCV_VERSION_PATCH)
 FLAGS += -DSTONEYVCV_VERSION_TWEAK=$(STONEYVCV_VERSION_TWEAK)
+
+# Build modules?
+STONEYVCV_BUILD_MODULES ?= 1
+STONEYVCV_BUILD_HP4 ?= 1
+STONEYVCV_BUILD_HP2 ?= 1
+STONEYVCV_BUILD_HP1 ?= 1
+
+FLAGS += -DSTONEYVCV_BUILD_MODULES=$(STONEYVCV_BUILD_MODULES)
+FLAGS += -DSTONEYVCV_BUILD_HP4=$(STONEYVCV_BUILD_HP4)
+FLAGS += -DSTONEYVCV_BUILD_HP2=$(STONEYVCV_BUILD_HP2)
+FLAGS += -DSTONEYVCV_BUILD_HP1=$(STONEYVCV_BUILD_HP1)
+
+# Build tests?
+STONEYVCV_BUILD_TESTS ?= 1
+
+FLAGS += -DSTONEYVCV_BUILD_TESTS=$(STONEYVCV_BUILD_TESTS)
 
 # FLAGS will be passed to both the C and C++ compiler
 FLAGS += -Iinclude -Idep/StoneyDSP/include
@@ -36,3 +53,6 @@ DISTRIBUTABLES += $(wildcard presets)
 
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
+
+# Include dep
+include $(PWD)/dep.mk
