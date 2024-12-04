@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.14...3.31 FATAL_ERROR)
 #[==[STONEYVCV]==]
 project(STONEYVCV VERSION 2.0.1.0)
 
+set(STONEYVCV_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(STONEYVCV_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
 enable_language(C)
 enable_language(CXX)
 
@@ -23,7 +26,7 @@ cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4 "" ON "STONEYVCV_BUILD_MODULES
 # Put components in the correct order of their dependencies on eachother
 # to save tears...
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
-find_package(rack 2.5.2 REQUIRED COMPONENTS dep sdk lib CONFIG)
+find_package(rack 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 
 # These props are helpful to have around...
 get_target_property(rack_inc_dir rack::lib INTERFACE_INCLUDE_DIRECTORIES)
@@ -55,35 +58,35 @@ else() # LINUX
     set(PLUGIN_LIB_FILE_EXTENSION ".so")
 endif(WIN32)
 set(PLUGIN_LIB "plugin${PLUGIN_LIB_FILE_EXTENSION}")
-configure_file("include/${PLUGIN_HPP}" "include/${PLUGIN_HPP}")
+configure_file("include/StoneyVCV/${PLUGIN_HPP}" "include/StoneyVCV/${PLUGIN_HPP}")
 target_sources(plugin
     PUBLIC
     FILE_SET stoneyvcv_PLUGIN_PUBLIC_HEADERS
     TYPE HEADERS
     BASE_DIRS
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
     $<INSTALL_INTERFACE:include>
     FILES
     #[==[include/plugin.hpp]==]
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PLUGIN_HPP}>
-    $<INSTALL_INTERFACE:include/${PLUGIN_HPP}>
+    $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/StoneyVCV/${PLUGIN_HPP}>
+    $<INSTALL_INTERFACE:include/StoneyVCV/${PLUGIN_HPP}>
 )
 
 target_sources(plugin
     PRIVATE
-    "src/${PLUGIN_CPP}"
+    "src/StoneyVCV/${PLUGIN_CPP}"
 )
 
 set_target_properties(plugin
     PROPERTIES
     PREFIX ""
     LIBRARY_OUTPUT_NAME "plugin"
-    ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY "${STONEYVCV_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${STONEYVCV_BINARY_DIR}/lib"
     # Compatible Interface
-    INTERFACE_plugin_MAJOR_VERSION ${STONEYVCV_VERSION_MAJOR}
-    INTERFACE_plugin_MINOR_VERSION ${STONEYVCV_VERSION_MINOR}
-    INTERFACE_plugin_PATCH_VERSION ${STONEYVCV_VERSION_PATCH}
+    INTERFACE_plugin_MAJOR_VERSION "${STONEYVCV_VERSION_MAJOR}"
+    INTERFACE_plugin_MINOR_VERSION "${STONEYVCV_VERSION_MINOR}"
+    INTERFACE_plugin_PATCH_VERSION "${STONEYVCV_VERSION_PATCH}"
 )
 set_property(TARGET plugin APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_plugin_MAJOR_VERSION
@@ -162,6 +165,29 @@ if(WIN32)
 endif(WIN32)
 list(APPEND STONEYVCV_TARGETS plugin)
 
+# install the target and create export-set
+install(TARGETS plugin
+    EXPORT StoneyVCVPluginTargets
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET stoneyvcv_PLUGIN_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+
+# generate and install export file
+install(EXPORT StoneyVCVPluginTargets
+    FILE "StoneyVCVPluginTargets.cmake"
+    NAMESPACE StoneyDSP::StoneyVCV::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+)
+
+export(
+    TARGETS plugin
+    FILE "share/cmake/StoneyVCVPluginTargets.cmake"
+    NAMESPACE StoneyDSP::StoneyVCV::
+)
+
 #[==[test]==]
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
@@ -175,12 +201,12 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     add_executable(StoneyDSP::StoneyVCV::test ALIAS tests)
     target_include_directories(tests
         PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
     )
     target_sources(tests
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test/plugin.cpp"
+        "${PROJECT_SOURCE_DIR}/test/StoneyVCV/plugin.cpp"
     )
     target_link_libraries(tests
         PRIVATE
@@ -190,7 +216,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     set_target_properties(tests
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/test"
+        RUNTIME_OUTPUT_DIRECTORY "${STONEYVCV_BINARY_DIR}/test"
         RUNTIME_OUTPUT_NAME "tests"
     )
     target_compile_features(tests PUBLIC cxx_std_17)
@@ -210,21 +236,21 @@ if(STONEYVCV_BUILD_MODULE_HP1)
     add_library(StoneyVCV::HP1 ALIAS HP1)
     add_library(StoneyDSP::StoneyVCV::HP1 ALIAS HP1)
     set(STONEYVCV_HP1_HPP "HP1.hpp")
-    configure_file("include/${STONEYVCV_HP1_HPP}" "include/${STONEYVCV_HP1_HPP}")
+    configure_file("include/StoneyVCV/${STONEYVCV_HP1_HPP}" "include/StoneyVCV/${STONEYVCV_HP1_HPP}")
     set_target_properties(HP1 PROPERTIES VERSION 0.0.1)
     set_target_properties(HP1 PROPERTIES SOVERSION 0.0.1)
-    target_sources(HP1 PRIVATE "src/HP1.cpp")
+    target_sources(HP1 PRIVATE "src/StoneyVCV/HP1.cpp")
     target_sources(HP1
         PUBLIC
         FILE_SET stoneyvcv_HP1_PUBLIC_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
         FILES
         #[==[include/plugin.hpp]==]
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP1_HPP}>
-        $<INSTALL_INTERFACE:include/${STONEYVCV_HP1_HPP}>
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/StoneyVCV/${STONEYVCV_HP1_HPP}>
+        $<INSTALL_INTERFACE:include/StoneyVCV/${STONEYVCV_HP1_HPP}>
     )
     target_compile_options(HP1
         PUBLIC
@@ -240,11 +266,31 @@ if(STONEYVCV_BUILD_MODULE_HP1)
     )
     target_link_libraries(HP1
         PUBLIC
-        rack::lib
+        rack::core
         StoneyDSP::Core
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP1)
     target_compile_definitions(plugin PUBLIC "-DSTONEYVCV_BUILD_HP1=1")
+    # install the target and create export-set
+    install(TARGETS HP1
+        EXPORT StoneyVCVHP1Targets
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        FILE_SET stoneyvcv_HP1_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
+    # generate and install export file
+    install(EXPORT StoneyVCVHP1Targets
+        FILE "StoneyVCVHP1Targets.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+    )
+    export(
+        TARGETS HP1
+        FILE "share/cmake/StoneyVCVHP1Targets.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+    )
     list(APPEND STONEYVCV_TARGETS HP1)
 endif(STONEYVCV_BUILD_MODULE_HP1)
 
@@ -256,19 +302,19 @@ if(STONEYVCV_BUILD_MODULE_HP2)
     set_target_properties(HP2 PROPERTIES VERSION 0.0.1)
     set_target_properties(HP2 PROPERTIES SOVERSION 0.0.1)
     set(STONEYVCV_HP2_HPP "HP2.hpp")
-    configure_file("include/${STONEYVCV_HP2_HPP}" "include/${STONEYVCV_HP2_HPP}")
-    target_sources(HP2 PRIVATE "src/HP2.cpp")
+    configure_file("include/StoneyVCV/${STONEYVCV_HP2_HPP}" "include/StoneyVCV/${STONEYVCV_HP2_HPP}")
+    target_sources(HP2 PRIVATE "src/StoneyVCV/HP2.cpp")
     target_sources(HP2
         PUBLIC
         FILE_SET stoneyvcv_HP2_PUBLIC_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
         FILES
         #[==[include/plugin.hpp]==]
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP2_HPP}>
-        $<INSTALL_INTERFACE:include/${STONEYVCV_HP2_HPP}>
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/StoneyVCV/${STONEYVCV_HP2_HPP}>
+        $<INSTALL_INTERFACE:include/StoneyVCV/${STONEYVCV_HP2_HPP}>
     )
     target_compile_options(HP2
         PUBLIC
@@ -284,11 +330,31 @@ if(STONEYVCV_BUILD_MODULE_HP2)
     )
     target_link_libraries(HP2
         PUBLIC
-        rack::lib
+        rack::core
         StoneyDSP::Core
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP2)
     target_compile_definitions(plugin PUBLIC "-DSTONEYVCV_BUILD_HP2=1")
+    # install the target and create export-set
+    install(TARGETS HP2
+        EXPORT StoneyVCVHP2Targets
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        FILE_SET stoneyvcv_HP2_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
+    # generate and install export file
+    install(EXPORT StoneyVCVHP2Targets
+        FILE "StoneyVCVHP2Targets.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+    )
+    export(
+        TARGETS HP2
+        FILE "share/cmake/StoneyVCVHP2Targets.cmake.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+    )
     list(APPEND STONEYVCV_TARGETS HP2)
 endif(STONEYVCV_BUILD_MODULE_HP2)
 
@@ -298,21 +364,21 @@ if(STONEYVCV_BUILD_MODULE_HP4)
     add_library(StoneyVCV::HP4 ALIAS HP4)
     add_library(StoneyDSP::StoneyVCV::HP4 ALIAS HP4)
     set(STONEYVCV_HP4_HPP "HP4.hpp")
-    configure_file("include/${STONEYVCV_HP4_HPP}" "include/${STONEYVCV_HP4_HPP}")
+    configure_file("include/StoneyVCV/${STONEYVCV_HP4_HPP}" "include/StoneyVCV/${STONEYVCV_HP4_HPP}")
     set_target_properties(HP2 PROPERTIES VERSION 0.0.1)
     set_target_properties(HP2 PROPERTIES SOVERSION 0.0.1)
-    target_sources(HP4 PRIVATE "src/HP4.cpp")
+    target_sources(HP4 PRIVATE "src/StoneyVCV/HP4.cpp")
     target_sources(HP4
         PUBLIC
         FILE_SET stoneyvcv_HP4_PUBLIC_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
         FILES
         #[==[include/plugin.hpp]==]
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${STONEYVCV_HP4_HPP}>
-        $<INSTALL_INTERFACE:include/${STONEYVCV_HP4_HPP}>
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/StoneyVCV/${STONEYVCV_HP4_HPP}>
+        $<INSTALL_INTERFACE:include/StoneyVCV/${STONEYVCV_HP4_HPP}>
     )
     target_compile_options(HP4
         PUBLIC
@@ -328,11 +394,31 @@ if(STONEYVCV_BUILD_MODULE_HP4)
     )
     target_link_libraries(HP4
         PUBLIC
-        rack::lib
+        rack::core
         StoneyDSP::Core
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP4)
     target_compile_definitions(plugin PUBLIC "-DSTONEYVCV_BUILD_HP4=1")
+    # install the target and create export-set
+    install(TARGETS HP4
+        EXPORT StoneyVCVHP4Targets
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        FILE_SET stoneyvcv_HP4_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
+    # generate and install export file
+    install(EXPORT StoneyVCVHP4Targets
+        FILE "StoneyVCVHP4Targets.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+    )
+    export(
+        TARGETS HP4
+        FILE "share/cmake/StoneyVCVHP4Targets.cmake.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+    )
     list(APPEND STONEYVCV_TARGETS HP4)
 endif(STONEYVCV_BUILD_MODULE_HP4)
 
@@ -340,19 +426,19 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     if(STONEYVCV_BUILD_MODULE_HP4)
         target_sources(tests
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test/HP4.cpp"
+        "${PROJECT_SOURCE_DIR}/test/StoneyVCV/HP4.cpp"
     )
     endif(STONEYVCV_BUILD_MODULE_HP4)
     if(STONEYVCV_BUILD_MODULE_HP2)
         target_sources(tests
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test/HP2.cpp"
+        "${PROJECT_SOURCE_DIR}/test/StoneyVCV/HP2.cpp"
     )
     endif(STONEYVCV_BUILD_MODULE_HP2)
     if(STONEYVCV_BUILD_MODULE_HP1)
         target_sources(tests
         PRIVATE
-        "${PROJECT_SOURCE_DIR}/test/HP1.cpp"
+        "${PROJECT_SOURCE_DIR}/test/StoneyVCV/HP1.cpp"
     )
     endif(STONEYVCV_BUILD_MODULE_HP1)
 endif()
@@ -415,30 +501,30 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     catch_discover_tests(tests)
 endif()
 
-# install the target and create export-set
-install(TARGETS ${STONEYVCV_TARGETS}
-    EXPORT StoneyVCVTargets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILE_SET stoneyvcv_PLUGIN_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-    FILE_SET stoneyvcv_HP1_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-    FILE_SET stoneyvcv_HP2_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-    FILE_SET stoneyvcv_HP4_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-)
+# # install the target and create export-set
+# install(TARGETS ${STONEYVCV_TARGETS}
+#     EXPORT StoneyVCVTargets
+#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+#     FILE_SET stoneyvcv_PLUGIN_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
+#     FILE_SET stoneyvcv_HP1_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
+#     FILE_SET stoneyvcv_HP2_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
+#     FILE_SET stoneyvcv_HP4_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
+# )
 
-# generate and install export file
-install(EXPORT StoneyVCVTargets
-    FILE "StoneyVCVTargets.cmake"
-    NAMESPACE StoneyDSP::StoneyVCV::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
-)
-export(
-    TARGETS ${STONEYVCV_TARGETS}
-    FILE "share/cmake/StoneyVCVTargets.cmake"
-    NAMESPACE StoneyDSP::StoneyVCV::
-)
+# # generate and install export file
+# install(EXPORT StoneyVCVTargets
+#     FILE "StoneyVCVTargets.cmake"
+#     NAMESPACE StoneyDSP::StoneyVCV::
+#     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+# )
+# export(
+#     TARGETS ${STONEYVCV_TARGETS}
+#     FILE "share/cmake/StoneyVCVTargets.cmake"
+#     NAMESPACE StoneyDSP::StoneyVCV::
+# )
 
 #[==[StoneyVCVConfig.cmake]==]
 include(CMakePackageConfigHelpers)
@@ -492,4 +578,19 @@ install(
     "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyVCVConfigVersion.cmake"
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+)
+install(DIRECTORY
+    "${STONEYVCV_SOURCE_DIR}/res"
+    DESTINATION
+    # This is not a good location to be using...
+    "${CMAKE_INSTALL_PREFIX}"
+)
+install(
+    FILES
+    "${STONEYVCV_SOURCE_DIR}/LICENSE"
+    "${STONEYVCV_SOURCE_DIR}/VERSION"
+    "${STONEYVCV_SOURCE_DIR}/plugin.json"
+    DESTINATION
+    # This is not a good location to be using...
+    "${CMAKE_INSTALL_PREFIX}"
 )
