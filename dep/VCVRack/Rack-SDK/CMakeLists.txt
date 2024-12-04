@@ -254,7 +254,7 @@ install(TARGETS core
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    FILE_SET rack_SDK_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET rack_sdk_CORE_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 # generate and install export file
@@ -565,7 +565,7 @@ foreach(_requested_component ${rack_sdk_FIND_COMPONENTS})
     message(STATUS "Linking with rack-sdk::${_requested_component}")
 endforeach()
 
-unset(_rack_supported_components)
+unset(_rack_sdk_supported_components)
 
 ####################################################################################
 
