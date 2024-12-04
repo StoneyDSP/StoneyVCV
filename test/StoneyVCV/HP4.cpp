@@ -32,14 +32,16 @@
 #if (STONEYVCV_BUILD_HP4 == 1) && (STONEYVCV_BUILD_TESTS == 1)
 
 #include <catch2/catch_test_macros.hpp>
+// for floating point comparisons
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "HP4.hpp"
+#include "StoneyVCV/HP4.hpp"
 
 // Spec goes here...
 
 namespace StoneyDSP {
 namespace StoneyVCV {
-struct HP4Spec {
+struct HP4Spec final : ::StoneyDSP::StoneyVCV::Spec {
 public:
     std::string slug;
     static constexpr int NUM_PARAMS = 0;
@@ -82,6 +84,33 @@ TEST_CASE( "HP4", "[HP4]" ) {
         }
     }
 
+    SECTION( "HP4ModuleWidget" ) {
+        // ::StoneyDSP::StoneyVCV::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4Module;
+        // ::rack::app::ModuleWidget* test_hp4ModuleWidget = new ::StoneyDSP::StoneyVCV::HP4ModuleWidget(dynamic_cast<::StoneyDSP::StoneyVCV::HP4Module*>(test_hp4Module));
+        // std::shared_ptr<::StoneyDSP::StoneyVCV::HP4ModuleWidget> test_hp4ModuleWidget = std::make_shared<::StoneyDSP::StoneyVCV::HP4ModuleWidget>();
+        // REQUIRE( test_hp4ModuleWidget.get()->box.size.x == 5.08F );
+        // REQUIRE( test_hp4ModuleWidget.get()->box.size.y == 128.5F );
+        // delete test_hp4ModuleWidget;
+        // delete test_hp4Module;
+
+        // REQUIRE_THAT(
+        //     test_hp4ModuleWidget.box.size.x,
+        //     Catch::Matchers::WithinRel(5.08 * 3.0, 0.001)
+        // );
+
+        // REQUIRE_THAT(
+        //     test_hp4ModuleWidget.box.size.y,
+        //     Catch::Matchers::WithinRel(128.5, 0.001)
+        // );
+
+
+        // ::StoneyDSP::StoneyVCV::HP4Module* test_hp4Module = NULL;
+        // test_hp4Module = dynamic_cast<::StoneyDSP::StoneyVCV::HP4Module*>(new ::StoneyDSP::StoneyVCV::HP4Module);
+        // ::StoneyDSP::StoneyVCV::HP4ModuleWidget* test_hp4ModuleWidget = new ::StoneyDSP::StoneyVCV::HP4ModuleWidget(test_hp4Module);
+
+        // delete test_hp4ModuleWidget;
+        // delete test_hp4Module;
+    }
 
     SECTION( "instance" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::modelHP4 != nullptr );

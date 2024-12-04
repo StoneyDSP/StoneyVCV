@@ -1,5 +1,5 @@
 /**
- * @file HP1.cpp
+ * @file HP2.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -29,66 +29,65 @@
  *
  ******************************************************************************/
 
-#if (STONEYVCV_BUILD_HP1 == 1) && (STONEYVCV_BUILD_TESTS == 1)
+#if (STONEYVCV_BUILD_HP2 == 1) && (STONEYVCV_BUILD_TESTS == 1)
 
 #include <catch2/catch_test_macros.hpp>
 // for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "HP1.hpp"
+#include "StoneyVCV/HP2.hpp"
 
 // Spec goes here...
 
 namespace StoneyDSP {
 namespace StoneyVCV {
-struct HP1Spec final {
+struct HP2Spec final : ::StoneyDSP::StoneyVCV::Spec {
 public:
     std::string slug;
     static constexpr int NUM_PARAMS = 0;
     static constexpr int NUM_INPUTS = 0;
     static constexpr int NUM_OUTPUTS = 0;
     static constexpr int NUM_LIGHTS = 0;
-    HP1Spec() : slug("HP1") {};
+    HP2Spec() : slug("HP2") {};
 private:
-    // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP1Spec)
-    STONEYDSP_DECLARE_NON_COPYABLE(HP1Spec)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP1Spec)
+    // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP2Spec)
+    STONEYDSP_DECLARE_NON_COPYABLE(HP2Spec)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP2Spec)
 };
 }
 }
 
 // Tests go here...
 
-TEST_CASE("HP1", "[HP1]") {
+TEST_CASE( "HP2", "[HP2]" ) {
 
-    std::shared_ptr<::StoneyDSP::StoneyVCV::HP1Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP1Spec>();
+    std::shared_ptr<::StoneyDSP::StoneyVCV::HP2Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP2Spec>();
 
-    SECTION("files") {
-        REQUIRE(STONEYVCV_HP1_HPP_INCLUDED == 1);
+    SECTION( "files" ) {
+        REQUIRE( STONEYVCV_HP2_HPP_INCLUDED == 1 );
     }
-    SECTION("HP1Module") {
-        SECTION("statics") {
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::PARAMS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::INPUTS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::OUTPUTS_LEN == 0);
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1Module::LIGHTS_LEN == 0);
+    SECTION( "HP2Module" ) {
+        SECTION( "statics" ) {
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
-            ::StoneyDSP::StoneyVCV::HP1Module* test_hp1Module = new ::StoneyDSP::StoneyVCV::HP1Module;
-            REQUIRE( test_hp1Module->getNumParams() == spec.get()->NUM_PARAMS );
-            REQUIRE( test_hp1Module->getNumInputs() == spec.get()->NUM_INPUTS );
-            REQUIRE( test_hp1Module->getNumOutputs() == spec.get()->NUM_OUTPUTS );
-            REQUIRE( test_hp1Module->getNumLights() == spec.get()->NUM_LIGHTS );
-            delete test_hp1Module;
+            ::StoneyDSP::StoneyVCV::HP2Module* test_hp2Module = new ::StoneyDSP::StoneyVCV::HP2Module;
+            REQUIRE( test_hp2Module->getNumParams() == spec.get()->NUM_PARAMS );
+            REQUIRE( test_hp2Module->getNumInputs() == spec.get()->NUM_INPUTS );
+            REQUIRE( test_hp2Module->getNumOutputs() == spec.get()->NUM_OUTPUTS );
+            REQUIRE( test_hp2Module->getNumLights() == spec.get()->NUM_LIGHTS );
+            delete test_hp2Module;
         }
     }
-    SECTION("instance") {
-        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP1 != nullptr );
-        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP1->slug == spec.get()->slug );
+    SECTION( "instance" ) {
+        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP2 != nullptr );
+        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP2->slug == spec.get()->slug );
     }
 
     spec.reset();
-
 }
 
 #endif

@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file HP2.hpp
+ * @file HP4.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -31,7 +31,7 @@
 
 #pragma once
 
-#define STONEYVCV_HP2_HPP_INCLUDED 1
+#define STONEYVCV_HP4_HPP_INCLUDED 1
 
 //==============================================================================
 
@@ -58,17 +58,15 @@ namespace StoneyVCV
 
 //==============================================================================
 
-using Module = ::rack::engine::Module;
-
 /**
- * @brief The `HP2Module` struct.
+ * @brief The `HP4Module` struct.
  *
  */
-struct HP2Module final : Module
+struct HP4Module final : ::rack::engine::Module
 {
 public:
 
-    using ProcessArgs = ::StoneyDSP::StoneyVCV::Module::ProcessArgs;
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     enum ParamsId {
         PARAMS_LEN
@@ -83,22 +81,20 @@ public:
 		LIGHTS_LEN
 	};
 
-    HP2Module();
-    // ~HP2Module();
+    HP4Module();
+    // ~HP4Module();
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(HP2Module)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP2Module)
+    STONEYDSP_DECLARE_NON_COPYABLE(HP4Module)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP4Module)
 };
 
 //==============================================================================
 
-using Widget = ::rack::Widget;
-
-struct HP2Widget final : Widget
+struct HP4Widget final : ::rack::Widget
 {
 public:
-    HP2Widget();
-    // ~HP2Widget();
+    HP4Widget();
+    // ~HP4Widget();
     /**
      * @brief Advances the module by one frame.
      *
@@ -111,32 +107,30 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::Widget::DrawArgs &args) override;
-    // ::rack::FramebufferWidget *hp2WidgetFrameBuffer;
+    void draw(const ::rack::Widget::DrawArgs &args) override;
+    // ::rack::FramebufferWidget *hp4WidgetFrameBuffer;
     // Widget *panelBorder;
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(HP2Widget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP2Widget)
+    STONEYDSP_DECLARE_NON_COPYABLE(HP4Widget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP4Widget)
 };
 
 //==============================================================================
 
-using ModuleWidget = ::rack::app::ModuleWidget;
-
 /**
- * @brief The `HP2ModuleWidget` struct.
+ * @brief The `HP4ModuleWidget` struct.
  *
  */
-struct HP2ModuleWidget final : ModuleWidget
+struct HP4ModuleWidget final : ::rack::app::ModuleWidget
 {
 public:
-    HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2Module *module);
-    // ~HP2ModuleWidget();
-    // ::StoneyDSP::StoneyVCV::HP2Widget *hp2Widget;
-    // ::rack::FramebufferWidget *hp2ModuleWidgetFrameBuffer;
+    HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4Module *module);
+    // ~HP4ModuleWidget();
+    // ::StoneyDSP::StoneyVCV::HP4Widget *hp4Widget;
+    // ::rack::FramebufferWidget *hp4ModuleWidgetFrameBuffer;
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(HP2ModuleWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP2ModuleWidget)
+    STONEYDSP_DECLARE_NON_COPYABLE(HP4ModuleWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(HP4ModuleWidget)
 };
 
 //==============================================================================
@@ -146,7 +140,7 @@ private:
  *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createHP2(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model *createHP4(); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 

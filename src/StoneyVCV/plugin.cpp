@@ -29,39 +29,50 @@
  *
  ******************************************************************************/
 
-#include <catch2/catch_test_macros.hpp>
+#include "StoneyVCV/plugin.hpp"
 
-#include "plugin.hpp"
+namespace StoneyDSP {
 
-// Tests go here...
+namespace StoneyVCV {
 
-TEST_CASE("plugin", "[plugin]") {
+/** @brief The `StoneyDSP` VCV Rack Plugin instance. */
+::rack::plugin::Plugin* pluginInstance;
 
-    SECTION( "files" ) {
-        REQUIRE(STONEYVCV_PLUGIN_HPP_INCLUDED == 1);
-    }
+}
 
-    SECTION( "pluginInstance" ) {
-        REQUIRE(::StoneyDSP::StoneyVCV::pluginInstance == nullptr);
-    }
+}
 
-    SECTION("modules") {
+/**
+ * @brief The `StoneyDSP` VCV Rack Plugin Initialiser.
+ *
+ * @param p
+ */
+void init(::rack::plugin::Plugin* p) {
+
+    ::StoneyDSP::StoneyVCV::pluginInstance = p;
+
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-        SECTION( "HP4" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::modelHP4 != nullptr);
-        }
-        SECTION( "HP2" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::modelHP2 != nullptr);
-        }
-        SECTION( "HP1" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::modelHP1 != nullptr);
-        }
+    p->addModel(::StoneyDSP::StoneyVCV::modelHP4);
+    p->addModel(::StoneyDSP::StoneyVCV::modelHP2);
+    p->addModel(::StoneyDSP::StoneyVCV::modelHP1);
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
-    }
+
+    // Any other plugin initialization may go here.
+    // As an alternative, consider lazy-loading assets and lookup tables when
+    // your module is created to reduce startup times of Rack.
+}
+
+namespace StoneyDSP {
+namespace StoneyVCV {
+namespace Panels {
+::NVGcolor bgBlack = ::nvgRGBA(42, 42, 42, 255);
+::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
+}
+}
 }
