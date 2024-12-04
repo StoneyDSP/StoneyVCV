@@ -439,3 +439,57 @@ export(
     FILE "share/cmake/StoneyVCVTargets.cmake"
     NAMESPACE StoneyDSP::StoneyVCV::
 )
+
+#[==[StoneyVCVConfig.cmake]==]
+include(CMakePackageConfigHelpers)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCVConfig.cmake.in" [==[
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/StoneyVCVConfigVersion.cmake")
+
+set(_StoneyVCV_supported_components)
+list(APPEND _StoneyVCV_supported_components
+    @STONEYVCV_TARGETS@
+)
+
+## Custom 'check_required_components' macro
+foreach(_requested_component ${StoneyVCV_FIND_COMPONENTS})
+  if (NOT _requested_component IN_LIST _StoneyVCV_supported_components)
+    set(StoneyVCV_FOUND False)
+    set(StoneyVCV_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
+  endif()
+  include("${CMAKE_CURRENT_LIST_DIR}/StoneyVCV${_requested_component}Targets.cmake")
+  message(STATUS "Linking with StoneyVCV::${_requested_component}")
+endforeach()
+
+unset(_StoneyVCV_supported_components)
+
+# Tell the user what to do
+message(STATUS "Linking with StoneyVCV")
+
+]==])
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCVConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyVCVConfig.cmake"
+    INSTALL_DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+
+    # # Use custom 'check_required_components' macro
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+)
+
+# generate the version file for the config file
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyVCVConfigVersion.cmake"
+    VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
+    COMPATIBILITY AnyNewerVersion
+)
+
+install(
+    FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyVCVConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyVCVConfigVersion.cmake"
+    DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+)
