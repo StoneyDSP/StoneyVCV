@@ -27,6 +27,10 @@ cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4 "" ON "STONEYVCV_BUILD_MODULES
 # to save tears...
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
+# The package cmakerc provides additional cmake functions:
+find_package(CMakeRC CONFIG REQUIRED)
+# cmrc_add_resource_library(foo-resources ALIAS foo::rc NAMESPACE foo  ...)
+# target_link_libraries(main PRIVATE foo::rc)
 
 # These props are helpful to have around...
 get_target_property(rack_inc_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_INCLUDE_DIRECTORIES)
