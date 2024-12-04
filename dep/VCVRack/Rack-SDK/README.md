@@ -33,10 +33,10 @@ All three targets are passed to CMake's "install" routine, which makes them relo
 
 Download [VCV Rack](https://vcvrack.com/Rack) and the Rack SDK ([Windows x64](https://vcvrack.com/downloads/Rack-SDK-latest-win-x64.zip) / [Mac x64+ARM64](https://vcvrack.com/downloads/Rack-SDK-latest-mac-x64+arm64.zip) / [Linux x64](https://vcvrack.com/downloads/Rack-SDK-latest-lin-x64.zip)). Install VCV Rack, and unzip the SDK to any location on your local filesystem.
 
-Clone this project and move into the VCVRack directory:
+Clone this project and move into the VCVRack SDK directory:
 
 ```shell
-git clone git@github.com:StoneyDSP/StoneyVCV.git && cd StoneyVCV/dep/VCVRack
+git clone git@github.com:StoneyDSP/StoneyVCV.git && cd StoneyVCV/dep/VCVRack/Rack-SDK
 ```
 
 Configure CMake with a source directory (`-S`), a build directory (`-B`), and the `RACK_DIR` variable (`-DRACK_DIR=`). Optionally, set a `CMAKE_INSTALL_PREFIX` if you want to examine the CMake `install` routine's output.
@@ -55,10 +55,10 @@ Once configuration is complete, use the `--build` command on the build output di
 cmake --build ./build
 ```
 
-Optionally, to examine the CMake `install` routine's output, build the `ìnstall` target (it will populate `VCVRack/install` with the SDK headers, libraries, and relocatable CMake files):
+Optionally, to examine the CMake `install` routine's output, build the `ìnstall` target (it will populate `<current directory>/install` with the SDK headers, libraries, and relocatable CMake files):
 
 ```shell
-cmake --build ./build --target insall
+cmake --build ./build --target install
 ```
 
 ## Why?

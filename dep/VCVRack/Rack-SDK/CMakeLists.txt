@@ -11,16 +11,16 @@ if(DEFINED ENV{RACK_DIR} AND NOT DEFINED RACK_DIR)
 endif()
 
 set(PROJECT_VENDOR "VCV" CACHE STRING "" FORCE)
-set(RACK_VERSION_MAJOR 2 CACHE STRING "" FORCE)
-set(RACK_VERSION_MINOR 5 CACHE STRING "" FORCE)
-set(RACK_VERSION_PATCH 2 CACHE STRING "" FORCE)
-set(RACK_LANGUAGES "C" "CXX" CACHE STRING "" FORCE)
+set(RACK_SDK_VERSION_MAJOR 2 CACHE STRING "" FORCE)
+set(RACK_SDK_VERSION_MINOR 5 CACHE STRING "" FORCE)
+set(RACK_SDK_VERSION_PATCH 2 CACHE STRING "" FORCE)
+set(RACK_SDK_LANGUAGES "C" "CXX" CACHE STRING "" FORCE)
 
-set(RACK_VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH})
+set(RACK_VERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH})
 
-project(RACK
+project(RACK_SDK
     VERSION ${RACK_VERSION}
-    LANGUAGES ${RACK_LANGUAGES}
+    LANGUAGES ${RACK_SDK_LANGUAGES}
 )
 
 # Not known until first "project()..."
@@ -31,16 +31,16 @@ VCV Rack for Windows requires MSYS2 with the MinGW64 toolchain and shell....
 endif()
 
 include(GNUInstallDirs)
-set(RACK_TARGETS)
+set(RACK_SDK_TARGETS)
 
 #[==[Rack SDK Deps]==]
 add_library(dep INTERFACE)
-add_library(rack::dep ALIAS dep)
+add_library(rack-sdk::dep ALIAS dep)
 
 set_target_properties(dep
     PROPERTIES
-    VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
-    SOVERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+    VERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}
+    SOVERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}
 
     RUNTIME_OUTPUT_DIRECTORY "bin"
     LIBRARY_OUTPUT_DIRECTORY "lib"
@@ -48,9 +48,9 @@ set_target_properties(dep
     PDB_OUTPUT_DIRECTORY "bin"
 
     # Compatible Interface
-    INTERFACE_dep_MAJOR_VERSION ${RACK_VERSION_MAJOR}
-    INTERFACE_dep_MINOR_VERSION ${RACK_VERSION_MINOR}
-    INTERFACE_dep_PATCH_VERSION ${RACK_VERSION_PATCH}
+    INTERFACE_dep_MAJOR_VERSION ${RACK_SDK_VERSION_MAJOR}
+    INTERFACE_dep_MINOR_VERSION ${RACK_SDK_VERSION_MINOR}
+    INTERFACE_dep_PATCH_VERSION ${RACK_SDK_VERSION_PATCH}
 )
 set_property(TARGET dep APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_dep_MAJOR_VERSION
@@ -103,8 +103,8 @@ foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
         FILE_SET rack_DEP_INTERFACE_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/dep>
-        $<INSTALL_INTERFACE:include/dep>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         FILES
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
         $<INSTALL_INTERFACE:${rel_path_to_file}>
@@ -123,38 +123,38 @@ install(TARGETS dep
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILE_SET rack_DEP_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dep"
+    FILE_SET rack_DEP_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 # generate and install export file
 install(EXPORT DepExport
-    FILE "rack-dep-targets.cmake"
-    NAMESPACE rack::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
+    FILE "rack-sdk-dep-targets.cmake"
+    NAMESPACE rack-sdk::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 )
 
 export(
     EXPORT DepExport
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-dep-targets.cmake"
-    NAMESPACE rack::
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-dep-targets.cmake"
+    NAMESPACE rack-sdk::
 )
 
 # export(
 # TARGETS dep
-# FILE "share/cmake/rack-dep-targets.cmake"
-# NAMESPACE rack::
+# FILE "share/cmake/rack-sdk-dep-targets.cmake"
+# NAMESPACE rack-sdk::
 # )
 
-list(APPEND RACK_TARGETS dep)
+list(APPEND RACK_SDK_TARGETS dep)
 
 #[==[Rack SDK]==]
-add_library(sdk INTERFACE)
-add_library(rack::sdk ALIAS sdk)
+add_library(core INTERFACE)
+add_library(rack-sdk::core ALIAS core)
 
-set_target_properties(sdk
+set_target_properties(core
     PROPERTIES
-    VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
-    SOVERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+    VERSION "${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}"
+    SOVERSION "${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}"
 
     RUNTIME_OUTPUT_DIRECTORY "bin"
     LIBRARY_OUTPUT_DIRECTORY "lib"
@@ -162,18 +162,30 @@ set_target_properties(sdk
     PDB_OUTPUT_DIRECTORY "bin"
 
     # Compatible Interface
-    INTERFACE_sdk_MAJOR_VERSION ${RACK_VERSION_MAJOR}
-    INTERFACE_sdk_MINOR_VERSION ${RACK_VERSION_MINOR}
-    INTERFACE_sdk_PATCH_VERSION ${RACK_VERSION_PATCH}
+    INTERFACE_core_MAJOR_VERSION "${RACK_SDK_VERSION_MAJOR}"
+    INTERFACE_core_MINOR_VERSION "${RACK_SDK_VERSION_MINOR}"
+    INTERFACE_core_PATCH_VERSION "${RACK_SDK_VERSION_PATCH}"
 )
-set_property(TARGET sdk APPEND PROPERTY
-    COMPATIBLE_INTERFACE_STRING INTERFACE_sdk_MAJOR_VERSION
+set_property(TARGET core APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_core_MAJOR_VERSION
 )
-set_property(TARGET sdk APPEND PROPERTY
-    COMPATIBLE_INTERFACE_STRING INTERFACE_sdk_MINOR_VERSION
+set_property(TARGET core APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_core_MINOR_VERSION
 )
-set_property(TARGET sdk APPEND PROPERTY
-    COMPATIBLE_INTERFACE_STRING INTERFACE_sdk_PATCH_VERSION
+set_property(TARGET core APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING INTERFACE_core_PATCH_VERSION
+)
+
+configure_file("include/rack.hpp" "include/rack.hpp")
+target_sources(core INTERFACE
+    FILE_SET rack_sdk_CORE_INTERFACE_HEADERS
+    TYPE HEADERS
+    BASE_DIRS
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    FILES
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack.hpp>
+    $<INSTALL_INTERFACE:include/rack.hpp>
 )
 
 set(__rack_sdk_headers_glob "")
@@ -213,12 +225,12 @@ foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
     message(DEBUG "rel_path_to_file: ${rel_path_to_file}") # "include/rack/someobject/someheader.hpp"
     message(DEBUG "")
 
-    target_sources(sdk INTERFACE
-        FILE_SET rack_SDK_INTERFACE_HEADERS
+    target_sources(core INTERFACE
+        FILE_SET rack_sdk_CORE_INTERFACE_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack>
-        $<INSTALL_INTERFACE:include/rack>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         FILES
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
         $<INSTALL_INTERFACE:${rel_path_to_file}>
@@ -229,40 +241,40 @@ foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
     unset(name_of_file_dir)
 endforeach()
 
-target_link_libraries(sdk
+target_link_libraries(core
     INTERFACE
-    rack::dep
+    rack-sdk::dep
 )
 
 # install the target and create export-set
-install(TARGETS sdk
-    EXPORT SdkExport
-    COMPONENT sdk
+install(TARGETS core
+    EXPORT CoreExport
+    COMPONENT core
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    FILE_SET rack_SDK_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/rack"
+    FILE_SET rack_SDK_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 # generate and install export file
-install(EXPORT SdkExport
-    FILE "rack-sdk-targets.cmake"
-    NAMESPACE rack::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
+install(EXPORT CoreExport
+    FILE "rack-sdk-core-targets.cmake"
+    NAMESPACE rack-sdk::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 )
 
 export(
-    TARGETS sdk
-    FILE "share/cmake/rack-sdk-targets.cmake"
-    NAMESPACE rack::
+    TARGETS core
+    FILE "share/cmake/rack-sdk-core-targets.cmake"
+    NAMESPACE rack-sdk::
 )
 
-list(APPEND RACK_TARGETS sdk)
+list(APPEND RACK_SDK_TARGETS core)
 
 #[==[Rack Library]==]
 add_library(lib SHARED IMPORTED GLOBAL)
-add_library(rack::lib ALIAS lib)
+add_library(rack-sdk::lib ALIAS lib)
 
 set(RACK_LIB_FILE_EXTENSION)
 set(RACK_LIB_FILE_DESTINATION)
@@ -295,8 +307,8 @@ endif()
 
 set_target_properties(lib
     PROPERTIES
-    VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
-    SOVERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+    VERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}
+    SOVERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}
 
     ENABLE_EXPORTS TRUE
 
@@ -309,9 +321,9 @@ set_target_properties(lib
     IMPORTED_NO_SONAME TRUE
 
     # Compatible Interface
-    INTERFACE_lib_MAJOR_VERSION ${RACK_VERSION_MAJOR}
-    INTERFACE_lib_MINOR_VERSION ${RACK_VERSION_MINOR}
-    INTERFACE_lib_PATCH_VERSION ${RACK_VERSION_PATCH}
+    INTERFACE_lib_MAJOR_VERSION ${RACK_SDK_VERSION_MAJOR}
+    INTERFACE_lib_MINOR_VERSION ${RACK_SDK_VERSION_MINOR}
+    INTERFACE_lib_PATCH_VERSION ${RACK_SDK_VERSION_PATCH}
 )
 set_property(TARGET lib APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_lib_MAJOR_VERSION
@@ -339,7 +351,7 @@ endif()
 
 target_link_libraries(lib
     INTERFACE
-    rack::sdk
+    rack-sdk::core
 )
 
 install(
@@ -355,7 +367,7 @@ install(
 # RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 # )
 
-file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-lib-targets.cmake" CONTENT [==[
+file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-lib-targets.cmake" CONTENT [==[
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.8)
     message(FATAL_ERROR "CMake >= 2.8.0 required")
 endif()
@@ -379,7 +391,7 @@ set(_cmake_targets_defined "")
 set(_cmake_targets_not_defined "")
 set(_cmake_expected_targets "")
 
-foreach(_cmake_expected_target IN ITEMS rack::lib)
+foreach(_cmake_expected_target IN ITEMS rack-sdk::lib)
     list(APPEND _cmake_expected_targets "${_cmake_expected_target}")
 
     if(TARGET "${_cmake_expected_target}")
@@ -438,29 +450,29 @@ else()
     set(RACK_DLL_IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libRack${RACK_LIB_FILE_EXTENSION}")
 endif()
 
-# Create imported target rack::lib
-add_library(rack::lib SHARED IMPORTED GLOBAL)
+# Create imported target rack-sdk::lib
+add_library(rack-sdk::lib SHARED IMPORTED GLOBAL)
 
-set_target_properties(rack::lib PROPERTIES
-    VERSION @RACK_VERSION_MAJOR@.@RACK_VERSION_MINOR@.@RACK_VERSION_PATCH@
-    SOVERSION @RACK_VERSION_MAJOR@.@RACK_VERSION_MINOR@.@RACK_VERSION_PATCH@
+set_target_properties(rack-sdk::lib PROPERTIES
+    VERSION @RACK_SDK_VERSION_MAJOR@.@RACK_SDK_VERSION_MINOR@.@RACK_SDK_VERSION_PATCH@
+    SOVERSION @RACK_SDK_VERSION_MAJOR@.@RACK_SDK_VERSION_MINOR@.@RACK_SDK_VERSION_PATCH@
     ENABLE_EXPORTS TRUE
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
     # INTERFACE_LINK_OPTIONS "-fPIC;-shared"
     INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@"
-    INTERFACE_LINK_LIBRARIES "rack::sdk"
+    INTERFACE_LINK_LIBRARIES "rack-sdk::core"
     IMPORTED_LOCATION "${RACK_DLL_IMPORTED_LOCATION}"
     IMPORTED_IMPLIB "${_IMPORT_PREFIX}/@RACK_LIB_FILE_DESTINATION@/libRack${RACK_LIB_FILE_EXTENSION}"
     IMPORTED_NO_SONAME "TRUE"
     COMPATIBLE_INTERFACE_STRING "INTERFACE_lib_MAJOR_VERSION;INTERFACE_lib_MINOR_VERSION;INTERFACE_lib_PATCH_VERSION"
-    INTERFACE_lib_MAJOR_VERSION @RACK_VERSION_MAJOR@
-    INTERFACE_lib_MINOR_VERSION @RACK_VERSION_MINOR@
-    INTERFACE_lib_PATCH_VERSION @RACK_VERSION_PATCH@
+    INTERFACE_lib_MAJOR_VERSION @RACK_SDK_VERSION_MAJOR@
+    INTERFACE_lib_MINOR_VERSION @RACK_SDK_VERSION_MINOR@
+    INTERFACE_lib_PATCH_VERSION @RACK_SDK_VERSION_PATCH@
 )
 
 # Load information for each installed configuration.
-file(GLOB _cmake_config_files "${CMAKE_CURRENT_LIST_DIR}/rack-lib-targets-*.cmake")
+file(GLOB _cmake_config_files "${CMAKE_CURRENT_LIST_DIR}/rack-sdk-lib-targets-*.cmake")
 
 foreach(_cmake_config_file IN LISTS _cmake_config_files)
     include("${_cmake_config_file}")
@@ -502,7 +514,7 @@ unset(_cmake_import_check_targets)
 # Make sure the targets which have been exported in some other
 # export set exist.
 unset(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets)
-foreach(_target "rack::sdk" )
+foreach(_target "rack-sdk::core" )
   if(NOT TARGET "${_target}" )
     set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets "${${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE_targets} ${_target}")
   endif()
@@ -526,31 +538,31 @@ cmake_policy(POP)
 
 # export(
 # TARGETS lib
-# FILE "share/cmake/rack-lib-targets.cmake"
-# NAMESPACE rack::
+# FILE "share/cmake/rack-sdk-lib-targets.cmake"
+# NAMESPACE rack-sdk::
 # )
 
-list(APPEND RACK_TARGETS lib)
+list(APPEND RACK_SDK_TARGETS lib)
 
 include(CMakePackageConfigHelpers)
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-config.cmake.in" [==[
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-sdk-config.cmake.in" [==[
 @PACKAGE_INIT@
 
-include("${CMAKE_CURRENT_LIST_DIR}/rack-config-version.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/rack-sdk-config-version.cmake")
 
-set(_rack_supported_components)
-list(APPEND _rack_supported_components
-    @RACK_TARGETS@
+set(_rack_sdk_supported_components)
+list(APPEND _rack_sdk_supported_components
+    @RACK_SDK_TARGETS@
 )
 ## Custom 'check_required_components' macro
-foreach(_requested_component ${rack_FIND_COMPONENTS})
+foreach(_requested_component ${rack-sdk_FIND_COMPONENTS})
     if (NOT _requested_component IN_LIST _rack_supported_components)
         message(FATAL_ERROR "Unsupported component: ${_requested_component}")
         set(rack_FOUND False)
         set(rack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
     endif()
-    include("${CMAKE_CURRENT_LIST_DIR}/rack-${_requested_component}-targets.cmake")
-    message(STATUS "Linking with rack::${_requested_component}")
+    include("${CMAKE_CURRENT_LIST_DIR}/rack-sdk-${_requested_component}-targets.cmake")
+    message(STATUS "Linking with rack-sdk::${_requested_component}")
 endforeach()
 
 unset(_rack_supported_components)
@@ -558,15 +570,15 @@ unset(_rack_supported_components)
 ####################################################################################
 
 # Tell the user what to do
-message(STATUS "Linking with rack")
+message(STATUS "Linking with rack-sdk")
 ]==])
 
 # create cmake config file
 configure_package_config_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/rack-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/rack-sdk-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-config.cmake"
     INSTALL_DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 
     # Use custom 'check_required_components' macro
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
@@ -574,17 +586,17 @@ configure_package_config_file(
 
 # generate the version file for the cmake config file
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config-version.cmake"
-    VERSION ${RACK_VERSION_MAJOR}.${RACK_VERSION_MINOR}.${RACK_VERSION_PATCH}
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-config-version.cmake"
+    VERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}
     COMPATIBILITY AnyNewerVersion
 )
 
 # install config files
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-config-version.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-lib-targets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-config-version.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/rack-sdk-lib-targets.cmake"
     DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/cmake/rack"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 )
