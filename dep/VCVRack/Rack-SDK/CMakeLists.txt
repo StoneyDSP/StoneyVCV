@@ -628,3 +628,63 @@ install(
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 )
+
+
+
+#[==[
+This would create a redistributable shared library called
+'plugin.{so,dylib,dll.a}' with lots of platform-dependent defs...
+
+# Example usage:
+
+vcvrack_add_plugin(
+    SLUG StoneyVCV
+    SOURCES "src/plugin.cpp"
+    HEADERS "include/plugin.hpp"
+    VERSION 2.0.31
+)
+]==]
+# function(vcvrack_add_plugin __slug __sources __version)
+#     cmake_parse_arguments(...)
+#     # This lib name is hard-coded; CMake only permits one of these per-project! ;)
+#     add_library(plugin SHARED)
+#     add_library(${__slug}::plugin ALIAS plugin)
+#     # validation: plugin 'VERSION_MAJOR' >= 2...
+#     set_target_properties(plugin PROPERTIES VERSION ${__version})
+#     target_sources(plugin PRIVATE ${__sources})
+#     target_compile_options(plugin PRIVATE "-fPIC")
+#     target_link_options(plugin PRIVATE "-static-libstdc++")
+#     target_link_libraries(${__slug}::plugin PUBLIC
+#         unoffical-vcvrack::rack-sdk::lib
+#     )
+#     # ...and so forth!
+# endfunction()
+
+
+#[==[
+This would create an object library; 'plugin' links to it via 'SLUG'...
+You may create as many modules per project as you wish with it.
+
+# Example usage:
+
+vcvrack_add_module(
+    NAME HP1
+    SLUG StoneyVCV
+    SOURCES "src/HP1.cpp"
+    HEADERS "include/HP1.hpp"
+    VERSION 1.0.2
+)
+]==]
+# function(vcvrack_add_module __name __slug __sources __version)
+#     cmake_parse_arguments(...)
+#     # This one accepts a name, but is joined to 'plugin' by the alias namespace (the 'SLUG' param)
+#     add_library(${__name} OBJECT)
+#     add_library(${__slug}::${__name} ALIAS ${__name})
+#     set_target_properties(plugin PROPERTIES VERSION ${__version})
+#     target_sources(${__name} PRIVATE ${__sources})
+#     target_compile_options(${__name} PRIVATE "-fPIC")
+#     # Since we can be sure that *all* modules must link with a target which has the name 'plugin'
+#     # (since we hard-coded the name), the user just passes in the desired namespace/'SLUG' to link with :)
+#     target_link_libraries(${__slug}::plugin PUBLIC ${__slug}::${__name})
+#     # ...and so forth!
+# endfunction()

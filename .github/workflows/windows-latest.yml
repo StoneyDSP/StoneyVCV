@@ -144,7 +144,7 @@ jobs:
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make build -j3
+      run: make -j3
 
     - name: Dist
       shell: msys2 {0}
