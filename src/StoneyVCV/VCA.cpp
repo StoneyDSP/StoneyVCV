@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file VCO.cpp
+ * @file VCA.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -31,6 +31,18 @@
 
 //==============================================================================
 
-#include "StoneyVCV/VCO.hpp"
+#include "StoneyVCV/VCA.hpp"
+
+//==============================================================================
+
+namespace StoneyDSP {
+
+namespace StoneyVCV {
+
+::rack::plugin::Model* modelHP4 = NULL;
+
+}
+
+}
 
 //==============================================================================
