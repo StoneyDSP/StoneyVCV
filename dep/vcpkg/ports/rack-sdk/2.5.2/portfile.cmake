@@ -62,7 +62,7 @@ vcpkg_extract_source_archive_ex(
 # Dirty hack to use the local 'CMakeLists.txt' file under 'dep/VCVRack'...
 get_this_dir()
 get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
-set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack")
+set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack/Rack-SDK")
 
 # Configure 'dep/VCVRack/CMakeLists.txt' using the unzipped Rack SDK
 vcpkg_cmake_configure(
@@ -71,7 +71,7 @@ vcpkg_cmake_configure(
 )
 vcpkg_cmake_install()
 vcpkg_cmake_config_fixup(
-    PACKAGE_NAME rack
+    PACKAGE_NAME rack-sdk
     CONFIG_PATH "lib/cmake/rack"
 )
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
