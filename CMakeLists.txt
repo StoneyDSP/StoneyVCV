@@ -40,12 +40,57 @@ get_target_property(rack_implib_location unofficial-vcvrack::rack-sdk::lib IMPOR
 
 set(STONEYVCV_TARGETS)
 
+#[==[Dependencies]==]
+add_library(dependencies INTERFACE)
+add_library(StoneyVCV::dependencies ALIAS dependencies)
+add_library(StoneyDSP::StoneyVCV::dependencies ALIAS dependencies)
+
+set_target_properties(dependencies PROPERTIES VERSION 0.0.0)
+set_target_properties(dependencies PROPERTIES SOVERSION 0.0.0)
+
+target_include_directories(dependencies
+    INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(dependencies
+    INTERFACE
+    unofficial-vcvrack::rack-sdk::core
+    StoneyDSP::Core
+)
+
+target_compile_options(dependencies
+    INTERFACE
+    "-fPIC"
+)
+# install the target and create export-set
+install(TARGETS dependencies
+    EXPORT StoneyVCVDependenciesTargets
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+
+# generate and install export file
+install(EXPORT StoneyVCVDependenciesTargets
+    FILE "StoneyVCVDependenciesTargets.cmake"
+    NAMESPACE StoneyDSP::StoneyVCV::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
+)
+
+export(
+    TARGETS dependencies
+    FILE "share/cmake/StoneyVCVDependenciesTargets.cmake"
+    NAMESPACE StoneyDSP::StoneyVCV::
+)
+list(APPEND STONEYVCV_TARGETS dependencies)
+
 #[==[StoneyVCV]==]
 add_library(plugin SHARED EXCLUDE_FROM_ALL)
 add_library(StoneyVCV::plugin ALIAS plugin)
 add_library(StoneyDSP::StoneyVCV::plugin ALIAS plugin)
-# add_library(StoneyVCV SHARED EXCLUDE_FROM_ALL)
-# add_library(StoneyDSP::StoneyVCV ALIAS StoneyVCV)
 
 set_target_properties(plugin PROPERTIES VERSION 2.1.0)
 set_target_properties(plugin PROPERTIES SOVERSION 2.1.0)
@@ -118,7 +163,7 @@ endif(DEFINED STONEYVCV_EXPERIMENTAL)
 target_link_libraries(plugin
     PUBLIC
     unofficial-vcvrack::rack-sdk::lib
-    StoneyDSP::Core
+    StoneyDSP::StoneyVCV::dependencies
     StoneyDSP::SIMD
     StoneyDSP::DSP
 )
@@ -270,8 +315,7 @@ if(STONEYVCV_BUILD_MODULE_HP1)
     )
     target_link_libraries(HP1
         PUBLIC
-        unofficial-vcvrack::rack-sdk::core
-        StoneyDSP::Core
+        StoneyDSP::StoneyVCV::dependencies
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP1)
     target_compile_definitions(plugin PUBLIC "-DSTONEYVCV_BUILD_HP1=1")
@@ -334,8 +378,7 @@ if(STONEYVCV_BUILD_MODULE_HP2)
     )
     target_link_libraries(HP2
         PUBLIC
-        unofficial-vcvrack::rack-sdk::core
-        StoneyDSP::Core
+        StoneyDSP::StoneyVCV::dependencies
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP2)
     target_compile_definitions(plugin PUBLIC "-DSTONEYVCV_BUILD_HP2=1")
@@ -398,8 +441,7 @@ if(STONEYVCV_BUILD_MODULE_HP4)
     )
     target_link_libraries(HP4
         PUBLIC
-        unofficial-vcvrack::rack-sdk::core
-        StoneyDSP::Core
+        StoneyDSP::StoneyVCV::dependencies
     )
     target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::HP4)
     target_compile_definitions(plugin PUBLIC "-DSTONEYVCV_BUILD_HP4=1")
