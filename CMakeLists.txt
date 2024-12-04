@@ -501,31 +501,6 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     catch_discover_tests(tests)
 endif()
 
-# # install the target and create export-set
-# install(TARGETS ${STONEYVCV_TARGETS}
-#     EXPORT StoneyVCVTargets
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-#     FILE_SET stoneyvcv_PLUGIN_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-#     FILE_SET stoneyvcv_HP1_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-#     FILE_SET stoneyvcv_HP2_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-#     FILE_SET stoneyvcv_HP4_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/StoneyVCV"
-# )
-
-# # generate and install export file
-# install(EXPORT StoneyVCVTargets
-#     FILE "StoneyVCVTargets.cmake"
-#     NAMESPACE StoneyDSP::StoneyVCV::
-#     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyVCV"
-# )
-# export(
-#     TARGETS ${STONEYVCV_TARGETS}
-#     FILE "share/cmake/StoneyVCVTargets.cmake"
-#     NAMESPACE StoneyDSP::StoneyVCV::
-# )
-
 #[==[StoneyVCVConfig.cmake]==]
 include(CMakePackageConfigHelpers)
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCVConfig.cmake.in" [==[
