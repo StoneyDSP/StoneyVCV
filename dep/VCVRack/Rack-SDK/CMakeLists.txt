@@ -556,7 +556,7 @@ list(APPEND _rack_sdk_supported_components
 )
 ## Custom 'check_required_components' macro
 foreach(_requested_component ${rack-sdk_FIND_COMPONENTS})
-    if (NOT _requested_component IN_LIST _rack_supported_components)
+    if (NOT _requested_component IN_LIST _rack_sdk_supported_components)
         message(FATAL_ERROR "Unsupported component: ${_requested_component}")
         set(rack_FOUND False)
         set(rack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
