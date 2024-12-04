@@ -38,10 +38,13 @@ add_library(dep INTERFACE)
 add_library(rack-sdk::dep ALIAS dep)
 add_library(unofficial-vcvrack::rack-sdk::dep ALIAS dep)
 
+target_compile_features(dep PUBLIC cxx_std_11)
+target_compile_features(dep PUBLIC c_std_11)
+
 set_target_properties(dep
     PROPERTIES
-    VERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}
-    SOVERSION ${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}
+    VERSION "${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}"
+    SOVERSION "${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}"
 
     RUNTIME_OUTPUT_DIRECTORY "bin"
     LIBRARY_OUTPUT_DIRECTORY "lib"
@@ -49,9 +52,9 @@ set_target_properties(dep
     PDB_OUTPUT_DIRECTORY "bin"
 
     # Compatible Interface
-    INTERFACE_dep_MAJOR_VERSION ${RACK_SDK_VERSION_MAJOR}
-    INTERFACE_dep_MINOR_VERSION ${RACK_SDK_VERSION_MINOR}
-    INTERFACE_dep_PATCH_VERSION ${RACK_SDK_VERSION_PATCH}
+    INTERFACE_dep_MAJOR_VERSION "${RACK_SDK_VERSION_MAJOR}"
+    INTERFACE_dep_MINOR_VERSION "${RACK_SDK_VERSION_MINOR}"
+    INTERFACE_dep_PATCH_VERSION "${RACK_SDK_VERSION_PATCH}"
 )
 set_property(TARGET dep APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_dep_MAJOR_VERSION
@@ -116,6 +119,11 @@ foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
     unset(name_of_file_dir)
 endforeach()
 
+target_compile_options(dep
+    PUBLIC
+    "-fPIC"
+)
+
 # install the target and create export-set
 install(TARGETS dep
     EXPORT DepExport
@@ -152,6 +160,9 @@ list(APPEND RACK_SDK_TARGETS dep)
 add_library(core INTERFACE)
 add_library(rack-sdk::core ALIAS core)
 add_library(unofficial-vcvrack::rack-sdk::core ALIAS core)
+
+target_compile_features(core PUBLIC cxx_std_11)
+target_compile_features(core PUBLIC c_std_11)
 
 set_target_properties(core
     PROPERTIES
@@ -230,7 +241,10 @@ foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
     unset(rel_path_to_file)
     unset(name_of_file_dir)
 endforeach()
-
+target_compile_options(core
+    PUBLIC
+    "-fPIC"
+)
 target_link_libraries(core
     INTERFACE
     unofficial-vcvrack::rack-sdk::dep
@@ -266,6 +280,9 @@ list(APPEND RACK_SDK_TARGETS core)
 add_library(lib SHARED IMPORTED GLOBAL)
 add_library(rack-sdk::lib ALIAS lib)
 add_library(unofficial-vcvrack::rack-sdk::lib ALIAS lib)
+
+target_compile_features(lib PUBLIC cxx_std_11)
+target_compile_features(lib PUBLIC c_std_11)
 
 set(RACK_SDK_LIB_FILE_EXTENSION)
 set(RACK_SDK_LIB_FILE_DESTINATION)
@@ -304,6 +321,7 @@ set_target_properties(lib
     ENABLE_EXPORTS TRUE
 
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
+    INTERFACE_COMPILE_OPTIONS "-fPIC"
     INTERFACE_LINK_DIRECTORIES "${RACK_SDK_LIB_INSTALL_DIR}"
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_INSTALL_INCLUDEDIR}"
 
@@ -332,6 +350,10 @@ if(WIN32)
         DESTINATION "${RACK_SDK_LIB_INSTALL_DIR}"
     )
 endif()
+target_compile_options(lib
+    PUBLIC
+    "-fPIC"
+)
 
 # set_property(TARGET lib APPEND PROPERTY
 # INTERFACE_LINK_OPTIONS "-fPIC"
@@ -449,6 +471,7 @@ set_target_properties(unofficial-vcvrack::rack-sdk::lib PROPERTIES
     SOVERSION @RACK_SDK_VERSION_MAJOR@.@RACK_SDK_VERSION_MINOR@.@RACK_SDK_VERSION_PATCH@
     ENABLE_EXPORTS TRUE
     INTERFACE_COMPILE_FEATURES "cxx_std_11;c_std_11"
+    INTERFACE_COMPILE_OPTIONS "-fPIC"
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
     # INTERFACE_LINK_OPTIONS "-fPIC;-shared"
     INTERFACE_LINK_DIRECTORIES "${_IMPORT_PREFIX}/@RACK_SDK_LIB_FILE_DESTINATION@"
