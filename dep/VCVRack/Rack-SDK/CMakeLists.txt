@@ -550,20 +550,16 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-sdk-config.cmake.in" [==[
 
 include("${CMAKE_CURRENT_LIST_DIR}/rack-sdk-config-version.cmake")
 
-message(STATUS "rack_sdk_FIND_COMPONENTS ${rack_sdk_FIND_COMPONENTS}")
-message(STATUS "rack-sdk_FIND_COMPONENTS ${rack-sdk_FIND_COMPONENTS}")
-message(STATUS "RACK_SDK_FIND_COMPONENTS ${RACK_SDK_FIND_COMPONENTS}")
-
 set(_rack_sdk_supported_components)
 list(APPEND _rack_sdk_supported_components
     @RACK_SDK_TARGETS@
 )
 ## Custom 'check_required_components' macro
-foreach(_requested_component ${rack_sdk_FIND_COMPONENTS})
+foreach(_requested_component ${rack-sdk_FIND_COMPONENTS})
     if (NOT _requested_component IN_LIST _rack_sdk_supported_components)
         message(FATAL_ERROR "Unsupported component: ${_requested_component}")
-        set(rack_sdk_FOUND False)
-        set(rack_sdk_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
+        set(rack-sdk_FOUND False)
+        set(rack-sdk_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
     endif()
     include("${CMAKE_CURRENT_LIST_DIR}/rack-sdk-${_requested_component}-targets.cmake")
     message(STATUS "Linking with rack-sdk::${_requested_component}")
