@@ -38,8 +38,8 @@ add_library(dep INTERFACE)
 add_library(rack-sdk::dep ALIAS dep)
 add_library(unofficial-vcvrack::rack-sdk::dep ALIAS dep)
 
-target_compile_features(dep PUBLIC cxx_std_11)
-target_compile_features(dep PUBLIC c_std_11)
+target_compile_features(dep INTERFACE cxx_std_11)
+target_compile_features(dep INTERFACE c_std_11)
 
 set_target_properties(dep
     PROPERTIES
@@ -120,7 +120,7 @@ foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
 endforeach()
 
 target_compile_options(dep
-    PUBLIC
+    INTERFACE
     "-fPIC"
 )
 
@@ -161,8 +161,8 @@ add_library(core INTERFACE)
 add_library(rack-sdk::core ALIAS core)
 add_library(unofficial-vcvrack::rack-sdk::core ALIAS core)
 
-target_compile_features(core PUBLIC cxx_std_11)
-target_compile_features(core PUBLIC c_std_11)
+target_compile_features(core INTERFACE cxx_std_11)
+target_compile_features(core INTERFACE c_std_11)
 
 set_target_properties(core
     PROPERTIES
@@ -242,7 +242,7 @@ foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
     unset(name_of_file_dir)
 endforeach()
 target_compile_options(core
-    PUBLIC
+    INTERFACE
     "-fPIC"
 )
 target_link_libraries(core
@@ -281,8 +281,8 @@ add_library(lib SHARED IMPORTED GLOBAL)
 add_library(rack-sdk::lib ALIAS lib)
 add_library(unofficial-vcvrack::rack-sdk::lib ALIAS lib)
 
-target_compile_features(lib PUBLIC cxx_std_11)
-target_compile_features(lib PUBLIC c_std_11)
+target_compile_features(lib INTERFACE cxx_std_11)
+target_compile_features(lib INTERFACE c_std_11)
 
 set(RACK_SDK_LIB_FILE_EXTENSION)
 set(RACK_SDK_LIB_FILE_DESTINATION)
@@ -351,7 +351,7 @@ if(WIN32)
     )
 endif()
 target_compile_options(lib
-    PUBLIC
+    INTERFACE
     "-fPIC"
 )
 
