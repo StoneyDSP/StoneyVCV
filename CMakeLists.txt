@@ -32,7 +32,7 @@ find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 get_target_property(rack_inc_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(rack_link_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_LINK_DIRECTORIES)
 get_target_property(rack_implib unofficial-vcvrack::rack-sdk::lib IMPORTED_IMPLIB)
-get_target_property(rack_implib_unofficial-vcvrack::location rack-sdk::lib IMPORTED_LOCATION)
+get_target_property(rack_implib_location unofficial-vcvrack::rack-sdk::lib IMPORTED_LOCATION)
 
 set(STONEYVCV_TARGETS)
 
