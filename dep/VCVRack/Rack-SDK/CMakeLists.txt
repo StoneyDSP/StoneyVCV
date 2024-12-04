@@ -555,11 +555,11 @@ list(APPEND _rack_sdk_supported_components
     @RACK_SDK_TARGETS@
 )
 ## Custom 'check_required_components' macro
-foreach(_requested_component ${rack-sdk_FIND_COMPONENTS})
+foreach(_requested_component ${rack_sdk_FIND_COMPONENTS})
     if (NOT _requested_component IN_LIST _rack_sdk_supported_components)
         message(FATAL_ERROR "Unsupported component: ${_requested_component}")
-        set(rack_FOUND False)
-        set(rack_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
+        set(rack_sdk_FOUND False)
+        set(rack_sdk_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
     endif()
     include("${CMAKE_CURRENT_LIST_DIR}/rack-sdk-${_requested_component}-targets.cmake")
     message(STATUS "Linking with rack-sdk::${_requested_component}")
