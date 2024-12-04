@@ -104,8 +104,8 @@ foreach(__rack_dep_header IN LISTS __rack_dep_headers_glob)
         FILE_SET rack_DEP_INTERFACE_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/dep>
+        $<INSTALL_INTERFACE:include/dep>
         FILES
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
         $<INSTALL_INTERFACE:${rel_path_to_file}>
@@ -231,8 +231,8 @@ foreach(__rack_sdk_header IN LISTS __rack_sdk_headers_glob)
         FILE_SET rack_sdk_CORE_INTERFACE_HEADERS
         TYPE HEADERS
         BASE_DIRS
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack>
+        $<INSTALL_INTERFACE:include/rack>
         FILES
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${rel_path_to_file}>
         $<INSTALL_INTERFACE:${rel_path_to_file}>
