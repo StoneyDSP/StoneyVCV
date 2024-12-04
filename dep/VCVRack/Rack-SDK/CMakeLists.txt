@@ -120,11 +120,11 @@ endforeach()
 install(TARGETS dep
     EXPORT DepExport
     COMPONENT dep
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILE_SET rack_DEP_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET rack_DEP_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/dep"
 )
 
 # generate and install export file
@@ -177,18 +177,6 @@ set_property(TARGET core APPEND PROPERTY
 set_property(TARGET core APPEND PROPERTY
     COMPATIBLE_INTERFACE_STRING INTERFACE_core_PATCH_VERSION
 )
-
-# configure_file("include/rack.hpp" "include/rack.hpp")
-# target_sources(core INTERFACE
-#     FILE_SET rack_sdk_CORE_INTERFACE_HEADERS
-#     TYPE HEADERS
-#     BASE_DIRS
-#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-#     $<INSTALL_INTERFACE:include>
-#     FILES
-#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack.hpp>
-#     $<INSTALL_INTERFACE:include/rack.hpp>
-# )
 
 set(__rack_sdk_headers_glob "")
 file(GLOB_RECURSE __rack_sdk_headers_glob CONFIGURE_DEPENDS "${RACK_DIR}/include/*.h*")
@@ -256,7 +244,7 @@ install(TARGETS core
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    FILE_SET rack_sdk_CORE_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET rack_sdk_CORE_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/rack"
 )
 
 # generate and install export file
@@ -545,6 +533,20 @@ cmake_policy(POP)
 # )
 
 list(APPEND RACK_SDK_TARGETS lib)
+
+# add_library(rack-sdk INTERFACE)
+# add_library(unofficial-vcvrack::rack-sdk ALIAS rack-sdk)
+# configure_file("include/rack.hpp" "include/rack.hpp")
+# target_sources(rack-sdk INTERFACE
+#     FILE_SET rack_sdk_SDK_INTERFACE_HEADERS
+#     TYPE HEADERS
+#     BASE_DIRS
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+#     $<INSTALL_INTERFACE:include>
+#     FILES
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack.hpp>
+#     $<INSTALL_INTERFACE:include/rack.hpp>
+# )
 
 include(CMakePackageConfigHelpers)
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-sdk-config.cmake.in" [==[
