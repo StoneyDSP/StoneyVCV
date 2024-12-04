@@ -28,7 +28,7 @@ SOURCES += $(wildcard src/StoneyVCV/*.cpp)
 
 # Add files to the ZIP package when running `make dist`
 # The compiled plugin and "plugin.json" are automatically added.
-DISTRIBUTABLES += include
+# DISTRIBUTABLES += include
 DISTRIBUTABLES += res
 DISTRIBUTABLES += LICENSE
 DISTRIBUTABLES += VERSION
