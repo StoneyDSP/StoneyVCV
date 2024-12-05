@@ -38,5 +38,155 @@
 #include <rack.hpp>
 
 #include "plugin.hpp"
+#include "StoneyDSP/Core.hpp"
+#include "StoneyDSP/DSP.hpp"
+#include "StoneyDSP/SIMD.hpp"
+
+//==============================================================================
+
+namespace StoneyDSP
+{
+/** @addtogroup StoneyDSP
+ *  @{
+ */
+
+//==============================================================================
+
+namespace StoneyVCV
+{
+/** @addtogroup StoneyVCV
+ *  @{
+ */
+
+//==============================================================================
+
+/**
+ * @brief The `VCA` class.
+ *
+ */
+struct VCA final : ::rack::engine::Module
+{
+public:
+
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+
+    ::StoneyDSP::float_t gain;
+
+    int lastChannels = 1;
+	::StoneyDSP::float_t lastGains[16] = {};
+
+    enum ParamsId {
+        GAIN_PARAM,
+        PARAMS_LEN
+    };
+	enum InputsId {
+		VCA_INPUT,
+        CV_INPUT,
+		INPUTS_LEN
+	};
+	enum OutputsId {
+		VCA_OUTPUT,
+		OUTPUTS_LEN
+	};
+	enum LightsId {
+		BLINK_LIGHT,
+		LIGHTS_LEN
+	};
+
+    /**
+     * @brief Construct a new `VCO` object.
+     *
+     */
+    VCA();
+
+    /**
+     * @brief Destroy the `VCO` object.
+     *
+     */
+    ~VCA();
+
+    /**
+     * @brief Advances the module by one audio sample.
+     *
+     * @param args
+     */
+    virtual void process(const ::StoneyDSP::StoneyVCV::VCA::ProcessArgs &args) override;
+
+    ::json_t *dataToJson() override;
+
+    void dataFromJson(::json_t *rootJ) override;
+
+private:
+    STONEYDSP_DECLARE_NON_COPYABLE(VCA)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCA)
+};
+
+//==============================================================================
+
+/**
+ * @brief The `VCAWidget` class.
+ *
+ */
+struct VCAWidget final : ::rack::Widget
+{
+public:
+    VCAWidget();
+    ~VCAWidget();
+    /**
+     * @brief Advances the module by one frame.
+     *
+     */
+    void step() override;
+    /**
+     * @brief Draws the widget to the NanoVG context.
+     * When overriding, call the superclass's draw(args) to recurse to
+     * children.
+     *
+     * @param args
+     */
+    void draw(const ::rack::Widget::DrawArgs &args) override;
+    ::rack::FramebufferWidget *vcaWidgetFrameBuffer;
+    ::rack::Widget *panelBorder;
+private:
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAWidget)
+};
+
+//==============================================================================
+
+/**
+ * @brief The `VCAModuleWidget` class.
+ *
+ */
+struct VCAModuleWidget final : ::rack::app::ModuleWidget
+{
+public:
+    VCAModuleWidget(::StoneyDSP::VCVRack::VCA* module);
+    ~VCAModuleWidget();
+    // ::StoneyDSP::VCVRack::VCAWidget *vcaWidget;
+    // ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
+private:
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAModuleWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAModuleWidget)
+};
+
+//==============================================================================
+
+/**
+ * @brief
+ *
+ * @return `rack::plugin::Model*`
+ */
+::rack::plugin::Model *createVCA(); // STONEYDSP_NOEXCEPT(false);
+
+//==============================================================================
+
+  /// @} group VCVRack
+} // namespace VCVRack
+
+//==============================================================================
+
+  /// @} group StoneyDSP
+} // namespace StoneyDSP
 
 //==============================================================================
