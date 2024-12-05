@@ -39,7 +39,7 @@ namespace StoneyDSP {
 
 namespace StoneyVCV {
 
-::rack::plugin::Model* modelHP4 = NULL;
+::rack::plugin::Model* modelVCA = NULL;
 
 }
 
