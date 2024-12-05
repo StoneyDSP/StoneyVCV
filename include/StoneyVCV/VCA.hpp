@@ -61,10 +61,10 @@ namespace StoneyVCV
 //==============================================================================
 
 /**
- * @brief The `VCA` class.
+ * @brief The `VCAModule` class.
  *
  */
-struct VCA final : ::rack::engine::Module
+struct VCAModule final : ::rack::engine::Module
 {
 public:
 
@@ -94,31 +94,31 @@ public:
 	};
 
     /**
-     * @brief Construct a new `VCO` object.
+     * @brief Construct a new `VCOModule` object.
      *
      */
-    VCA();
+    VCAModule();
 
     /**
-     * @brief Destroy the `VCO` object.
+     * @brief Destroy the `VCOModule` object.
      *
      */
-    ~VCA();
+    ~VCAModule();
 
     /**
      * @brief Advances the module by one audio sample.
      *
      * @param args
      */
-    virtual void process(const ::StoneyDSP::StoneyVCV::VCA::ProcessArgs &args) override;
+    virtual void process(const ::StoneyDSP::StoneyVCV::VCAModule::ProcessArgs &args) override;
 
     ::json_t *dataToJson() override;
 
     void dataFromJson(::json_t *rootJ) override;
 
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(VCA)
-    STONEYDSP_DECLARE_NON_MOVEABLE(VCA)
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
 };
 
 //==============================================================================
@@ -161,9 +161,9 @@ private:
 struct VCAModuleWidget final : ::rack::app::ModuleWidget
 {
 public:
-    VCAModuleWidget(::StoneyDSP::VCVRack::VCA* module);
+    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCAModule* module);
     ~VCAModuleWidget();
-    // ::StoneyDSP::VCVRack::VCAWidget *vcaWidget;
+    // ::StoneyDSP::StoneyVCV::VCAWidget *vcaWidget;
     // ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModuleWidget)
