@@ -39,4 +39,88 @@
 
 // Spec goes here...
 
+namespace StoneyDSP {
+namespace StoneyVCV {
+namespace VCA {
+struct VCASpec final : ::StoneyDSP::StoneyVCV::Spec
+{
+public:
+    std::string slug;
+    static constexpr int NUM_PARAMS = 1;
+    static constexpr int NUM_INPUTS = 2;
+    static constexpr int NUM_OUTPUTS = 1;
+    static constexpr int NUM_LIGHTS = 1;
+    VCASpec() : slug("VCA") {};
+private:
+    // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(VCASpec)
+    STONEYDSP_DECLARE_NON_COPYABLE(VCASpec)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCASpec)
+};
+}
+}
+}
+
+// Tests go here...
+
+TEST_CASE( "VCA", "[VCA]" ) {
+
+    std::shared_ptr<::StoneyDSP::StoneyVCV::VCA::VCASpec> spec = std::make_shared<::StoneyDSP::StoneyVCV::VCA::VCASpec>();
+
+    SECTION( "files" ) {
+        REQUIRE( STONEYVCV_VCA_HPP_INCLUDED == 1 );
+    }
+
+    SECTION( "VCAModule" ) {
+        SECTION( "statics" ) {
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::PARAMS_LEN == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::INPUTS_LEN == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+        }
+        SECTION( "methods" ) {
+            ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
+            REQUIRE( test_vcaModule->getNumParams() == spec.get()->NUM_PARAMS );
+            REQUIRE( test_vcaModule->getNumInputs() == spec.get()->NUM_INPUTS );
+            REQUIRE( test_vcaModule->getNumOutputs() == spec.get()->NUM_OUTPUTS );
+            REQUIRE( test_vcaModule->getNumLights() == spec.get()->NUM_LIGHTS );
+            delete test_vcaModule;
+        }
+    }
+
+    SECTION( "VCAModuleWidget" ) {
+        // ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
+        // ::rack::app::ModuleWidget* test_vcaModuleWidget = new ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget(dynamic_cast<::StoneyDSP::StoneyVCV::VCA::VCAModule*>(test_vcaModule));
+        // std::shared_ptr<::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget> test_vcaModuleWidget = std::make_shared<::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget>();
+        // REQUIRE( test_vcaModuleWidget.get()->box.size.x == 5.08F );
+        // REQUIRE( test_vcaModuleWidget.get()->box.size.y == 128.5F );
+        // delete test_vcaModuleWidget;
+        // delete test_vcaModule;
+
+        // REQUIRE_THAT(
+        //     test_vcaModuleWidget.box.size.x,
+        //     Catch::Matchers::WithinRel(5.08 * 3.0, 0.001)
+        // );
+
+        // REQUIRE_THAT(
+        //     test_vcaModuleWidget.box.size.y,
+        //     Catch::Matchers::WithinRel(128.5, 0.001)
+        // );
+
+
+        // ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = NULL;
+        // test_vcaModule = dynamic_cast<::StoneyDSP::StoneyVCV::VCA::VCAModule*>(new ::StoneyDSP::StoneyVCV::VCA::VCAModule);
+        // ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget* test_vcaModuleWidget = new ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget(test_vcaModule);
+
+        // delete test_vcaModuleWidget;
+        // delete test_vcaModule;
+    }
+
+    SECTION( "instance" ) {
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->slug == spec.get()->slug );
+    }
+
+    spec.reset();
+}
+
 #endif

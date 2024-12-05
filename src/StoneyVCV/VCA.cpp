@@ -35,49 +35,49 @@
 
 //==============================================================================
 
-::StoneyDSP::StoneyVCV::VCAModule::VCAModule()
+::StoneyDSP::StoneyVCV::VCA::VCAModule::VCAModule()
  : gain(0.0F)
 {
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
-        ::StoneyDSP::StoneyVCV::VCAModule::PARAMS_LEN,   // numParams
-        ::StoneyDSP::StoneyVCV::VCAModule::INPUTS_LEN,   // numInputs
-        ::StoneyDSP::StoneyVCV::VCAModule::OUTPUTS_LEN,  // numOutputs
-        ::StoneyDSP::StoneyVCV::VCAModule::LIGHTS_LEN    // numLights
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::PARAMS_LEN,     // numParams
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::INPUTS_LEN,     // numInputs
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::OUTPUTS_LEN,    // numOutputs
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::LIGHTS_LEN      // numLights
     );
     configParam(
-        ::StoneyDSP::StoneyVCV::VCAModule::GAIN_PARAM,   // paramId
-        0.0f,                                    // minValue
-        1.0f,                                    // maxValue
-        1.0f,                                    // defaultValue
-        "Gain",                                  // name
-        "%",                                     // unit
-        0.0f,                                    // displayBase
-        100.0f                                   // displayMultiplier
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM,     // paramId
+        0.0f,                                                   // minValue
+        1.0f,                                                   // maxValue
+        1.0f,                                                   // defaultValue
+        "Gain",                                                 // name
+        "%",                                                    // unit
+        0.0f,                                                   // displayBase
+        100.0f                                                  // displayMultiplier
     );
     configInput(
-        ::StoneyDSP::StoneyVCV::VCAModule::VCA_INPUT,    // portID
-        "IN"                                     // name
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT,           // portID
+        "IN"                                                    // name
     );
     configInput(
-        ::StoneyDSP::StoneyVCV::VCAModule::CV_INPUT,     // portID
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT,     // portID
         "CV"                                     // name
     );
     configOutput(
-        ::StoneyDSP::StoneyVCV::VCAModule::VCA_OUTPUT,   // portID
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT,   // portID
         "OUT"                                    // name
     );
 }
 
-::StoneyDSP::StoneyVCV::VCAModule::~VCAModule()
+::StoneyDSP::StoneyVCV::VCA::VCAModule::~VCAModule()
 {
 
 }
 
-void ::StoneyDSP::StoneyVCV::VCAModule::process(const ::StoneyDSP::StoneyVCV::VCAModule::ProcessArgs &args)
+void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args)
 {
-    auto vca_input = inputs[::StoneyDSP::StoneyVCV::VCAModule::VCA_INPUT];
-    auto cv_input = inputs[::StoneyDSP::StoneyVCV::VCAModule::CV_INPUT];
+    auto vca_input = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT];
+    auto cv_input = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT];
 
     // Get desired number of channels from a "primary" input.
 	// If this input is unpatched, getChannels() returns 0, but we should
@@ -89,16 +89,16 @@ void ::StoneyDSP::StoneyVCV::VCAModule::process(const ::StoneyDSP::StoneyVCV::VC
     });
 
     // Panel-based params are monophonic by nature
-    float level = params[::StoneyDSP::StoneyVCV::VCAModule::GAIN_PARAM].getValue();
+    float level = params[::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM].getValue();
 
     for (::StoneyDSP::uint32_t c = 0; c < numChannels; c++) {
 			// Get input
-			float in = inputs[::StoneyDSP::StoneyVCV::VCAModule::VCA_INPUT].getPolyVoltage(c);
+			float in = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT].getPolyVoltage(c);
 
 			// Get gain
 			auto gainApply = level;
-			if (inputs[::StoneyDSP::StoneyVCV::VCAModule::CV_INPUT].isConnected()) {
-				auto cv = ::rack::clamp(inputs[::StoneyDSP::StoneyVCV::VCAModule::CV_INPUT].getPolyVoltage(c) / 10.0f, 0.0f, 1.0f);
+			if (inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT].isConnected()) {
+				auto cv = ::rack::clamp(inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT].getPolyVoltage(c) / 10.0f, 0.0f, 1.0f);
 				// if (int(params[EXP_PARAM].getValue()) == 0)
 				// 	cv = std::pow(cv, 4.f);
 				gainApply *= cv;
@@ -109,21 +109,21 @@ void ::StoneyDSP::StoneyVCV::VCAModule::process(const ::StoneyDSP::StoneyVCV::VC
 			lastGains[c] = gainApply;
 
 			// Set output
-			outputs[::StoneyDSP::StoneyVCV::VCAModule::VCA_OUTPUT].setVoltage(in, c);
+			outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT].setVoltage(in, c);
 		}
 
-	outputs[::StoneyDSP::StoneyVCV::VCAModule::VCA_OUTPUT].setChannels(numChannels);
+	outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT].setChannels(numChannels);
 	lastChannels = numChannels;
 }
 
-::json_t *::StoneyDSP::StoneyVCV::VCAModule::dataToJson()
+::json_t *::StoneyDSP::StoneyVCV::VCA::VCAModule::dataToJson()
 {
     ::json_t *rootJ = ::json_object();
     ::json_object_set_new(rootJ, "gain", ::json_real(gain));
     return rootJ;
 }
 
-void ::StoneyDSP::StoneyVCV::VCAModule::dataFromJson(::json_t *rootJ)
+void ::StoneyDSP::StoneyVCV::VCA::VCAModule::dataFromJson(::json_t *rootJ)
 {
     ::json_t *gainJ = ::json_object_get(rootJ, "gain");
     if (gainJ)
@@ -132,7 +132,7 @@ void ::StoneyDSP::StoneyVCV::VCAModule::dataFromJson(::json_t *rootJ)
 
 //==============================================================================
 
-::StoneyDSP::StoneyVCV::VCAWidget::VCAWidget()
+::StoneyDSP::StoneyVCV::VCA::VCAWidget::VCAWidget()
 {
     // Widgets
     vcaWidgetFrameBuffer = new ::rack::FramebufferWidget;
@@ -144,18 +144,18 @@ void ::StoneyDSP::StoneyVCV::VCAModule::dataFromJson(::json_t *rootJ)
     vcaWidgetFrameBuffer->addChild(panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::VCAWidget::~VCAWidget()
+::StoneyDSP::StoneyVCV::VCA::VCAWidget::~VCAWidget()
 {
 
 }
 
-void ::StoneyDSP::StoneyVCV::VCAWidget::step()
+void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::step()
 {
     panelBorder->box.size = box.size;
     ::rack::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::VCAWidget::draw(const ::rack::Widget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::rack::Widget::DrawArgs &args)
 {
 
     ::nvgBeginPath(args.vg);
@@ -168,7 +168,7 @@ void ::StoneyDSP::StoneyVCV::VCAWidget::draw(const ::rack::Widget::DrawArgs &arg
 
 //==============================================================================
 
-::StoneyDSP::StoneyVCV::VCAModuleWidget::VCAModuleWidget(::StoneyDSP::StoneyVCV::VCAModule* module)
+::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module)
 {
     setModule(module);
     setPanel(::rack::createPanel(
@@ -180,7 +180,7 @@ void ::StoneyDSP::StoneyVCV::VCAWidget::draw(const ::rack::Widget::DrawArgs &arg
     // vcaModuleWidgetFrameBuffer->setSize(box.size);
     // addChild(vcaModuleWidgetFrameBuffer);
     // //
-    // vcaWidget = ::rack::createWidget<::StoneyDSP::StoneyVCV::VCAWidget>(::rack::math::Vec(0.0f, 0.0f));
+    // vcaWidget = ::rack::createWidget<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(::rack::math::Vec(0.0f, 0.0f));
     // vcaWidget->setSize(box.size);
     // vcaModuleWidgetFrameBuffer->addChild(vcaWidget);
     // Screws
@@ -199,19 +199,31 @@ void ::StoneyDSP::StoneyVCV::VCAWidget::draw(const ::rack::Widget::DrawArgs &arg
     addChild(screwC);
     addChild(screwD);
     // Params
-    addParam(::rack::createParamCentered<::rack::componentlibrary::RoundBigBlackKnob>(::rack::window::mm2px(::rack::math::Vec(15.24f, 34.068f)), module, ::StoneyDSP::StoneyVCV::VCAModule::GAIN_PARAM));
+    addParam(::rack::createParamCentered<::rack::componentlibrary::RoundBigBlackKnob>(::rack::window::mm2px(::rack::math::Vec(15.24f, 34.068f)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM));
     // Inputs
-    addInput(::rack::createInputCentered<::rack::componentlibrary::PJ301MPort>(::rack::window::mm2px(::rack::math::Vec(15.24f, 58.4275f)), module, ::StoneyDSP::StoneyVCV::VCAModule::CV_INPUT));
-    addInput(::rack::createInputCentered<::rack::componentlibrary::PJ301MPort>(::rack::window::mm2px(::rack::math::Vec(15.24f, 82.7865f)), module, ::StoneyDSP::StoneyVCV::VCAModule::VCA_INPUT));
+    addInput(::rack::createInputCentered<::rack::componentlibrary::PJ301MPort>(::rack::window::mm2px(::rack::math::Vec(15.24f, 58.4275f)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT));
+    addInput(::rack::createInputCentered<::rack::componentlibrary::PJ301MPort>(::rack::window::mm2px(::rack::math::Vec(15.24f, 82.7865f)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT));
     // Outputs
-    addOutput(::rack::createOutputCentered<::rack::componentlibrary::PJ301MPort>(::rack::window::mm2px(::rack::math::Vec(15.24f, 107.1455f)), module, ::StoneyDSP::StoneyVCV::VCAModule::VCA_OUTPUT));
+    addOutput(::rack::createOutputCentered<::rack::componentlibrary::PJ301MPort>(::rack::window::mm2px(::rack::math::Vec(15.24f, 107.1455f)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT));
     // Lights
-    addChild(::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>>(::rack::window::mm2px(::rack::math::Vec(15.24f, 21.889f)), module, ::StoneyDSP::StoneyVCV::VCAModule::BLINK_LIGHT));
+    addChild(::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>>(::rack::window::mm2px(::rack::math::Vec(15.24f, 21.889f)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::BLINK_LIGHT));
 }
 
-::StoneyDSP::StoneyVCV::VCAModuleWidget::~VCAModuleWidget()
+::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::~VCAModuleWidget()
 {
     // delete vcaModuleWidgetFrameBuffer;
+}
+
+//==============================================================================
+
+::rack::plugin::Model* ::StoneyDSP::StoneyVCV::VCA::createVCA() // STONEYDSP_NOEXCEPT(false)
+{
+    ::rack::plugin::Model* modelVCA = ::rack::createModel<
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule,
+        ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget
+    >("VCA");
+    // STONEYDSP_THROW_IF_FAILED_VOID(modelVCO == nullptr, bad_alloc);
+    return modelVCA;
 }
 
 //==============================================================================
@@ -224,16 +236,15 @@ namespace StoneyVCV {
 
 //==============================================================================
 
-::rack::plugin::Model* createVCA() // STONEYDSP_NOEXCEPT(false)
-{
-    ::rack::plugin::Model* modelVCA = ::rack::createModel<::StoneyDSP::StoneyVCV::VCAModule, ::StoneyDSP::StoneyVCV::VCAModuleWidget>("VCA");
-    // STONEYDSP_THROW_IF_FAILED_VOID(modelVCO == nullptr, bad_alloc);
-    return modelVCA;
-}
+namespace VCA {
 
 //==============================================================================
 
-::rack::plugin::Model* modelVCA = ::StoneyDSP::StoneyVCV::createVCA();
+::rack::plugin::Model* modelVCA = ::StoneyDSP::StoneyVCV::VCA::createVCA();
+
+//==============================================================================
+
+} // namespace VCA
 
 //==============================================================================
 

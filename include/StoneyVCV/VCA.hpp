@@ -31,7 +31,7 @@
 
 #pragma once
 
-#define VCA_HPP_INCLUDED 1
+#define STONEYVCV_VCA_HPP_INCLUDED 1
 
 //==============================================================================
 
@@ -60,19 +60,27 @@ namespace StoneyVCV
 
 //==============================================================================
 
+namespace VCA
+{
+/** @addtogroup VCA
+ *  @{
+ */
+
+//==============================================================================
+
 /**
  * @brief The `VCAModule` class.
  *
  */
-struct VCAModule final : ::rack::engine::Module
+struct VCAModule final :
+    ::rack::engine::Module
 {
 public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
+    ::StoneyDSP::size_t lastChannels = 1;
     ::StoneyDSP::float_t gain;
-
-    int lastChannels = 1;
 	::StoneyDSP::float_t lastGains[16] = {};
 
     enum ParamsId {
@@ -110,7 +118,7 @@ public:
      *
      * @param args
      */
-    virtual void process(const ::StoneyDSP::StoneyVCV::VCAModule::ProcessArgs &args) override;
+    virtual void process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args) override;
 
     ::json_t *dataToJson() override;
 
@@ -127,7 +135,8 @@ private:
  * @brief The `VCAWidget` class.
  *
  */
-struct VCAWidget final : ::rack::Widget
+struct VCAWidget final :
+    ::rack::Widget
 {
 public:
     VCAWidget();
@@ -158,10 +167,11 @@ private:
  * @brief The `VCAModuleWidget` class.
  *
  */
-struct VCAModuleWidget final : ::rack::app::ModuleWidget
+struct VCAModuleWidget final :
+    ::rack::app::ModuleWidget
 {
 public:
-    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCAModule* module);
+    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module);
     ~VCAModuleWidget();
     // ::StoneyDSP::StoneyVCV::VCAWidget *vcaWidget;
     // ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
@@ -178,6 +188,11 @@ private:
  * @return `rack::plugin::Model*`
  */
 ::rack::plugin::Model *createVCA(); // STONEYDSP_NOEXCEPT(false);
+
+//==============================================================================
+
+  /// @} group VCA
+} // namespace VCA
 
 //==============================================================================
 
