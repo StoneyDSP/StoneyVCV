@@ -63,7 +63,9 @@ extern ::rack::plugin::Plugin* pluginInstance;
     extern ::rack::plugin::Model* modelHP4;
     extern ::rack::plugin::Model* modelHP2;
     extern ::rack::plugin::Model* modelHP1;
+namespace VCA {
     extern ::rack::plugin::Model* modelVCA;
+}
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif

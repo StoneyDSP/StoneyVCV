@@ -60,6 +60,9 @@ TEST_CASE("plugin", "[plugin]") {
         SECTION( "HP1" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::modelHP1 != nullptr);
         }
+        SECTION( "HP1" ) {
+            REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
+        }
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
