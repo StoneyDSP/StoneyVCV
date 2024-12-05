@@ -535,22 +535,28 @@ endif(STONEYVCV_BUILD_MODULE_VCA)
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     if(STONEYVCV_BUILD_MODULE_HP4)
         target_sources(tests
-        PRIVATE
-        "${PROJECT_SOURCE_DIR}/test/StoneyVCV/HP4.cpp"
-    )
+            PRIVATE
+            "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/HP4.cpp"
+        )
     endif(STONEYVCV_BUILD_MODULE_HP4)
     if(STONEYVCV_BUILD_MODULE_HP2)
         target_sources(tests
-        PRIVATE
-        "${PROJECT_SOURCE_DIR}/test/StoneyVCV/HP2.cpp"
-    )
+            PRIVATE
+            "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/HP2.cpp"
+        )
     endif(STONEYVCV_BUILD_MODULE_HP2)
     if(STONEYVCV_BUILD_MODULE_HP1)
         target_sources(tests
-        PRIVATE
-        "${PROJECT_SOURCE_DIR}/test/StoneyVCV/HP1.cpp"
-    )
+            PRIVATE
+            "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/HP1.cpp"
+        )
     endif(STONEYVCV_BUILD_MODULE_HP1)
+    if(STONEYVCV_BUILD_MODULE_VCA)
+        target_sources(tests
+            PRIVATE
+            "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/VCA.cpp"
+        )
+    endif(STONEYVCV_BUILD_MODULE_VCA)
 endif()
 
 endif(STONEYVCV_BUILD_MODULES)
