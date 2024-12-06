@@ -35,23 +35,23 @@
 
 //==============================================================================
 
-::StoneyDSP::StoneyVCV::HP2Module::HP2Module()
+::StoneyDSP::StoneyVCV::HP2::HP2Module::HP2Module()
 {
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
-        ::StoneyDSP::StoneyVCV::HP2Module::PARAMS_LEN,   // numParams
-        ::StoneyDSP::StoneyVCV::HP2Module::INPUTS_LEN,   // numInputs
-        ::StoneyDSP::StoneyVCV::HP2Module::OUTPUTS_LEN,  // numOutputs
-        ::StoneyDSP::StoneyVCV::HP2Module::LIGHTS_LEN    // numLights
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::PARAMS_LEN,   // numParams
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::INPUTS_LEN,   // numInputs
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::OUTPUTS_LEN,  // numOutputs
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::LIGHTS_LEN    // numLights
     );
 }
 
-// ::StoneyDSP::StoneyVCV::HP2Module::~HP2Module()
+// ::StoneyDSP::StoneyVCV::HP2::HP2Module::~HP2Module()
 // {}
 
 //==============================================================================
 
-::StoneyDSP::StoneyVCV::HP2Widget::HP2Widget()
+::StoneyDSP::StoneyVCV::HP2::HP2Widget::HP2Widget()
 // :   hp2WidgetFrameBuffer(new ::rack::FramebufferWidget),
 //     panelBorder(::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f)))
 {
@@ -65,16 +65,16 @@
     // hp2WidgetFrameBuffer->addChild(panelBorder);
 }
 
-// ::StoneyDSP::StoneyVCV::HP2Widget::~HP2Widget()
+// ::StoneyDSP::StoneyVCV::HP2::HP2Widget::~HP2Widget()
 // {}
 
-void ::StoneyDSP::StoneyVCV::HP2Widget::step()
+void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::step()
 {
     // panelBorder->box.size = box.size;
     ::rack::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::HP2Widget::draw(const ::rack::Widget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::rack::Widget::DrawArgs &args)
 {
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
@@ -86,8 +86,8 @@ void ::StoneyDSP::StoneyVCV::HP2Widget::draw(const ::rack::Widget::DrawArgs &arg
 
 //==============================================================================
 
-::StoneyDSP::StoneyVCV::HP2ModuleWidget::HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2Module* module)
-// :   hp2Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP2Widget>(::rack::math::Vec(0.0F, 0.0F))),
+::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2::HP2Module* module)
+// :   hp2Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP2::HP2Widget>(::rack::math::Vec(0.0F, 0.0F))),
 //     hp2ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget)
 {
     setModule(module);
@@ -106,7 +106,7 @@ void ::StoneyDSP::StoneyVCV::HP2Widget::draw(const ::rack::Widget::DrawArgs &arg
     // hp2ModuleWidgetFrameBuffer->setSize(box.size);
     // addChild(hp2ModuleWidgetFrameBuffer);
     // //
-    // hp2Widget = ::rack::createWidget<::StoneyDSP::StoneyVCV::HP2Widget>(::rack::math::Vec(0.0F, 0.0F));
+    // hp2Widget = ::rack::createWidget<::StoneyDSP::StoneyVCV::HP2::HP2Widget>(::rack::math::Vec(0.0F, 0.0F));
     // hp2Widget->setSize(box.size);
     // hp2ModuleWidgetFrameBuffer->addChild(hp2Widget);
     // // Screws
@@ -120,18 +120,18 @@ void ::StoneyDSP::StoneyVCV::HP2Widget::draw(const ::rack::Widget::DrawArgs &arg
     // addChild(screwB1);
 }
 
-// ::StoneyDSP::StoneyVCV::HP2ModuleWidget::~HP2ModuleWidget()
+// ::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::~HP2ModuleWidget()
 // {}
 
 /**
  *
  */
-::rack::plugin::Model* ::StoneyDSP::StoneyVCV::createHP2()
+::rack::plugin::Model* ::StoneyDSP::StoneyVCV::HP2::createHP2()
 {
 
     ::rack::plugin::Model* modelHP2 = ::rack::createModel<
-        ::StoneyDSP::StoneyVCV::HP2Module,
-        ::StoneyDSP::StoneyVCV::HP2ModuleWidget
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module,
+        ::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget
     >("HP2");
 
     // STONEYDSP_THROW_IF_FAILED_VOID(modelHP2 == nullptr, bad_alloc);
@@ -141,13 +141,13 @@ void ::StoneyDSP::StoneyVCV::HP2Widget::draw(const ::rack::Widget::DrawArgs &arg
 //==============================================================================
 
 namespace StoneyDSP {
-
 namespace StoneyVCV {
+namespace HP2 {
 
-::rack::plugin::Model* modelHP2 = ::StoneyDSP::StoneyVCV::createHP2();
+::rack::plugin::Model* modelHP2 = ::StoneyDSP::StoneyVCV::HP2::createHP2();
 
 }
-
+}
 }
 
 //==============================================================================
