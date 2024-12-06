@@ -58,7 +58,7 @@ TEST_CASE("plugin", "[plugin]") {
             REQUIRE(::StoneyDSP::StoneyVCV::modelHP2 != nullptr);
         }
         SECTION( "HP1" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::modelHP1 != nullptr);
+            REQUIRE(::StoneyDSP::StoneyVCV::HP1::modelHP1 != nullptr);
         }
         SECTION( "HP1" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);

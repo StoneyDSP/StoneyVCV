@@ -62,7 +62,9 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
     extern ::rack::plugin::Model* modelHP4;
     extern ::rack::plugin::Model* modelHP2;
+namespace HP1 {
     extern ::rack::plugin::Model* modelHP1;
+}
 namespace VCA {
     extern ::rack::plugin::Model* modelVCA;
 }
