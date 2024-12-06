@@ -58,11 +58,20 @@ namespace StoneyVCV
 
 //==============================================================================
 
+namespace HP2
+{
+/** @addtogroup HP2
+ *  @{
+ */
+
+//==============================================================================
+
 /**
  * @brief The `HP2Module` struct.
  *
  */
-struct HP2Module final : ::rack::engine::Module
+struct HP2Module final :
+    ::rack::engine::Module
 {
 public:
 
@@ -90,7 +99,8 @@ private:
 
 //==============================================================================
 
-struct HP2Widget final : ::rack::Widget
+struct HP2Widget final :
+    ::rack::Widget
 {
 public:
     HP2Widget();
@@ -121,10 +131,11 @@ private:
  * @brief The `HP2ModuleWidget` struct.
  *
  */
-struct HP2ModuleWidget final : ::rack::app::ModuleWidget
+struct HP2ModuleWidget final :
+    ::rack::app::ModuleWidget
 {
 public:
-    HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2Module *module);
+    HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2::HP2Module *module);
     // ~HP2ModuleWidget();
     // ::StoneyDSP::StoneyVCV::HP2Widget *hp2Widget;
     // ::rack::FramebufferWidget *hp2ModuleWidgetFrameBuffer;
@@ -141,6 +152,11 @@ private:
  * @return `rack::plugin::Model*`
  */
 ::rack::plugin::Model *createHP2(); // STONEYDSP_NOEXCEPT(false);
+
+//==============================================================================
+
+  /// @} group HP2
+} // namespace HP2
 
 //==============================================================================
 
