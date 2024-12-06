@@ -52,7 +52,7 @@ void init(::rack::plugin::Plugin* p) {
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-    p->addModel(::StoneyDSP::StoneyVCV::modelHP4);
+    p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
     p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
     p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
     p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
