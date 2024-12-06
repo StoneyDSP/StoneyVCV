@@ -32,14 +32,10 @@
 #include "StoneyVCV/plugin.hpp"
 
 namespace StoneyDSP {
-
 namespace StoneyVCV {
-
 /** @brief The `StoneyDSP` VCV Rack Plugin instance. */
 ::rack::plugin::Plugin* pluginInstance;
-
 }
-
 }
 
 /**
@@ -59,6 +55,7 @@ void init(::rack::plugin::Plugin* p) {
     p->addModel(::StoneyDSP::StoneyVCV::modelHP4);
     p->addModel(::StoneyDSP::StoneyVCV::modelHP2);
     p->addModel(::StoneyDSP::StoneyVCV::modelHP1);
+    p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif

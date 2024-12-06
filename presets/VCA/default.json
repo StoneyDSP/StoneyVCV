@@ -1,0 +1,11 @@
+{
+  "plugin": "StoneyVCV",
+  "model": "VCA",
+  "version": "2.0.0",
+  "params": [
+    {
+      "value": 1.0,
+      "id": 0
+    }
+  ]
+}
