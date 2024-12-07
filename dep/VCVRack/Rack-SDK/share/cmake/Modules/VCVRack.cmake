@@ -192,8 +192,8 @@ function(vcvrack_add_plugin)
 
     # Parse args...
     set(options)
-    set(args BRAND SLUG VERSION)
-    set(list_args)
+    set(args BRAND SLUG VERSION SOVERSION)
+    set(list_args SOURCES)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
     #
@@ -213,20 +213,226 @@ function(vcvrack_add_plugin)
     if(DEFINED ARG_BRAND)
         add_library(${brand}::${slug}::plugin ALIAS plugin)
     endif()
-    #
+    target_link_libraries(plugin
+        PUBLIC
+        unofficial-vcvrack::rack-sdk::lib
+    )
+
+    set_target_properties(plugin
+        PROPERTIES
+        PREFIX ""
+        LIBRARY_OUTPUT_NAME "plugin"
+    )
+
+    set_property(
+        TARGET plugin
+        PROPERTY "plugin_IS_VCVRACK_LIBRARY" TRUE # custom validation
+    )
+
+    if(DEFINED ARG_VERSION)
+        set_target_properties(plugin
+            PROPERTIES
+            VERSION "${ARG_VERSION}"
+        )
+        vcvrack_add_compile_definitions(plugin
+            PUBLIC
+            "-Dplugin_VERSION=${ARG_VERSION}"
+        )
+    endif()
+    if(DEFINED ARG_SOVERSION)
+        set_target_properties(plugin
+            PROPERTIES
+            VERSION "${ARG_SOVERSION}"
+        )
+        vcvrack_add_compile_definitions(plugin
+            PUBLIC
+            "-Dplugin_SOVERSION=${ARG_SOVERSION}"
+        )
+    endif()
+
+    if(DEFINED ARG_SOURCES)
+        foreach(source IN LISTS ARG_SOURCES)
+            vcvrack_add_sources(plugin ${source})
+        endforeach()
+    endif()
+
+    vcvrack_add_sources(plugin ${ARG_UNPARSED_ARGUMENTS})
+
 endfunction()
 
 function(vcvrack_add_module name)
     # Parse args...
     set(options)
-    set(args SLUG BRAND VERSION)
-    set(list_args)
+    set(args SLUG BRAND VERSION SOVERSION)
+    set(list_args SOURCES)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
     # Validate 'SLUG' arg (required)
     # Validate 'BRAND' arg (optional)
     # Validate 'VERSION' arg (optional)
     # Begin target...
     add_library(${name} OBJECT)
+    add_library(${slug}::${name} ALIAS ${name})
+    if(DEFINED ARG_BRAND)
+        add_library(${brand}::${slug}::${name} ALIAS ${name})
+        target_link_libraries(plugin PUBLIC ${brand}::${slug}::${name})
+    else()
+        target_link_libraries(plugin PUBLIC ${slug}::${name})
+    endif()
+    target_link_libraries(${name}
+        PUBLIC
+        unofficial-vcvrack::rack-sdk::core
+    )
+    set_property(
+        TARGET ${name}
+        PROPERTY "${name}_IS_VCVRACK_LIBRARY" TRUE # custom validation
+    )
+
+    if(DEFINED ARG_VERSION)
+        set_target_properties(${name}
+            PROPERTIES
+            VERSION "${ARG_VERSION}"
+        )
+        vcvrack_add_compile_definitions(${name}
+            PUBLIC
+            "-D${name}_VERSION=${ARG_VERSION}"
+        )
+    endif()
+    if(DEFINED ARG_SOVERSION)
+        set_target_properties(${name}
+            PROPERTIES
+            VERSION "${ARG_SOVERSION}"
+        )
+        vcvrack_add_compile_definitions(${name}
+            PUBLIC
+            "-D${name}_SOVERSION=${ARG_SOVERSION}"
+        )
+    endif()
+
+    if(DEFINED ARG_SOURCES)
+        foreach(source IN LISTS ARG_SOURCES)
+            vcvrack_add_sources(${name} ${source})
+        endforeach()
+    endif()
+
+    vcvrack_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
+
+endfunction()
+
+#[=============================================================================[
+Add source files to an existing VCVRack library target.
+
+vcvrack_add_sources(<name> [items1...])
+vcvrack_add_sources(<name> [BASE_DIRS <dirs>] [items1...])
+vcvrack_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]])
+vcvrack_add_sources(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
+]=============================================================================]#
+function(vcvrack_add_sources name)
+
+    # Check that this is a VCVRack library target
+    get_target_property(is_vcvrack_lib ${name} ${name}_IS_VCVRACK_LIBRARY)
+    if(NOT TARGET ${name} OR NOT is_vcvrack_lib)
+        message(SEND_ERROR "'vcvrack_add_sources()' called on '${name}' which is not an existing VCVRack library")
+        return()
+    endif()
+
+    set(options)
+    set(args BASE_DIRS)
+    set(list_args INTERFACE PRIVATE PUBLIC)
+    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    if(NOT ARG_BASE_DIRS)
+        # Default base directory of the passed-in source file(s)
+        set(ARG_BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
+    endif()
+    _vcvrack_normalize_path(ARG_BASE_DIRS)
+    get_filename_component(ARG_BASE_DIRS "${ARG_BASE_DIRS}" ABSOLUTE)
+
+    # All remaining unparsed args 'should' be source files for this target, so...
+    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+
+        _vcvrack_normalize_path(input)
+        get_filename_component(abs_in "${input}" ABSOLUTE)
+        file(RELATIVE_PATH relpath "${ARG_BASE_DIRS}" "${abs_in}")
+        if(relpath MATCHES "^\\.\\.")
+            # For now we just error on files that exist outside of the source dir.
+            message(SEND_ERROR "Cannot add file '${input}': File must be in a subdirectory of ${ARG_BASE_DIRS}")
+            return()
+        endif()
+
+        set(rel_file "${ARG_BASE_DIRS}/${relpath}")
+        _vcvrack_normalize_path(rel_file)
+        get_filename_component(source_file "${input}" ABSOLUTE)
+        # If we are here, source file is valid. Add IDE support
+        source_group("${name}" FILES "${source_file}")
+
+        if(DEFINED ARG_INTERFACE)
+            foreach(item IN LISTS ARG_INTERFACE)
+                target_sources(${name} INTERFACE "${source_file}")
+            endforeach()
+        endif()
+
+        if(DEFINED ARG_PRIVATE)
+            foreach(item IN LISTS ARG_PRIVATE)
+                target_sources(${name} PRIVATE "${source_file}")
+            endforeach()
+        endif()
+
+        if(DEFINED ARG_PUBLIC)
+            foreach(item IN LISTS ARG_PUBLIC)
+                target_sources(${name} PUBLIC "${source_file}")
+            endforeach()
+        endif()
+
+        foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+            target_sources(${name} PRIVATE "${source_file}")
+        endforeach()
+
+    endforeach()
+
+endfunction()
+
+#[=============================================================================[
+Add pre-processor definitions to an existing VCVRack library target.
+
+vcvrack_add_compile_definitions(<name> [items1...])
+vcvrack_add_compile_definitions(<name> <INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
+]=============================================================================]#
+function(vcvrack_add_compile_definitions name)
+
+    # Check that this is a VCVRack library target
+    get_target_property(is_vcvrack_lib ${name} ${name}_IS_VCVRACK_LIBRARY)
+    if(NOT TARGET ${name} OR NOT is_vcvrack_lib)
+        message(SEND_ERROR "'vcvrack_add_compile_definitions()' called on '${name}' which is not an existing VCVRack library")
+        return()
+    endif()
+
+    set(options)
+    set(args)
+    set(list_args INTERFACE PRIVATE PUBLIC)
+    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    if(DEFINED ARG_INTERFACE)
+        foreach(item IN LISTS ARG_INTERFACE)
+            target_compile_definitions(${name} INTERFACE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PRIVATE)
+        foreach(item IN LISTS ARG_PRIVATE)
+            target_compile_definitions(${name} PRIVATE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PUBLIC)
+        foreach(item IN LISTS ARG_PUBLIC)
+            target_compile_definitions(${name} PUBLIC "${item}")
+        endforeach()
+    endif()
+
+    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+        target_compile_definitions(${name} "${item}")
+    endforeach()
+
 endfunction()
 
 #[==[Cleanup]==]
