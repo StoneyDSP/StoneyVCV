@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.14...3.31 FATAL_ERROR)
 get_filename_component(VCVRACK_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 list(APPEND CMAKE_MODULE_PATH "${VCVRACK_DIR}/Rack-SDK/share/cmake/Modules")
 # Pick up 'rack-sdk-config.cmake', 'rack-sdk-*-targets.cmake.cmake', etc
-list(APPEND CMAKE_PREFIX_PATH "${VCVRACK_DIR}/Rack-SDK/share/cmake/rack-sdk")
+# list(APPEND CMAKE_PREFIX_PATH "${VCVRACK_DIR}/Rack-SDK/share/cmake/rack-sdk")
 
 project(MyPlugin)
 
@@ -39,18 +39,10 @@ message(STATUS "}")
 
 vcvrack_add_plugin(
     SLUG MySlug
-)
-
-target_sources(plugin
-    PRIVATE
-    "src/plugin.cpp"
+    SOURCES "src/plugin.cpp"
 )
 
 vcvrack_add_module(MyModule
     SLUG MySlug
-)
-
-target_sources(MyModule
-    PRIVATE
-    "src/MyModule.cpp"
+    SOURCES "src/MyModule.cpp"
 )
