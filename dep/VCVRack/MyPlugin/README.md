@@ -13,6 +13,34 @@ cmake                                       \
   -S .                                      \
   -B ./build                                \
   -DRACK_DIR="/path/to/unzipped/Rack-SDK"
+
+# example of successful output (linux)...
+
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Linking with unofficial-vcvrack::rack-sdk::dep
+-- Linking with unofficial-vcvrack::rack-sdk::core
+-- Linking with unofficial-vcvrack::rack-sdk::lib
+-- Linking with unofficial-vcvrack::rack-sdk
+-- VCVRack.cmake v2.5.2
+-- found jq: /usr/bin/jq
+-- plguin.json: {
+--   "slug": "MyPlugin"
+--   "version": "2.0.1"
+-- }
+-- Configuring done (4.6s)
+-- Generating done (0.0s)
+-- Build files have been written to...
 ```
 
 ```shell
