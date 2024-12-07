@@ -36,3 +36,21 @@ message(STATUS "}")
 # ends up being the source of most problems, especially for inexperienced users.
 
 # Let's try to make a plugin!
+
+vcvrack_add_plugin(
+    SLUG MySlug
+)
+
+target_sources(plugin
+    PRIVATE
+    "src/plugin.cpp"
+)
+
+vcvrack_add_module(MyModule
+    SLUG MySlug
+)
+
+target_sources(MyModule
+    PRIVATE
+    "src/MyModule.cpp"
+)
