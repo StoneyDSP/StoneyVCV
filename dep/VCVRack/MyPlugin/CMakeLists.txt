@@ -16,3 +16,9 @@ include(VCVRack)
 
 vcvrack_get_plugin_slug()
 vcvrack_get_plugin_version()
+
+# Let's not *really* do this... but it's a useful test, for now
+message(STATUS "plugin.json: {")
+message(STATUS "  \"slug\": \"${VCVRACK_PLUGIN_SLUG}\"")
+message(STATUS "  \"version\": \"${VCVRACK_PLUGIN_VERSION}\"")
+message(STATUS "}")
