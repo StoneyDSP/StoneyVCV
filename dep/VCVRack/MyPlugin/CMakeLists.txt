@@ -25,6 +25,7 @@ message(STATUS "  \"slug\": \"${VCVRACK_PLUGIN_SLUG}\"")
 message(STATUS "  \"version\": \"${VCVRACK_PLUGIN_VERSION}\"")
 message(STATUS "}")
 
+include(GNUInstallDirs)
 # I don't like that design pattern above; and parsing the plugin.json in this
 # way leads to too many "cool ideas" which end up as dead ends. Let's focus on
 # the real tasks: the helper functions which create plugin and module targets.
@@ -41,7 +42,8 @@ message(STATUS "}")
 
 vcvrack_add_plugin(
     SLUG MySlug
-    SOURCES "src/plugin.cpp"
+    # HEADERS "include/plugin.hpp"
+    SOURCES "src/plugin.cpp" "src/plugin.hpp"
     VERSION 2.0.0
     SOVERSION 2
 )
@@ -51,4 +53,29 @@ vcvrack_add_module(MyModule
     SOURCES "src/MyModule.cpp"
     VERSION 0.0.1
     SOVERSION 0
+)
+
+# install targets and generate an export set
+install(TARGETS plugin;MyModule
+    EXPORT MyPluginExports
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET plugin_plugin_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET plugin_MyModule_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+
+# install export set
+install(EXPORT MyPluginExports
+    FILE "MyPluginTargets.cmake"
+    NAMESPACE MyBrand::MyPlugin::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MyBrand"
+)
+
+# export targets
+export(
+    TARGETS plugin;MyModule
+    FILE "share/cmake/MyPluginTargets.cmake"
+    NAMESPACE MyBrand::MyPlugin::
 )
