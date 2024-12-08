@@ -10,6 +10,8 @@ include(CMakeParseArguments)
 include(GNUInstallDirs)
 include(CMakeDependentOption)
 
+find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
+
 #[==[Include Guard]==]
 
 if(COMMAND vcvrack_add_sources)
@@ -170,7 +172,7 @@ consumers of the VCV Rack API. Then, we use some aliased CMake commands like
 `vcvrack_add_sources`.... the custom property will allow us to do some helpful
 input validation (and provide helpful error messages) for passed-in files...
 ]==]
-message(STATUS "")
+message(STATUS "Loading VCVRack helper functions...")
 
 #[=============================================================================[
 Example usage:
@@ -193,14 +195,15 @@ function(vcvrack_add_plugin)
     # Parse args...
     set(options)
     set(args BRAND SLUG VERSION SOVERSION)
-    set(list_args SOURCES)
+    set(list_args SOURCES HEADERS)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
-    #
+    # Validate 'SLUG' arg (required)
     if(NOT DEFINED ARG_SLUG)
-        message(SEND_ERROR "'vcvrack_add_plugin' requires argument: SLUG")
+        message(SEND_ERROR "'vcvrack_add_plugin' requires arg: SLUG")
+    else()
+        set(slug ${ARG_SLUG})
     endif()
-    set(slug "${ARG_SLUG}")
 
     #
     if(DEFINED ARG_BRAND)
@@ -208,7 +211,7 @@ function(vcvrack_add_plugin)
     endif()
 
     # Begin target...
-    add_library(plugin SHARED)
+    add_library(plugin SHARED) # EXCLUDE_FROM_ALL
     add_library(${slug}::plugin ALIAS plugin)
     if(DEFINED ARG_BRAND)
         add_library(${brand}::${slug}::plugin ALIAS plugin)
@@ -218,10 +221,17 @@ function(vcvrack_add_plugin)
         unofficial-vcvrack::rack-sdk::lib
     )
 
+    # Minimum C/C++ language requirements
+    target_compile_features(plugin PUBLIC cxx_std_11)
+    target_compile_features(plugin PUBLIC c_std_11)
+
     set_target_properties(plugin
         PROPERTIES
         PREFIX ""
         LIBRARY_OUTPUT_NAME "plugin"
+        # Prevent some platforms from putting built lib in 'lib64/' or 'bin/'
+        ARCHIVE_OUTPUT_DIRECTORY "lib"
+        LIBRARY_OUTPUT_DIRECTORY "lib"
     )
 
     set_property(
@@ -250,6 +260,12 @@ function(vcvrack_add_plugin)
         )
     endif()
 
+    if(DEFINED ARG_HEADERS)
+        foreach(header IN LISTS ARG_HEADERS)
+            vcvrack_add_headers(plugin ${header})
+        endforeach()
+    endif()
+
     if(DEFINED ARG_SOURCES)
         foreach(source IN LISTS ARG_SOURCES)
             vcvrack_add_sources(plugin ${source})
@@ -258,15 +274,80 @@ function(vcvrack_add_plugin)
 
     vcvrack_add_sources(plugin ${ARG_UNPARSED_ARGUMENTS})
 
+    vcvrack_add_compile_options(plugin
+        PUBLIC
+            "-fPIC"
+    )
+
+    if(UNIX)
+        if(APPLE)
+            target_link_options(plugin
+                PUBLIC
+                "-undefined dynamic_lookup"
+            )
+        else() # If we're Linux... (assumes GCC, as per Rack)
+            target_compile_options(plugin
+                PUBLIC
+
+                # # This prevents static variables in the DSO (dynamic shared
+                # # object) from being preserved after dlclose().
+                "-fno-gnu-unique"
+            )
+            target_link_options(plugin
+                PUBLIC
+
+                # # This prevents static variables in the DSO (dynamic shared
+                # # object) from being preserved after dlclose().
+                "-fno-gnu-unique"
+
+                # # When Rack loads a plugin, it symlinks /tmp/Rack2 to its
+                # # system dir, so the plugin can link to libRack.
+                "-Wl,-rpath=/tmp/Rack2"
+
+                # # Since the plugin's compiler could be a different version
+                # # than Rack's compiler, link libstdc++ and libgcc statically
+                # # to avoid ABI issues.
+                "-static-libstdc++"
+                "-static-libgcc"
+            )
+        endif(APPLE)
+    endif(UNIX)
+
+    if(WIN32)
+        target_link_options(plugin
+            PUBLIC
+            "-static-libstdc++"
+        )
+    endif(WIN32)
+
 endfunction()
 
+#[=============================================================================[
+Example usage:
+
+vcvrack_add_module(
+    NAME "MyModule"
+    SLUG "MySlug"
+    BRAND "MyBrand"
+    VERSION 2.0.1
+    HEADERS "include/MyModule.hpp"
+    SOURCES "src/MyModule.cp"
+)
+
+Should create a target named 'MyModule', along with some aliases...
+]=============================================================================]#
 function(vcvrack_add_module name)
     # Parse args...
     set(options)
     set(args SLUG BRAND VERSION SOVERSION)
-    set(list_args SOURCES)
+    set(list_args SOURCES HEADERS)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
     # Validate 'SLUG' arg (required)
+    if(NOT DEFINED ARG_SLUG)
+        message(SEND_ERROR "'vcvrack_add_module' requires arg: SLUG")
+    else()
+        set(slug ${ARG_SLUG})
+    endif()
     # Validate 'BRAND' arg (optional)
     # Validate 'VERSION' arg (optional)
     # Begin target...
@@ -278,6 +359,7 @@ function(vcvrack_add_module name)
     else()
         target_link_libraries(plugin PUBLIC ${slug}::${name})
     endif()
+    # vcvrack_add_sources(plugin PRIVATE $<TARGET_OBJECTS:${name}>)
     target_link_libraries(${name}
         PUBLIC
         unofficial-vcvrack::rack-sdk::core
@@ -308,6 +390,17 @@ function(vcvrack_add_module name)
         )
     endif()
 
+    vcvrack_add_compile_options(${name}
+        PUBLIC
+        "-fPIC"
+    )
+
+    if(DEFINED ARG_HEADERS)
+        foreach(header IN LISTS ARG_HEADERS)
+            vcvrack_add_headers(${name} ${header})
+        endforeach()
+    endif()
+
     if(DEFINED ARG_SOURCES)
         foreach(source IN LISTS ARG_SOURCES)
             vcvrack_add_sources(${name} ${source})
@@ -315,6 +408,203 @@ function(vcvrack_add_module name)
     endif()
 
     vcvrack_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
+
+    # get_target_property(plugin_include_dirs plugin INTERFACE_INCLUDE_DIRECTORIES)
+
+    # if(DEFINED plugin_include_dirs AND NOT plugin_include_dirs STREQUAL "")
+    #     vcvrack_include_directories(${name} PUBLIC "${plugin_include_dirs}")
+    # endif()
+
+endfunction()
+
+#[=============================================================================[
+Include directories in an existing VCVRack library target.
+
+vcvrack_include_directories(<name> [items1...])
+vcvrack_include_directories(<name> [BASE_DIRS <dirs>] [items1...])
+vcvrack_include_directories(<name> [<INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]])
+vcvrack_include_directories(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
+]=============================================================================]#
+function(vcvrack_include_directories)
+
+    # Check that this is a VCVRack library target
+    get_target_property(is_vcvrack_lib ${name} ${name}_IS_VCVRACK_LIBRARY)
+    if(NOT TARGET ${name} OR NOT is_vcvrack_lib)
+        message(SEND_ERROR "'vcvrack_include_directories()' called on '${name}' which is not an existing VCVRack library")
+        return()
+    endif()
+
+    set(options)
+    set(args)
+    set(list_args INTERFACE PRIVATE PUBLIC)
+    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    if(DEFINED ARG_INTERFACE)
+        foreach(item IN LISTS ARG_INTERFACE)
+            target_include_directories(${name} INTERFACE ${item})
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PUBLIC)
+        foreach(item IN LISTS ARG_PUBLIC)
+            target_include_directories(${name} PUBLIC ${item})
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PRIVATE)
+        foreach(item IN LISTS ARG_PRIVATe)
+            target_include_directories(${name} PRIVATE ${item})
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_UNPARSED_ARGUMENTS)
+        foreach(item IN LISTS ARG_UNPARSED_ARGUMENTS)
+            target_include_directories(${name} PUBLIC ${item})
+        endforeach()
+    endif()
+
+endfunction()
+
+#[=============================================================================[
+Add header files to an existing VCVRack library target.
+
+vcvrack_add_headers(<name> [items1...])
+vcvrack_add_headers(<name> [BASE_DIRS <dirs>] [items1...])
+vcvrack_add_headers(<name> [<INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]])
+vcvrack_add_headers(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
+]=============================================================================]#
+function(vcvrack_add_headers name)
+
+    # Check that this is a VCVRack library target
+    get_target_property(is_vcvrack_lib ${name} ${name}_IS_VCVRACK_LIBRARY)
+    if(NOT TARGET ${name} OR NOT is_vcvrack_lib)
+        message(SEND_ERROR "'vcvrack_add_headers()' called on '${name}' which is not an existing VCVRack library")
+        return()
+    endif()
+
+    set(options)
+    set(args BASE_DIR)
+    set(list_args INTERFACE PRIVATE PUBLIC)
+    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    if(NOT ARG_BASE_DIR)
+        # Default base directory of the passed-in source file(s)
+        set(ARG_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+    endif()
+    _vcvrack_normalize_path(ARG_BASE_DIR)
+    get_filename_component(ARG_BASE_DIR "${ARG_BASE_DIR}" ABSOLUTE)
+
+    # All remaining unparsed args 'should' be source files for this target, so...
+    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS ARG_INTERFACE ARG_PUBLIC ARG_PRIVATE)
+
+        _vcvrack_normalize_path(input)
+        get_filename_component(abs_in "${input}" ABSOLUTE)
+        file(RELATIVE_PATH rel_in "${ARG_BASE_DIR}" "${abs_in}")
+
+        if(rel_in MATCHES "^\\.\\.")
+            # For now we just error on files that exist outside of the source dir.
+            message(SEND_ERROR "Cannot add file '${input}': File must be in a subdirectory of ${ARG_BASE_DIR}")
+            return()
+        endif()
+
+        get_filename_component(input_filename "${abs_in}" NAME)
+        get_filename_component(input_dirname "${abs_in}" DIRECTORY)
+
+        file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${abs_in}")
+        file(RELATIVE_PATH dir_relpath "${ARG_BASE_DIR}" "${input_dirname}")
+
+        configure_file("${item_relpath}" "${item_relpath}")
+
+        # set(rel_file "${ARG_BASE_DIR}/${rel_in}")
+        # _vcvrack_normalize_path(rel_file)
+        # get_filename_component(source_file "${input}" ABSOLUTE)
+        # # If we are here, source file is valid. Add IDE support
+        # source_group("${name}" FILES "${source_file}")
+    endforeach()
+
+    if(DEFINED ARG_INTERFACE)
+        foreach(item IN LISTS ARG_INTERFACE)
+            get_filename_component(item_absolute_path "${item}" ABSOLUTE)
+            get_filename_component(item_filename "${item}" NAME)
+            get_filename_component(item_dirname "${item}" DIRECTORY)
+            file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
+            get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
+            target_sources(${name}
+                INTERFACE
+                FILE_SET "plugin_${name}_INTERFACE_HEADERS"
+                TYPE HEADERS
+                BASE_DIRS
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                $<INSTALL_INTERFACE:${dir_relpath}>
+                FILES
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
+                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+            )
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PRIVATE)
+        foreach(item IN LISTS ARG_PRIVATE)
+            get_filename_component(item_absolute_path "${item}" ABSOLUTE)
+            get_filename_component(item_filename "${item}" NAME)
+            get_filename_component(item_dirname "${item}" DIRECTORY)
+            file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
+            get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
+            target_sources(${name}
+                PRIVATE
+                FILE_SET "plugin_${name}_PRIVATE_HEADERS"
+                TYPE HEADERS
+                BASE_DIRS
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                $<INSTALL_INTERFACE:${dir_relpath}>
+                FILES
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
+                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+            )
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PUBLIC)
+        foreach(item IN LISTS ARG_PUBLIC)
+            get_filename_component(item_absolute_path "${item}" ABSOLUTE)
+            get_filename_component(item_filename "${item}" NAME)
+            get_filename_component(item_dirname "${item}" DIRECTORY)
+            file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
+            get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
+            target_sources(${name}
+                PUBLIC
+                FILE_SET "plugin_${name}_PUBLIC_HEADERS"
+                TYPE HEADERS
+                BASE_DIRS
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                $<INSTALL_INTERFACE:${dir_relpath}>
+                FILES
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
+                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+            )
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_UNPARSED_ARGUMENTS)
+        foreach(item IN LISTS ARG_UNPARSED_ARGUMENTS)
+            get_filename_component(item_absolute_path "${item}" ABSOLUTE)
+            get_filename_component(item_filename "${item}" NAME)
+            get_filename_component(item_dirname "${item}" DIRECTORY)
+            file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
+            get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
+            target_sources(${name}
+                PUBLIC
+                FILE_SET "plugin_${name}_PUBLIC_HEADERS"
+                TYPE HEADERS
+                BASE_DIRS
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                $<INSTALL_INTERFACE:${dir_relpath}>
+                FILES
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
+                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+            )
+        endforeach()
+    endif()
 
 endfunction()
 
@@ -348,7 +638,7 @@ function(vcvrack_add_sources name)
     get_filename_component(ARG_BASE_DIRS "${ARG_BASE_DIRS}" ABSOLUTE)
 
     # All remaining unparsed args 'should' be source files for this target, so...
-    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS ARG_PUBLIC ARG_PRIVATE ARG_INTERFACE)
 
         _vcvrack_normalize_path(input)
         get_filename_component(abs_in "${input}" ABSOLUTE)
@@ -359,35 +649,37 @@ function(vcvrack_add_sources name)
             return()
         endif()
 
-        set(rel_file "${ARG_BASE_DIRS}/${relpath}")
-        _vcvrack_normalize_path(rel_file)
-        get_filename_component(source_file "${input}" ABSOLUTE)
-        # If we are here, source file is valid. Add IDE support
-        source_group("${name}" FILES "${source_file}")
-
-        if(DEFINED ARG_INTERFACE)
-            foreach(item IN LISTS ARG_INTERFACE)
-                target_sources(${name} INTERFACE "${source_file}")
-            endforeach()
-        endif()
-
-        if(DEFINED ARG_PRIVATE)
-            foreach(item IN LISTS ARG_PRIVATE)
-                target_sources(${name} PRIVATE "${source_file}")
-            endforeach()
-        endif()
-
-        if(DEFINED ARG_PUBLIC)
-            foreach(item IN LISTS ARG_PUBLIC)
-                target_sources(${name} PUBLIC "${source_file}")
-            endforeach()
-        endif()
-
-        foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-            target_sources(${name} PRIVATE "${source_file}")
-        endforeach()
+        # set(rel_file "${ARG_BASE_DIRS}/${relpath}")
+        # _vcvrack_normalize_path(rel_file)
+        # get_filename_component(source_file "${input}" ABSOLUTE)
+        # # If we are here, source file is valid. Add IDE support
+        # source_group("${name}" FILES "${source_file}")
 
     endforeach()
+
+    if(DEFINED ARG_INTERFACE)
+        foreach(item IN LISTS ARG_INTERFACE)
+            target_sources(${name} INTERFACE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PRIVATE)
+        foreach(item IN LISTS ARG_PRIVATE)
+            target_sources(${name} PRIVATE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PUBLIC)
+        foreach(item IN LISTS ARG_PUBLIC)
+            target_sources(${name} PUBLIC "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_UNPARSED_ARGUMENTS)
+        foreach(item IN LISTS ARG_UNPARSED_ARGUMENTS)
+            target_sources(${name} PRIVATE "${item}")
+        endforeach()
+    endif()
 
 endfunction()
 
@@ -431,6 +723,94 @@ function(vcvrack_add_compile_definitions name)
 
     foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
         target_compile_definitions(${name} "${item}")
+    endforeach()
+
+endfunction()
+
+#[=============================================================================[
+Add compiler options to an existing VCVRack library target.
+
+vcvrack_add_compile_options(<name> [items1...])
+vcvrack_add_compile_options(<name> <INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
+]=============================================================================]#
+function(vcvrack_add_compile_options name)
+
+    # Check that this is a VCVRack library target
+    get_target_property(is_vcvrack_lib ${name} ${name}_IS_VCVRACK_LIBRARY)
+    if(NOT TARGET ${name} OR NOT is_vcvrack_lib)
+        message(SEND_ERROR "'vcvrack_add_compile_options()' called on '${name}' which is not an existing VCVRack library")
+        return()
+    endif()
+
+    set(options)
+    set(args)
+    set(list_args INTERFACE PRIVATE PUBLIC)
+    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    if(DEFINED ARG_INTERFACE)
+        foreach(item IN LISTS ARG_INTERFACE)
+            target_compile_options(${name} INTERFACE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PRIVATE)
+        foreach(item IN LISTS ARG_PRIVATE)
+            target_compile_options(${name} PRIVATE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PUBLIC)
+        foreach(item IN LISTS ARG_PUBLIC)
+            target_compile_options(${name} PUBLIC "${item}")
+        endforeach()
+    endif()
+
+    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+        target_compile_options(${name} "${item}")
+    endforeach()
+
+endfunction()
+
+#[=============================================================================[
+Add linker options to an existing VCVRack library target.
+
+vcvrack_add_link_options(<name> [items1...])
+vcvrack_add_link_options(<name> <INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
+]=============================================================================]#
+function(vcvrack_add_link_options name)
+
+    # Check that this is a VCVRack library target
+    get_target_property(is_vcvrack_lib ${name} ${name}_IS_VCVRACK_LIBRARY)
+    if(NOT TARGET ${name} OR NOT is_vcvrack_lib)
+        message(SEND_ERROR "'vcvrack_add_link_options()' called on '${name}' which is not an existing VCVRack library")
+        return()
+    endif()
+
+    set(options)
+    set(args)
+    set(list_args INTERFACE PRIVATE PUBLIC)
+    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    if(DEFINED ARG_INTERFACE)
+        foreach(item IN LISTS ARG_INTERFACE)
+            target_link_options(${name} INTERFACE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PRIVATE)
+        foreach(item IN LISTS ARG_PRIVATE)
+            target_link_options(${name} PRIVATE "${item}")
+        endforeach()
+    endif()
+
+    if(DEFINED ARG_PUBLIC)
+        foreach(item IN LISTS ARG_PUBLIC)
+            target_link_options(${name} PUBLIC "${item}")
+        endforeach()
+    endif()
+
+    foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
+        target_link_options(${name} "${item}")
     endforeach()
 
 endfunction()
