@@ -193,8 +193,8 @@ May only be used once per project (unless we can do better somehow)
 function(vcvrack_add_plugin)
 
     # Parse args...
-    set(options)
-    set(args BRAND SLUG VERSION SOVERSION)
+    set(options EXPORT INSTALL)
+    set(args BRAND SLUG VERSION SOVERSION RACK_SDK_VERSION)
     set(list_args SOURCES HEADERS INCLUDE_DIRS)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
@@ -221,6 +221,14 @@ function(vcvrack_add_plugin)
         endif()
         set(brand ${ARG_BRAND})
     endif()
+
+    # if(NOT DEFINED ARG_EXPORT)
+    #     set(ARG_EXPORT TRUE)
+    # endif()
+
+    # if(NOT DEFINED ARG_INSTALL)
+    #     set(ARG_INSTALL TRUE)
+    # endif()
 
     # Begin target...
     add_library(plugin SHARED) # EXCLUDE_FROM_ALL
@@ -264,7 +272,7 @@ function(vcvrack_add_plugin)
     if(DEFINED ARG_SOVERSION)
         set_target_properties(plugin
             PROPERTIES
-            VERSION "${ARG_SOVERSION}"
+            SOVERSION "${ARG_SOVERSION}"
         )
         vcvrack_add_compile_definitions(plugin
             PUBLIC
@@ -339,6 +347,42 @@ function(vcvrack_add_plugin)
         )
     endif(WIN32)
 
+    if(ARG_INSTALL)
+        install(TARGETS plugin
+            EXPORT PluginExports
+            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+            FILE_SET plugin_plugin_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        )
+
+        if(ARG_BRAND)
+            set(_ns_prefix ${ARG_BRAND}::)
+            set(_dir_prefix ${ARG_BRAND}/)
+        endif()
+
+        # install export set
+        install(EXPORT PluginExports
+            FILE "${slug}-plugin-targets.cmake"
+            NAMESPACE ${_ns_prefix}${brand}::
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_dir_prefix}${slug}"
+        )
+    endif()
+
+    if(ARG_EXPORT)
+        # export targets
+        if(ARG_BRAND)
+            set(_ns_prefix ${ARG_BRAND}::)
+            set(_dir_prefix ${ARG_BRAND}/)
+        endif()
+        export(
+            TARGETS plugin
+            FILE "share/cmake/${_dir_prefix}${slug}/${slug}-plugin-targets.cmake"
+            NAMESPACE ${_ns_prefix}${slug}::
+        )
+    endif()
+
 endfunction()
 
 #[=============================================================================[
@@ -363,8 +407,8 @@ function(vcvrack_add_module name)
     endif()
 
     # Parse args...
-    set(options)
-    set(args SLUG BRAND VERSION SOVERSION)
+    set(options EXPORT INSTALL)
+    set(args SLUG BRAND VERSION SOVERSION RACK_SDK_VERSION)
     set(list_args SOURCES HEADERS INCLUDE_DIRS)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
 
@@ -391,18 +435,28 @@ function(vcvrack_add_module name)
         endif()
         set(brand ${ARG_BRAND})
     endif()
+
     # Validate 'VERSION' arg (optional)
+
+    # if(NOT DEFINED ARG_EXPORT)
+    #     set(ARG_EXPORT TRUE)
+    # endif()
+
+    # if(NOT DEFINED ARG_INSTALL)
+    #     set(ARG_INSTALL TRUE)
+    # endif()
+
     # Begin target...
     add_library(${name} OBJECT)
     add_library(${slug}::${name} ALIAS ${name})
     if(DEFINED ARG_BRAND)
         add_library(${brand}::${slug}::${name} ALIAS ${name})
-        target_link_libraries(plugin PRIVATE ${brand}::${slug}::${name})
-    else()
-        target_link_libraries(plugin PRIVATE ${slug}::${name})
+    #     target_link_libraries(plugin PRIVATE ${brand}::${slug}::${name})
+    # else()
+    #     target_link_libraries(plugin PRIVATE ${slug}::${name})
     endif()
 
-    # vcvrack_add_sources(plugin PRIVATE $<TARGET_OBJECTS:${name}>)
+    vcvrack_add_sources(plugin PRIVATE $<TARGET_OBJECTS:${name}>)
     target_link_libraries(${name}
         PUBLIC
         unofficial-vcvrack::rack-sdk::core
@@ -425,7 +479,7 @@ function(vcvrack_add_module name)
     if(DEFINED ARG_SOVERSION)
         set_target_properties(${name}
             PROPERTIES
-            VERSION "${ARG_SOVERSION}"
+            SOVERSION "${ARG_SOVERSION}"
         )
         vcvrack_add_compile_definitions(${name}
             PUBLIC
@@ -462,6 +516,41 @@ function(vcvrack_add_module name)
 
     if(DEFINED plugin_include_dirs AND NOT plugin_include_dirs STREQUAL "")
         vcvrack_include_directories(${name} PUBLIC "${plugin_include_dirs}")
+    endif()
+
+    if(ARG_INSTALL)
+        install(TARGETS ${name}
+            EXPORT ${name}Exports
+            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+            FILE_SET plugin_${name}_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        )
+
+        if(ARG_BRAND)
+            set(_ns_prefix ${ARG_BRAND}::)
+            set(_dir_prefix ${ARG_BRAND}/)
+        endif()
+
+        # install export set
+        install(EXPORT ${name}Exports
+            FILE "${slug}-${name}-targets.cmake"
+            NAMESPACE ${_ns_prefix}${brand}::
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_dir_prefix}${slug}"
+        )
+    endif()
+
+    if(ARG_EXPORT)
+        # export targets
+        if(ARG_BRAND)
+            set(_ns_prefix ${ARG_BRAND}::)
+        endif()
+        export(
+            TARGETS ${name}
+            FILE "share/cmake/${_ns_prefix}${slug}/${slug}-${name}-targets.cmake"
+            NAMESPACE ${_ns_prefix}${slug}::
+        )
     endif()
 
 endfunction()
@@ -501,7 +590,7 @@ function(vcvrack_include_directories name)
     endif()
 
     if(DEFINED ARG_PRIVATE)
-        foreach(item IN LISTS ARG_PRIVATe)
+        foreach(item IN LISTS ARG_PRIVATE)
             target_include_directories(${name} PRIVATE ${item})
         endforeach()
     endif()
