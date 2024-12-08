@@ -1,5 +1,7 @@
 #include "plugin.hpp"
 
+// using namespace rack;
+
 struct OscillatorEngine {
 	float phase = 0.f;
 };

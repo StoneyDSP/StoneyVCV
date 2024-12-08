@@ -1,7 +1,7 @@
 #pragma once
 #include <rack.hpp>
 
-
+// Be very careful abut 'using namespace' in the global namespace of a shared header...
 using namespace rack;
 
 // Declare the Plugin, defined in plugin.cpp

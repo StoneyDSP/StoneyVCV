@@ -46,3 +46,42 @@ cmake                                       \
 ```shell
 cmake --build ./build
 ```
+
+## Initialization
+
+This simple test project was built using the following commands against a local copy of the Rack SDK:
+
+```shell
+cd dep/VCVRack
+```
+
+```shell
+$RACK_DIR/helper.py createplugin MyPlugin
+```
+
+```shell
+cd MyPlugin
+```
+
+```shell
+curl https://vcvrack.com/manual/images/MyModule.svg -o res/MyModule.svg
+```
+
+```shell
+$RACK_DIR/helper.py createmodule MyModule res/MyModule.svg src/MyModule.cpp
+```
+
+```txt
+To enable the module, add
+
+	extern Model* modelMyModule;
+
+to plugin.hpp, and add
+
+	p->addModel(modelMyModule);
+
+to the init() function in plugin.cpp.
+Source file generated at src/MyModule.cpp
+```
+
+Implement [Polyphony as per the VCV Rack Plugin Guide](https://vcvrack.com/manual/PluginGuide#Polyphony).

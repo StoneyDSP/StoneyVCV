@@ -558,21 +558,12 @@ cmake_policy(POP)
 
 list(APPEND RACK_SDK_TARGETS lib)
 
-# add_library(rack-sdk INTERFACE)
-# add_library(unofficial-vcvrack::rack-sdk ALIAS rack-sdk)
-# configure_file("include/rack.hpp" "include/rack.hpp")
-# target_sources(rack-sdk INTERFACE
-#     FILE_SET rack_sdk_SDK_INTERFACE_HEADERS
-#     TYPE HEADERS
-#     BASE_DIRS
-#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-#     $<INSTALL_INTERFACE:include>
-#     FILES
-#     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/rack.hpp>
-#     $<INSTALL_INTERFACE:include/rack.hpp>
-# )
-
 include(CMakePackageConfigHelpers)
+
+file(READ "${PROJECT_SOURCE_DIR}/share/cmake/Modules/rack-sdk.cmake" __RACK_SDK_HELPERS_FILE)
+
+# The following codeblob is a multi-line string (not a comment) which
+# explains to CMake how to set up the package "rack-sdk" and it's components...
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/rack-sdk-config.cmake.in" [==[
 @PACKAGE_INIT@
 
@@ -599,6 +590,9 @@ unset(_rack_sdk_supported_components)
 
 # Tell the user what to do
 message(STATUS "Linking with unofficial-vcvrack::rack-sdk")
+
+@__RACK_SDK_HELPERS_FILE@
+
 ]==])
 
 # create cmake config file
@@ -629,62 +623,4 @@ install(
     "${CMAKE_INSTALL_LIBDIR}/cmake/rack-sdk"
 )
 
-
-
-#[==[
-This would create a redistributable shared library called
-'plugin.{so,dylib,dll.a}' with lots of platform-dependent defs...
-
-# Example usage:
-
-vcvrack_add_plugin(
-    SLUG StoneyVCV
-    SOURCES "src/plugin.cpp"
-    HEADERS "include/plugin.hpp"
-    VERSION 2.0.31
-)
-]==]
-# function(vcvrack_add_plugin __slug __sources __version)
-#     cmake_parse_arguments(...)
-#     # This lib name is hard-coded; CMake only permits one of these per-project! ;)
-#     add_library(plugin SHARED)
-#     add_library(${__slug}::plugin ALIAS plugin)
-#     # validation: plugin 'VERSION_MAJOR' >= 2...
-#     set_target_properties(plugin PROPERTIES VERSION ${__version})
-#     target_sources(plugin PRIVATE ${__sources})
-#     target_compile_options(plugin PRIVATE "-fPIC")
-#     target_link_options(plugin PRIVATE "-static-libstdc++")
-#     target_link_libraries(${__slug}::plugin PUBLIC
-#         unoffical-vcvrack::rack-sdk::lib
-#     )
-#     # ...and so forth!
-# endfunction()
-
-
-#[==[
-This would create an object library; 'plugin' links to it via 'SLUG'...
-You may create as many modules per project as you wish with it.
-
-# Example usage:
-
-vcvrack_add_module(
-    NAME HP1
-    SLUG StoneyVCV
-    SOURCES "src/HP1.cpp"
-    HEADERS "include/HP1.hpp"
-    VERSION 1.0.2
-)
-]==]
-# function(vcvrack_add_module __name __slug __sources __version)
-#     cmake_parse_arguments(...)
-#     # This one accepts a name, but is joined to 'plugin' by the alias namespace (the 'SLUG' param)
-#     add_library(${__name} OBJECT)
-#     add_library(${__slug}::${__name} ALIAS ${__name})
-#     set_target_properties(plugin PROPERTIES VERSION ${__version})
-#     target_sources(${__name} PRIVATE ${__sources})
-#     target_compile_options(${__name} PRIVATE "-fPIC")
-#     # Since we can be sure that *all* modules must link with a target which has the name 'plugin'
-#     # (since we hard-coded the name), the user just passes in the desired namespace/'SLUG' to link with :)
-#     target_link_libraries(${__slug}::plugin PUBLIC ${__slug}::${__name})
-#     # ...and so forth!
-# endfunction()
+unset(__RACK_SDK_HELPERS_FILE)

@@ -1,16 +1,11 @@
 set(_version 2.5.2)
 
-# add_library(${brand}::${slug}::plugin)
-# add_library(${brand}::${slug}::{module})
-
 #[==[Requirements]==]
 cmake_minimum_required(VERSION 3.15)
 cmake_policy(VERSION 3.15)
 include(CMakeParseArguments)
 include(GNUInstallDirs)
 include(CMakeDependentOption)
-
-find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 
 #[==[Include Guard]==]
 
@@ -29,6 +24,8 @@ set(_VCVRACK_API_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to cur
 #[==[Begin Script]==]
 
 message (STATUS "VCVRack.cmake v${_VCVRACK_API_VERSION}")
+
+# find_package(rack-sdk ${_VCVRACK_API_VERSION} REQUIRED COMPONENTS dep core lib CONFIG)
 
 function(_vcvrack_function_template)
     # Parse args...

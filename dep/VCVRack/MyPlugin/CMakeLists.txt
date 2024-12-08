@@ -1,26 +1,15 @@
 cmake_minimum_required(VERSION 3.14...3.31 FATAL_ERROR)
 
-# Pick up 'VCVRack.cmake' - helper functions
-get_filename_component(VCVRACK_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
-list(APPEND CMAKE_MODULE_PATH "${VCVRACK_DIR}/Rack-SDK/share/cmake/Modules")
-
-# If NOT using CMAKE_TOOLCHAIN_FILE (i.e., vcpkg), then try uncommenting this to
-# Ppick up 'rack-sdk-config.cmake', 'rack-sdk-*-targets.cmake.cmake', etc...
-# list(APPEND CMAKE_PREFIX_PATH "${VCVRACK_DIR}/Rack-SDK/share/cmake/rack-sdk")
-
 project(MyPlugin)
 
-# Find rack-sdk package from CMAKE_PREFIX_PATH
+# Find rack-sdk package from CMAKE_TOOLCHAIN_FILE
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib)
-
-# Include VCVRack helpers from CMAKE_MODULE_PATH
-include(VCVRack)
 
 # Let's try to make a plugin!
 
 vcvrack_add_plugin(
     SLUG MySlug
-    HEADERS "src/plugin.hpp"
+    HEADERS "include/plugin.hpp"
     SOURCES "src/plugin.cpp"
     VERSION 2.0.0
     SOVERSION 2
@@ -42,16 +31,15 @@ vcvrack_add_module(MyModule
 
 #[==[Some fun with the helper functions...]==]
 
-vcvrack_get_plugin_slug()
-vcvrack_get_plugin_version()
+# vcvrack_get_plugin_slug()
+# vcvrack_get_plugin_version()
 
-# Let's not *really* do this... but it's a useful test, for now
-message(STATUS "plugin.json: {")
-message(STATUS "  \"slug\": \"${VCVRACK_PLUGIN_SLUG}\"")
-message(STATUS "  \"version\": \"${VCVRACK_PLUGIN_VERSION}\"")
-message(STATUS "}")
+# # Let's not *really* do this... but it's a useful test, for now
+# message(STATUS "plugin.json: {")
+# message(STATUS "  \"slug\": \"${VCVRACK_PLUGIN_SLUG}\"")
+# message(STATUS "  \"version\": \"${VCVRACK_PLUGIN_VERSION}\"")
+# message(STATUS "}")
 
-include(GNUInstallDirs)
 # I don't like that design pattern above; and parsing the plugin.json in this
 # way leads to too many "cool ideas" which end up as dead ends. Let's focus on
 # the real tasks: the helper functions which create plugin and module targets.
