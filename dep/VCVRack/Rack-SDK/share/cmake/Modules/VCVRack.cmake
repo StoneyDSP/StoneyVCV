@@ -195,19 +195,31 @@ function(vcvrack_add_plugin)
     # Parse args...
     set(options)
     set(args BRAND SLUG VERSION SOVERSION)
-    set(list_args SOURCES HEADERS)
+    set(list_args SOURCES HEADERS INCLUDE_DIRS)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    # Generate a regex to validate some args with...
+    set(namespace_regex "[a-zA-Z_][a-zA-Z0-9_]*")
 
     # Validate 'SLUG' arg (required)
     if(NOT DEFINED ARG_SLUG)
         message(SEND_ERROR "'vcvrack_add_plugin' requires arg: SLUG")
+        return()
     else()
+        if(NOT ARG_SLUG MATCHES "${namespace_regex}")
+            message(SEND_ERROR "'vcvrack_add_plugin() given invalid arg: SLUG ${ARG_SLUG}'. Please choose a valid C++ identifier.")
+            return()
+        endif()
         set(slug ${ARG_SLUG})
     endif()
 
-    #
+    # Validate 'BRAND' arg (optional)
     if(DEFINED ARG_BRAND)
-        set(brand "${ARG_BRAND}")
+        if(NOT ARG_BRAND MATCHES "${namespace_regex}")
+            message(SEND_ERROR "'vcvrack_add_plugin() given invalid arg: BRAND ${ARG_BRAND}'. Please choose a valid C++ identifier.")
+            return()
+        endif()
+        set(brand ${ARG_BRAND})
     endif()
 
     # Begin target...
@@ -259,6 +271,13 @@ function(vcvrack_add_plugin)
             "-Dplugin_SOVERSION=${ARG_SOVERSION}"
         )
     endif()
+
+    if(DEFINED ARG_INCLUDE_DIRS)
+        foreach(include_dir IN LISTS ARG_INCLUDE_DIRS)
+            vcvrack_include_directories(plugin ${include_dir})
+        endforeach()
+    endif()
+
 
     if(DEFINED ARG_HEADERS)
         foreach(header IN LISTS ARG_HEADERS)
@@ -337,28 +356,52 @@ vcvrack_add_module(
 Should create a target named 'MyModule', along with some aliases...
 ]=============================================================================]#
 function(vcvrack_add_module name)
+
+    if(NOT TARGET plugin)
+        message(SEND_ERROR "'vcvrack_add_module()' called in a project with no corresponding 'vcvrack_add_plugin()'")
+        return()
+    endif()
+
     # Parse args...
     set(options)
     set(args SLUG BRAND VERSION SOVERSION)
-    set(list_args SOURCES HEADERS)
+    set(list_args SOURCES HEADERS INCLUDE_DIRS)
     cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
+
+    # Generate a regex to validate some args with...
+    set(namespace_regex "[a-zA-Z_][a-zA-Z0-9_]*")
+
     # Validate 'SLUG' arg (required)
     if(NOT DEFINED ARG_SLUG)
         message(SEND_ERROR "'vcvrack_add_module' requires arg: SLUG")
+        return()
     else()
+        if(NOT ARG_SLUG MATCHES "${namespace_regex}")
+            message(SEND_ERROR "'vcvrack_add_plugin() given invalid arg: SLUG ${ARG_SLUG}'. Please choose a valid C++ identifier.")
+            return()
+        endif()
         set(slug ${ARG_SLUG})
     endif()
+
     # Validate 'BRAND' arg (optional)
+    if(DEFINED ARG_BRAND)
+        if(NOT ARG_BRAND MATCHES "${namespace_regex}")
+            message(SEND_ERROR "'vcvrack_add_plugin() given invalid arg: BRAND ${ARG_BRAND}'. Please choose a valid C++ identifier.")
+            return()
+        endif()
+        set(brand ${ARG_BRAND})
+    endif()
     # Validate 'VERSION' arg (optional)
     # Begin target...
     add_library(${name} OBJECT)
     add_library(${slug}::${name} ALIAS ${name})
     if(DEFINED ARG_BRAND)
         add_library(${brand}::${slug}::${name} ALIAS ${name})
-        target_link_libraries(plugin PUBLIC ${brand}::${slug}::${name})
+        target_link_libraries(plugin PRIVATE ${brand}::${slug}::${name})
     else()
-        target_link_libraries(plugin PUBLIC ${slug}::${name})
+        target_link_libraries(plugin PRIVATE ${slug}::${name})
     endif()
+
     # vcvrack_add_sources(plugin PRIVATE $<TARGET_OBJECTS:${name}>)
     target_link_libraries(${name}
         PUBLIC
@@ -395,6 +438,12 @@ function(vcvrack_add_module name)
         "-fPIC"
     )
 
+    if(DEFINED ARG_INCLUDE_DIRS)
+        foreach(include_dir IN LISTS ARG_INCLUDE_DIRS)
+            vcvrack_include_directories(${name} ${include_dir})
+        endforeach()
+    endif()
+
     if(DEFINED ARG_HEADERS)
         foreach(header IN LISTS ARG_HEADERS)
             vcvrack_add_headers(${name} ${header})
@@ -409,11 +458,11 @@ function(vcvrack_add_module name)
 
     vcvrack_add_sources(${name} ${ARG_UNPARSED_ARGUMENTS})
 
-    # get_target_property(plugin_include_dirs plugin INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(plugin_include_dirs plugin INCLUDE_DIRECTORIES)
 
-    # if(DEFINED plugin_include_dirs AND NOT plugin_include_dirs STREQUAL "")
-    #     vcvrack_include_directories(${name} PUBLIC "${plugin_include_dirs}")
-    # endif()
+    if(DEFINED plugin_include_dirs AND NOT plugin_include_dirs STREQUAL "")
+        vcvrack_include_directories(${name} PUBLIC "${plugin_include_dirs}")
+    endif()
 
 endfunction()
 
@@ -425,7 +474,7 @@ vcvrack_include_directories(<name> [BASE_DIRS <dirs>] [items1...])
 vcvrack_include_directories(<name> [<INTERFACE|PUBLIC|PRIVATE> [items1...] [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...]])
 vcvrack_include_directories(<name> [<INTERFACE|PUBLIC|PRIVATE> [BASE_DIRS [<dirs>...]] [items1...]...)
 ]=============================================================================]#
-function(vcvrack_include_directories)
+function(vcvrack_include_directories name)
 
     # Check that this is a VCVRack library target
     get_target_property(is_vcvrack_lib ${name} ${name}_IS_VCVRACK_LIBRARY)
