@@ -16,6 +16,32 @@ find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib)
 # Include VCVRack helpers from CMAKE_MODULE_PATH
 include(VCVRack)
 
+# Let's try to make a plugin!
+
+vcvrack_add_plugin(
+    SLUG MySlug
+    HEADERS "src/plugin.hpp"
+    SOURCES "src/plugin.cpp"
+    VERSION 2.0.0
+    SOVERSION 2
+    EXPORT
+    INSTALL
+)
+
+vcvrack_add_module(MyModule
+    SLUG MySlug
+    SOURCES "src/MyModule.cpp"
+    VERSION 0.0.1
+    SOVERSION 0
+    # INCLUDE_DIRS
+    # $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+    # $<INSTALL_INTERFACE:include>
+    EXPORT
+    INSTALL
+)
+
+#[==[Some fun with the helper functions...]==]
+
 vcvrack_get_plugin_slug()
 vcvrack_get_plugin_version()
 
@@ -37,45 +63,3 @@ include(GNUInstallDirs)
 # we do *not* want to dictate things like project and target names, and so
 # forth; that stuff is often done with all the best intentions, but ironically
 # ends up being the source of most problems, especially for inexperienced users.
-
-# Let's try to make a plugin!
-
-vcvrack_add_plugin(
-    SLUG MySlug
-    # HEADERS "include/plugin.hpp"
-    SOURCES "src/plugin.cpp" "src/plugin.hpp"
-    VERSION 2.0.0
-    SOVERSION 2
-)
-
-vcvrack_add_module(MyModule
-    SLUG MySlug
-    SOURCES "src/MyModule.cpp"
-    VERSION 0.0.1
-    SOVERSION 0
-)
-
-# install targets and generate an export set
-install(TARGETS plugin;MyModule
-    EXPORT MyPluginExports
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    FILE_SET plugin_plugin_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    FILE_SET plugin_MyModule_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-)
-
-# install export set
-install(EXPORT MyPluginExports
-    FILE "MyPluginTargets.cmake"
-    NAMESPACE MyBrand::MyPlugin::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/MyBrand"
-)
-
-# export targets
-export(
-    TARGETS plugin;MyModule
-    FILE "share/cmake/MyPluginTargets.cmake"
-    NAMESPACE MyBrand::MyPlugin::
-)
