@@ -41,7 +41,9 @@
 
 namespace StoneyDSP {
 namespace StoneyVCV {
-struct HP4Spec final : ::StoneyDSP::StoneyVCV::Spec {
+namespace HP4 {
+struct HP4Spec final :
+    ::StoneyDSP::StoneyVCV::Spec {
 public:
     std::string slug;
     static constexpr int NUM_PARAMS = 0;
@@ -56,12 +58,13 @@ private:
 };
 }
 }
+}
 
 // Tests go here...
 
 TEST_CASE( "HP4", "[HP4]" ) {
 
-    std::shared_ptr<::StoneyDSP::StoneyVCV::HP4Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP4Spec>();
+    std::shared_ptr<::StoneyDSP::StoneyVCV::HP4::HP4Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP4::HP4Spec>();
 
     SECTION( "files" ) {
         REQUIRE( STONEYVCV_HP4_HPP_INCLUDED == 1 );
@@ -69,13 +72,13 @@ TEST_CASE( "HP4", "[HP4]" ) {
 
     SECTION( "HP4Module" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
-            ::StoneyDSP::StoneyVCV::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4Module;
+            ::StoneyDSP::StoneyVCV::HP4::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4::HP4Module;
             REQUIRE( test_hp4Module->getNumParams() == spec.get()->NUM_PARAMS );
             REQUIRE( test_hp4Module->getNumInputs() == spec.get()->NUM_INPUTS );
             REQUIRE( test_hp4Module->getNumOutputs() == spec.get()->NUM_OUTPUTS );
@@ -85,9 +88,9 @@ TEST_CASE( "HP4", "[HP4]" ) {
     }
 
     SECTION( "HP4ModuleWidget" ) {
-        // ::StoneyDSP::StoneyVCV::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4Module;
-        // ::rack::app::ModuleWidget* test_hp4ModuleWidget = new ::StoneyDSP::StoneyVCV::HP4ModuleWidget(dynamic_cast<::StoneyDSP::StoneyVCV::HP4Module*>(test_hp4Module));
-        // std::shared_ptr<::StoneyDSP::StoneyVCV::HP4ModuleWidget> test_hp4ModuleWidget = std::make_shared<::StoneyDSP::StoneyVCV::HP4ModuleWidget>();
+        // ::StoneyDSP::StoneyVCV::HP4::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4::HP4Module;
+        // ::rack::app::ModuleWidget* test_hp4ModuleWidget = new ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget(dynamic_cast<::StoneyDSP::StoneyVCV::HP4::HP4Module*>(test_hp4Module));
+        // std::shared_ptr<::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget> test_hp4ModuleWidget = std::make_shared<::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget>();
         // REQUIRE( test_hp4ModuleWidget.get()->box.size.x == 5.08F );
         // REQUIRE( test_hp4ModuleWidget.get()->box.size.y == 128.5F );
         // delete test_hp4ModuleWidget;
@@ -104,17 +107,17 @@ TEST_CASE( "HP4", "[HP4]" ) {
         // );
 
 
-        // ::StoneyDSP::StoneyVCV::HP4Module* test_hp4Module = NULL;
-        // test_hp4Module = dynamic_cast<::StoneyDSP::StoneyVCV::HP4Module*>(new ::StoneyDSP::StoneyVCV::HP4Module);
-        // ::StoneyDSP::StoneyVCV::HP4ModuleWidget* test_hp4ModuleWidget = new ::StoneyDSP::StoneyVCV::HP4ModuleWidget(test_hp4Module);
+        // ::StoneyDSP::StoneyVCV::HP4::HP4Module* test_hp4Module = NULL;
+        // test_hp4Module = dynamic_cast<::StoneyDSP::StoneyVCV::HP4::HP4Module*>(new ::StoneyDSP::StoneyVCV::HP4::HP4Module);
+        // ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget* test_hp4ModuleWidget = new ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget(test_hp4Module);
 
         // delete test_hp4ModuleWidget;
         // delete test_hp4Module;
     }
 
     SECTION( "instance" ) {
-        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP4 != nullptr );
-        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP4->slug == spec.get()->slug );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP4::modelHP4 != nullptr );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP4::modelHP4->slug == spec.get()->slug );
     }
 
     spec.reset();

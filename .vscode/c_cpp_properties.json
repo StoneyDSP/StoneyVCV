@@ -6,8 +6,8 @@
       "includePath": [
         "${default}",
         "${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
-        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/dep",
-        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/rack"
+        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/dep",
+        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/rack"
       ],
       "defines": [
         "${default}"
@@ -17,8 +17,8 @@
         "-Wsuggest-override",
         "-fPIC",
         "-I${workspaceFolder}/include",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include/dep",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include/rack",
+        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/dep",
+        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/rack",
         "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
         "-fno-gnu-unique",
         "-MMD",
@@ -56,8 +56,8 @@
       "includePath": [
         "${default}",
         "${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
-        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/dep",
-        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/rack"
+        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/dep",
+        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/rack"
       ],
       "defines": [
         "${default}"
@@ -67,8 +67,8 @@
         "-stdlib=libc++",
         "-fPIC",
         "-I${workspaceFolder}/include",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include/dep",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include/rack",
+        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/dep",
+        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/rack",
         "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
         "-MMD",
         "-MP",
@@ -105,8 +105,8 @@
       "includePath": [
         "${default}",
         "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
-        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\dep",
-        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\rack"
+        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\dep",
+        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\rack"
       ],
       "defines": [
         "${default}",
@@ -117,8 +117,8 @@
         "-Wsuggest-override",
         "-fPIC",
         "-I${workspaceFolder}\\include",
-        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\dep",
-        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\rack",
+        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\dep",
+        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\rack",
         "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
         "-MMD",
         "-MP",

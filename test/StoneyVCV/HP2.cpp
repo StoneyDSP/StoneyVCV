@@ -41,7 +41,10 @@
 
 namespace StoneyDSP {
 namespace StoneyVCV {
-struct HP2Spec final : ::StoneyDSP::StoneyVCV::Spec {
+namespace HP2 {
+struct HP2Spec final :
+    ::StoneyDSP::StoneyVCV::Spec
+{
 public:
     std::string slug;
     static constexpr int NUM_PARAMS = 0;
@@ -56,25 +59,26 @@ private:
 };
 }
 }
+}
 
 // Tests go here...
 
 TEST_CASE( "HP2", "[HP2]" ) {
 
-    std::shared_ptr<::StoneyDSP::StoneyVCV::HP2Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP2Spec>();
+    std::shared_ptr<::StoneyDSP::StoneyVCV::HP2::HP2Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP2::HP2Spec>();
 
     SECTION( "files" ) {
         REQUIRE( STONEYVCV_HP2_HPP_INCLUDED == 1 );
     }
     SECTION( "HP2Module" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP2Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
-            ::StoneyDSP::StoneyVCV::HP2Module* test_hp2Module = new ::StoneyDSP::StoneyVCV::HP2Module;
+            ::StoneyDSP::StoneyVCV::HP2::HP2Module* test_hp2Module = new ::StoneyDSP::StoneyVCV::HP2::HP2Module;
             REQUIRE( test_hp2Module->getNumParams() == spec.get()->NUM_PARAMS );
             REQUIRE( test_hp2Module->getNumInputs() == spec.get()->NUM_INPUTS );
             REQUIRE( test_hp2Module->getNumOutputs() == spec.get()->NUM_OUTPUTS );
@@ -83,8 +87,8 @@ TEST_CASE( "HP2", "[HP2]" ) {
         }
     }
     SECTION( "instance" ) {
-        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP2 != nullptr );
-        REQUIRE( ::StoneyDSP::StoneyVCV::modelHP2->slug == spec.get()->slug );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2 != nullptr );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->slug == spec.get()->slug );
     }
 
     spec.reset();
