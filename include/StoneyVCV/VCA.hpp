@@ -1,5 +1,5 @@
 /***************************************************************************//**
- * @file HP2.hpp
+ * @file VCA.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 0.0.0
@@ -31,14 +31,16 @@
 
 #pragma once
 
-#define STONEYVCV_HP2_HPP_INCLUDED 1
+#define STONEYVCV_VCA_HPP_INCLUDED 1
 
 //==============================================================================
 
 #include <rack.hpp>
-#include <StoneyDSP/Core.hpp>
 
 #include "plugin.hpp"
+#include "StoneyDSP/Core.hpp"
+#include "StoneyDSP/DSP.hpp"
+#include "StoneyDSP/SIMD.hpp"
 
 //==============================================================================
 
@@ -58,53 +60,87 @@ namespace StoneyVCV
 
 //==============================================================================
 
-namespace HP2
+namespace VCA
 {
-/** @addtogroup HP2
+/** @addtogroup VCA
  *  @{
  */
 
 //==============================================================================
 
 /**
- * @brief The `HP2Module` struct.
+ * @brief The `VCAModule` class.
  *
  */
-struct HP2Module final :
+struct VCAModule final :
     ::rack::engine::Module
 {
 public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
+    ::StoneyDSP::size_t lastChannels = 1;
+    ::StoneyDSP::float_t gain;
+	::StoneyDSP::float_t lastGains[16] = {};
+
     enum ParamsId {
+        GAIN_PARAM,
         PARAMS_LEN
     };
 	enum InputsId {
+		VCA_INPUT,
+        CV_INPUT,
 		INPUTS_LEN
 	};
 	enum OutputsId {
+		VCA_OUTPUT,
 		OUTPUTS_LEN
 	};
 	enum LightsId {
+		BLINK_LIGHT,
 		LIGHTS_LEN
 	};
 
-    HP2Module();
-    // ~HP2Module();
+    /**
+     * @brief Construct a new `VCOModule` object.
+     *
+     */
+    VCAModule();
+
+    /**
+     * @brief Destroy the `VCOModule` object.
+     *
+     */
+    ~VCAModule();
+
+    /**
+     * @brief Advances the module by one audio sample.
+     *
+     * @param args
+     */
+    virtual void process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args) override;
+
+    ::json_t *dataToJson() override;
+
+    void dataFromJson(::json_t *rootJ) override;
+
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(HP2Module)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP2Module)
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
 };
 
 //==============================================================================
 
-struct HP2Widget final :
+/**
+ * @brief The `VCAWidget` class.
+ *
+ */
+struct VCAWidget final :
     ::rack::Widget
 {
 public:
-    HP2Widget();
-    // ~HP2Widget();
+    VCAWidget();
+    ~VCAWidget();
     /**
      * @brief Advances the module by one frame.
      *
@@ -118,30 +154,30 @@ public:
      * @param args
      */
     void draw(const ::rack::Widget::DrawArgs &args) override;
-    // ::rack::FramebufferWidget *hp2WidgetFrameBuffer;
-    // Widget *panelBorder;
+    ::rack::FramebufferWidget *vcaWidgetFrameBuffer;
+    ::rack::Widget *panelBorder;
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(HP2Widget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP2Widget)
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAWidget)
 };
 
 //==============================================================================
 
 /**
- * @brief The `HP2ModuleWidget` struct.
+ * @brief The `VCAModuleWidget` class.
  *
  */
-struct HP2ModuleWidget final :
+struct VCAModuleWidget final :
     ::rack::app::ModuleWidget
 {
 public:
-    HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2::HP2Module *module);
-    // ~HP2ModuleWidget();
-    // ::StoneyDSP::StoneyVCV::HP2Widget *hp2Widget;
-    // ::rack::FramebufferWidget *hp2ModuleWidgetFrameBuffer;
+    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module);
+    ~VCAModuleWidget();
+    // ::StoneyDSP::StoneyVCV::VCAWidget *vcaWidget;
+    // ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
 private:
-    STONEYDSP_DECLARE_NON_COPYABLE(HP2ModuleWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP2ModuleWidget)
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAModuleWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAModuleWidget)
 };
 
 //==============================================================================
@@ -151,17 +187,17 @@ private:
  *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createHP2(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model *createVCA(); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
-  /// @} group HP2
-} // namespace HP2
+  /// @} group VCA
+} // namespace VCA
 
 //==============================================================================
 
-  /// @} group StoneyVCV
-} // namespace StoneyVCV
+  /// @} group VCVRack
+} // namespace VCVRack
 
 //==============================================================================
 

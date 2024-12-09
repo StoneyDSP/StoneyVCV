@@ -58,11 +58,20 @@ namespace StoneyVCV
 
 //==============================================================================
 
+namespace HP4
+{
+/** @addtogroup HP4
+ *  @{
+ */
+
+//==============================================================================
+
 /**
  * @brief The `HP4Module` struct.
  *
  */
-struct HP4Module final : ::rack::engine::Module
+struct HP4Module final :
+    ::rack::engine::Module
 {
 public:
 
@@ -90,7 +99,8 @@ private:
 
 //==============================================================================
 
-struct HP4Widget final : ::rack::Widget
+struct HP4Widget final :
+    ::rack::Widget
 {
 public:
     HP4Widget();
@@ -121,12 +131,13 @@ private:
  * @brief The `HP4ModuleWidget` struct.
  *
  */
-struct HP4ModuleWidget final : ::rack::app::ModuleWidget
+struct HP4ModuleWidget final :
+    ::rack::app::ModuleWidget
 {
 public:
-    HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4Module *module);
+    HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4::HP4Module *module);
     // ~HP4ModuleWidget();
-    // ::StoneyDSP::StoneyVCV::HP4Widget *hp4Widget;
+    // ::StoneyDSP::StoneyVCV::HP4::HP4Widget *hp4Widget;
     // ::rack::FramebufferWidget *hp4ModuleWidgetFrameBuffer;
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(HP4ModuleWidget)
@@ -141,6 +152,11 @@ private:
  * @return `rack::plugin::Model*`
  */
 ::rack::plugin::Model *createHP4(); // STONEYDSP_NOEXCEPT(false);
+
+//==============================================================================
+
+  /// @} group HP4
+} // namespace HP4
 
 //==============================================================================
 
