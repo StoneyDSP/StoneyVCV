@@ -1,0 +1,24 @@
+{
+  "$schema": "../../../plugin.schema.json",
+  "slug": "MyPlugin",
+  "name": "MyPlugin",
+  "version": "2.0.0",
+  "license": "MIT",
+  "brand": "MyBrand",
+  "author": "My Me",
+  "authorEmail": "",
+  "authorUrl": "",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "MyModule",
+      "name": "MyModule",
+      "description": "",
+      "tags": []
+    }
+  ]
+}

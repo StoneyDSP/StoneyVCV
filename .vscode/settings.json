@@ -146,6 +146,7 @@
     }
   },
   "files.associations": {
+    "**/usage": "plaintext",
     "**.d.ts": "typescript",
     "*.css": "tailwindcss",
     "**.bash**": "shellscript",
