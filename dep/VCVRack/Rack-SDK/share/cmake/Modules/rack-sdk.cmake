@@ -11,29 +11,17 @@ include(CMakeDependentOption)
 
 if(COMMAND vcvrack_add_sources)
     if(NOT DEFINED _VCVRACK_API_VERSION OR NOT (_version STREQUAL _VCVRACK_API_VERSION))
-        message(WARNING "More than one 'VCVRack.cmake' version has been included in this project.")
+        message(WARNING "More than one 'rack-sdk.cmake' version has been included in this project.")
     endif()
-    # 'VCVRack.cmake' has already been included! Don't do anything
+    # 'rack-sdk.cmake' has already been included! Don't do anything
     return()
 endif()
 
-set(_VCVRACK_API_VERSION "${_version}" CACHE INTERNAL "Current 'VCVRack.cmake' version. Used for checking for conflicts")
+set(_VCVRACK_API_VERSION "${_version}" CACHE INTERNAL "Current 'rack-sdk.cmake' version. Used for checking for conflicts")
 
-set(_VCVRACK_API_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to current 'VCVRack.cmake' script")
+set(_VCVRACK_API_SCRIPT "${CMAKE_CURRENT_LIST_FILE}" CACHE INTERNAL "Path to current 'rack-sdk.cmake' script")
 
 #[==[Begin Script]==]
-
-message (STATUS "VCVRack.cmake v${_VCVRACK_API_VERSION}")
-
-# find_package(rack-sdk ${_VCVRACK_API_VERSION} REQUIRED COMPONENTS dep core lib CONFIG)
-
-function(_vcvrack_function_template)
-    # Parse args...
-    set(options)
-    set(args)
-    set(list_args)
-    cmake_parse_arguments(ARG "${options}" "${args}" "${list_args}" "${ARGN}")
-endfunction()
 
 #[=============================================================================[
 Internal helper
@@ -136,41 +124,6 @@ function(vcvrack_get_plugin_modules)
     set(VCVRACK_PLUGIN_MODULES "${VCVRACK_PLUGIN_MODULES}" PARENT_SCOPE)
 endfunction()
 
-#[==[
-SKETCHES
-
-Basically, we want to set up the following pattern;
-
-add_library(${brand}::${slug}::plugin SHARED)
-add_library(${brand}::${slug}::{module} OBJECT)
-target_link_library(plugin PRIVATE ${brand}::${slug}::{module})
-
-NOTE: we don't actually need to be opinionated about the name of the 'plugin'
-target itself (the user can name it as they wish), since
-we will set_target_properties(LIBRARY_OUTPUT_NAME "plugin")
-
-This opens up the interesting idea about building more than one plugin
-under one project call... but we should set 'plugin' as the default name
-incase the user doesn't specify a custom one.
-
-Nonetheless, we *might* hard-code the name for the time being, to avoid
-unneccessary bugs...
-
-NOTE: the actual call will be 'add_library(<name> <TYPE>)', followed by
-'add_library(<brand::name> ALIAS <name>)', then
-'add_library(<brand::slug::name> ALIAS <name>)'.
-
-NOTE: 'plugin.json' doesn't require 'brand', so if the user doesn't pass in a
-`BRAND` argument to this function, we can option out
-the final 'add_library(<brand::slug::name> ALIAS <name>)' alias library.
-
-NOTE: we should set a custom property on these targets to identify them as
-consumers of the VCV Rack API. Then, we use some aliased CMake commands like
-`vcvrack_add_sources`.... the custom property will allow us to do some helpful
-input validation (and provide helpful error messages) for passed-in files...
-]==]
-message(STATUS "Loading VCVRack helper functions...")
-
 #[=============================================================================[
 Example usage:
 
@@ -218,14 +171,6 @@ function(vcvrack_add_plugin)
         endif()
         set(brand ${ARG_BRAND})
     endif()
-
-    # if(NOT DEFINED ARG_EXPORT)
-    #     set(ARG_EXPORT TRUE)
-    # endif()
-
-    # if(NOT DEFINED ARG_INSTALL)
-    #     set(ARG_INSTALL TRUE)
-    # endif()
 
     # Begin target...
     add_library(plugin SHARED) # EXCLUDE_FROM_ALL
@@ -344,6 +289,16 @@ function(vcvrack_add_plugin)
         )
     endif(WIN32)
 
+    if(ARG_BRAND)
+        set(_ns_prefix ${ARG_BRAND}::)
+        set(_dir_prefix ${ARG_BRAND})
+        set(_tgt_prefix ${ARG_BRAND}-)
+    else()
+        set(_ns_prefix)
+        set(_dir_prefix ${slug})
+        set(_tgt_prefix)
+    endif()
+
     if(ARG_INSTALL)
         install(TARGETS plugin
             EXPORT PluginExports
@@ -354,28 +309,19 @@ function(vcvrack_add_plugin)
             FILE_SET plugin_plugin_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         )
 
-        if(ARG_BRAND)
-            set(_ns_prefix ${ARG_BRAND}::)
-            set(_dir_prefix ${ARG_BRAND}/)
-        endif()
-
         # install export set
         install(EXPORT PluginExports
-            FILE "${slug}-plugin-targets.cmake"
+            FILE "${_tgt_prefix}${slug}-plugin-targets.cmake"
             NAMESPACE ${_ns_prefix}${brand}::
-            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_dir_prefix}${slug}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_dir_prefix}"
         )
     endif()
 
     if(ARG_EXPORT)
         # export targets
-        if(ARG_BRAND)
-            set(_ns_prefix ${ARG_BRAND}::)
-            set(_dir_prefix ${ARG_BRAND}/)
-        endif()
         export(
             TARGETS plugin
-            FILE "share/cmake/${_dir_prefix}${slug}/${slug}-plugin-targets.cmake"
+            FILE "share/cmake/${_dir_prefix}/${_tgt_prefix}${slug}-plugin-targets.cmake"
             NAMESPACE ${_ns_prefix}${slug}::
         )
     endif()
@@ -435,25 +381,19 @@ function(vcvrack_add_module name)
 
     # Validate 'VERSION' arg (optional)
 
-    # if(NOT DEFINED ARG_EXPORT)
-    #     set(ARG_EXPORT TRUE)
-    # endif()
-
-    # if(NOT DEFINED ARG_INSTALL)
-    #     set(ARG_INSTALL TRUE)
-    # endif()
-
     # Begin target...
     add_library(${name} OBJECT)
     add_library(${slug}::${name} ALIAS ${name})
     if(DEFINED ARG_BRAND)
         add_library(${brand}::${slug}::${name} ALIAS ${name})
-    #     target_link_libraries(plugin PRIVATE ${brand}::${slug}::${name})
-    # else()
-    #     target_link_libraries(plugin PRIVATE ${slug}::${name})
+        target_link_libraries(plugin PRIVATE ${brand}::${slug}::${name})
+    else()
+        target_link_libraries(plugin PRIVATE ${slug}::${name})
     endif()
 
-    vcvrack_add_sources(plugin PRIVATE $<TARGET_OBJECTS:${name}>)
+    # either use the two 'target_link_libraries()' above, or use this:
+    # vcvrack_add_sources(plugin PRIVATE $<TARGET_OBJECTS:${name}>)
+
     target_link_libraries(${name}
         PUBLIC
         unofficial-vcvrack::rack-sdk::core
@@ -515,6 +455,16 @@ function(vcvrack_add_module name)
         vcvrack_include_directories(${name} PUBLIC "${plugin_include_dirs}")
     endif()
 
+    if(ARG_BRAND)
+        set(_ns_prefix ${ARG_BRAND}::)
+        set(_dir_prefix ${ARG_BRAND})
+        set(_tgt_prefix ${ARG_BRAND}-)
+    else()
+        set(_ns_prefix)
+        set(_dir_prefix ${slug})
+        set(_tgt_prefix)
+    endif()
+
     if(ARG_INSTALL)
         install(TARGETS ${name}
             EXPORT ${name}Exports
@@ -525,27 +475,19 @@ function(vcvrack_add_module name)
             FILE_SET plugin_${name}_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         )
 
-        if(ARG_BRAND)
-            set(_ns_prefix ${ARG_BRAND}::)
-            set(_dir_prefix ${ARG_BRAND}/)
-        endif()
-
         # install export set
         install(EXPORT ${name}Exports
-            FILE "${slug}-${name}-targets.cmake"
+            FILE "${_tgt_prefix}${slug}-${name}-targets.cmake"
             NAMESPACE ${_ns_prefix}${brand}::
-            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_dir_prefix}${slug}"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_dir_prefix}"
         )
     endif()
 
     if(ARG_EXPORT)
         # export targets
-        if(ARG_BRAND)
-            set(_ns_prefix ${ARG_BRAND}::)
-        endif()
         export(
             TARGETS ${name}
-            FILE "share/cmake/${_ns_prefix}${slug}/${slug}-${name}-targets.cmake"
+            FILE "share/cmake/${_dir_prefix}/${_tgt_prefix}${slug}-${name}-targets.cmake"
             NAMESPACE ${_ns_prefix}${slug}::
         )
     endif()
@@ -592,6 +534,7 @@ function(vcvrack_include_directories name)
         endforeach()
     endif()
 
+    # Default: PUBLIC
     if(DEFINED ARG_UNPARSED_ARGUMENTS)
         foreach(item IN LISTS ARG_UNPARSED_ARGUMENTS)
             target_include_directories(${name} PUBLIC ${item})
@@ -648,7 +591,15 @@ function(vcvrack_add_headers name)
         file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${abs_in}")
         file(RELATIVE_PATH dir_relpath "${ARG_BASE_DIR}" "${input_dirname}")
 
-        configure_file("${item_relpath}" "${item_relpath}")
+        string(SUBSTRING "${item_relpath}" 0 7 __maybe_include_dir)
+        if("${__maybe_include_dir}" STREQUAL "include")
+            configure_file("${item_relpath}" "${item_relpath}")
+        else()
+            configure_file("${item_relpath}" "include/${item_relpath}")
+            # ok, that's quite opinionated... but, if headers are not in
+            # in a predictable place, it's hard to guarantee that the user's
+            # 'include' line will work... even if they have set it up correctly!
+        endif()
 
         # set(rel_file "${ARG_BASE_DIR}/${rel_in}")
         # _vcvrack_normalize_path(rel_file)
@@ -661,7 +612,6 @@ function(vcvrack_add_headers name)
         foreach(item IN LISTS ARG_INTERFACE)
             get_filename_component(item_absolute_path "${item}" ABSOLUTE)
             get_filename_component(item_filename "${item}" NAME)
-            get_filename_component(item_dirname "${item}" DIRECTORY)
             file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
             get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
             target_sources(${name}
@@ -669,11 +619,13 @@ function(vcvrack_add_headers name)
                 FILE_SET "plugin_${name}_INTERFACE_HEADERS"
                 TYPE HEADERS
                 BASE_DIRS
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
-                $<INSTALL_INTERFACE:${dir_relpath}>
+                # $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                # $<INSTALL_INTERFACE:${dir_relpath}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                $<INSTALL_INTERFACE:include>
                 FILES
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
-                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${item_relpath}>
+                $<INSTALL_INTERFACE:${item_relpath}>
             )
         endforeach()
     endif()
@@ -682,7 +634,6 @@ function(vcvrack_add_headers name)
         foreach(item IN LISTS ARG_PRIVATE)
             get_filename_component(item_absolute_path "${item}" ABSOLUTE)
             get_filename_component(item_filename "${item}" NAME)
-            get_filename_component(item_dirname "${item}" DIRECTORY)
             file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
             get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
             target_sources(${name}
@@ -690,11 +641,13 @@ function(vcvrack_add_headers name)
                 FILE_SET "plugin_${name}_PRIVATE_HEADERS"
                 TYPE HEADERS
                 BASE_DIRS
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
-                $<INSTALL_INTERFACE:${dir_relpath}>
+                # $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                # $<INSTALL_INTERFACE:${dir_relpath}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                $<INSTALL_INTERFACE:include>
                 FILES
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
-                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${item_relpath}>
+                $<INSTALL_INTERFACE:${item_relpath}>
             )
         endforeach()
     endif()
@@ -703,7 +656,6 @@ function(vcvrack_add_headers name)
         foreach(item IN LISTS ARG_PUBLIC)
             get_filename_component(item_absolute_path "${item}" ABSOLUTE)
             get_filename_component(item_filename "${item}" NAME)
-            get_filename_component(item_dirname "${item}" DIRECTORY)
             file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
             get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
             target_sources(${name}
@@ -711,20 +663,22 @@ function(vcvrack_add_headers name)
                 FILE_SET "plugin_${name}_PUBLIC_HEADERS"
                 TYPE HEADERS
                 BASE_DIRS
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
-                $<INSTALL_INTERFACE:${dir_relpath}>
+                # $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                # $<INSTALL_INTERFACE:${dir_relpath}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                $<INSTALL_INTERFACE:include>
                 FILES
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
-                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${item_relpath}>
+                $<INSTALL_INTERFACE:${item_relpath}>
             )
         endforeach()
     endif()
 
+    # Default: PUBLIC
     if(DEFINED ARG_UNPARSED_ARGUMENTS)
         foreach(item IN LISTS ARG_UNPARSED_ARGUMENTS)
             get_filename_component(item_absolute_path "${item}" ABSOLUTE)
             get_filename_component(item_filename "${item}" NAME)
-            get_filename_component(item_dirname "${item}" DIRECTORY)
             file(RELATIVE_PATH item_relpath "${ARG_BASE_DIR}" "${item_absolute_path}")
             get_filename_component(dir_relpath "${item_relpath}" DIRECTORY)
             target_sources(${name}
@@ -732,11 +686,13 @@ function(vcvrack_add_headers name)
                 FILE_SET "plugin_${name}_PUBLIC_HEADERS"
                 TYPE HEADERS
                 BASE_DIRS
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
-                $<INSTALL_INTERFACE:${dir_relpath}>
+                # $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}>
+                # $<INSTALL_INTERFACE:${dir_relpath}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                $<INSTALL_INTERFACE:include>
                 FILES
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${dir_relpath}/${item_filename}>
-                $<INSTALL_INTERFACE:${dir_relpath}/${item_filename}>
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${item_relpath}>
+                $<INSTALL_INTERFACE:${item_relpath}>
             )
         endforeach()
     endif()
@@ -810,6 +766,7 @@ function(vcvrack_add_sources name)
         endforeach()
     endif()
 
+    # Default: PRIVATE
     if(DEFINED ARG_UNPARSED_ARGUMENTS)
         foreach(item IN LISTS ARG_UNPARSED_ARGUMENTS)
             target_sources(${name} PRIVATE "${item}")
@@ -856,8 +813,9 @@ function(vcvrack_add_compile_definitions name)
         endforeach()
     endif()
 
+    # Default: PUBLIC
     foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-        target_compile_definitions(${name} "${item}")
+        target_compile_definitions(${name} PUBLIC "${item}")
     endforeach()
 
 endfunction()
@@ -900,8 +858,9 @@ function(vcvrack_add_compile_options name)
         endforeach()
     endif()
 
+    # Default: PUBLIC
     foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-        target_compile_options(${name} "${item}")
+        target_compile_options(${name} PUBLIC "${item}")
     endforeach()
 
 endfunction()
@@ -944,11 +903,50 @@ function(vcvrack_add_link_options name)
         endforeach()
     endif()
 
+    # Default: PUBLIC
     foreach(input IN LISTS ARG_UNPARSED_ARGUMENTS)
-        target_link_options(${name} "${item}")
+        target_link_options(${name} PUBLIC "${item}")
     endforeach()
 
 endfunction()
+
+if(NOT VCVRACK_DISABLE_USAGE_MESSAGE)
+# Tell the user what to do...
+message(STATUS [==[
+--
+-- To build a plugin and modules with the VCV Rack SDK, you can:
+--
+
+project(MyPlugin)
+
+find_package(rack-sdk 2.5.2)
+
+vcvrack_add_plugin(
+    SLUG MySlug
+    HEADERS "include/plugin.hpp"
+    SOURCES "src/plugin.cpp"
+)
+
+vcvrack_add_module(MyModule
+    SLUG MySlug
+    SOURCES "src/MyModule.cpp"
+)
+
+vcvrack_add_module(MyOtherModule
+    SLUG MySlug
+    SOURCES "src/MyOtherModule.cpp"
+)
+
+--
+-- You can #include '<rack.hpp>' in 'plugin.cpp' and start building
+-- with the VCV Rack SDK and all its' dependencies.
+--
+-- For more examples:
+-- https://github.com/StoneyDSP/StoneyVCV/dep/VCVRack/share/cmake/Modules/README.md
+--
+]==])
+
+endif()
 
 #[==[Cleanup]==]
 
