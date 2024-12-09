@@ -8,6 +8,7 @@ find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib)
 # Let's make a plugin!
 vcvrack_add_plugin(
     SLUG MySlug
+    BRAND MyBrand
     HEADERS "include/plugin.hpp"
     SOURCES "src/plugin.cpp"
     VERSION 2.0.0
@@ -19,6 +20,8 @@ vcvrack_add_plugin(
 # Let's add a module to our plugin!
 vcvrack_add_module(MyModule
     SLUG MySlug
+    BRAND MyBrand
+    HEADERS "include/extras/components.hpp"
     SOURCES "src/MyModule.cpp"
     VERSION 0.0.1
     SOVERSION 0
