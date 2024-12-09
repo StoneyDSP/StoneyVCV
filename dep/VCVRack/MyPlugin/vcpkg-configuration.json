@@ -1,0 +1,43 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
+  "default-registry": {
+    "kind": "git",
+    "baseline": "66b4b34d99ab272fcf21f2bd12b616e371c6bb31",
+    "repository": "https://github.com/microsoft/vcpkg"
+  },
+  "registries": [
+    {
+      "kind": "filesystem",
+      "path": "../../vcpkg",
+      "baseline": "2024-11-27",
+      "packages": [
+        "stoneydsp",
+        "rack-sdk",
+        "curl",
+        "ghc-filesystem",
+        "glfw",
+        "glew",
+        "libarchive",
+        "libsamplerate",
+        "jansson",
+        "nanovg",
+        "nanosvg",
+        "openssl",
+        "pffft",
+        "rtaudio",
+        "rtmidi",
+        "speexdsp",
+        "tinyexpr",
+        "zstd"
+      ]
+    },
+    {
+      "kind": "artifact",
+      "location": "https://github.com/microsoft/vcpkg-ce-catalog/archive/refs/heads/main.zip",
+      "name": "microsoft"
+    }
+  ],
+  "overlay-ports": [
+    "../../vcpkg/ports"
+  ]
+}
