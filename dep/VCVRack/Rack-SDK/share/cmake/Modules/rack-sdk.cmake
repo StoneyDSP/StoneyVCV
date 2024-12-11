@@ -194,6 +194,7 @@ function(vcvrack_add_plugin)
         # Prevent some platforms from putting built lib in 'lib64/' or 'bin/'
         ARCHIVE_OUTPUT_DIRECTORY "lib"
         LIBRARY_OUTPUT_DIRECTORY "lib"
+        NO_SONAME TRUE
     )
 
     set_property(
@@ -215,6 +216,14 @@ function(vcvrack_add_plugin)
         set_target_properties(plugin
             PROPERTIES
             SOVERSION "${ARG_SOVERSION}"
+        )
+        set_property(TARGET plugin
+            PROPERTY
+            INTERFACE_plugin_MAJOR_VERSION  "${ARG_SOVERSION}"
+        )
+        set_property(TARGET plugin
+            APPEND PROPERTY
+            COMPATIBLE_INTERFACE_STRING plugin_MAJOR_VERSION
         )
         vcvrack_add_compile_definitions(plugin
             PUBLIC
@@ -417,6 +426,14 @@ function(vcvrack_add_module name)
         set_target_properties(${name}
             PROPERTIES
             SOVERSION "${ARG_SOVERSION}"
+        )
+        set_property(TARGET ${name}
+            PROPERTY
+            INTERFACE_${name}_MAJOR_VERSION  "${ARG_SOVERSION}"
+        )
+        set_property(TARGET ${name}
+            APPEND PROPERTY
+            COMPATIBLE_INTERFACE_STRING ${name}_MAJOR_VERSION
         )
         vcvrack_add_compile_definitions(${name}
             PUBLIC
