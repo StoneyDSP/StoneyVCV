@@ -29,9 +29,17 @@
  *
  ******************************************************************************/
 
+#if (STONEYVCV_BUILD_PLUGIN == 1) && (STONEYVCV_BUILD_TESTS == 1)
+
+//==============================================================================
+
 #include <catch2/catch_test_macros.hpp>
 
+//==============================================================================
+
 #include "StoneyVCV/plugin.hpp"
+
+//==============================================================================
 
 // Tests go here...
 
@@ -48,6 +56,9 @@ TEST_CASE("plugin", "[plugin]") {
     SECTION("modules") {
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
+        SECTION( "VCA" ) {
+            REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
+        }
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
@@ -60,11 +71,14 @@ TEST_CASE("plugin", "[plugin]") {
         SECTION( "HP1" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::HP1::modelHP1 != nullptr);
         }
-        SECTION( "HP1" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
-        }
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
     }
 }
+
+//==============================================================================
+
+#endif
+
+//==============================================================================
