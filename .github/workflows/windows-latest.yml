@@ -108,6 +108,7 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
         -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_EXPERIMENTAL:BOOL=TRUE
         -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli

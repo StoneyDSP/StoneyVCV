@@ -29,13 +29,23 @@
  *
  ******************************************************************************/
 
+//==============================================================================
+
 #if (STONEYVCV_BUILD_VCA == 1) && (STONEYVCV_BUILD_TESTS == 1)
+
+
+//==============================================================================
 
 #include <catch2/catch_test_macros.hpp>
 // for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+//==============================================================================
+
+#include "StoneyVCV/plugin.hpp"
 #include "StoneyVCV/VCA.hpp"
+
+//==============================================================================
 
 // Spec goes here...
 
@@ -60,15 +70,22 @@ private:
 }
 }
 
+
+//==============================================================================
+
 // Tests go here...
 
 TEST_CASE( "VCA", "[VCA]" ) {
 
     std::shared_ptr<::StoneyDSP::StoneyVCV::VCA::VCASpec> spec = std::make_shared<::StoneyDSP::StoneyVCV::VCA::VCASpec>();
 
+    //==========================================================================
+
     SECTION( "files" ) {
         REQUIRE( STONEYVCV_VCA_HPP_INCLUDED == 1 );
     }
+
+    //==========================================================================
 
     SECTION( "VCAModule" ) {
         SECTION( "statics" ) {
@@ -86,6 +103,8 @@ TEST_CASE( "VCA", "[VCA]" ) {
             delete test_vcaModule;
         }
     }
+
+    //==========================================================================
 
     SECTION( "VCAModuleWidget" ) {
         // ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
@@ -115,12 +134,20 @@ TEST_CASE( "VCA", "[VCA]" ) {
         // delete test_vcaModule;
     }
 
+    //==========================================================================
+
     SECTION( "instance" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->slug == spec.get()->slug );
     }
 
+    //==========================================================================
+
     spec.reset();
 }
 
+//==========================================================================
+
 #endif
+
+//==========================================================================

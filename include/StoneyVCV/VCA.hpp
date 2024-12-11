@@ -36,11 +36,13 @@
 //==============================================================================
 
 #include <rack.hpp>
+#include <StoneyDSP/Core.hpp>
+#include <StoneyDSP/DSP.hpp>
+#include <StoneyDSP/SIMD.hpp>
+
+//==============================================================================
 
 #include "plugin.hpp"
-#include "StoneyDSP/Core.hpp"
-#include "StoneyDSP/DSP.hpp"
-#include "StoneyDSP/SIMD.hpp"
 
 //==============================================================================
 
