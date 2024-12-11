@@ -56,7 +56,6 @@ void init(::rack::plugin::Plugin* p) {
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
     p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
-    p->addModel(::StoneyDSP::StoneyVCV::LFO::modelLFO);
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
