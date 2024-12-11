@@ -22,6 +22,7 @@ set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FOR
 set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
+option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." ON)
 option(STONEYVCV_BUILD_TESTS                        "Use '-DSTONEYVCV_BUILD_TESTS=ON|OFF' when configuring to toggle this option." OFF)
 option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
@@ -29,7 +30,6 @@ cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP1   "Use '-DSTONEYVCV_BUILD_MODU
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP2   "Use '-DSTONEYVCV_BUILD_MODULE_HP2=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4   "Use '-DSTONEYVCV_BUILD_MODULE_HP4=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_VCA   "Use '-DSTONEYVCV_BUILD_MODULE_VCA=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_MODULE_LFO   "Use '-DSTONEYVCV_BUILD_MODULE_LFO=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 
 # Put components in the correct order of their dependencies on eachother to save tears...
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
@@ -115,8 +115,16 @@ if(STONEYVCV_BUILD_MODULES)
         HP1
         HP2
         HP4
+    )
+
+    set(STONEYVCV_EXPERIMENTAL_MODULES)
+    list(APPEND STONEYVCV_EXPERIMENTAL_MODULES # List of enabled experimental modules
         VCA
     )
+
+    if(STONEYVCV_EXPERIMENTAL)
+        list(APPEND STONEYVCV_MODULES ${STONEYVCV_EXPERIMENTAL_MODULES})
+    endif()
 
     foreach(MODULE IN LISTS STONEYVCV_MODULES)
 
@@ -181,12 +189,12 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
     )
 
     # Toggle experimental code
-    if(DEFINED STONEYVCV_EXPERIMENTAL)
+    if(STONEYVCV_EXPERIMENTAL)
         target_compile_definitions(${TARGET}
             PUBLIC
                 "STONEYVCV_EXPERIMENTAL=${STONEYVCV_EXPERIMENTAL}"
         )
-    endif(DEFINED STONEYVCV_EXPERIMENTAL)
+    endif(STONEYVCV_EXPERIMENTAL)
 
     # Toggle unit test code
             if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
