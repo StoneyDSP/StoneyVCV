@@ -37,8 +37,10 @@
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
-#include <StoneyDSP/DSP.hpp>
-#include <StoneyDSP/SIMD.hpp>
+
+//==============================================================================
+
+#include "StoneyVCV/version.hpp"
 
 //==============================================================================
 
@@ -57,6 +59,12 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
+    namespace VCA {
+        extern ::rack::plugin::Model* modelVCA;
+    }
+    namespace LFO {
+        extern ::rack::plugin::Model* modelLFO;
+    }
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
@@ -68,9 +76,6 @@ namespace HP2 {
 }
 namespace HP1 {
     extern ::rack::plugin::Model* modelHP1;
-}
-namespace VCA {
-    extern ::rack::plugin::Model* modelVCA;
 }
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
