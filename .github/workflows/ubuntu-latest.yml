@@ -66,6 +66,7 @@ jobs:
         -DVCPKG_HOST_TRIPLET:STRING=x64-linux
         -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
         -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
+        -DSTONEYVCV_EXPERIMENTAL:BOOL=TRUE
         -G "Ninja"
         --compile-no-warning-as-error
         --no-warn-unused-cli

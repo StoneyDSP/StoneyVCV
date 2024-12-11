@@ -29,6 +29,12 @@
  *
  ******************************************************************************/
 
+//==============================================================================
+
+#include <rack.hpp>
+
+//==============================================================================
+
 #include "StoneyVCV/plugin.hpp"
 
 namespace StoneyDSP {
@@ -49,13 +55,13 @@ void init(::rack::plugin::Plugin* p) {
 
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
+    p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
     p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
     p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
     p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
-    p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
