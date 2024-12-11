@@ -29,13 +29,22 @@
  *
  ******************************************************************************/
 
+//==============================================================================
+
 #if (STONEYVCV_BUILD_HP4 == 1) && (STONEYVCV_BUILD_TESTS == 1)
+
+//==============================================================================
 
 #include <catch2/catch_test_macros.hpp>
 // for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+//==============================================================================
+
+#include "StoneyVCV/plugin.hpp"
 #include "StoneyVCV/HP4.hpp"
+
+//==============================================================================
 
 // Spec goes here...
 
@@ -60,15 +69,21 @@ private:
 }
 }
 
+//==============================================================================
+
 // Tests go here...
 
 TEST_CASE( "HP4", "[HP4]" ) {
 
     std::shared_ptr<::StoneyDSP::StoneyVCV::HP4::HP4Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP4::HP4Spec>();
 
+    //==========================================================================
+
     SECTION( "files" ) {
         REQUIRE( STONEYVCV_HP4_HPP_INCLUDED == 1 );
     }
+
+    //==========================================================================
 
     SECTION( "HP4Module" ) {
         SECTION( "statics" ) {
@@ -86,6 +101,8 @@ TEST_CASE( "HP4", "[HP4]" ) {
             delete test_hp4Module;
         }
     }
+
+    //==========================================================================
 
     SECTION( "HP4ModuleWidget" ) {
         // ::StoneyDSP::StoneyVCV::HP4::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4::HP4Module;
@@ -115,12 +132,20 @@ TEST_CASE( "HP4", "[HP4]" ) {
         // delete test_hp4Module;
     }
 
+    //==========================================================================
+
     SECTION( "instance" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::HP4::modelHP4 != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::HP4::modelHP4->slug == spec.get()->slug );
     }
 
+    //==========================================================================
+
     spec.reset();
 }
 
+//==============================================================================
+
 #endif
+
+//==============================================================================
