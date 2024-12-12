@@ -15,11 +15,7 @@ env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_DEFAULT_TRIPLET: "x64-osx"
-  VCPKG_DEFAULT_HOST_TRIPLET: "x64-osx"
-  VCPKG_OSX_ARCHITECTURES: "x86_64"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
@@ -66,17 +62,7 @@ jobs:
     - name: Configure Tests
       run: >-
         cmake
-        -S ${{ github.workspace }}
-        -B ${{ env.BUILD_DIR }}
-        -DCMAKE_INSTALL_PREFIX:PATH=${{ github.workspace }}/install
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
-        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64"
-        -DVCPKG_HOST_TRIPLET:STRING="x64-osx"
-        -DVCPKG_TARGET_TRIPLET:STRING="x64-osx"
-        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
-        -G "Ninja"
-        --compile-no-warning-as-error
-        --no-warn-unused-cli
+        --preset x64-osx-release
         --fresh
 
     - name: Build Tests

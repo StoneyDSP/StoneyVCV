@@ -15,11 +15,8 @@ env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
-  VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   VCPKG_MANIFEST_MODE: ON
   VCPKG_ROOT: "vcpkg"
-  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\dep\vcpkg\ports
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
@@ -101,16 +98,7 @@ jobs:
       shell: msys2 {0}
       run: >-
         cmake
-        -S ${PWD}
-        -B ${PWD}/build
-        -DCMAKE_INSTALL_PREFIX=${PWD}/install
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
-        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
-        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
-        -G "Ninja"
-        --compile-no-warning-as-error
-        --no-warn-unused-cli
+        --preset x64-windows-release
         --fresh
 
     - name: Build Tests
