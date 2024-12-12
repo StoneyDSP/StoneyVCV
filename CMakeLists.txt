@@ -197,7 +197,7 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
     endif(STONEYVCV_EXPERIMENTAL)
 
     # Toggle unit test code
-            if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
+    if(STONEYVCV_BUILD_TESTS)
                 target_sources(tests
                     PRIVATE
                 "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${TARGET}.cpp"
@@ -206,7 +206,7 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"
                 )
-    endif(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
+    endif(STONEYVCV_BUILD_TESTS)
 
     endforeach()
 
@@ -286,7 +286,7 @@ install(
 
 #[=============================[Enable Unit Tests]=============================]
 
-if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
+if(STONEYVCV_BUILD_TESTS)
     enable_testing()
     include(CTest)
     include(Catch)
