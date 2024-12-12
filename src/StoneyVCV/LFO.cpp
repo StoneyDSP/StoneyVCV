@@ -107,7 +107,7 @@ void ::StoneyDSP::StoneyVCV::LFO::LFOWidget::draw(const ::rack::Widget::DrawArgs
 
 ::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget::LFOModuleWidget(::StoneyDSP::StoneyVCV::LFO::LFOModule* module) {
     setModule(module);
-    setPanel(::rack::createPanel<::rack::app::SvgPanel>(
+    setPanel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
         ::rack::asset::plugin(::StoneyDSP::StoneyVCV::pluginInstance, "res/LFO-light.svg"),
         ::rack::asset::plugin(::StoneyDSP::StoneyVCV::pluginInstance, "res/LFO-dark.svg")
     ));
