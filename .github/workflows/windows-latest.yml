@@ -123,8 +123,8 @@ jobs:
       run: >-
         cmake
         --install ${{ env.BUILD_DIR }}
-        --preset x64-windows-release
         --prefix ${PWD}/install
+        --strip
         -j3
 
       # DEPLOYMENT WORKFLOW

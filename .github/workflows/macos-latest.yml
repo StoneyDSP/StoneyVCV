@@ -84,8 +84,8 @@ jobs:
       run: >-
         cmake
         --install ${{ env.BUILD_DIR }}
-        --preset x64-osx-release
         --prefix ${{ github.workspace }}/install
+        --strip
         -j3
 
       # DEPLOYMENT WORKFLOW
