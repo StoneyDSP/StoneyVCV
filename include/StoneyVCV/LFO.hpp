@@ -168,8 +168,8 @@ public:
     LFOModuleWidget(::StoneyDSP::StoneyVCV::LFO::LFOModule* module);
     ~LFOModuleWidget();
 private:
-    // ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget;
-    // ::rack::FramebufferWidget *lfoModuleWidgetFrameBuffer;
+    ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget;
+    ::rack::FramebufferWidget *lfoModuleWidgetFrameBuffer;
     STONEYDSP_DECLARE_NON_COPYABLE(LFOModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOModuleWidget)
 };
