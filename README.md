@@ -9,27 +9,55 @@ StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 
 ---
 
+## Quickstart
+
+```shell
+git clone https://github.com/StoneyDSP/StoneyVCV.git
+```
+
+```shell
+make dep
+```
+
+```shell
+make
+```
+
+```shell
+make install
+```
+
 ## Contents
 
 - [StoneyVCV](#stoneyvcv)
+  - [Quickstart](#quickstart)
   - [Requirements](#requirements)
   - [Build and Install StoneyVCV for VCV Rack 2 with Make](#build-and-install-stoneyvcv-for-vcv-rack-2-with-make)
   - [Develop, Test and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2](#develop-test-and-deploy-stoneyvcv-for-vcv-rack-2-with-cmake-and-catch2)
+  - [Additional Functionality](#additional-functionality)
+    - [CMake Presets](#cmake-presets)
+    - [Makefile Commands](#makefile-commands)
   - [Further Reading](#further-reading)
 
 ---
 
 ## Requirements
 
-Complete the [Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) section of the [VCV Rack Plugin Development guide](https://vcvrack.com/manual/Building).
+Complete the [Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) section of the [VCV Rack Plugin Development guide](https://vcvrack.com/manual/Building). Briefly, you will need the following installations at minimum:
+
+- VCV Rack 2 Free
+- CMake
+- Ninja
+- GNU Make
+- A Bash-like command line
 
 StoneyVCV can be built in three ways:
 
-- Download [VCV Rack](https://vcvrack.com/Rack) and the Rack SDK ([Windows x64](https://vcvrack.com/downloads/Rack-SDK-latest-win-x64.zip) / [Mac x64+ARM64](https://vcvrack.com/downloads/Rack-SDK-latest-mac-x64+arm64.zip) / [Linux x64](https://vcvrack.com/downloads/Rack-SDK-latest-lin-x64.zip)), and build StoneyVCV from any location. (Easiest/fastest.)
+1. Download [VCV Rack](https://vcvrack.com/Rack) and the Rack SDK ([Windows x64](https://vcvrack.com/downloads/Rack-SDK-latest-win-x64.zip) / [Mac x64+ARM64](https://vcvrack.com/downloads/Rack-SDK-latest-mac-x64+arm64.zip) / [Linux x64](https://vcvrack.com/downloads/Rack-SDK-latest-lin-x64.zip)), and build StoneyVCV from any location. (Easiest/fastest.)
 
-- [Build Rack from source](https://vcvrack.com/manual/Building#Building-Rack) and build StoneyVCV in the `plugins/` folder. (Recommended for advanced developers.)
+2. [Build Rack from source](https://vcvrack.com/manual/Building#Building-Rack) and build StoneyVCV in the `plugins/` folder. (Recommended for advanced developers.)
 
-- Build for all architectures with one command using the [VCV Rack Plugin Toolchain](https://github.com/VCVRack/rack-plugin-toolchain). Native (Linux) or Docker (Linux, Mac, Windows). *Recommended 15 GB disk space, 8 GB RAM.*
+3. Build for all architectures with one command using the [VCV Rack Plugin Toolchain](https://github.com/VCVRack/rack-plugin-toolchain). Native (Linux) or Docker (Linux, Mac, Windows). *Recommended 15 GB disk space, 8 GB RAM.*
 
 ---
 
@@ -132,7 +160,95 @@ cd ..
 
 The unit tests executable should run in the terminal, and eventually indicate the success rate of all the tests combined.
 
+## Additional Functionality
+
+StoneyVCV packs some interesting features into its' design, including some well - thought-out and thoroughly tested build system features.
+
+All Modules, tests, and even the plugin itself are all optionable, by applying different configurations to the C++ compiler pre-processor (i.e., what CMake's 'configure' stage means). Module versioning, dependency injection, downstream deployment integration, and much more has been considered throughout the development cycle of StoneyVCV.
+
+To streamline much of these many options and configurations, we have provided some additional functionality which will brings a lot more control over the build (and deloyment, and debugging, and tests...) under smaller "macro"-like code signatures, with the use of tools such as CMake Presets and Makefile commands.
+
+These additional functions provide a wide coverage of the full feature set of StoneyVCV, usually in just a single command line argument each.
+
+### CMake Presets
+
+The following CMake Presets are available for easy access to various configurations:
+
+```txt
+x64-windows-debug
+x64-windows-release
+x64-windows-debug-verbose
+x64-windows-release-verbose
+```
+```txt
+x64-linux-debug
+x64-linux-release
+x64-linux-debug-verbose
+x64-linux-release-verbose
+```
+```txt
+x64-osx-debug
+x64-osx-release
+x64-osx-debug-verbose
+x64-osx-release-verbose
+```
+
+```txt
+arm64-osx-debug
+arm64-osx-release
+arm64-osx-debug-verbose
+arm64-osx-release-verbose
+```
+
+To use a CMake Preset, you can just pass the `--preset=` arg to CMake (no other args required):
+
+```shell
+cmake --preset x64-windows-release
+```
+
+*The above command will configure the plugin for Windows 64-bit in Release mode using the same settings that the Rack-SDK itself implements, respectively*
+
+### Makefile commands
+
+As a further helper, we have also organized our `Makefile` to *automatically detect* a relevant CMake Preset - if not manually chosen - and run CMake for us, using an *even simpler* command, which works on *all* platforms:
+
+```shell
+make configure
+```
+
+*The above command will configure the plugin for the host machine's platform; the CPU and OS are detected by the Rack-SDK itself, while the common environment variables `VERBOSE` and `DEBUG` may also be set or unset, to further adapt the behaviour of `make configure` according to your current environment.*
+
+Further CMake actions and workflows can be triggered via `make` in a similarly environment-sensitive manner:
+
+```shell
+make reconfigure
+```
+
+*Clears the current CMake cache file (not dir!) and runs the configure step again*
+
+```shell
+make build
+```
+
+*Builds all currently-enabled CMake targets*
+
+
+```shell
+make test
+```
+
+*Runs CTest on the build output directory, executing any tests it finds (i.e., Catch2 unit tests)*
+
+
+```shell
+make package
+```
+
+*Creates a local directory (`./install`) containing a distributable package, unarchived*
+
 The GitHub Workflows in our repository may be a useful reference, if any doubts.
+
+---
 
 Please feel welcome to submit pull requests of any changes you feel are useful, interesting, or appropriate, along with any technical notes and/or subjective reasoning; you may use [one of our PR templates](https://github.com/StoneyDSP/StoneyVCV/issues/new/choose) to help you get started - [all community contributions are gratefully recieved](https://github.com/StoneyDSP/StoneyVCV/blob/production/.github/CONTRIBUTING.md).
 

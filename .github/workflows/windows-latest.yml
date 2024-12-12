@@ -14,12 +14,10 @@ concurrency:
 env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
+  CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_DEFAULT_TRIPLET: "x64-mingw-dynamic"
-  VCPKG_DEFAULT_HOST_TRIPLET: "x64-mingw-dynamic"
   VCPKG_MANIFEST_MODE: ON
   VCPKG_ROOT: "vcpkg"
-  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}\dep\vcpkg\ports
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
@@ -101,17 +99,7 @@ jobs:
       shell: msys2 {0}
       run: >-
         cmake
-        -S ${PWD}
-        -B ${PWD}/build
-        -DCMAKE_INSTALL_PREFIX=${PWD}/install
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
-        -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
-        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_EXPERIMENTAL:BOOL=TRUE
-        -G "Ninja"
-        --compile-no-warning-as-error
-        --no-warn-unused-cli
+        --preset x64-windows-release
         --fresh
 
     - name: Build Tests
@@ -119,19 +107,26 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
+        --preset x64-windows-release
         --target tests
-        -j3
+        -j 3
 
     - name: Test
       shell: msys2 {0}
       run: >-
-        cd build &&
         ctest
-        -j3
-        --rerun-failed
-        --output-on-failure
-        --verbose
-        && cd ..
+        --test-dir ${{ env.BUILD_DIR }}
+        --preset x64-windows-release
+        -j 3
+
+    - name: Install
+      shell: msys2 {0}
+      run: >-
+        cmake
+        --install ${{ env.BUILD_DIR }}
+        --prefix ${PWD}/install
+        --strip
+        -j 3
 
       # DEPLOYMENT WORKFLOW
 
@@ -142,6 +137,12 @@ jobs:
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
+
+    - name: Dep
+      shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dep -j 3
 
     - name: Build
       shell: msys2 {0}

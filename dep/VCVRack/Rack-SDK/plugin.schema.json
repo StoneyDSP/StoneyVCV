@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/production/plugin.schema.json",
+  "type": "object",
+  "allOf": [
+    {
+      "required": [
+        "slug",
+        "name",
+        "version",
+        "license",
+        "author"
+      ],
+      "patternProperties": {
+        "^\\$": {}
+      },
+      "additionalProperties": false,
+      "properties": {
+        "slug": {
+          "description": "The unique identifier for your plugin. Case-sensitive. Slugs may only contain letters `a-z` and `A-Z`, numbers `0-9`, hyphens `-`, and underscores `_`. After your plugin is released, the slug must never change, otherwise patch compatibility would be broken. To guarantee uniqueness, it is a good idea to prefix the slug by your “brand name” if available, e.g. “MyCompany-MyPlugin”.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The human-readable name for your plugin. Used for labeling your plugin the VCV Library. Unlike slugs, the name can be changed at any time without breaking patch compatibility.",
+          "type": "string"
+        },
+        "version": {
+          "description": "The version of your plugin should follow the form `MAJOR`.`MINOR`.`REVISION`. Do not include the “v” prefix—this is added automatically where appropriate. The `MAJOR` version should match the version of Rack your plugin is built for, e.g. `2`. You are free to choose the `MINOR`.`REVISION` part of your plugin version. For example, `MyPlugin 2.4.2` would specify that your plugin is compatible with Rack `2`.X. If you publish the source code in a git repository, it is recommended to add a git tag with `git tag vX.Y.Z` and `git push --tags`.",
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+)*(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+        },
+        "license": {
+          "description": "The license of your plugin. For open-source plugins, use the license identifier string from the SPDX License List, such as 'GPL-3.0-or-later', 'GPL-3.0-only', 'MIT', 'BSD-3-Clause', 'CC0-1.0', etc. For freeware plugins, use 'proprietary' (TODO: use 'https://vcvrack.com/freeware-eula' when available), or your own freeware license URL. For commercial plugins, use 'https://vcvrack.com/eula' if sold on the VCV Library, or your own commercial license URL.",
+          "type": "string"
+        },
+        "brand": {
+          "description": "Prefix string for all modules in your plugin. For example, the brand “VCV” is used by the Fundamental plugin to create 'VCV VCF', 'VCV Unity', etc. If blank or undefined, the plugin name is used.",
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "authorEmail": {
+          "type": "string"
+        },
+        "authorUrl": {
+          "type": "string"
+        },
+        "pluginUrl": {
+          "type": "string"
+        },
+        "manualUrl": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "type": "string"
+        },
+        "donateUrl": {
+          "type": "string"
+        },
+        "changelogUrl": {
+          "type": "string"
+        },
+        "modules": {
+          "type": "array"
+        },
+        "minRackVersion": {
+          "description": "Minimum version of Rack required to download the plugin from the VCV Library. VCV Rack 2.4.0+ is required to prevent downloading plugin packages with incompatible minRackVersion. Older Rack versions do not support this property and will download all plugin versions regardless of its value.",
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+)*(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+        }
+      }
+    }
+  ]
+}
