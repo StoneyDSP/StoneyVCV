@@ -83,8 +83,8 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     find_package(Catch2 3.5.2 REQUIRED)
     add_executable(tests)
-    add_executable(StoneyVCV::test ALIAS tests)
-    add_executable(StoneyDSP::StoneyVCV::test ALIAS tests)
+    add_executable(StoneyVCV::tests ALIAS tests)
+    add_executable(StoneyDSP::StoneyVCV::tests ALIAS tests)
     target_include_directories(tests
         PUBLIC
         $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
