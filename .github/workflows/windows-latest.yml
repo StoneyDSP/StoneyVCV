@@ -139,6 +139,7 @@ jobs:
         cd ..
 
     - name: Dep
+      shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dep -j 3
