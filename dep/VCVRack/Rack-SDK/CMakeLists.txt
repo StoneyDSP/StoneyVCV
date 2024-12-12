@@ -290,13 +290,10 @@ export(
 
 list(APPEND RACK_SDK_TARGETS core)
 
+## Intellisense helper...
 # add_library(rack-sdk INTERFACE)
 # add_library(unofficial-vcvrack::rack-sdk ALIAS rack-sdk)
-
-# file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/rack.hpp" [==[
-# // intellisense helper
-# #include "Rack-SDK/rack/rack.hpp"
-# ]==])
+# configure_file("include/rack.hpp" "include/rack.hpp")
 # target_sources(rack-sdk INTERFACE
 #     FILE_SET rack_sdk_INTERFACE_HEADERS
 #     TYPE HEADERS
@@ -309,7 +306,11 @@ list(APPEND RACK_SDK_TARGETS core)
 # )
 # target_compile_options(rack-sdk
 #     INTERFACE
-#     "-fPIC"
+#         "-fPIC"
+# )
+# target_link_libraries(rack-sdk
+#     INTERFACE
+#         unofficial-vcvrack::rack-sdk::core
 # )
 
 # # install the target and create export-set
@@ -696,5 +697,56 @@ install(
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/Rack-SDK"
 )
+
+if(RACK_SDK_IS_TOP_LEVEL)
+    # add CPack to project
+    set(CPACK_PACKAGE_NAME "Rack-SDK")
+    set(CPACK_PACKAGE_VENDOR "VCV")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CPack Component Installation Example")
+    set(CPACK_PACKAGE_VERSION "${RACK_SDK_VERSION_MAJOR}.${RACK_SDK_VERSION_MINOR}.${RACK_SDK_VERSION_PATCH}")
+    set(CPACK_PACKAGE_VERSION_MAJOR "${RACK_SDK_VERSION_MAJOR}")
+    set(CPACK_PACKAGE_VERSION_MINOR "${RACK_SDK_VERSION_MINOR}")
+    set(CPACK_PACKAGE_VERSION_PATCH "${RACK_SDK_VERSION_PATCH}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Rack-SDK")
+    set(CPACK_SOURCE_IGNORE_FILES)
+    list(APPEND CPACK_SOURCE_IGNORE_FILES
+        "/_CPack_Packages/"
+        "/install/"
+        "/build/"
+        "/dist/"
+        "/out/"
+        "/.git/"
+        "/.github/"
+        "/.vscode/"
+        "/*.zip"
+        "/*.tar"
+        "/*.tar.gz"
+        "/*.tar.xz"
+        "/*.tar.bz2"
+        "/*.tar.Z"
+        "/*.sh"
+        "/*.vcvplugin"
+    )
+    # This must always be after all CPACK\_\* variables are defined
+    include(CPack)
+    cpack_add_component(dep
+        DISPLAY_NAME "Dependency C++ Headers"
+        DESCRIPTION "C/C++ header files for Rack-SDK's dependencies"
+        GROUP "Rack-SDK"
+    )
+    cpack_add_component(core
+        DISPLAY_NAME "C++ Headers"
+        DESCRIPTION "C/C++ header files for Rack-SDK"
+        GROUP "Rack-SDK"
+        DEPENDS dep
+    )
+    cpack_add_component(lib
+        DISPLAY_NAME "Shared Library"
+        DESCRIPTION "Dynamic library for Rack-SDK"
+        GROUP "Rack-SDK"
+        DEPENDS core
+    )
+    # cpack_add_component(rack-sdk)
+endif()
 
 unset(__RACK_SDK_HELPERS_FILE)
