@@ -23,13 +23,13 @@ set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FOR
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
 option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." OFF)
-option(STONEYVCV_BUILD_TESTS                        "Use '-DSTONEYVCV_BUILD_TESTS=ON|OFF' when configuring to toggle this option." OFF)
 option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP1   "Use '-DSTONEYVCV_BUILD_MODULE_HP1=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP2   "Use '-DSTONEYVCV_BUILD_MODULE_HP2=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4   "Use '-DSTONEYVCV_BUILD_MODULE_HP4=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_VCA   "Use '-DSTONEYVCV_BUILD_MODULE_VCA=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL" ON)
+cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TESTS=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_IS_TOP_LEVEL" ON)
 
 # Put components in the correct order of their dependencies on eachother to save tears...
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
@@ -83,8 +83,8 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     find_package(Catch2 3.5.2 REQUIRED)
     add_executable(tests)
-    add_executable(StoneyVCV::test ALIAS tests)
-    add_executable(StoneyDSP::StoneyVCV::test ALIAS tests)
+    add_executable(StoneyVCV::tests ALIAS tests)
+    add_executable(StoneyDSP::StoneyVCV::tests ALIAS tests)
     target_include_directories(tests
         PUBLIC
         $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
@@ -197,7 +197,7 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
     endif(STONEYVCV_EXPERIMENTAL)
 
     # Toggle unit test code
-            if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
+    if(STONEYVCV_BUILD_TESTS)
                 target_sources(tests
                     PRIVATE
                 "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${TARGET}.cpp"
@@ -206,7 +206,7 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"
                 )
-    endif(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
+    endif(STONEYVCV_BUILD_TESTS)
 
     endforeach()
 
@@ -286,7 +286,7 @@ install(
 
 #[=============================[Enable Unit Tests]=============================]
 
-if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
+if(STONEYVCV_BUILD_TESTS)
     enable_testing()
     include(CTest)
     include(Catch)

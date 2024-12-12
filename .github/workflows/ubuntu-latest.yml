@@ -16,9 +16,9 @@ env:
   BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   CMAKE_BUILD_PARALLEL_LEVEL: 3
+  CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "lin-x64"
@@ -59,34 +59,31 @@ jobs:
     - name: Configure Tests
       run: >-
         cmake
-        -S ${{ github.workspace }}
-        -B ${{ env.BUILD_DIR }}
-        -DCMAKE_INSTALL_PREFIX:PATH=${{ github.workspace }}/install
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake"
-        -DVCPKG_HOST_TRIPLET:STRING=x64-linux
-        -DVCPKG_TARGET_TRIPLET:STRING=x64-linux
-        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
-        -G "Ninja"
-        --compile-no-warning-as-error
-        --no-warn-unused-cli
+        --preset x64-linux-release
         --fresh
 
     - name: Build Tests
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
+        --preset x64-linux-release
         --target tests
-        -j3
+        -j 3
 
     - name: Test
       run: >-
-        cd ${{ env.BUILD_DIR }} &&
         ctest
-        -j3
-        --rerun-failed
-        --output-on-failure
-        --verbose
-        && cd ${{ github.workspace }}
+        --test-dir ${{ env.BUILD_DIR }}
+        --preset x64-linux-release
+        -j 3
+
+    - name: Install
+      run: >-
+        cmake
+        --install ${{ env.BUILD_DIR }}
+        --prefix ${{ github.workspace }}/install
+        --strip
+        -j 3
 
       # DEPLOYMENT WORKFLOW
 
@@ -96,6 +93,11 @@ jobs:
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
+
+    - name: Dep
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dep -j 3
 
     - name: Build
       env:
