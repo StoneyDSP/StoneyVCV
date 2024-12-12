@@ -193,6 +193,13 @@ x64-osx-debug-verbose
 x64-osx-release-verbose
 ```
 
+```txt
+arm64-osx-debug
+arm64-osx-release
+arm64-osx-debug-verbose
+arm64-osx-release-verbose
+```
+
 To use a CMake Preset, you can just pass the `--preset=` arg to CMake (no other args required):
 
 ```shell
