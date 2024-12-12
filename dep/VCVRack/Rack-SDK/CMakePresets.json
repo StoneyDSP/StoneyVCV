@@ -224,6 +224,51 @@
       }
     },
     {
+      "name": "arm64-osx",
+      "hidden": true,
+      "inherits": "base",
+      "displayName": "MacOS-only configuration",
+      "description": "This build is only available on MacOS",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "VCPKG_HOST_TRIPLET": {
+          "value": "arm64-osx",
+          "type": "STRING"
+        },
+        "VCPKG_TARGET_TRIPLET": {
+          "value": "arm64-osx",
+          "type": "STRING"
+        },
+        "CMAKE_OSX_ARCHITECTURES": {
+          "value": "x86_64;arm64",
+          "type": "STRING"
+        },
+        "VCPKG_OSX_ARCHITECTURES": {
+          "value": "x86_64;arm64",
+          "type": "STRING"
+        }
+      },
+      "environment": {
+        "VCPKG_OSX_ARCHITECTURES": "x86_64;arm64",
+        "VCPKG_DEFAULT_TRIPLET": "arm64-osx",
+        "VCPKG_DEFAULT_TARGET_TRIPLET": "arm64-osx"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "autoFormat": true,
+          "hostOS": "macOS",
+          "intelliSenseMode": "ios-clang-arm64",
+          "intelliSenseOptions": {
+            "useCompilerDefaults": true
+          }
+        }
+      }
+    },
+    {
       "name": "x64-linux-debug",
       "hidden": false,
       "inherits": [
@@ -324,6 +369,40 @@
         "release",
         "verbose"
       ]
+    },
+    {
+      "name": "arm64-osx-debug",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
+        "debug"
+      ]
+    },
+    {
+      "name": "arm64-osx-release",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
+        "release"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug-verbose",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
+        "debug",
+        "verbose"
+      ]
+    },
+    {
+      "name": "arm64-osx-release-verbose",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
+        "release",
+        "verbose"
+      ]
     }
   ],
   "buildPresets": [
@@ -390,6 +469,19 @@
       "name": "x64-osx",
       "hidden": true,
       "configurePreset": "x64-osx",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "arm64-osx",
+      "hidden": true,
+      "configurePreset": "arm64-osx",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -509,6 +601,44 @@
       "hidden": false,
       "inherits": [
         "x64-osx",
+        "release",
+        "verbose"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug",
+      "configurePreset": "arm64-osx-debug",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
+        "debug"
+      ]
+    },
+    {
+      "name": "arm64-osx-release",
+      "configurePreset": "arm64-osx-release",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
+        "release"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug-verbose",
+      "configurePreset": "arm64-osx-debug-verbose",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
+        "debug",
+        "verbose"
+      ]
+    },
+    {
+      "name": "arm64-osx-release-verbose",
+      "configurePreset": "arm64-osx-release-verbose",
+      "hidden": false,
+      "inherits": [
+        "arm64-osx",
         "release",
         "verbose"
       ]
@@ -599,6 +729,19 @@
       ]
     },
     {
+      "name": "arm64-osx",
+      "hidden": true,
+      "configurePreset": "arm64-osx",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
       "name": "x64-windows-debug",
       "hidden": false,
       "configurePreset": "x64-windows-debug",
@@ -711,6 +854,44 @@
         "release",
         "verbose"
       ]
+    },
+    {
+      "name": "arm64-osx-debug",
+      "hidden": false,
+      "configurePreset": "arm64-osx-debug",
+      "inherits": [
+        "arm64-osx",
+        "debug"
+      ]
+    },
+    {
+      "name": "arm64-osx-release",
+      "hidden": false,
+      "configurePreset": "arm64-osx-release",
+      "inherits": [
+        "arm64-osx",
+        "release"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug-verbose",
+      "hidden": false,
+      "configurePreset": "arm64-osx-debug-verbose",
+      "inherits": [
+        "arm64-osx",
+        "debug",
+        "verbose"
+      ]
+    },
+    {
+      "name": "arm64-osx-release-verbose",
+      "hidden": false,
+      "configurePreset": "arm64-osx-release-verbose",
+      "inherits": [
+        "arm64-osx",
+        "release",
+        "verbose"
+      ]
     }
   ],
   "packagePresets": [
@@ -794,6 +975,19 @@
     {
       "name": "x64-osx",
       "configurePreset": "x64-osx",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "arm64-osx",
+      "configurePreset": "arm64-osx",
       "hidden": true,
       "inherits": [
         "base"
@@ -1027,6 +1221,82 @@
       "configurePreset": "x64-osx-release-verbose",
       "inherits": [
         "x64-osx",
+        "release",
+        "source",
+        "verbose"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug",
+      "configurePreset": "arm64-osx-debug",
+      "inherits": [
+        "arm64-osx",
+        "debug",
+        "build"
+      ]
+    },
+    {
+      "name": "arm64-osx-release",
+      "configurePreset": "arm64-osx-release",
+      "inherits": [
+        "arm64-osx",
+        "release",
+        "build"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug-verbose",
+      "configurePreset": "arm64-osx-debug-verbose",
+      "inherits": [
+        "arm64-osx",
+        "debug",
+        "verbose",
+        "build"
+      ]
+    },
+    {
+      "name": "arm64-osx-release-verbose",
+      "configurePreset": "arm64-osx-release-verbose",
+      "inherits": [
+        "arm64-osx",
+        "release",
+        "verbose",
+        "build"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug-source",
+      "configurePreset": "arm64-osx-debug",
+      "inherits": [
+        "arm64-osx",
+        "debug",
+        "source"
+      ]
+    },
+    {
+      "name": "arm64-osx-release-source",
+      "configurePreset": "arm64-osx-release",
+      "inherits": [
+        "arm64-osx",
+        "release",
+        "source"
+      ]
+    },
+    {
+      "name": "arm64-osx-debug-source-verbose",
+      "configurePreset": "arm64-osx-debug-verbose",
+      "inherits": [
+        "arm64-osx",
+        "debug",
+        "source",
+        "verbose"
+      ]
+    },
+    {
+      "name": "arm64-osx-release-source-verbose",
+      "configurePreset": "arm64-osx-release-verbose",
+      "inherits": [
+        "arm64-osx",
         "release",
         "source",
         "verbose"
@@ -1354,6 +1624,114 @@
         },
         {
           "name": "x64-osx-release-source-verbose",
+          "type": "package"
+        }
+      ]
+    },
+    {
+      "name": "arm64-osx-debug",
+      "displayName": "MacOS Debug",
+      "description": "MacOS-only Debug workflow preset.",
+      "steps": [
+        {
+          "name": "arm64-osx-debug",
+          "type": "configure"
+        },
+        {
+          "name": "arm64-osx-debug",
+          "type": "build"
+        },
+        {
+          "name": "arm64-osx-debug",
+          "type": "test"
+        },
+        {
+          "name": "arm64-osx-debug",
+          "type": "package"
+        },
+        {
+          "name": "arm64-osx-debug-source",
+          "type": "package"
+        }
+      ]
+    },
+    {
+      "name": "arm64-osx-release",
+      "displayName": "MacOS Release",
+      "description": "MacOS-only Release workflow preset.",
+      "steps": [
+        {
+          "name": "arm64-osx-release",
+          "type": "configure"
+        },
+        {
+          "name": "arm64-osx-release",
+          "type": "build"
+        },
+        {
+          "name": "arm64-osx-release",
+          "type": "test"
+        },
+        {
+          "name": "arm64-osx-release",
+          "type": "package"
+        },
+        {
+          "name": "arm64-osx-release-source",
+          "type": "package"
+        }
+      ]
+    },
+    {
+      "name": "arm64-osx-debug-verbose",
+      "displayName": "MacOS Debug (verbose)",
+      "description": "MacOS-only Debug workflow preset (verbose).",
+      "steps": [
+        {
+          "name": "arm64-osx-debug-verbose",
+          "type": "configure"
+        },
+        {
+          "name": "arm64-osx-debug-verbose",
+          "type": "build"
+        },
+        {
+          "name": "arm64-osx-debug-verbose",
+          "type": "test"
+        },
+        {
+          "name": "arm64-osx-debug-verbose",
+          "type": "package"
+        },
+        {
+          "name": "arm64-osx-debug-source-verbose",
+          "type": "package"
+        }
+      ]
+    },
+    {
+      "name": "arm64-osx-release-verbose",
+      "displayName": "MacOS Release (verbose)",
+      "description": "MacOS-only Release workflow preset (verbose).",
+      "steps": [
+        {
+          "name": "arm64-osx-release-verbose",
+          "type": "configure"
+        },
+        {
+          "name": "arm64-osx-release-verbose",
+          "type": "build"
+        },
+        {
+          "name": "arm64-osx-release-verbose",
+          "type": "test"
+        },
+        {
+          "name": "arm64-osx-release-verbose",
+          "type": "package"
+        },
+        {
+          "name": "arm64-osx-release-source-verbose",
           "type": "package"
         }
       ]
