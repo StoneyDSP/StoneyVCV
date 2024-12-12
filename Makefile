@@ -62,8 +62,26 @@ ifeq ($(STONEYVCV_BUILD_TESTS),1)
 	FLAGS += -DSTONEYVCV_BUILD_TESTS=$(STONEYVCV_BUILD_TESTS)
 endif
 
+include $(RACK_DIR)/arch.mk
+
+# Include deps
+ifdef ARCH_WIN
+	FLAGS += -I$(PWD)/build/vcpkg_installed/x64-mingw-dynamic/include
+	LDFLAGS += -L$(PWD)/build/vcpkg_installed/x64-mingw-dynamic/lib
+endif
+
+ifdef ARCH_LIN
+	FLAGS += -I$(PWD)/build/vcpkg_installed/x64-linux/include
+	LDFLAGS += -L$(PWD)/build/vcpkg_installed/x64-linux/lib
+endif
+
+ifdef ARCH_MAC
+	FLAGS += -I$(PWD)/build/vcpkg_installed/x64-osx/include
+	LDFLAGS += -L$(PWD)/build/vcpkg_installed/x64-osx/lib
+endif
+
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += -Iinclude -Idep/StoneyDSP/include
+FLAGS += -I$(PWD)/include
 CFLAGS +=
 CXXFLAGS +=
 
@@ -75,12 +93,6 @@ LDFLAGS +=
 
 # Add .cpp files to the build
 # SOURCES += $(wildcard src/StoneyVCV/*.cpp)
-# SOURCES += src/HP4.cpp
-# SOURCES += src/HP2.cpp
-# SOURCES += src/HP1.cpp
-# SOURCES += src/VCA.cpp
-# SOURCES += src/LFO.cpp
-# SOURCES += src/plugin.cpp
 
 # Add files to the ZIP package when running `make dist`
 # The compiled plugin and "plugin.json" are automatically added.
@@ -90,8 +102,61 @@ DISTRIBUTABLES += LICENSE
 DISTRIBUTABLES += VERSION
 DISTRIBUTABLES += $(wildcard presets)
 
+ifdef ARCH_X64
+	PRESET_ARCH := x64
+endif
+
+ifdef ARCH_ARM64
+	PRESET_ARCH := arm64
+endif
+
+ifdef ARCH_WIN
+	PRESET_OS := windows
+endif
+
+ifdef ARCH_LIN
+	PRESET_OS := linux
+endif
+
+ifdef ARCH_MAC
+	PRESET_OS := osx
+endif
+
+ifdef BUILD_TYPE
+	PRESET_CONFIG := $(BUILD_TYPE)
+else
+	PRESET_CONFIG := release
+endif
+
+ifdef VERBOSE
+	PRESET_VERBOSE := -verbose
+endif
+
+PRESET ?= $(PRESET_ARCH)-$(PRESET_OS)-$(PRESET_CONFIG)$(PRESET_VERBOSE)
+
+reconfigure:
+	cmake \
+	--preset $(PRESET) \
+  --fresh
+
+configure:
+	cmake \
+	--preset $(PRESET)
+
+build: configure
+	cmake \
+  --build $(PWD)/build \
+	--preset $(PRESET)
+
+test: build
+	ctest \
+  --test-dir $(PWD)/build \
+	--preset $(PRESET)
+
+package: test
+	cmake \
+  --install $(PWD)/build \
+	--prefix $(PWD)/install
+
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
-
-# Include dep
-include $(PWD)/dep.mk
