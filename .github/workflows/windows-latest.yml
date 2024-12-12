@@ -138,6 +138,11 @@ jobs:
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
+    - name: Dep
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dep -j 3
+
     - name: Build
       shell: msys2 {0}
       env:
