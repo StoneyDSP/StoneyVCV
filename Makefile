@@ -64,21 +64,29 @@ endif
 
 include $(RACK_DIR)/arch.mk
 
+ifdef ARCH_X64
+	TRIPLET_ARCH := x64
+endif
+
+ifdef ARCH_ARM64
+	TRIPLET_ARCH := arm64
+endif
+
 # Include deps
 ifdef ARCH_WIN
-	FLAGS += -I$(PWD)/build/vcpkg_installed/x64-mingw-dynamic/include
-	LDFLAGS += -L$(PWD)/build/vcpkg_installed/x64-mingw-dynamic/lib
+	TRIPLET_OS := mingw-dynamic
 endif
 
 ifdef ARCH_LIN
-	FLAGS += -I$(PWD)/build/vcpkg_installed/x64-linux/include
-	LDFLAGS += -L$(PWD)/build/vcpkg_installed/x64-linux/lib
+	TRIPLET_OS := linux
 endif
 
 ifdef ARCH_MAC
-	FLAGS += -I$(PWD)/build/vcpkg_installed/x64-osx/include
-	LDFLAGS += -L$(PWD)/build/vcpkg_installed/x64-osx/lib
+	TRIPLET_OS := osx
 endif
+
+FLAGS += -I$(PWD)/build/vcpkg_installed/$(TRIPLET_ARCH)-$(TRIPLET_OS)/include
+LDFLAGS += -L$(PWD)/build/vcpkg_installed/$(TRIPLET_ARCH)-$(TRIPLET_OS)/lib
 
 # FLAGS will be passed to both the C and C++ compiler
 FLAGS += -I$(PWD)/include
