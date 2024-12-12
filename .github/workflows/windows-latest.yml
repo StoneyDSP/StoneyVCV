@@ -14,6 +14,7 @@ concurrency:
 env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
+  CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_MANIFEST_MODE: ON
   VCPKG_ROOT: "vcpkg"
@@ -108,7 +109,7 @@ jobs:
         --build ${{ env.BUILD_DIR }}
         --preset x64-windows-release
         --target tests
-        -j3
+        -j 3
 
     - name: Test
       shell: msys2 {0}
@@ -116,7 +117,7 @@ jobs:
         ctest
         --test-dir ${{ env.BUILD_DIR }}
         --preset x64-windows-release
-        -j3
+        -j 3
 
     - name: Install
       shell: msys2 {0}
@@ -125,7 +126,7 @@ jobs:
         --install ${{ env.BUILD_DIR }}
         --prefix ${PWD}/install
         --strip
-        -j3
+        -j 3
 
       # DEPLOYMENT WORKFLOW
 

@@ -14,6 +14,7 @@ concurrency:
 env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
+  CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   BUILD_DIR: ${{ github.workspace }}/build
@@ -71,14 +72,14 @@ jobs:
         --build ${{ env.BUILD_DIR }}
         --preset x64-osx-release
         --target tests
-        -j3
+        -j 3
 
     - name: Test
       run: >-
         ctest
         --test-dir ${{ env.BUILD_DIR }}
         --preset x64-osx-release
-        -j3
+        -j 3
 
     - name: Install
       run: >-
@@ -86,7 +87,7 @@ jobs:
         --install ${{ env.BUILD_DIR }}
         --prefix ${{ github.workspace }}/install
         --strip
-        -j3
+        -j 3
 
       # DEPLOYMENT WORKFLOW
 
