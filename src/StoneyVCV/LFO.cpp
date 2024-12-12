@@ -83,21 +83,6 @@ void ::StoneyDSP::StoneyVCV::LFO::LFOModule::dataFromJson(::json_t *rootJ)
 
 ::StoneyDSP::StoneyVCV::LFO::LFOWidget::~LFOWidget()
 {
-
-}
-
-//==============================================================================
-
-::StoneyDSP::StoneyVCV::LFO::LFOWidget::LFOWidget()
-{
-    // Widgets
-    lfoWidgetFrameBuffer = new ::rack::FramebufferWidget;
-    lfoWidgetFrameBuffer->setSize(box.size);
-    addChild(lfoWidgetFrameBuffer);
-}
-
-::StoneyDSP::StoneyVCV::LFO::LFOWidget::~LFOWidget()
-{
     // delete lfoWidgetFrameBuffer;
 }
 
