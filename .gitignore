@@ -1,5 +1,6 @@
 # Artefact directories
 #
+/_CPack_Packages
 /vcpkg_installed
 /install
 /build
@@ -12,6 +13,13 @@
 /*.so
 /*.dylib
 /*.dll
+**.zip
+**.tar
+**.gz
+**.bz2
+**.sh
+**.tar.Z
+**.vcvplugin
 
 # Resource files
 #

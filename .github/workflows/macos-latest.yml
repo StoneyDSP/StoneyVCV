@@ -14,12 +14,9 @@ concurrency:
 env:
   DISPLAY: :0
   CMAKE_BUILD_PARALLEL_LEVEL: 3
+  CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_DEFAULT_TRIPLET: "x64-osx"
-  VCPKG_DEFAULT_HOST_TRIPLET: "x64-osx"
-  VCPKG_OSX_ARCHITECTURES: "x86_64"
   VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-  VCPKG_OVERLAY_PORTS: ${{ github.workspace }}/dep/vcpkg/ports
   BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
@@ -54,7 +51,7 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: x64-osx
+        triplet: arm64-osx
         # GitHub token to authenticate API requests. Recommended to use  github.token
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
@@ -66,36 +63,31 @@ jobs:
     - name: Configure Tests
       run: >-
         cmake
-        -S ${{ github.workspace }}
-        -B ${{ env.BUILD_DIR }}
-        -DCMAKE_INSTALL_PREFIX:PATH=${{ github.workspace }}/install
-        -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
-        -DCMAKE_OSX_ARCHITECTURES:STRING="x86_64"
-        -DVCPKG_HOST_TRIPLET:STRING="x64-osx"
-        -DVCPKG_TARGET_TRIPLET:STRING="x64-osx"
-        -DSTONEYVCV_BUILD_TESTS:BOOL=TRUE
-        -DSTONEYVCV_EXPERIMENTAL:BOOL=TRUE
-        -G "Ninja"
-        --compile-no-warning-as-error
-        --no-warn-unused-cli
+        --preset arm64-osx-release
         --fresh
 
     - name: Build Tests
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
+        --preset arm64-osx-release
         --target tests
-        -j3
+        -j 3
 
     - name: Test
       run: >-
-        cd ${{ env.BUILD_DIR }} &&
         ctest
-        -j3
-        --rerun-failed
-        --output-on-failure
-        --verbose
-        && cd ${{ github.workspace }}
+        --test-dir ${{ env.BUILD_DIR }}
+        --preset arm64-osx-release
+        -j 3
+
+    - name: Install
+      run: >-
+        cmake
+        --install ${{ env.BUILD_DIR }}
+        --prefix ${{ github.workspace }}/install
+        --strip
+        -j 3
 
       # DEPLOYMENT WORKFLOW
 
@@ -106,20 +98,25 @@ jobs:
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
+    - name: Dep
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make dep -j 3
+
     - name: Build
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make -j3
+      run: make -j 3
 
     - name: Dist
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make dist -j3
+      run: make dist -j 3
 
     - name: Install
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make install -j3
+      run: make install -j 3
 
     # List all files in tree
     - name: List
