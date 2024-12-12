@@ -179,9 +179,33 @@
       }
     },
     {
-      "name": "x64-osx",
+      "name": "osx",
       "hidden": true,
       "inherits": "base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": {
+          "value": "x86_64;arm64",
+          "type": "STRING"
+        },
+        "VCPKG_OSX_ARCHITECTURES": {
+          "value": "x86_64;arm64",
+          "type": "STRING"
+        }
+      },
+      "environment": {
+        "CMAKE_OSX_ARCHITECTURES": "x86_64;arm64",
+        "VCPKG_OSX_ARCHITECTURES": "x86_64;arm64"
+      }
+    },
+    {
+      "name": "x64-osx",
+      "hidden": true,
+      "inherits": "osx",
       "displayName": "MacOS-only configuration",
       "description": "This build is only available on MacOS",
       "condition": {
@@ -197,18 +221,9 @@
         "VCPKG_TARGET_TRIPLET": {
           "value": "x64-osx",
           "type": "STRING"
-        },
-        "CMAKE_OSX_ARCHITECTURES": {
-          "value": "x86_64",
-          "type": "STRING"
-        },
-        "VCPKG_OSX_ARCHITECTURES": {
-          "value": "x86_64",
-          "type": "STRING"
         }
       },
       "environment": {
-        "VCPKG_OSX_ARCHITECTURES": "x86_64",
         "VCPKG_DEFAULT_TRIPLET": "x64-osx",
         "VCPKG_DEFAULT_TARGET_TRIPLET": "x64-osx"
       },
@@ -242,18 +257,9 @@
         "VCPKG_TARGET_TRIPLET": {
           "value": "arm64-osx",
           "type": "STRING"
-        },
-        "CMAKE_OSX_ARCHITECTURES": {
-          "value": "x86_64;arm64",
-          "type": "STRING"
-        },
-        "VCPKG_OSX_ARCHITECTURES": {
-          "value": "x86_64;arm64",
-          "type": "STRING"
         }
       },
       "environment": {
-        "VCPKG_OSX_ARCHITECTURES": "x86_64;arm64",
         "VCPKG_DEFAULT_TRIPLET": "arm64-osx",
         "VCPKG_DEFAULT_TARGET_TRIPLET": "arm64-osx"
       },
