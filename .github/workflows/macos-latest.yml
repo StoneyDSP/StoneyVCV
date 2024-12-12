@@ -69,18 +69,24 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
+        --preset x64-osx-release
         --target tests
         -j3
 
     - name: Test
       run: >-
-        cd ${{ env.BUILD_DIR }} &&
         ctest
+        --test-dir ${{ env.BUILD_DIR }}
+        --preset x64-osx-release
         -j3
-        --rerun-failed
-        --output-on-failure
-        --verbose
-        && cd ${{ github.workspace }}
+
+    - name: Install
+      run: >-
+        cmake
+        --install ${{ env.BUILD_DIR }}
+        --preset x64-osx-release
+        --prefix ${{ github.workspace }}/install
+        -j3
 
       # DEPLOYMENT WORKFLOW
 

@@ -106,19 +106,26 @@ jobs:
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
+        --preset x64-windows-release
         --target tests
         -j3
 
     - name: Test
       shell: msys2 {0}
       run: >-
-        cd build &&
         ctest
+        --test-dir ${{ env.BUILD_DIR }}
+        --preset x64-windows-release
         -j3
-        --rerun-failed
-        --output-on-failure
-        --verbose
-        && cd ..
+
+    - name: Install
+      shell: msys2 {0}
+      run: >-
+        cmake
+        --install ${{ env.BUILD_DIR }}
+        --preset x64-windows-release
+        --prefix ${PWD}/install
+        -j3
 
       # DEPLOYMENT WORKFLOW
 
