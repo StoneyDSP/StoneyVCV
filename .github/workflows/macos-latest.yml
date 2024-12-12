@@ -51,7 +51,7 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
-        triplet: x64-osx
+        triplet: arm64-osx
         # GitHub token to authenticate API requests. Recommended to use  github.token
         token: ${{ github.token }}
         # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
@@ -63,14 +63,14 @@ jobs:
     - name: Configure Tests
       run: >-
         cmake
-        --preset x64-osx-release
+        --preset arm64-osx-release
         --fresh
 
     - name: Build Tests
       run: >-
         cmake
         --build ${{ env.BUILD_DIR }}
-        --preset x64-osx-release
+        --preset arm64-osx-release
         --target tests
         -j 3
 
@@ -78,7 +78,7 @@ jobs:
       run: >-
         ctest
         --test-dir ${{ env.BUILD_DIR }}
-        --preset x64-osx-release
+        --preset arm64-osx-release
         -j 3
 
     - name: Install
