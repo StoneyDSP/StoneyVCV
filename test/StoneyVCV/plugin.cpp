@@ -59,6 +59,9 @@ TEST_CASE("plugin", "[plugin]") {
         SECTION( "VCA" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
         }
+        SECTION( "LFO" ) {
+            REQUIRE(::StoneyDSP::StoneyVCV::LFO::modelLFO != nullptr);
+        }
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)

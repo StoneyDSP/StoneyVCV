@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.14...3.31 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.23...3.31 FATAL_ERROR)
 
 #[=================================[STONEYVCV]=================================]
 
 project(STONEYVCV
     VERSION 2.0.1.0
-    DESCRIPTION ""
-    HOMEPAGE_URL ""
+    DESCRIPTION "StoneyDSP Modules for VCV Rack 2."
+    HOMEPAGE_URL "https://github.com/StoneyDSP/StoneyVCV"
 )
 
 enable_language(C)
@@ -29,6 +29,7 @@ cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP1   "Use '-DSTONEYVCV_BUILD_MODU
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP2   "Use '-DSTONEYVCV_BUILD_MODULE_HP2=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4   "Use '-DSTONEYVCV_BUILD_MODULE_HP4=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_VCA   "Use '-DSTONEYVCV_BUILD_MODULE_VCA=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL" ON)
+cmake_dependent_option(STONEYVCV_BUILD_MODULE_LFO   "Use '-DSTONEYVCV_BUILD_MODULE_LFO=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL" ON)
 cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TESTS=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_IS_TOP_LEVEL" ON)
 
 # Put components in the correct order of their dependencies on eachother to save tears...
@@ -120,6 +121,7 @@ if(STONEYVCV_BUILD_MODULES)
     set(STONEYVCV_EXPERIMENTAL_MODULES)
     list(APPEND STONEYVCV_EXPERIMENTAL_MODULES # List of enabled experimental modules
         VCA
+        LFO
     )
 
     if(STONEYVCV_EXPERIMENTAL)
