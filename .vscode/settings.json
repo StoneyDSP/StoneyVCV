@@ -9,28 +9,32 @@
     160
   ],
   "makefile.configureOnOpen": false,
+  "cmake.cmakePath": "cmake",
+  "cmake.ctestPath": "ctest",
+  "cmake.cpackPath": "cpack",
+  "cmake.languageSupport.enableFileAPI": true,
+  "cmake.cmakeCommunicationMode": "fileApi",
+  "cmake.sourceDirectory": "${workspaceFolder}",
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.installPrefix": "${workspaceFolder}/install",
+  "cmake.exportCompileCommandsFile": true,
+  "cmake.loadCompileCommands": true,
+  "cmake.launchBehavior": "reuseTerminal",
+  "cmake.preferredGenerators": [
+    "Ninja",
+    "Ninja Multi-Config"
+  ],
   "cmake.configureOnOpen": true,
   "cmake.configureOnEdit": false,
-  "cmake.environment": {
-    "VCPKG_ROOT": "${env:VCPKG_ROOT}"
-  },
-  "cmake.configureArgs": [
-    "-DVCPKG_HOST_TRIPLET:STRING=x64-linux",
-    "-DVCPKG_TARGET_TRIPLET:STRING=x64-linux",
-    "-DCMAKE_TOOLCHAIN_FILE:STRING=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-    "-DSTONEYVCV_EXPERIMENTAL=ON",
-    "-DSTONEYVCV_BUILD_TESTS=ON",
-    "-DSTONEYVCV_BUILD_PLUGIN=ON",
-    "-DSTONEYVCV_BUILD_MODULES=ON",
-    "-DSTONEYVCV_BUILD_MODULE_HP4=ON",
-    "-DSTONEYVCV_BUILD_MODULE_HP2=ON",
-    "-DSTONEYVCV_BUILD_MODULE_HP1=ON",
-    "-DSTONEYVCV_BUILD_MODULE_VCA=ON",
-    "--no-warn-unused-cli",
-    "--compile-no-warning-as-error",
-    "-Wno-dev",
-    "--fresh"
-  ],
+  "cmake.clearOutputBeforeBuild": true,
+  "cmake.saveBeforeBuild": true,
+  "cmake.buildBeforeRun": true,
+
+  "cmake.deleteBuildDirOnCleanConfigure": false,
+  "cmake.useVsDeveloperEnvironment": "auto",
+  "cmake.automaticReconfigure": true,
+  "cmake.skipConfigureIfCachePresent": true,
+  "cmake.useCMakePresets": "always",
   "cmake.debugConfig": {
 		"cwd": "${workspaceFolder}",
 		"symbolSearchPath": "${workspaceFolder}/include",
@@ -47,10 +51,7 @@
 			"programOutput": true
 		}
 	},
-  "cmake.sourceDirectory": "${workspaceFolder}",
-  "cmake.buildDirectory": "${workspaceFolder}/build",
-  "cmake.installPrefix": "${workspaceFolder}/install",
-  "cmake.loadCompileCommands": true,
+
   "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
   "C_Cpp.default.includePath": [
@@ -239,4 +240,5 @@
     "charconv": "cpp",
     "shared_mutex": "cpp"
   }
+
 }

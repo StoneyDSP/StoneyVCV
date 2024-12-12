@@ -11,7 +11,7 @@ Here is an example of how to build, and then run, the tests executable:
 ### 1. Configure tests with CMake
 
 ```shell
-cmake -S . -B ./build -G Ninja
+cmake -S . -B ./build -G Ninja -DSTONEYVCV_BUILD_TESTS=TRUE
 ```
 
 ### 2. Build tests with Ninja
