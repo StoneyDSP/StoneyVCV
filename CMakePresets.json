@@ -39,7 +39,7 @@
           "type": "STRING"
         },
         "STONEYVCV_EXPERIMENTAL": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_TESTS": {
@@ -69,6 +69,10 @@
         "STONEYVCV_BUILD_MODULE_VCA": {
           "value": "ON",
           "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_MODULE_LFO": {
+          "value": "ON",
+          "type": "BOOL"
         }
       },
       "vendor": {
@@ -88,7 +92,7 @@
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": {
-          "value": "DEBUG",
+          "value": "Debug",
           "type": "STRING"
         }
       }
@@ -101,7 +105,7 @@
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": {
-          "value": "RELEASE",
+          "value": "Release",
           "type": "STRING"
         }
       }
