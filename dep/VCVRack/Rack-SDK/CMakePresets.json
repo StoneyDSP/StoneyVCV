@@ -1,0 +1,617 @@
+{
+  "version": 9,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+
+  "configurePresets": [
+    {
+      "name": "base",
+      "description": "Base configuration for all presets",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "installDir": "${sourceDir}/install",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "hidden": true,
+      "warnings": {
+        "dev": false,
+        "unusedCli": false,
+        "uninitialized": false
+      },
+      "errors": {
+        "dev": false,
+        "deprecated": false
+      },
+      "environment": {},
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": {
+          "value": "Debug;Release",
+          "type": "STRING"
+        }
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "autoFormat": true,
+          "intelliSenseOptions": {
+            "useCompilerDefaults": true
+          }
+        }
+      }
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "value": "DEBUG",
+          "type": "STRING"
+        }
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": {
+          "value": "RELEASE",
+          "type": "STRING"
+        }
+      }
+    },
+    {
+      "name": "verbose",
+      "hidden": true,
+      "warnings": {
+        "dev": true,
+        "deprecated": true,
+        "systemVars": true,
+        "uninitialized": true,
+        "unusedCli": true
+      },
+      "errors": {
+        "dev": true,
+        "deprecated": true
+      },
+      "environment": {
+        "VERBOSE": "1"
+      }
+    },
+    {
+      "name": "x64-windows",
+      "hidden": true,
+      "inherits": "base",
+      "displayName": "Windows-only configuration",
+      "description": "This build is only available on Windows",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "VCPKG_HOST_TRIPLET": {
+          "value": "x64-mingw-dynamic",
+          "type": "STRING"
+        },
+        "VCPKG_TARGET_TRIPLET": {
+          "value": "x64-mingw-dynamic",
+          "type": "STRING"
+        }
+      },
+      "environment": {
+        "MSYSTEM": "MINGW64"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "autoFormat": true,
+          "hostOS": "Windows",
+          "intelliSenseOptions": {
+            "useCompilerDefaults": true
+          }
+        }
+      }
+    },
+    {
+      "name": "x64-linux",
+      "hidden": true,
+      "inherits": "base",
+      "displayName": "Linux-only configuration",
+      "description": "This build is only available on Linux",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "VCPKG_HOST_TRIPLET": {
+          "value": "x64-linux",
+          "type": "STRING"
+        },
+        "VCPKG_TARGET_TRIPLET": {
+          "value": "x64-linux",
+          "type": "STRING"
+        }
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "autoFormat": true,
+          "hostOS": "Linux",
+          "intelliSenseMode": "linux-gcc-x64",
+          "intelliSenseOptions": {
+            "useCompilerDefaults": true
+          }
+        }
+      }
+    },
+    {
+      "name": "x64-osx",
+      "hidden": true,
+      "inherits": "base",
+      "displayName": "MacOS-only configuration",
+      "description": "This build is only available on MacOS",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "VCPKG_HOST_TRIPLET": {
+          "value": "x64-osx",
+          "type": "STRING"
+        },
+        "VCPKG_TARGET_TRIPLET": {
+          "value": "x64-osx",
+          "type": "STRING"
+        },
+        "CMAKE_OSX_ARCHITECTURES": {
+          "value": "x86_64",
+          "type": "STRING"
+        },
+        "VCPKG_OSX_ARCHITECTURES": {
+          "value": "x86_64",
+          "type": "STRING"
+        }
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "autoFormat": true,
+          "hostOS": "macOS",
+          "intelliSenseMode": "ios-clang-x64",
+          "intelliSenseOptions": {
+            "useCompilerDefaults": true
+          }
+        }
+      }
+    },
+    {
+      "name": "x64-linux-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-linux",
+        "debug"
+      ]
+    },
+    {
+      "name": "x64-linux-release",
+      "hidden": false,
+      "inherits": [
+        "x64-linux",
+        "release"
+      ]
+    },
+    {
+      "name": "x64-windows-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-windows",
+        "debug"
+      ]
+    },
+    {
+      "name": "x64-windows-release",
+      "hidden": false,
+      "inherits": [
+        "x64-windows",
+        "release"
+      ]
+    },
+    {
+      "name": "x64-osx-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-osx",
+        "debug"
+      ]
+    },
+    {
+      "name": "x64-osx-release",
+      "hidden": false,
+      "inherits": [
+        "x64-osx",
+        "release"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "description": "Base configuration for all presets"
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "configuration": "Debug",
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "configuration": "Release",
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "verbose",
+      "hidden": true,
+      "verbose": true,
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "x64-windows",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "x64-linux",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "x64-osx",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "x64-windows-debug",
+      "configurePreset": "x64-windows-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-windows",
+        "debug"
+      ]
+    },
+    {
+      "name": "x64-windows-release",
+      "configurePreset": "x64-windows-release",
+      "hidden": false,
+      "inherits": [
+        "x64-windows",
+        "release"
+      ]
+    },
+    {
+      "name": "x64-windows-debug-verbose",
+      "configurePreset": "x64-windows-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-windows",
+        "debug",
+        "verbose"
+      ]
+    },
+    {
+      "name": "x64-windows-release-verbose",
+      "configurePreset": "x64-windows-release",
+      "hidden": false,
+      "inherits": [
+        "x64-windows",
+        "release",
+        "verbose"
+      ]
+    },
+    {
+      "name": "x64-linux-debug",
+      "configurePreset": "x64-linux-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-linux",
+        "debug"
+      ]
+    },
+    {
+      "name": "x64-linux-release",
+      "configurePreset": "x64-linux-release",
+      "hidden": false,
+      "inherits": [
+        "x64-linux",
+        "release"
+      ]
+    },
+    {
+      "name": "x64-linux-debug-verbose",
+      "configurePreset": "x64-linux-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-linux",
+        "debug",
+        "verbose"
+      ]
+    },
+    {
+      "name": "x64-linux-release-verbose",
+      "configurePreset": "x64-linux-release",
+      "hidden": false,
+      "inherits": [
+        "x64-linux",
+        "release",
+        "verbose"
+      ]
+    },
+    {
+      "name": "x64-osx-debug",
+      "configurePreset": "x64-osx-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-osx",
+        "debug"
+      ]
+    },
+    {
+      "name": "x64-osx-release",
+      "configurePreset": "x64-osx-release",
+      "hidden": false,
+      "inherits": [
+        "x64-osx",
+        "release"
+      ]
+    },
+    {
+      "name": "x64-osx-debug-verbose",
+      "configurePreset": "x64-osx-debug",
+      "hidden": false,
+      "inherits": [
+        "x64-osx",
+        "debug",
+        "verbose"
+      ]
+    },
+    {
+      "name": "x64-osx-release-verbose",
+      "configurePreset": "x64-osx-release",
+      "hidden": false,
+      "inherits": [
+        "x64-osx",
+        "release",
+        "verbose"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true,
+        "labelSummary": true
+      }
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "configuration": "Debug",
+      "inherits": [
+        "base"
+      ],
+      "output": {
+        "debug": true
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "configuration": "Release",
+      "inherits": [
+        "base"
+      ],
+      "output": {
+        "debug": false
+      }
+    },
+    {
+      "name": "verbose",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "output": {
+        "verbosity": "verbose"
+      }
+    },
+    {
+      "name": "x64-windows",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "x64-linux",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "x64-osx",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "inherits": [
+        "base"
+      ]
+    },
+    {
+      "name": "x64-linux-debug",
+      "hidden": false,
+      "configurePreset": "x64-linux-debug",
+      "inherits": [
+        "x64-linux",
+        "debug"
+      ]
+    },
+    {
+      "name": "x64-linux-release",
+      "hidden": false,
+      "configurePreset": "x64-linux-release",
+      "inherits": [
+        "x64-linux",
+        "release"
+      ]
+    },
+    {
+      "name": "x64-linux-debug-verbose",
+      "hidden": false,
+      "configurePreset": "x64-linux-debug",
+      "inherits": [
+        "x64-linux",
+        "debug",
+        "verbose"
+      ]
+    },
+    {
+      "name": "x64-linux-release-verbose",
+      "hidden": false,
+      "configurePreset": "x64-linux-release",
+      "inherits": [
+        "x64-linux",
+        "release",
+        "verbose"
+      ]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "x64-linux-debug",
+      "displayName": "Linux Debug",
+      "description": "Linux-only Debug workflow preset.",
+      "steps": [
+        {
+          "name": "x64-linux-debug",
+          "type": "configure"
+        },
+        {
+          "name": "x64-linux-debug",
+          "type": "build"
+        },
+        {
+          "name": "x64-linux-debug",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "name": "x64-linux-release",
+      "displayName": "Linux Release",
+      "description": "Linux-only Release workflow preset.",
+      "steps": [
+        {
+          "name": "x64-linux-release",
+          "type": "configure"
+        },
+        {
+          "name": "x64-linux-release",
+          "type": "build"
+        },
+        {
+          "name": "x64-linux-release",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "name": "x64-linux-debug-verbose",
+      "displayName": "Linux Debug (verbose)",
+      "description": "Linux-only Debug workflow preset (verbose).",
+      "steps": [
+        {
+          "name": "x64-linux-debug",
+          "type": "configure"
+        },
+        {
+          "name": "x64-linux-debug-verbose",
+          "type": "build"
+        },
+        {
+          "name": "x64-linux-debug-verbose",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "name": "x64-linux-release-verbose",
+      "displayName": "Linux Release (verbose)",
+      "description": "Linux-only Release workflow preset (verbose).",
+      "steps": [
+        {
+          "name": "x64-linux-release",
+          "type": "configure"
+        },
+        {
+          "name": "x64-linux-release-verbose",
+          "type": "build"
+        },
+        {
+          "name": "x64-linux-release-verbose",
+          "type": "test"
+        }
+      ]
+    }
+  ]
+}
