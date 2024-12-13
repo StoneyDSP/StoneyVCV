@@ -216,6 +216,34 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 #[============================[Write CMake Package]============================]
 
 include(CMakePackageConfigHelpers)
+
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in" [==[
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=/${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=/${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @PROJECT_NAME@
+Description: @PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+Requires: Rack-SDK = 2.5.2
+Libs: -L${libdir} -lRack
+Cflags: -I${includedir}
+]==])
+
+configure_file (
+  "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+  @ONLY
+)
+
+install(
+    FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+    DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
+
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in" [==[
 @PACKAGE_INIT@
 
