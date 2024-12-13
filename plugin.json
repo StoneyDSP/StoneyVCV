@@ -38,6 +38,15 @@
       "tags": [
         "Blank"
       ]
+    },
+    {
+      "slug": "LFO",
+      "name": "LFO",
+      "description": "Simple Low-frequency oscillator. Supports Polyphony.",
+      "tags": [
+        "Low-frequency oscillator",
+        "Polyphonic"
+      ]
     }
   ]
 }
