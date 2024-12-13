@@ -38,15 +38,6 @@
       "tags": [
         "Blank"
       ]
-    },
-    {
-      "slug": "VCA",
-      "name": "VCA",
-      "description": "Voltage-Controlled Amplifier. Supports Polyphony.",
-      "tags": [
-        "Voltage-Controlled Amplifier",
-        "Polyphonic"
-      ]
     }
   ]
 }
