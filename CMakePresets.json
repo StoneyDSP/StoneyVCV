@@ -67,7 +67,11 @@
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_MODULE_VCA": {
-          "value": "ON",
+          "value": "OFF",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_MODULE_LFO": {
+          "value": "OFF",
           "type": "BOOL"
         }
       },
@@ -88,7 +92,7 @@
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": {
-          "value": "DEBUG",
+          "value": "Debug",
           "type": "STRING"
         }
       }
@@ -101,7 +105,7 @@
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": {
-          "value": "RELEASE",
+          "value": "Release",
           "type": "STRING"
         }
       }
