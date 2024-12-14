@@ -30,6 +30,10 @@
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg/triplets"
       },
       "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": {
+          "value": "ON",
+          "type": "BOOL"
+        },
         "CMAKE_TOOLCHAIN_FILE": {
           "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "type": "PATH"
