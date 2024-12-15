@@ -40,11 +40,11 @@
       ]
     },
     {
-      "slug": "LFO",
-      "name": "LFO",
-      "description": "Simple Low-frequency oscillator. Supports Polyphony.",
+      "slug": "VCA",
+      "name": "VCA",
+      "description": "Voltage-Controlled Amplifier. Supports Polyphony.",
       "tags": [
-        "Low-frequency oscillator",
+        "Voltage-Controlled Amplifier",
         "Polyphonic"
       ]
     }
