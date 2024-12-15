@@ -36,33 +36,25 @@ cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TEST
 # Put components in the correct order of their dependencies on eachother to save tears...
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
-find_package(CMakeRC CONFIG REQUIRED)
 
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
-
-#[==================================[CMakeRC]==================================]
-
-if(FALSE) # TODO: CMakeRC stuff
-    # cmrc_add_resource_library(foo-resources ALIAS foo::rc NAMESPACE foo  ...)
-    # target_link_libraries(main PRIVATE foo::rc)
-endif()
 
 #[==================================[plugin]==================================]#
 
 if(STONEYVCV_BUILD_PLUGIN)
 
     # create rack-sdk plugin target
-vcvrack_add_plugin(
-    SLUG StoneyVCV
-    BRAND StoneyDSP
-        HEADERS "include/StoneyVCV/plugin.hpp" "include/StoneyVCV/version.hpp"
-    SOURCES "src/StoneyVCV/plugin.cpp"
-        VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
-        SOVERSION "${STONEYVCV_VERSION_MAJOR}"
-    EXPORT
-    INSTALL
-)
+    vcvrack_add_plugin(
+        SLUG StoneyVCV
+        BRAND StoneyDSP
+            HEADERS "include/StoneyVCV/plugin.hpp" "include/StoneyVCV/version.hpp"
+        SOURCES "src/StoneyVCV/plugin.cpp"
+            VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
+            SOVERSION "${STONEYVCV_VERSION_MAJOR}"
+        EXPORT
+        INSTALL
+    )
 
     target_compile_definitions(plugin
         PUBLIC
@@ -225,22 +217,21 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 
     # Toggle unit test code
     if(STONEYVCV_BUILD_TESTS)
-                target_sources(tests
-                    PRIVATE
+        target_sources(tests
+            PRIVATE
                 "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${TARGET}.cpp"
         )
         target_compile_definitions(${TARGET}
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"
-                )
+        )
         target_compile_definitions(tests
             PUBLIC
                 "-DSTONEYVCV_BUILD_${TARGET}=1"
         )
     endif(STONEYVCV_BUILD_TESTS)
 
-    endforeach()
-
+endforeach()
 
 #[============================[Write CMake Package]============================]
 
