@@ -26,10 +26,14 @@
       },
       "environment": {
         "VCPKG_ROOT": "$penv{VCPKG_ROOT}",
-        "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg/ports",
-        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg/triplets"
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg-registry/ports",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg-registry/triplets"
       },
       "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": {
+          "value": "ON",
+          "type": "BOOL"
+        },
         "CMAKE_TOOLCHAIN_FILE": {
           "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "type": "PATH"
@@ -37,6 +41,10 @@
         "CMAKE_CONFIGURATION_TYPES": {
           "value": "Debug;Release",
           "type": "STRING"
+        },
+        "STONEYVCV_COMPILE_RESOURCES": {
+          "value": "OFF",
+          "type": "BOOL"
         },
         "STONEYVCV_EXPERIMENTAL": {
           "value": "OFF",
