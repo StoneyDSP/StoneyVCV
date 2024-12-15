@@ -12,8 +12,8 @@
   "cmake.cmakePath": "cmake",
   "cmake.ctestPath": "ctest",
   "cmake.cpackPath": "cpack",
-  "cmake.languageSupport.enableFileAPI": true,
-  "cmake.cmakeCommunicationMode": "fileApi",
+  // "cmake.languageSupport.enableFileAPI": true,
+  // "cmake.cmakeCommunicationMode": "fileApi",
   "cmake.sourceDirectory": "${workspaceFolder}",
   "cmake.buildDirectory": "${workspaceFolder}/build",
   "cmake.installPrefix": "${workspaceFolder}/install",
@@ -56,13 +56,22 @@
   "C_Cpp.autoAddFileAssociations": true,
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/include",
+    "${workspaceFolder}/build/_cmrc/include"
   ],
   "C_Cpp.default.defines": [
-    "STONEYVCV_VERSION_MAJOR=0",
+    "STONEYVCV_EXPERIMENTAL",
+    "STONEYVCV_BUILD_PLUGIN",
+    "STONEYVCV_BUILD_MODULES",
+    "STONEYVCV_BUILD_MODULE_HP4",
+    "STONEYVCV_BUILD_MODULE_HP2",
+    "STONEYVCV_BUILD_MODULE_HP1",
+    // "STONEYVCV_BUILD_MODULE_LFO",
+    // "STONEYVCV_BUILD_MODULE_VCA",
+    "STONEYVCV_VERSION_MAJOR=2",
     "STONEYVCV_VERSION_MINOR=0",
     "STONEYVCV_VERSION_PATCH=1",
     "STONEYVCV_VERSION_TWEAK=0",
-    "STONEYVCV_EXPERIMENTAL"
+    "STONEYVCV_VERSION=2.0.1.0"
   ],
   "C_Cpp.default.browse.databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
   "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
