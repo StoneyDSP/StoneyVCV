@@ -26,8 +26,8 @@
       },
       "environment": {
         "VCPKG_ROOT": "$penv{VCPKG_ROOT}",
-        "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg/ports",
-        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg/triplets"
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg-registry/ports",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg-registry/triplets"
       },
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": {
