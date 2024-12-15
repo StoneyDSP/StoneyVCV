@@ -670,6 +670,35 @@ set(VCVRACK_DISABLE_USAGE_MESSAGE @VCVRACK_DISABLE_USAGE_MESSAGE@)
 
 ]==])
 
+# Create pkgconfig file
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/Rack-SDK.pc.in" [==[
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=/${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=/${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: Rack-SDK
+Description: @PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+Libs: -L${libdir}
+Cflags: -I${includedir}
+]==])
+
+# Configure pkgconfig file
+configure_file (
+  "${CMAKE_CURRENT_BINARY_DIR}/Rack-SDK.pc.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/Rack-SDK.pc"
+  @ONLY
+)
+
+# Install pkgconfig file
+install(
+    FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/Rack-SDK.pc"
+    DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
+
 # create cmake config file
 configure_package_config_file(
     "${CMAKE_CURRENT_BINARY_DIR}/rack-sdk-config.cmake.in"

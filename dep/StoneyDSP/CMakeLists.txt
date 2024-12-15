@@ -291,6 +291,35 @@ message(STATUS "Linking with StoneyDSP")
 
 ]==])
 
+# Create pkgconfig file
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP.pc.in" [==[
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=/${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=/${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @PROJECT_NAME@
+Description: @PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+Libs: -L${libdir}
+Cflags: -I${includedir}
+]==])
+
+# Configure pkgconfig file
+configure_file (
+  "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP.pc.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyDSP.pc"
+  @ONLY
+)
+
+# Install pkgconfig file
+install(
+    FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyDSP.pc"
+    DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
+
 configure_package_config_file(
     "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSPConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSPConfig.cmake"

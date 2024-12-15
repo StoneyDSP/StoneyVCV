@@ -17,7 +17,11 @@
     },
     {
       "name": "rack-sdk",
-      "version>=": "2.5.2"
+      "version>=": "2.5.2",
+      "default-features": true,
+      "features": [
+        "dep", "lib"
+      ]
     },
     {
       "name": "vcpkg-cmake",

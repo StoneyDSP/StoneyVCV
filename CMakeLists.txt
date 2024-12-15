@@ -7,6 +7,7 @@ project(STONEYVCV
     DESCRIPTION "StoneyDSP Modules for VCV Rack 2."
     HOMEPAGE_URL "https://github.com/StoneyDSP/StoneyVCV"
 )
+set(PROJECT_NAME "StoneyVCV" CACHE STRING "" FORCE)
 
 enable_language(C)
 enable_language(CXX)
@@ -22,6 +23,7 @@ set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FOR
 set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
+option(STONEYVCV_COMPILE_RESOURCES                  "Use '-DSTONEYVCV_COMPILE_RESOURCES=ON|OFF' when configuring to toggle this option. Uses CMakeRC to compile some static resources into an embedded filesystem." ON)
 option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." OFF)
 option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
@@ -37,37 +39,36 @@ find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 find_package(CMakeRC CONFIG REQUIRED)
 
-# These props are helpful to have around...
-get_target_property(rack_inc_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(rack_link_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_LINK_DIRECTORIES)
-get_target_property(rack_implib unofficial-vcvrack::rack-sdk::lib IMPORTED_IMPLIB)
-get_target_property(rack_implib_location unofficial-vcvrack::rack-sdk::lib IMPORTED_LOCATION)
-
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
-
-#[==================================[CMakeRC]==================================]
-
-if(FALSE) # TODO: CMakeRC stuff
-    # cmrc_add_resource_library(foo-resources ALIAS foo::rc NAMESPACE foo  ...)
-    # target_link_libraries(main PRIVATE foo::rc)
-endif()
 
 #[==================================[plugin]==================================]#
 
 if(STONEYVCV_BUILD_PLUGIN)
 
     # create rack-sdk plugin target
-vcvrack_add_plugin(
-    SLUG StoneyVCV
-    BRAND StoneyDSP
-        HEADERS "include/StoneyVCV/plugin.hpp" "include/StoneyVCV/version.hpp"
-    SOURCES "src/StoneyVCV/plugin.cpp"
-        VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
-        SOVERSION "${STONEYVCV_VERSION_MAJOR}"
-    EXPORT
-    INSTALL
-)
+    vcvrack_add_plugin(
+        SLUG StoneyVCV
+        BRAND StoneyDSP
+            HEADERS "include/StoneyVCV/plugin.hpp" "include/StoneyVCV/version.hpp"
+        SOURCES "src/StoneyVCV/plugin.cpp"
+            VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
+            SOVERSION "${STONEYVCV_VERSION_MAJOR}"
+        EXPORT
+        INSTALL
+    )
+
+    target_compile_definitions(plugin
+        PUBLIC
+            "-DSTONEYVCV_BUILD_PLUGIN=1"
+    )
+
+    if(STONEYVCV_BUILD_MODULES)
+        target_compile_definitions(plugin
+            PUBLIC
+                "-DSTONEYVCV_BUILD_MODULES=1"
+        )
+    endif()
 
     # plugin custom dependencies
     target_link_libraries(plugin
@@ -104,7 +105,18 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     target_compile_features(tests PUBLIC cxx_std_17)
     target_compile_features(tests PUBLIC c_std_17)
-
+    if(STONEYVCV_BUILD_PLUGIN)
+        target_compile_definitions(tests
+            PUBLIC
+                "-DSTONEYVCV_BUILD_PLUGIN=1"
+        )
+    endif()
+    if(STONEYVCV_BUILD_MODULES)
+        target_compile_definitions(tests
+            PUBLIC
+                "-DSTONEYVCV_BUILD_MODULES=1"
+        )
+    endif()
 endif()
 
 #[==================================[Modules]==================================]
@@ -144,13 +156,20 @@ if(STONEYVCV_BUILD_MODULES)
             )
             list(APPEND STONEYVCV_TARGETS ${MODULE}) # Collect enabled modules
 
+            target_compile_definitions(${MODULE}
+                PUBLIC
+                    "-DSTONEYVCV_BUILD_PLUGIN=1"
+                    "-DSTONEYVCV_BUILD_MODULES=1"
+                    "-DSTONEYVCV_BUILD_${MODULE}=1"
+            )
+
         endif()
 
     endforeach()
 
     # add dep: StoneyDSP::Core
     foreach(CORE_MODULE IN LISTS HP1;HP2;HP4;VCA;LFO)
-        if(STONEYVCV_BUILD_${DSP_MODULE}) #if enabled with -D...
+        if(STONEYVCV_BUILD_${CORE_MODULE}) #if enabled with -D...
             target_link_libraries(${CORE_MODULE} PRIVATE StoneyDSP::Core)
         endif()
     endforeach()
@@ -200,22 +219,88 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 
     # Toggle unit test code
     if(STONEYVCV_BUILD_TESTS)
-                target_sources(tests
-                    PRIVATE
+        target_sources(tests
+            PRIVATE
                 "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${TARGET}.cpp"
         )
         target_compile_definitions(${TARGET}
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"
-                )
+        )
+        target_compile_definitions(tests
+            PUBLIC
+                "-DSTONEYVCV_BUILD_${TARGET}=1"
+        )
     endif(STONEYVCV_BUILD_TESTS)
 
-    endforeach()
+endforeach()
 
+#[==================================[CMakeRC]==================================]
+
+if(STONEYVCV_COMPILE_RESOURCES)
+    # TODO: CMakeRC stuff
+    cmrc_add_resource_library(Resources
+        ALIAS StoneyVCV::Resources
+        # NAMESPACE foo
+    )
+    add_library(StoneyDSP::StoneyVCV::Resources ALIAS Resources)
+    target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::Resources)
+    target_compile_definitions(plugin
+        PUBLIC
+            "-DSTONEYVCV_COMPILE_RESOURCES=1"
+    )
+    install(TARGETS Resources;cmrc-base
+        EXPORT ResourcesExport
+        COMPONENT Resources
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
+    install(
+        EXPORT ResourcesExport
+        NAMESPACE StoneyDSP::StoneyVCV::
+        FILE "StoneyDSP-StoneyVCV-Resources-targets.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
+    )
+    export(
+        TARGETS Resources;cmrc-base
+        FILE "share/cmake/StoneyDSP-StoneyVCV-Resources-targets.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+    )
+endif()
 
 #[============================[Write CMake Package]============================]
 
 include(CMakePackageConfigHelpers)
+
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in" [==[
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=/${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=/${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @PROJECT_NAME@
+Description: @PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+Requires: Rack-SDK = 2.5.2
+Libs: -L${libdir} -lRack
+Cflags: -I${includedir}
+]==])
+
+configure_file (
+  "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+  @ONLY
+)
+
+install(
+    FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+    DESTINATION
+    "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
+
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in" [==[
 @PACKAGE_INIT@
 
