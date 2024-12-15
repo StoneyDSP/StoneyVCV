@@ -2,7 +2,7 @@
  * @file plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.0
+ * @version 2.0.1
  * @date 2024-11-11
  *
  * @copyright Copyright (c) 2024
@@ -37,12 +37,34 @@
 
 #include "StoneyVCV/plugin.hpp"
 
+//==============================================================================
+
+#ifdef STONEYVCV_BUILD_PLUGIN
+
 namespace StoneyDSP {
+
+//==============================================================================
+
 namespace StoneyVCV {
-/** @brief The `StoneyDSP` VCV Rack Plugin instance. */
+
+//==============================================================================
+
+/**
+ * @brief The `StoneyDSP` VCV Rack Plugin instance.
+ */
 ::rack::plugin::Plugin* pluginInstance;
-}
-}
+
+//==============================================================================
+
+} // namespace StoneyVCV
+
+//==============================================================================
+
+} // namespace StoneyDSP
+
+//==============================================================================
+
+#ifdef STONEYVCV_BUILD_MODULES
 
 /**
  * @brief The `StoneyDSP` VCV Rack Plugin Initialiser.
@@ -55,14 +77,24 @@ void init(::rack::plugin::Plugin* p) {
 
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
+#ifdef STONEYVCV_BUILD_VCA
     p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
+#endif
+#ifdef STONEYVCV_BUILD_LFO
     p->addModel(::StoneyDSP::StoneyVCV::LFO::modelLFO);
 #endif
+#endif // STONEYVCV_EXPERIMENTAL
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+#ifdef STONEYVCV_BUILD_HP4
     p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
+#endif
+#ifdef STONEYVCV_BUILD_HP2
     p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
+#endif
+#ifdef STONEYVCV_BUILD_HP1
     p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
+#endif
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
@@ -72,11 +104,40 @@ void init(::rack::plugin::Plugin* p) {
     // your module is created to reduce startup times of Rack.
 }
 
+//==============================================================================
+
 namespace StoneyDSP {
+
+//==============================================================================
+
 namespace StoneyVCV {
+
+//==============================================================================
+
 namespace Panels {
+
+//==============================================================================
+
 ::NVGcolor bgBlack = ::nvgRGBA(42, 42, 42, 255);
+
 ::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
-}
-}
-}
+
+//==============================================================================
+
+} // namespace Panels
+
+//==============================================================================
+
+} // namespace StoneyVCV
+
+//==============================================================================
+
+} // namespace StoneyDSP
+
+//==============================================================================
+
+#endif // STONEYVCV_BUILD_MODULES
+
+//==============================================================================
+
+#endif // STONEYVCV_BUILD_PLUGIN
