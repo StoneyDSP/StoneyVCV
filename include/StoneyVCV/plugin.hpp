@@ -2,7 +2,7 @@
  * @file plugin.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.0
+ * @version 2.0.1
  * @date 2024-11-11
  *
  * @copyright Copyright (c) 2024
@@ -33,6 +33,8 @@
 
 #define STONEYVCV_PLUGIN_HPP_INCLUDED 1
 
+#ifdef STONEYVCV_BUILD_PLUGIN
+
 //==============================================================================
 
 #include <rack.hpp>
@@ -40,13 +42,24 @@
 
 //==============================================================================
 
-#include "StoneyVCV/version.hpp"
+#include <StoneyVCV/version.hpp>
+
 
 //==============================================================================
 
-namespace StoneyDSP {
+namespace StoneyDSP
+{
+/** @addtogroup StoneyDSP
+ *  @{
+ */
 
-namespace StoneyVCV {
+//==============================================================================
+
+namespace StoneyVCV
+{
+/** @addtogroup StoneyVCV
+ *  @{
+ */
 
 //==============================================================================
 
@@ -55,28 +68,39 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
+#ifdef STONEYVCV_BUILD_MODULES
 // Declare each Model, defined in each module source file
 
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
+#ifdef STONEYVCV_BUILD_VCA
     namespace VCA {
         extern ::rack::plugin::Model* modelVCA;
     }
+#endif
+#ifdef STONEYVCV_BUILD_LFO
     namespace LFO {
         extern ::rack::plugin::Model* modelLFO;
     }
 #endif
+#endif // STONEYVCV_EXPERIMENTAL
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+#ifdef STONEYVCV_BUILD_HP4
 namespace HP4 {
     extern ::rack::plugin::Model* modelHP4;
 }
+#endif
+#ifdef STONEYVCV_BUILD_HP2
 namespace HP2 {
     extern ::rack::plugin::Model* modelHP2;
 }
+#endif
+#ifdef STONEYVCV_BUILD_HP1
 namespace HP1 {
     extern ::rack::plugin::Model* modelHP1;
 }
+#endif
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
@@ -86,9 +110,11 @@ extern ::NVGcolor bgBlack;
 extern ::NVGcolor bgWhite;
 }
 
+#endif // STONEYVCV_BUILD_MODULES
+
 //==============================================================================
 
-#if (STONEYVCV_BUILD_TESTS == 1)
+#ifdef STONEYVCV_BUILD_TESTS
 struct Spec {
 public:
     std::string slug;
@@ -104,8 +130,18 @@ private:
 };
 #endif
 
+//==============================================================================
+
+  /// @} group StoneyVCV
 } // namespace StoneyVCV
 
+//==============================================================================
+
+  /// @} group StoneyDSP
 } // namespace StoneyDSP
+
+//==============================================================================
+
+#endif // STONEYVCV_BUILD_PLUGIN
 
 //==============================================================================

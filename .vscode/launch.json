@@ -1,6 +1,28 @@
 {
   "configurations": [
     {
+      // https://vcvrack.com/manual/Installing#Command-line-usage
+      "name": "Rack",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${env:PATH}/Rack",
+      "args": [
+        // "--system"
+        // "--user"
+        // "--dev"
+        // "--headless"
+        // "--safe"
+        // "--screenshot"
+      ],
+      "environment": [
+        { "name": "RACK_SYSTEM_DIR", "value": "${env:RACK_SYSTEM_DIR}" },
+        { "name": "RACK_USER_DIR", "value": "${env:RACK_USER_DIR}" }
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false
+    },
+    {
       "type": "cmake",
       "request": "launch",
       "name": "Debug portfile(s)",
