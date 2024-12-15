@@ -1,7 +1,0 @@
-/install
-/build
-/dist
-/*.so
-/*.dylib
-/*.dll
-.DS_Store

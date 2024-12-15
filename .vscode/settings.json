@@ -55,8 +55,7 @@
   "vcpkg.general.enable": false,
   "C_Cpp.autoAddFileAssociations": true,
   "C_Cpp.default.includePath": [
-    "${workspaceFolder}/include",
-    "${workspaceFolder}/build/_cmrc/include"
+    "${workspaceFolder}/include"
   ],
   "C_Cpp.default.defines": [
     "STONEYVCV_EXPERIMENTAL",
@@ -94,12 +93,6 @@
   "json.format.enable": true,
   "json.validate.enable": true,
   "json.schemas": [
-    {
-      "fileMatch": [
-        "**/.tsconfig/*.json"
-      ],
-      "url": "https://json.schemastore.org/tsconfig"
-    },
     {
       "fileMatch": [
         "**/vcpkg.json"
