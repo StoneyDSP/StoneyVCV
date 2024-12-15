@@ -249,6 +249,25 @@ if(STONEYVCV_COMPILE_RESOURCES)
         PUBLIC
             "-DSTONEYVCV_COMPILE_RESOURCES=1"
     )
+    install(TARGETS Resources;cmrc-base
+        EXPORT ResourcesExport
+        COMPONENT Resources
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
+    install(
+        EXPORT ResourcesExport
+        NAMESPACE StoneyDSP::StoneyVCV::
+        FILE "StoneyDSP-StoneyVCV-Resources-targets.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
+    )
+    export(
+        TARGETS Resources;cmrc-base
+        FILE "share/cmake/StoneyDSP-StoneyVCV-Resources-targets.cmake"
+        NAMESPACE StoneyDSP::StoneyVCV::
+    )
 endif()
 
 #[============================[Write CMake Package]============================]
