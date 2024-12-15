@@ -42,6 +42,10 @@
           "value": "Debug;Release",
           "type": "STRING"
         },
+        "STONEYVCV_COMPILE_RESOURCES": {
+          "value": "ON",
+          "type": "BOOL"
+        },
         "STONEYVCV_EXPERIMENTAL": {
           "value": "OFF",
           "type": "BOOL"
