@@ -16,6 +16,7 @@ vcpkg_cmake_config_fixup(
     PACKAGE_NAME StoneyDSP
     CONFIG_PATH "lib/cmake/StoneyDSP"
 )
+vcpkg_fixup_pkgconfig()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(
     INSTALL "${SOURCE_PATH}/LICENSE"

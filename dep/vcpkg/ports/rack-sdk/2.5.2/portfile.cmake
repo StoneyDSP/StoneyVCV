@@ -116,6 +116,7 @@ vcpkg_cmake_configure(
     -DVCVRACK_DISABLE_USAGE_MESSAGE:BOOL="TRUE"
 )
 vcpkg_cmake_install()
+vcpkg_fixup_pkgconfig()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(
     INSTALL "${RACK_DIR}/helper.py"

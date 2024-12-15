@@ -7,6 +7,7 @@ project(STONEYVCV
     DESCRIPTION "StoneyDSP Modules for VCV Rack 2."
     HOMEPAGE_URL "https://github.com/StoneyDSP/StoneyVCV"
 )
+set(PROJECT_NAME "StoneyVCV" CACHE STRING "" FORCE)
 
 enable_language(C)
 enable_language(CXX)
@@ -37,12 +38,6 @@ find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 find_package(CMakeRC CONFIG REQUIRED)
 
-# These props are helpful to have around...
-get_target_property(rack_inc_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(rack_link_dir unofficial-vcvrack::rack-sdk::lib INTERFACE_LINK_DIRECTORIES)
-get_target_property(rack_implib unofficial-vcvrack::rack-sdk::lib IMPORTED_IMPLIB)
-get_target_property(rack_implib_location unofficial-vcvrack::rack-sdk::lib IMPORTED_LOCATION)
-
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
 
@@ -68,6 +63,18 @@ vcvrack_add_plugin(
     EXPORT
     INSTALL
 )
+
+    target_compile_definitions(plugin
+        PUBLIC
+            "-DSTONEYVCV_BUILD_PLUGIN=1"
+    )
+
+    if(STONEYVCV_BUILD_MODULES)
+        target_compile_definitions(plugin
+            PUBLIC
+                "-DSTONEYVCV_BUILD_MODULES=1"
+        )
+    endif()
 
     # plugin custom dependencies
     target_link_libraries(plugin
@@ -104,7 +111,18 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     target_compile_features(tests PUBLIC cxx_std_17)
     target_compile_features(tests PUBLIC c_std_17)
-
+    if(STONEYVCV_BUILD_PLUGIN)
+        target_compile_definitions(tests
+            PUBLIC
+                "-DSTONEYVCV_BUILD_PLUGIN=1"
+        )
+    endif()
+    if(STONEYVCV_BUILD_MODULES)
+        target_compile_definitions(tests
+            PUBLIC
+                "-DSTONEYVCV_BUILD_MODULES=1"
+        )
+    endif()
 endif()
 
 #[==================================[Modules]==================================]
@@ -144,13 +162,20 @@ if(STONEYVCV_BUILD_MODULES)
             )
             list(APPEND STONEYVCV_TARGETS ${MODULE}) # Collect enabled modules
 
+            target_compile_definitions(${MODULE}
+                PUBLIC
+                    "-DSTONEYVCV_BUILD_PLUGIN=1"
+                    "-DSTONEYVCV_BUILD_MODULES=1"
+                    "-DSTONEYVCV_BUILD_${MODULE}=1"
+            )
+
         endif()
 
     endforeach()
 
     # add dep: StoneyDSP::Core
     foreach(CORE_MODULE IN LISTS HP1;HP2;HP4;VCA;LFO)
-        if(STONEYVCV_BUILD_${DSP_MODULE}) #if enabled with -D...
+        if(STONEYVCV_BUILD_${CORE_MODULE}) #if enabled with -D...
             target_link_libraries(${CORE_MODULE} PRIVATE StoneyDSP::Core)
         endif()
     endforeach()
@@ -208,6 +233,10 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"
                 )
+        target_compile_definitions(tests
+            PUBLIC
+                "-DSTONEYVCV_BUILD_${TARGET}=1"
+        )
     endif(STONEYVCV_BUILD_TESTS)
 
     endforeach()
