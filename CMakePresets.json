@@ -79,7 +79,7 @@
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_MODULE_LFO": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         }
       },
