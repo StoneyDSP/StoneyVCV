@@ -4,6 +4,10 @@
 # into three logical CMake targets: deps, sdk (headers), and lib (dynamic
 # library).
 
+# For this to be a vcpkg thing, we just need to use a vcpkg helper function
+# to download the SDK from the Rack website, unzip it, and then configure
+# the VCVRack CMake project with those contents...
+
 if(NOT VCPKG_TARGET_IS_MINGW AND NOT VCPKG_TARGET_IS_LINUX AND NOT VCPKG_TARGET_IS_OSX)
     message(SEND_ERROR "VCV Rack SDK does not support the current platform...")
     return()
@@ -19,28 +23,6 @@ if(NOT "${VERSION}" STREQUAL "${VCVRACK_RACKSDK_VERSION}")
     message(SEND_ERROR "VCV Rack SDK version mismatch: Requested version: ${VERSION}; found version: ${VCVRACK_RACKSDK_VERSION}...")
     return()
 endif()
-# For this to be a vcpkg thing, we just need to use a vcpkg helper function
-# to download the SDK from the Rack website, unzip it, and then configure
-# the VCVRack CMake project with those contents...
-
-function(_normalize_path var)
-    message(STATUS "normalizing path: ${var}")
-    set(path "${${var}}")
-    file(TO_CMAKE_PATH "${path}" path)
-
-    while(path MATCHES "//")
-        string(REPLACE "//" "/" path "${path}")
-    endwhile()
-
-    string(REGEX REPLACE "/+$" "" path "${path}")
-    set("${var}" "${path}" PARENT_SCOPE)
-    message(STATUS "normalized path: ${var}")
-endfunction()
-
-# A temporary dirty hack to find the CMakeLists.txt under 'dep/VCVRack'
-function(get_this_dir)
-    set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
-endfunction()
 
 vcpkg_check_linkage(
     ONLY_DYNAMIC_LIBRARY
@@ -96,10 +78,37 @@ vcpkg_extract_source_archive_ex(
     ARCHIVE "${ARCHIVE}"
 )
 
-# Dirty hack to use the local 'CMakeLists.txt' file under 'dep/VCVRack'...
-get_this_dir()
-get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
-set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack/Rack-SDK")
+## Dirty hack to use the local 'CMakeLists.txt' file under 'dep/VCVRack'...
+# function(_normalize_path var)
+#     message(STATUS "normalizing path: ${var}")
+#     set(path "${${var}}")
+#     file(TO_CMAKE_PATH "${path}" path)
+
+#     while(path MATCHES "//")
+#         string(REPLACE "//" "/" path "${path}")
+#     endwhile()
+
+#     string(REGEX REPLACE "/+$" "" path "${path}")
+#     set("${var}" "${path}" PARENT_SCOPE)
+#     message(STATUS "normalized path: ${var}")
+# endfunction()
+
+
+# function(get_this_dir)
+#     set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
+# endfunction()
+
+# get_this_dir()
+# get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
+# set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack/Rack-SDK")
+
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO StoneyDSP/Rack-SDK
+    REF 900c74e6a13d11533607221dae0f3ce855a902cf
+    SHA512 0fab568dafeb871e95a7dd6cfdcc1cec989a727ea3f9abbcabda68513f53ceecb44f4c4cfd247cea3d3bb16dce0a89b53c0d991a357f045be53b58a5dc3fb787
+    HEAD_REF main
+)
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
@@ -114,6 +123,8 @@ vcpkg_cmake_configure(
     OPTIONS
     -DRACK_DIR:PATH="${RACK_DIR}"
     -DVCVRACK_DISABLE_USAGE_MESSAGE:BOOL="TRUE"
+    # Expands to: "-DRACK_SDK_BUILD_DEPS=ON|OFF;-DRACK_SDK_BUILD_CORE=ON|OFF;-DRACK_SDK_BUILD_LIB=ON|OFF"
+    ${FEATURE_OPTIONS}
 )
 vcpkg_cmake_install()
 vcpkg_fixup_pkgconfig()

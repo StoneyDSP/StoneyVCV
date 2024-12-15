@@ -1,11 +1,71 @@
 {
   "2024-11-27": {
-    "stoneydsp": {
+    "curl": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "ghc-filesystem": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "glew": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "glfw": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "jansson": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "libarchive": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "libsamplerate": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "nanosvg": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "nanovg": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "openssl": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "pffft": {
       "baseline": "0.0.0",
       "port-version": 0
     },
     "rack-sdk": {
       "baseline": "2.5.2",
+      "port-version": 0
+    },
+    "rtaudio": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "rtmidi": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "speexdsp": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "stoneydsp": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
+    "zstd": {
+      "baseline": "0.0.0",
       "port-version": 0
     }
   }
