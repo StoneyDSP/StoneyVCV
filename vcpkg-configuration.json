@@ -8,7 +8,7 @@
   "registries": [
     {
       "kind": "filesystem",
-      "path": "dep/vcpkg",
+      "path": "dep/vcpkg-registry",
       "baseline": "2024-11-27",
       "packages": [
         "stoneydsp",
@@ -38,6 +38,9 @@
     }
   ],
   "overlay-ports": [
-    "dep/vcpkg/ports"
+    "dep/vcpkg-registry/ports"
+  ],
+  "overlay-triplets": [
+    "dep/vcpkg-registry/triplets"
   ]
 }
