@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file VCA.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -44,10 +44,10 @@
 {
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::PARAMS_LEN,     // numParams
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::INPUTS_LEN,     // numInputs
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::OUTPUTS_LEN,    // numOutputs
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::LIGHTS_LEN      // numLights
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS,     // numParams
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS,     // numInputs
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS,    // numOutputs
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_LIGHTS      // numLights
     );
     configParam(
         ::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM,     // paramId
@@ -159,12 +159,15 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::step()
     ::rack::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::rack::Widget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args)
 {
+    ::NVGcolor& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
+    ::NVGcolor& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
 
+    // draw Themed BG
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
-    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? ::nvgRGB(42, 42, 42) : ::nvgRGB(235, 235, 235);
+    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
     ::nvgFillColor(args.vg, bg);
     ::nvgFill(args.vg);
     ::rack::Widget::draw(args);
@@ -175,18 +178,20 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::rack::Widget::DrawArgs
 ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module)
 {
     setModule(module);
-    setPanel(::rack::createPanel(
+    setPanel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
         ::rack::asset::plugin(::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-light.svg"),
         ::rack::asset::plugin(::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-dark.svg")
     ));
-    // // Widgets
-    // vcaModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
-    // vcaModuleWidgetFrameBuffer->setSize(box.size);
-    // addChild(vcaModuleWidgetFrameBuffer);
-    // //
-    // vcaWidget = ::rack::createWidget<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(::rack::math::Vec(0.0f, 0.0f));
-    // vcaWidget->setSize(box.size);
-    // vcaModuleWidgetFrameBuffer->addChild(vcaWidget);
+
+    // Widgets
+    vcaModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
+    vcaModuleWidgetFrameBuffer->setSize(box.size);
+    addChild(vcaModuleWidgetFrameBuffer);
+    //
+    vcaWidget = ::rack::createWidget<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(::rack::math::Vec(0.0f, 0.0f));
+    vcaWidget->setSize(box.size);
+    vcaModuleWidgetFrameBuffer->addChild(vcaWidget);
+
     // Screws
     ::rack::math::Vec screwAPos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, 0.0f); // top-left
     ::rack::math::Vec screwBPos = ::rack::math::Vec(box.size.x - 2.0f * ::rack::RACK_GRID_WIDTH, 0.0f); // top-right

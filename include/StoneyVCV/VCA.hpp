@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file VCA.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -62,6 +62,13 @@ namespace StoneyVCV
 
 //==============================================================================
 
+/**
+ * @brief The `VCA` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @namespace VCA
+ *
+ */
 namespace VCA
 {
 /** @addtogroup VCA
@@ -71,7 +78,7 @@ namespace VCA
 //==============================================================================
 
 /**
- * @brief The `VCAModule` class.
+ * @brief The `VCAModule` struct.
  *
  */
 struct VCAModule final :
@@ -81,26 +88,25 @@ public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
-    ::StoneyDSP::size_t lastChannels = 1;
-    ::StoneyDSP::float_t gain;
-	::StoneyDSP::float_t lastGains[16] = {};
-
     enum ParamsId {
         GAIN_PARAM,
-        PARAMS_LEN
+        NUM_PARAMS
     };
+
 	enum InputsId {
 		VCA_INPUT,
         CV_INPUT,
-		INPUTS_LEN
+		NUM_INPUTS
 	};
+
 	enum OutputsId {
 		VCA_OUTPUT,
-		OUTPUTS_LEN
+		NUM_OUTPUTS
 	};
+
 	enum LightsId {
 		BLINK_LIGHT,
-		LIGHTS_LEN
+		NUM_LIGHTS
 	};
 
     /**
@@ -122,9 +128,38 @@ public:
      */
     virtual void process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args) override;
 
+    /**
+     * @brief Store extra internal data in the "data" property of the module's JSON object.
+     *
+     * @return json_t
+     */
     ::json_t *dataToJson() override;
 
+    /**
+     * @brief Load internal data from the "data" property of the module's JSON object.
+     * Not called if "data" property is not present.
+     *
+     * @param rootJ
+     */
     void dataFromJson(::json_t *rootJ) override;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::size_t lastChannels = 1;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::float_t gain;
+
+    /**
+     * @brief
+     *
+     */
+	::StoneyDSP::float_t lastGains[16] = {};
 
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
@@ -134,20 +169,34 @@ private:
 //==============================================================================
 
 /**
- * @brief The `VCAWidget` class.
+ * @brief The `VCAWidget` struct.
  *
  */
 struct VCAWidget final :
     ::rack::Widget
 {
 public:
+
+    using DrawArgs = ::rack::Widget::DrawArgs;
+
+    /**
+     * @brief Construct a new `VCOWidget` object.
+     *
+     */
     VCAWidget();
+
+    /**
+     * @brief Destroys the `VCOWidget` object.
+     *
+     */
     ~VCAWidget();
+
     /**
      * @brief Advances the module by one frame.
      *
      */
     void step() override;
+
     /**
      * @brief Draws the widget to the NanoVG context.
      * When overriding, call the superclass's draw(args) to recurse to
@@ -155,10 +204,22 @@ public:
      *
      * @param args
      */
-    void draw(const ::rack::Widget::DrawArgs &args) override;
+    void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
+
+    /**
+     * @brief
+     *
+     */
     ::rack::FramebufferWidget *vcaWidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
     ::rack::Widget *panelBorder;
+
 private:
+
     STONEYDSP_DECLARE_NON_COPYABLE(VCAWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAWidget)
 };
@@ -166,17 +227,40 @@ private:
 //==============================================================================
 
 /**
- * @brief The `VCAModuleWidget` class.
+ * @brief The `VCAModuleWidget` struct.
  *
  */
 struct VCAModuleWidget final :
     ::rack::app::ModuleWidget
 {
 public:
+
+    /**
+     * @brief Construct a new `VCOModuleWidget` object.
+     *
+     * @param module
+     *
+     */
     VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module);
+
+    /**
+     * @brief Destroys the `VCOModuleWidget` object.
+     *
+     */
     ~VCAModuleWidget();
-    // ::StoneyDSP::StoneyVCV::VCAWidget *vcaWidget;
-    // ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::VCA::VCAWidget *vcaWidget;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
+
 private:
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModuleWidget)
