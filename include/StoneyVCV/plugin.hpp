@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file plugin.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief

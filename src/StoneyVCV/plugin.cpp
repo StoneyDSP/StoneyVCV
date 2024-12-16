@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
