@@ -50,8 +50,8 @@
     );
 }
 
-// ::StoneyDSP::StoneyVCV::HP2::HP2Module::~HP2Module()
-// {}
+::StoneyDSP::StoneyVCV::HP2::HP2Module::~HP2Module()
+{}
 
 //==============================================================================
 
@@ -59,18 +59,18 @@
 // :   hp2WidgetFrameBuffer(new ::rack::FramebufferWidget),
 //     panelBorder(::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f)))
 {
-    // // Widgets
-    // hp2WidgetFrameBuffer = new ::rack::FramebufferWidget;
-    // hp2WidgetFrameBuffer->setSize(box.size);
-    // addChild(hp2WidgetFrameBuffer);
-    // //
-    // panelBorder = ::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f));
-    // panelBorder->setSize(box.size);
-    // hp2WidgetFrameBuffer->addChild(panelBorder);
+    // Widgets
+    hp2WidgetFrameBuffer = new ::rack::FramebufferWidget;
+    hp2WidgetFrameBuffer->setSize(box.size);
+    addChild(hp2WidgetFrameBuffer);
+    //
+    panelBorder = ::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f));
+    panelBorder->setSize(box.size);
+    hp2WidgetFrameBuffer->addChild(panelBorder);
 }
 
-// ::StoneyDSP::StoneyVCV::HP2::HP2Widget::~HP2Widget()
-// {}
+::StoneyDSP::StoneyVCV::HP2::HP2Widget::~HP2Widget()
+{}
 
 void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::step()
 {
@@ -78,11 +78,15 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::step()
     ::rack::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::rack::Widget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::HP2::HP2Widget::DrawArgs &args)
 {
+    ::NVGcolor& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
+    ::NVGcolor& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
+
+    // draw Themed BG
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
-    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? ::nvgRGB(42, 42, 42) : ::nvgRGB(235, 235, 235);
+    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
     ::nvgFillColor(args.vg, bg);
     ::nvgFill(args.vg);
     ::rack::Widget::draw(args);
@@ -95,7 +99,7 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::rack::Widget::DrawArgs
 //     hp2ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget)
 {
     setModule(module);
-    setPanel(::rack::createPanel(
+    setPanel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
         // Light-mode panel
         ::rack::asset::plugin(
             ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP2-light.svg"
@@ -105,14 +109,16 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::rack::Widget::DrawArgs
             ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP2-dark.svg"
         )
     ));
-    // // Widgets
-    // hp2ModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
-    // hp2ModuleWidgetFrameBuffer->setSize(box.size);
-    // addChild(hp2ModuleWidgetFrameBuffer);
-    // //
-    // hp2Widget = ::rack::createWidget<::StoneyDSP::StoneyVCV::HP2::HP2Widget>(::rack::math::Vec(0.0F, 0.0F));
-    // hp2Widget->setSize(box.size);
-    // hp2ModuleWidgetFrameBuffer->addChild(hp2Widget);
+
+    // Widgets
+    hp2ModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
+    hp2ModuleWidgetFrameBuffer->setSize(box.size);
+    addChild(hp2ModuleWidgetFrameBuffer);
+    //
+    hp2Widget = ::rack::createWidget<::StoneyDSP::StoneyVCV::HP2::HP2Widget>(::rack::math::Vec(0.0F, 0.0F));
+    hp2Widget->setSize(box.size);
+    hp2ModuleWidgetFrameBuffer->addChild(hp2Widget);
+
     // // Screws
     // ::rack::math::Vec screwT1Pos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, 0.0F); // top-middle
     // ::rack::math::Vec screwB1Pos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, ::rack::RACK_GRID_HEIGHT - ::rack::RACK_GRID_WIDTH); // bottom-middle
@@ -124,8 +130,8 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::rack::Widget::DrawArgs
     // addChild(screwB1);
 }
 
-// ::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::~HP2ModuleWidget()
-// {}
+::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::~HP2ModuleWidget()
+{}
 
 /**
  *
