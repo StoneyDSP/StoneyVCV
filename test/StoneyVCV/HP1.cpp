@@ -29,10 +29,9 @@
  *
  ******************************************************************************/
 
-#if (STONEYVCV_BUILD_HP1 == 1) && (STONEYVCV_BUILD_TESTS == 1)
+#if defined (STONEYVCV_BUILD_HP1) && defined (STONEYVCV_BUILD_TESTS)
 
 #include <catch2/catch_test_macros.hpp>
-// for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "StoneyVCV/HP1.hpp"
@@ -72,10 +71,10 @@ TEST_CASE( "HP1", "[HP1]" ) {
     }
     SECTION( "HP1Module" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_PARAMS == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_INPUTS == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::HP1::HP1Module* test_hp1Module = new ::StoneyDSP::StoneyVCV::HP1::HP1Module;
