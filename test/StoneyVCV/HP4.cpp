@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file HP4.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -31,12 +31,11 @@
 
 //==============================================================================
 
-#if (STONEYVCV_BUILD_HP4 == 1) && (STONEYVCV_BUILD_TESTS == 1)
+#if defined (STONEYVCV_BUILD_HP4) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================
 
 #include <catch2/catch_test_macros.hpp>
-// for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 //==============================================================================
@@ -87,10 +86,10 @@ TEST_CASE( "HP4", "[HP4]" ) {
 
     SECTION( "HP4Module" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_PARAMS == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_INPUTS == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::HP4::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4::HP4Module;
