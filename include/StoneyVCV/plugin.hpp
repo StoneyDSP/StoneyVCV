@@ -44,7 +44,6 @@
 
 #include <StoneyVCV/version.hpp>
 
-
 //==============================================================================
 
 namespace StoneyDSP
@@ -55,6 +54,13 @@ namespace StoneyDSP
 
 //==============================================================================
 
+/**
+ * @brief The `StoneyVCV` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @namespace StoneyVCV
+ *
+ */
 namespace StoneyVCV
 {
 /** @addtogroup StoneyVCV
