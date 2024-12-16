@@ -1,8 +1,8 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file HP1.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.0
+ * @version 0.0.1
  * @date 2024-11-11
  *
  * @copyright Copyright (c) 2024
@@ -60,6 +60,13 @@ namespace StoneyVCV
 
 //==============================================================================
 
+/**
+ * @brief The `HP1` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @namespace HP1
+ *
+ */
 namespace HP1
 {
 /** @addtogroup HP1
@@ -80,38 +87,74 @@ public:
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     enum ParamsId {
-        PARAMS_LEN
+        /** Number of Parameters. */
+        NUM_PARAMS
     };
+
 	enum InputsId {
-		INPUTS_LEN
-	};
-	enum OutputsId {
-		OUTPUTS_LEN
-	};
-	enum LightsId {
-		LIGHTS_LEN
+        /** Number of Input ports. */
+		NUM_INPUTS
 	};
 
+	enum OutputsId {
+        /** Number of Output ports. */
+		NUM_OUTPUTS
+	};
+
+	enum LightsId {
+        /** Number of Lights. */
+		NUM_LIGHTS
+	};
+
+    /**
+     * @brief Construct a new `HP1Module` object.
+     *
+     */
     HP1Module();
-    // ~HP1Module();
+
+    /**
+     * @brief Destroys the `HP1Module` object.
+     *
+     */
+    ~HP1Module();
+
 private:
+
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Module)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1Module)
 };
 
 //==============================================================================
 
+/**
+ * @brief The `HP1Widget` struct.
+ *
+ */
 struct HP1Widget final :
     ::rack::Widget
 {
 public:
+
+    using DrawArgs = ::rack::Widget::DrawArgs;
+
+    /**
+     * @brief Construct a new `HP1Widget` object.
+     *
+     */
     HP1Widget();
-    // ~HP1Widget();
+
+    /**
+     * @brief Destroys the `HP1Widget` object.
+     *
+     */
+    ~HP1Widget();
+
     /**
      * @brief Advances the module by one frame.
      *
      */
     void step() override;
+
     /**
      * @brief Draws the widget to the NanoVG context.
      * When overriding, call the superclass's draw(args) to recurse to
@@ -119,10 +162,22 @@ public:
      *
      * @param args
      */
-    void draw(const ::rack::Widget::DrawArgs &args) override;
-    // ::rack::FramebufferWidget *hp1WidgetFrameBuffer;
-    // Widget *panelBorder;
+    void draw(const ::StoneyDSP::StoneyVCV::HP1::HP1Widget::DrawArgs& args) override;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget* hp1WidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::Widget* panelBorder;
+
 private:
+
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Widget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1Widget)
 };
@@ -137,11 +192,35 @@ struct HP1ModuleWidget final :
     ::rack::app::ModuleWidget
 {
 public:
+
+    /**
+     * @brief Construct a new `HP1ModuleWidget` object.
+     *
+     * @param module
+     *
+     */
     HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module *module);
-    // ~HP1ModuleWidget();
-    // ::StoneyDSP::StoneyVCV::HP1Widget *hp1Widget;
-    // ::rack::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
+
+    /**
+     * @brief Destroys the `HP1ModuleWidget` object.
+     *
+     */
+    ~HP1ModuleWidget();
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::HP1::HP1Widget *hp1Widget;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
+
 private:
+
     STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1ModuleWidget)
 };
