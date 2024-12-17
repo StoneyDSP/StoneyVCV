@@ -79,6 +79,29 @@ if(STONEYVCV_BUILD_PLUGIN)
 endif(STONEYVCV_BUILD_PLUGIN)
 
 #[==[test]==]
+function(stoneyvcv_add_test MODULE)
+    add_library(tests_${MODULE} OBJECT EXCLUDE_FROM_ALL)
+    add_library(StoneyVCV::tests_${MODULE} ALIAS tests_${MODULE})
+    add_library(StoneyDSP::StoneyVCV::tests_${MODULE} ALIAS tests_${MODULE})
+    target_include_directories(tests_${MODULE}
+        PUBLIC
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    )
+    target_sources(tests_${MODULE}
+        PRIVATE
+            "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${MODULE}.cpp"
+    )
+    target_link_libraries(tests_${MODULE}
+        PUBLIC
+            unofficial-vcvrack::rack-sdk::core
+            StoneyDSP::StoneyVCV::${MODULE}
+            Catch2::Catch2
+    )
+    target_compile_features(tests_${MODULE} PUBLIC cxx_std_17)
+    target_compile_features(tests_${MODULE} PUBLIC c_std_17)
+endfunction()
+
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     find_package(Catch2 3.5.2 REQUIRED)
@@ -91,7 +114,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         $<INSTALL_INTERFACE:include>
     )
     target_link_libraries(tests
-        PRIVATE
+        PUBLIC
         unofficial-vcvrack::rack-sdk::lib
         StoneyDSP::StoneyVCV::plugin
         Catch2::Catch2WithMain
@@ -193,13 +216,13 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 
     # Add project version number
     target_compile_definitions(${TARGET}
-                PUBLIC
-                "STONEYVCV_VERSION_MAJOR=${STONEYVCV_VERSION_MAJOR}"
-                "STONEYVCV_VERSION_MINOR=${STONEYVCV_VERSION_MINOR}"
-                "STONEYVCV_VERSION_PATCH=${STONEYVCV_VERSION_PATCH}"
-                "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
-                "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
-            )
+        PUBLIC
+        "STONEYVCV_VERSION_MAJOR=${STONEYVCV_VERSION_MAJOR}"
+        "STONEYVCV_VERSION_MINOR=${STONEYVCV_VERSION_MINOR}"
+        "STONEYVCV_VERSION_PATCH=${STONEYVCV_VERSION_PATCH}"
+        "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
+        "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
+    )
 
     # Toggle plugin module code
     target_compile_definitions(plugin
@@ -217,10 +240,8 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 
     # Toggle unit test code
     if(STONEYVCV_BUILD_TESTS)
-        target_sources(tests
-            PRIVATE
-                "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${TARGET}.cpp"
-        )
+        stoneyvcv_add_test(${TARGET})
+        target_link_libraries(tests PUBLIC StoneyDSP::StoneyVCV::tests_${TARGET})
         target_compile_definitions(${TARGET}
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"

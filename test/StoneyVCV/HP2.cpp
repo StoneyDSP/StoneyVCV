@@ -29,12 +29,20 @@
  *
  ******************************************************************************/
 
+//==============================================================================
+
 #if defined (STONEYVCV_BUILD_HP2) && defined (STONEYVCV_BUILD_TESTS)
+
+//==============================================================================
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "StoneyVCV/HP2.hpp"
+//==============================================================================
+
+#include <StoneyVCV/HP2.hpp>
+
+//==============================================================================
 
 // Spec goes here...
 
@@ -67,22 +75,35 @@ private:
 }
 }
 
+//==============================================================================
+
 // Tests go here...
 
 TEST_CASE( "HP2", "[HP2]" ) {
 
     std::shared_ptr<::StoneyDSP::StoneyVCV::HP2::HP2Spec> spec = std::make_shared<::StoneyDSP::StoneyVCV::HP2::HP2Spec>();
 
+    //==========================================================================
+
     SECTION( "files" ) {
         REQUIRE( STONEYVCV_HP2_HPP_INCLUDED == 1 );
     }
+
+    //==========================================================================
+
     SECTION( "HP2Module" ) {
+
+        //======================================================================
+
         SECTION( "statics" ) {
             REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_PARAMS == spec.get()->NUM_PARAMS );
             REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_INPUTS == spec.get()->NUM_INPUTS );
             REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
             REQUIRE( ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
+
+        //======================================================================
+
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::HP2::HP2Module* test_hp2Module = new ::StoneyDSP::StoneyVCV::HP2::HP2Module;
             REQUIRE( test_hp2Module->getNumParams() == spec.get()->NUM_PARAMS );
@@ -92,10 +113,15 @@ TEST_CASE( "HP2", "[HP2]" ) {
             delete test_hp2Module;
         }
     }
+
+    //==========================================================================
+
     SECTION( "instance" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2 != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->slug == spec.get()->slug );
     }
+
+    //==========================================================================
 
     spec.reset();
 }

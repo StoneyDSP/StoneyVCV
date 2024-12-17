@@ -94,22 +94,22 @@ public:
     enum IdxParams {
         /** Number of Parameters. */
         NUM_PARAMS
-    } idx_params;
+    };
 
 	enum IdxInputs {
         /** Number of Input ports. */
 		NUM_INPUTS
-	} idx_inputs;
+	};
 
 	enum IdxOutputs {
         /** Number of Output ports. */
 		NUM_OUTPUTS
-	} idx_outputs;
+	};
 
 	enum IdxLights {
         /** Number of Lights. */
 		NUM_LIGHTS
-	} idx_lights;
+	};
 
     //==========================================================================
 
@@ -245,6 +245,15 @@ public:
      *
      */
     ::rack::FramebufferWidget* hp1ModuleWidgetFrameBuffer;
+
+    //==========================================================================
+
+    ::rack::math::Vec screwTPos, screwBPos;
+
+    ::rack::componentlibrary::ThemedScrew* screwT;
+    ::rack::componentlibrary::ThemedScrew* screwB;
+
+    ::rack::app::ThemedSvgPanel* panel;
 
     //==========================================================================
 
