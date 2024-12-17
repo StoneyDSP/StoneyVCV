@@ -41,53 +41,58 @@
 
 ::StoneyDSP::StoneyVCV::HP2::HP2Module::HP2Module()
 {
+    assert(::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_PARAMS == 0U);
+    assert(::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_INPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_OUTPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_LIGHTS == 0U);
+
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
-        ::StoneyDSP::StoneyVCV::HP2::HP2Module::PARAMS_LEN,   // numParams
-        ::StoneyDSP::StoneyVCV::HP2::HP2Module::INPUTS_LEN,   // numInputs
-        ::StoneyDSP::StoneyVCV::HP2::HP2Module::OUTPUTS_LEN,  // numOutputs
-        ::StoneyDSP::StoneyVCV::HP2::HP2Module::LIGHTS_LEN    // numLights
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_PARAMS,
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_INPUTS,
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_OUTPUTS,
+        ::StoneyDSP::StoneyVCV::HP2::HP2Module::NUM_LIGHTS
     );
 }
 
 ::StoneyDSP::StoneyVCV::HP2::HP2Module::~HP2Module()
-{}
+{
+}
 
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::HP2::HP2Widget::HP2Widget()
-// :   hp2WidgetFrameBuffer(new ::rack::FramebufferWidget),
-//     panelBorder(::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f)))
+:   hp2WidgetFrameBuffer(new ::rack::FramebufferWidget),
+    panelBorder(::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0F, 0.0F)))
 {
-    // Widgets
-    hp2WidgetFrameBuffer = new ::rack::FramebufferWidget;
+    // Widget
     hp2WidgetFrameBuffer->setSize(box.size);
     addChild(hp2WidgetFrameBuffer);
-    //
-    panelBorder = ::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0f, 0.0f));
+
+    // Border
     panelBorder->setSize(box.size);
     hp2WidgetFrameBuffer->addChild(panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::HP2::HP2Widget::~HP2Widget()
-{}
+// ::StoneyDSP::StoneyVCV::HP2::HP2Widget::~HP2Widget()
+// {
+// }
 
 void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::step()
 {
-    // panelBorder->box.size = box.size;
+    panelBorder->box.size = box.size;
     ::rack::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::HP2::HP2Widget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::HP2::HP2Widget::DrawArgs& args)
 {
     ::NVGcolor& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
     ::NVGcolor& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
 
     // draw Themed BG
     ::nvgBeginPath(args.vg);
-    ::nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
-    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    ::nvgFillColor(args.vg, bg);
+    ::nvgRect(args.vg, 0.0F, 0.0F, box.size.x, box.size.y);
+    ::nvgFillColor(args.vg, ::rack::settings::preferDarkPanels ? bgBlack : bgWhite);
     ::nvgFill(args.vg);
     ::rack::Widget::draw(args);
 }
@@ -95,9 +100,11 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2::HP2Module* module)
-// :   hp2Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP2::HP2Widget>(::rack::math::Vec(0.0F, 0.0F))),
-//     hp2ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget)
+:   size(::rack::window::mm2px(10.1599999984F), ::rack::window::mm2px(128.693333312F)),
+    hp2Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP2::HP2Widget>(::rack::math::Vec(0.0F, 0.0F))),
+    hp2ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget)
 {
+    box.size = size;
     setModule(module);
     setPanel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
         // Light-mode panel
@@ -110,12 +117,14 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::
         )
     ));
 
-    // Widgets
-    hp2ModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;
+    assert(box.size.x == ::rack::window::mm2px(10.1599999984F));
+    assert(box.size.y == ::rack::window::mm2px(128.693333312F));
+
+    // Frame Buffer
     hp2ModuleWidgetFrameBuffer->setSize(box.size);
     addChild(hp2ModuleWidgetFrameBuffer);
-    //
-    hp2Widget = ::rack::createWidget<::StoneyDSP::StoneyVCV::HP2::HP2Widget>(::rack::math::Vec(0.0F, 0.0F));
+
+    // Widget
     hp2Widget->setSize(box.size);
     hp2ModuleWidgetFrameBuffer->addChild(hp2Widget);
 
@@ -130,12 +139,12 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::
     // addChild(screwB1);
 }
 
-::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::~HP2ModuleWidget()
-{}
+// ::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::~HP2ModuleWidget()
+// {
+// }
 
-/**
- *
- */
+//==============================================================================
+
 ::rack::plugin::Model* ::StoneyDSP::StoneyVCV::HP2::createHP2()
 {
 

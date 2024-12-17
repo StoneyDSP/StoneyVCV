@@ -46,11 +46,18 @@ struct HP2Spec final :
 {
 public:
     std::string slug;
-    static constexpr int NUM_PARAMS = 0;
-    static constexpr int NUM_INPUTS = 0;
-    static constexpr int NUM_OUTPUTS = 0;
-    static constexpr int NUM_LIGHTS = 0;
-    HP2Spec() : slug("HP2") {};
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0U;
+    ::rack::math::Vec size;
+    HP2Spec()
+    :   slug("HP2"),
+        size(
+            ::rack::window::mm2px(5.079999999F * 2.0F),
+            ::rack::window::mm2px(128.693333312F)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP2Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(HP2Spec)
