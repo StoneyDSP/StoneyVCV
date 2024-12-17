@@ -103,40 +103,52 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4::HP4Module* module)
 :   size(::rack::window::mm2px(20.3199999965F), ::rack::window::mm2px(128.693333312F)),
     hp4Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP4::HP4Widget>(::rack::math::Vec(0.0F, 0.0F))),
-    hp4ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget)
+    hp4ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget),
+    // Screws
+    screwT1Pos(::rack::math::Vec((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F), (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // top-left
+    screwT2Pos(::rack::math::Vec((size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)), (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // top-right
+    screwB1Pos(::rack::math::Vec((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F), size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // bottom-left
+    screwB2Pos(::rack::math::Vec((size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)), size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // bottom-right
+    screwT1(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwT1Pos)),
+    screwT2(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwT2Pos)),
+    screwB1(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwB1Pos)),
+    screwB2(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwB2Pos)),
+    // Panel
+    panel(
+        ::rack::createPanel<::rack::app::ThemedSvgPanel>(
+            // Light-mode panel
+            ::rack::asset::plugin(
+                ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-light.svg"
+            ),
+            // Dark-mode panel
+            ::rack::asset::plugin(
+                ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-dark.svg"
+            )
+        )
+    )
 {
     setModule(module);
-    setPanel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
-        // Light-mode panel
-        ::rack::asset::plugin(
-            ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-light.svg"
-        ),
-        // Dark-mode panel
-        ::rack::asset::plugin(
-            ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-dark.svg"
-        )
-    ));
+    setSize(size);
+    setPanel(panel);
 
-    assert(box.size.x == ::rack::window::mm2px(20.3199999965F));
-    assert(box.size.y == ::rack::window::mm2px(128.693333312F));
+    hp4Widget->setSize(this->getSize());
+    addChild(hp4Widget);
 
-    // Frame Buffer
-    hp4ModuleWidgetFrameBuffer->setSize(box.size);
-    addChild(hp4ModuleWidgetFrameBuffer);
+    // // Frame Buffer
+    // hp4ModuleWidgetFrameBuffer->setSize(box.size);
+    // addChild(hp4ModuleWidgetFrameBuffer);
 
-    // Widget
-    hp4Widget->setSize(box.size);
-    hp4ModuleWidgetFrameBuffer->addChild(hp4Widget);
+    // // Widget
+    // hp4Widget->setSize(box.size);
+    // hp4ModuleWidgetFrameBuffer->addChild(hp4Widget);
 
-    // // Screws
-    // ::rack::math::Vec screwT1Pos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, 0.0F); // top-middle
-    // ::rack::math::Vec screwB1Pos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, ::rack::RACK_GRID_HEIGHT - ::rack::RACK_GRID_WIDTH); // bottom-middle
-    // //
-    // ::rack::componentlibrary::ThemedScrew *screwT1 = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwT1Pos);
-    // ::rack::componentlibrary::ThemedScrew *screwB1 = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwB1Pos);
-    // //
-    // addChild(screwT1);
-    // addChild(screwB1);
+    addChild(screwT1);
+    addChild(screwT2);
+    addChild(screwB1);
+    addChild(screwB2);
+
+    assert(this->getSize().x == ::rack::window::mm2px(20.3199999965F));
+    assert(this->getSize().y == ::rack::window::mm2px(128.693333312F));
 }
 
 // ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::~HP4ModuleWidget()
@@ -148,7 +160,6 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
  */
 ::rack::plugin::Model* ::StoneyDSP::StoneyVCV::HP4::createHP4()
 {
-
     ::rack::plugin::Model* modelHP4 = ::rack::createModel<
         ::StoneyDSP::StoneyVCV::HP4::HP4Module,
         ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget
