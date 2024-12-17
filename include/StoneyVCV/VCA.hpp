@@ -84,30 +84,37 @@ namespace VCA
 struct VCAModule final :
     ::rack::engine::Module
 {
+
+    //==========================================================================
+
 public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
-    enum ParamsId {
+    //==========================================================================
+
+    enum IdxParams {
         GAIN_PARAM,
         NUM_PARAMS
     };
 
-	enum InputsId {
+	enum IdxInputs {
 		VCA_INPUT,
         CV_INPUT,
 		NUM_INPUTS
 	};
 
-	enum OutputsId {
+	enum IdxOutputs {
 		VCA_OUTPUT,
 		NUM_OUTPUTS
 	};
 
-	enum LightsId {
+	enum IdxLights {
 		BLINK_LIGHT,
 		NUM_LIGHTS
 	};
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `VCOModule` object.
@@ -120,6 +127,8 @@ public:
      *
      */
     ~VCAModule();
+
+    //==========================================================================
 
     /**
      * @brief Advances the module by one audio sample.
@@ -143,6 +152,8 @@ public:
      */
     void dataFromJson(::json_t *rootJ) override;
 
+    //==========================================================================
+
     /**
      * @brief
      *
@@ -161,7 +172,12 @@ public:
      */
 	::StoneyDSP::float_t lastGains[16] = {};
 
+    //==========================================================================
+
 private:
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
 };
@@ -175,9 +191,14 @@ private:
 struct VCAWidget final :
     ::rack::Widget
 {
+
+    //==========================================================================
+
 public:
 
     using DrawArgs = ::rack::Widget::DrawArgs;
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `VCOWidget` object.
@@ -185,11 +206,13 @@ public:
      */
     VCAWidget();
 
-    /**
-     * @brief Destroys the `VCOWidget` object.
-     *
-     */
-    ~VCAWidget();
+    // /**
+    //  * @brief Destroys the `VCOWidget` object.
+    //  *
+    //  */
+    // ~VCAWidget();
+
+    //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
@@ -206,6 +229,8 @@ public:
      */
     void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
 
+    //==========================================================================
+
     /**
      * @brief
      *
@@ -218,7 +243,11 @@ public:
      */
     ::rack::Widget *panelBorder;
 
+    //==========================================================================
+
 private:
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(VCAWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAWidget)
@@ -233,7 +262,12 @@ private:
 struct VCAModuleWidget final :
     ::rack::app::ModuleWidget
 {
+
+    //==========================================================================
+
 public:
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `VCOModuleWidget` object.
@@ -243,11 +277,19 @@ public:
      */
     VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module);
 
+    // /**
+    //  * @brief Destroys the `VCOModuleWidget` object.
+    //  *
+    //  */
+    // ~VCAModuleWidget();
+
+    //==========================================================================
+
     /**
-     * @brief Destroys the `VCOModuleWidget` object.
+     * @brief
      *
      */
-    ~VCAModuleWidget();
+    ::rack::math::Vec size;
 
     /**
      * @brief
@@ -261,7 +303,12 @@ public:
      */
     ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
 
+    //==========================================================================
+
 private:
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModuleWidget)
 };

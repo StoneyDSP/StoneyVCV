@@ -53,12 +53,19 @@ namespace VCA {
 struct VCASpec final : ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    std::string slug;
-    static constexpr int NUM_PARAMS = 1;
-    static constexpr int NUM_INPUTS = 2;
-    static constexpr int NUM_OUTPUTS = 1;
-    static constexpr int NUM_LIGHTS = 1;
-    VCASpec() : slug("VCA") {};
+    ::std::string slug;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 1U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 1U;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 1U;
+    ::rack::math::Vec size;
+    VCASpec()
+    :   slug("VCA"),
+        size(
+            ::rack::window::mm2px(30.479999995F).
+            ::rack::window::mm2px(128.693333312F)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(VCASpec)
     STONEYDSP_DECLARE_NON_COPYABLE(VCASpec)
