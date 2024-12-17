@@ -33,7 +33,7 @@
 
 #define STONEYVCV_PLUGIN_HPP_INCLUDED 1
 
-#ifdef STONEYVCV_BUILD_PLUGIN
+#if defined (STONEYVCV_BUILD_PLUGIN)
 
 //==============================================================================
 
@@ -74,61 +74,63 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
-#ifdef STONEYVCV_BUILD_MODULES
+#if defined (STONEYVCV_BUILD_MODULES)
 // Declare each Model, defined in each module source file
 
-#ifdef STONEYVCV_EXPERIMENTAL
+#if defined (STONEYVCV_EXPERIMENTAL)
     // EXPERIMENTAL MODULES HERE...
-#ifdef STONEYVCV_BUILD_VCA
-    namespace VCA {
-        extern ::rack::plugin::Model* modelVCA;
-    }
+#if defined (STONEYVCV_BUILD_VCA)
+namespace VCA {
+extern ::rack::plugin::Model* modelVCA;
+}
 #endif
-#ifdef STONEYVCV_BUILD_LFO
-    namespace LFO {
-        extern ::rack::plugin::Model* modelLFO;
-    }
+#if defined (STONEYVCV_BUILD_LFO)
+namespace LFO {
+extern ::rack::plugin::Model* modelLFO;
+}
 #endif
 #endif // STONEYVCV_EXPERIMENTAL
 
-#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-#ifdef STONEYVCV_BUILD_HP4
+#if (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
+#if defined (STONEYVCV_BUILD_HP4)
 namespace HP4 {
-    extern ::rack::plugin::Model* modelHP4;
+extern ::rack::plugin::Model* modelHP4;
 }
 #endif
-#ifdef STONEYVCV_BUILD_HP2
+#if defined (STONEYVCV_BUILD_HP2)
 namespace HP2 {
-    extern ::rack::plugin::Model* modelHP2;
+extern ::rack::plugin::Model* modelHP2;
 }
 #endif
-#ifdef STONEYVCV_BUILD_HP1
+#if defined (STONEYVCV_BUILD_HP1)
 namespace HP1 {
-    extern ::rack::plugin::Model* modelHP1;
+extern ::rack::plugin::Model* modelHP1;
 }
 #endif
-#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
+#elif (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 0U)
     #warning "No modules found..."
 #endif
 
 namespace Panels {
 extern ::NVGcolor bgBlack;
 extern ::NVGcolor bgWhite;
+extern ::StoneyDSP::float_t MIN_WIDTH;
+extern ::StoneyDSP::float_t MIN_HEIGHT;
 }
 
 #endif // STONEYVCV_BUILD_MODULES
 
 //==============================================================================
 
-#ifdef STONEYVCV_BUILD_TESTS
+#if defined (STONEYVCV_BUILD_TESTS)
 struct Spec {
 public:
-    std::string slug;
-    static constexpr int NUM_PARAMS = 0;
-    static constexpr int NUM_INPUTS = 0;
-    static constexpr int NUM_OUTPUTS = 0;
-    static constexpr int NUM_LIGHTS = 0;
-    Spec() : slug("SPEC") {};
+    ::std::string slug;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS;
+    virtual Spec();
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(Spec)
