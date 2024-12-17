@@ -126,11 +126,18 @@ extern ::StoneyDSP::float_t MIN_HEIGHT;
 struct Spec {
 public:
     ::std::string slug;
-    static constexpr ::StoneyDSP::size_t NUM_PARAMS;
-    static constexpr ::StoneyDSP::size_t NUM_INPUTS;
-    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS;
-    static constexpr ::StoneyDSP::size_t NUM_LIGHTS;
-    virtual Spec();
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0U;
+    ::rack::math::Vec size;
+    Spec()
+    :   slug("Spec"),
+        size(
+            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH),
+            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(Spec)
