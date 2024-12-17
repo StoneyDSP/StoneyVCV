@@ -139,7 +139,11 @@ endif
 ifdef BUILD_TYPE
 	PRESET_CONFIG := $(BUILD_TYPE)
 else
-	PRESET_CONFIG := release
+	ifdef DEBUG
+		PRESET_CONFIG := debug
+	else
+		PRESET_CONFIG := release
+	endif
 endif
 
 ifdef VERBOSE
