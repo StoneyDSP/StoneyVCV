@@ -90,25 +90,25 @@ public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
-    enum ParamsId {
+    enum IdxParams {
         /** Number of Parameters. */
         NUM_PARAMS
-    };
+    } idx_params;
 
-	enum InputsId {
+	enum IdxInputs {
         /** Number of Input ports. */
 		NUM_INPUTS
-	};
+	} idx_inputs;
 
-	enum OutputsId {
+	enum IdxOutputs {
         /** Number of Output ports. */
 		NUM_OUTPUTS
-	};
+	} idx_outputs;
 
-	enum LightsId {
+	enum IdxLights {
         /** Number of Lights. */
 		NUM_LIGHTS
-	};
+	} idx_lights;
 
     //==========================================================================
 
