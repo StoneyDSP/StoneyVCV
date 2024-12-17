@@ -53,12 +53,19 @@ namespace HP4 {
 struct HP4Spec final :
     ::StoneyDSP::StoneyVCV::Spec {
 public:
-    std::string slug;
-    static constexpr int NUM_PARAMS = 0;
-    static constexpr int NUM_INPUTS = 0;
-    static constexpr int NUM_OUTPUTS = 0;
-    static constexpr int NUM_LIGHTS = 0;
-    HP4Spec() : slug("HP4") {};
+    ::std::string slug;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0U;
+    ::rack::math::Vec size;
+    HP4Spec()
+    :   slug("HP4"),
+        size(
+            ::rack::window::mm2px(5.079999999F * 4.0F),
+            ::rack::window::mm2px(128.693333312F)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP4Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(HP4Spec)

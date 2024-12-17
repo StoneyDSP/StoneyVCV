@@ -2,7 +2,7 @@
  * @file HP4.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.0
+ * @version 0.0.1
  * @date 2024-11-11
  *
  * @copyright Copyright (c) 2024
@@ -160,11 +160,11 @@ public:
      */
     HP4Widget();
 
-    /**
-     * @brief Destroys the `HP4Widget` object.
-     *
-     */
-    ~HP4Widget();
+    // /**
+    //  * @brief Destroys the `HP4Widget` object.
+    //  *
+    //  */
+    // ~HP4Widget();
 
     /**
      * @brief Advances the module by one frame.
@@ -179,7 +179,7 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::HP4::HP4Widget::DrawArgs &args) override;
+    void draw(const ::StoneyDSP::StoneyVCV::HP4::HP4Widget::DrawArgs& args) override;
 
     //==========================================================================
 
@@ -187,13 +187,13 @@ public:
      * @brief
      *
      */
-    ::rack::FramebufferWidget *hp4WidgetFrameBuffer;
+    ::rack::FramebufferWidget* hp4WidgetFrameBuffer;
 
     /**
      * @brief
      *
      */
-    ::rack::Widget *panelBorder;
+    ::rack::Widget* panelBorder;
 
     //==========================================================================
 
@@ -225,27 +225,32 @@ public:
      * @brief Construct a new `HP4ModuleWidget` object.
      *
      */
-    HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4::HP4Module *module);
+    HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4::HP4Module* module);
 
-    /**
-     * @brief Destroys the `HP4ModuleWidget` object.
-     *
-     */
-    ~HP4ModuleWidget();
+    // /**
+    //  * @brief Destroys the `HP4ModuleWidget` object.
+    //  *
+    //  */
+    // ~HP4ModuleWidget();
 
     //==========================================================================
 
     /**
      * @brief
-     *
      */
-    ::StoneyDSP::StoneyVCV::HP4::HP4Widget *hp4Widget;
+    ::rack::math::Vec size;
 
     /**
      * @brief
      *
      */
-    ::rack::FramebufferWidget *hp4ModuleWidgetFrameBuffer;
+    ::StoneyDSP::StoneyVCV::HP4::HP4Widget* hp4Widget;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget* hp4ModuleWidgetFrameBuffer;
 
     //==========================================================================
 
@@ -264,7 +269,7 @@ private:
  *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createHP4(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model* createHP4(); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
