@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file LFO.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -43,10 +43,10 @@
 {
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::PARAMS_LEN,     // numParams
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::INPUTS_LEN,     // numInputs
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::OUTPUTS_LEN,    // numOutputs
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::LIGHTS_LEN      // numLights
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_PARAMS,
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_INPUTS,
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_OUTPUTS,
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_LIGHTS
     );
 }
 
@@ -92,12 +92,15 @@ void ::StoneyDSP::StoneyVCV::LFO::LFOWidget::step()
     ::rack::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::LFO::LFOWidget::draw(const ::rack::Widget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::LFO::LFOWidget::draw(const ::StoneyDSP::StoneyVCV::LFO::LFOWidget::DrawArgs &args)
 {
+    ::NVGcolor& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
+    ::NVGcolor& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
 
+    // draw Themed BG
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg, 0.0, 0.0, box.size.x, box.size.y);
-    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? ::nvgRGB(42, 42, 42) : ::nvgRGB(235, 235, 235);
+    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
     ::nvgFillColor(args.vg, bg);
     ::nvgFill(args.vg);
     ::rack::Widget::draw(args);
@@ -108,8 +111,14 @@ void ::StoneyDSP::StoneyVCV::LFO::LFOWidget::draw(const ::rack::Widget::DrawArgs
 ::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget::LFOModuleWidget(::StoneyDSP::StoneyVCV::LFO::LFOModule* module) {
     setModule(module);
     setPanel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
-        ::rack::asset::plugin(::StoneyDSP::StoneyVCV::pluginInstance, "res/LFO-light.svg"),
-        ::rack::asset::plugin(::StoneyDSP::StoneyVCV::pluginInstance, "res/LFO-dark.svg")
+        // Light-mode panel
+        ::rack::asset::plugin(
+            ::StoneyDSP::StoneyVCV::pluginInstance, "res/LFO-light.svg"
+        ),
+        // Dark-mode panel
+        ::rack::asset::plugin(
+            ::StoneyDSP::StoneyVCV::pluginInstance, "res/LFO-dark.svg"
+        )
     ));
     // Widgets
     lfoModuleWidgetFrameBuffer = new ::rack::FramebufferWidget;

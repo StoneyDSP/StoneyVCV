@@ -197,6 +197,8 @@ SHORT_NAMES            = NO
 
 JAVADOC_AUTOBRIEF      = YES
 
+JAVADOC_BANNER      = YES
+
 # If the QT_AUTOBRIEF tag is set to YES then doxygen will interpret the first
 # line (until the first dot) of a Qt-style comment as the brief description. If
 # set to NO, the Qt-style will behave just like regular Qt-style comments (thus

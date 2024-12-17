@@ -1,8 +1,8 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file HP2.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.0
+ * @version 0.0.1
  * @date 2024-11-11
  *
  * @copyright Copyright (c) 2024
@@ -60,6 +60,13 @@ namespace StoneyVCV
 
 //==============================================================================
 
+/**
+ * @brief The `HP2` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @namespace HP2
+ *
+ */
 namespace HP2
 {
 /** @addtogroup HP2
@@ -75,43 +82,97 @@ namespace HP2
 struct HP2Module final :
     ::rack::engine::Module
 {
+
+    //==========================================================================
+
 public:
+
+    //==========================================================================
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
-    enum ParamsId {
-        PARAMS_LEN
-    };
-	enum InputsId {
-		INPUTS_LEN
-	};
-	enum OutputsId {
-		OUTPUTS_LEN
-	};
-	enum LightsId {
-		LIGHTS_LEN
-	};
+    enum IdxParams {
+        /** Number of Parameters. */
+        NUM_PARAMS
+    } idx_params;
 
+	enum IdxInputs {
+        /** Number of Input ports. */
+		NUM_INPUTS
+	} idx_inputs;
+
+	enum IdxOutputs {
+        /** Number of Output ports. */
+		NUM_OUTPUTS
+	} idx_outputs;
+
+    enum IdxLights {
+        /** Number of Lights. */
+		NUM_LIGHTS
+	} idx_lights;
+
+    //==========================================================================
+
+    /**
+     * @brief Construct a new `HP2Module` object.
+     *
+     */
     HP2Module();
-    // ~HP2Module();
+
+    /**
+     * @brief Destroys the `HP2Module` object.
+     *
+     */
+    ~HP2Module();
+
+    //==========================================================================
+
 private:
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(HP2Module)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP2Module)
 };
 
 //==============================================================================
 
+/**
+ * @brief The `HP2Widget` struct.
+ *
+ */
 struct HP2Widget final :
     ::rack::Widget
 {
+
+    //==========================================================================
+
 public:
+
+    using DrawArgs = ::rack::Widget::DrawArgs;
+
+    //==========================================================================
+
+    /**
+     * @brief Construct a new `HP2Widget` object.
+     *
+     */
     HP2Widget();
+
+    // /**
+    //  * @brief Destroys the `HP2Widget` object.
+    //  *
+    //  */
     // ~HP2Widget();
+
+    //==========================================================================
+
     /**
      * @brief Advances the module by one frame.
      *
      */
     void step() override;
+
     /**
      * @brief Draws the widget to the NanoVG context.
      * When overriding, call the superclass's draw(args) to recurse to
@@ -119,10 +180,28 @@ public:
      *
      * @param args
      */
-    void draw(const ::rack::Widget::DrawArgs &args) override;
-    // ::rack::FramebufferWidget *hp2WidgetFrameBuffer;
-    // Widget *panelBorder;
+    void draw(const ::StoneyDSP::StoneyVCV::HP2::HP2Widget::DrawArgs& args) override;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget* hp2WidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::Widget* panelBorder;
+
+    //==========================================================================
+
 private:
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(HP2Widget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP2Widget)
 };
@@ -136,12 +215,52 @@ private:
 struct HP2ModuleWidget final :
     ::rack::app::ModuleWidget
 {
+
+    //==========================================================================
+
 public:
-    HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2::HP2Module *module);
+
+    //==========================================================================
+
+    /**
+     * @brief Construct a new `HP2ModuleWidget` object.
+     *
+     * @param module
+     *
+     */
+    HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2::HP2Module* module);
+
+    // /**
+    //  * @brief Destroys the `HP2ModuleWidget` object.
+    //  *
+    //  */
     // ~HP2ModuleWidget();
-    // ::StoneyDSP::StoneyVCV::HP2Widget *hp2Widget;
-    // ::rack::FramebufferWidget *hp2ModuleWidgetFrameBuffer;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     */
+    ::rack::math::Vec size;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::HP2::HP2Widget* hp2Widget;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget* hp2ModuleWidgetFrameBuffer;
+
+    //==========================================================================
+
 private:
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(HP2ModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP2ModuleWidget)
 };
@@ -153,7 +272,7 @@ private:
  *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createHP2(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model* createHP2(); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
