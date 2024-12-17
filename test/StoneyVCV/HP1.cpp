@@ -45,12 +45,19 @@ struct HP1Spec final :
     ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    std::string slug;
-    static constexpr int NUM_PARAMS = 0;
-    static constexpr int NUM_INPUTS = 0;
-    static constexpr int NUM_OUTPUTS = 0;
-    static constexpr int NUM_LIGHTS = 0;
-    HP1Spec() : slug("HP1") {};
+    ::std::string slug;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0;
+    ::rack::math::Vec size;
+    HP1Spec()
+    :   slug("HP1"),
+        size(
+            ::rack::window::mm2px(5.079999999F),
+            ::rack::window::mm2px(128.693333312F)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP1Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Spec)

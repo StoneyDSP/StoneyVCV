@@ -82,29 +82,36 @@ namespace HP1
 struct HP1Module final :
     ::rack::engine::Module
 {
+
+    //==========================================================================
+
 public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
-    enum ParamsId {
+    //==========================================================================
+
+    enum IdxParams {
         /** Number of Parameters. */
         NUM_PARAMS
-    };
+    } idx_params;
 
-	enum InputsId {
+	enum IdxInputs {
         /** Number of Input ports. */
 		NUM_INPUTS
-	};
+	} idx_inputs;
 
-	enum OutputsId {
+	enum IdxOutputs {
         /** Number of Output ports. */
 		NUM_OUTPUTS
-	};
+	} idx_outputs;
 
-	enum LightsId {
+	enum IdxLights {
         /** Number of Lights. */
 		NUM_LIGHTS
-	};
+	} idx_lights;
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `HP1Module` object.
@@ -118,7 +125,11 @@ public:
      */
     ~HP1Module();
 
+    //==========================================================================
+
 private:
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Module)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1Module)
@@ -137,17 +148,21 @@ public:
 
     using DrawArgs = ::rack::Widget::DrawArgs;
 
+    //==========================================================================
+
     /**
      * @brief Construct a new `HP1Widget` object.
      *
      */
     HP1Widget();
 
-    /**
-     * @brief Destroys the `HP1Widget` object.
-     *
-     */
-    ~HP1Widget();
+    // /**
+    //  * @brief Destroys the `HP1Widget` object.
+    //  *
+    //  */
+    // ~HP1Widget();
+
+    //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
@@ -164,6 +179,8 @@ public:
      */
     void draw(const ::StoneyDSP::StoneyVCV::HP1::HP1Widget::DrawArgs& args) override;
 
+    //==========================================================================
+
     /**
      * @brief
      *
@@ -176,7 +193,11 @@ public:
      */
     ::rack::Widget* panelBorder;
 
+    //==========================================================================
+
 private:
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Widget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1Widget)
@@ -191,7 +212,12 @@ private:
 struct HP1ModuleWidget final :
     ::rack::app::ModuleWidget
 {
+
+    //==========================================================================
+
 public:
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `HP1ModuleWidget` object.
@@ -199,27 +225,32 @@ public:
      * @param module
      *
      */
-    HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module *module);
+    HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module* module);
+
+    //==========================================================================
 
     /**
-     * @brief Destroys the `HP1ModuleWidget` object.
-     *
+     * @brief
      */
-    ~HP1ModuleWidget();
+    ::rack::math::Vec size;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::HP1::HP1Widget *hp1Widget;
+    ::StoneyDSP::StoneyVCV::HP1::HP1Widget* hp1Widget;
 
     /**
      * @brief
      *
      */
-    ::rack::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
+    ::rack::FramebufferWidget* hp1ModuleWidgetFrameBuffer;
+
+    //==========================================================================
 
 private:
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(HP1ModuleWidget)
@@ -232,7 +263,7 @@ private:
  *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createHP1(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model* createHP1(); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
