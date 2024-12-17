@@ -1,4 +1,4 @@
-/***************************************************************************//**
+/*******************************************************************************
  * @file LFO.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -62,6 +62,13 @@ namespace StoneyVCV
 
 //==============================================================================
 
+/**
+ * @brief The `LFO` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @namespace LFO
+ *
+ */
 namespace LFO
 {
 /** @addtogroup LFO
@@ -71,7 +78,7 @@ namespace LFO
 //==============================================================================
 
 /**
- * @brief The `LFOModule` class.
+ * @brief The `LFOModule` struct.
  *
  */
 struct LFOModule final :
@@ -81,17 +88,25 @@ public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
+
     enum ParamsId {
-        PARAMS_LEN
+        /** Number of Parameters. */
+        NUM_PARAMS
     };
+
 	enum InputsId {
-		INPUTS_LEN
+        /** Number of Input ports. */
+		NUM_INPUTS
 	};
+
 	enum OutputsId {
-		OUTPUTS_LEN
+        /** Number of Output ports. */
+		NUM_OUTPUTS
 	};
+
 	enum LightsId {
-		LIGHTS_LEN
+        /** Number of Lights. */
+		NUM_LIGHTS
 	};
 
     /**
@@ -113,11 +128,23 @@ public:
      */
     virtual void process(const ::StoneyDSP::StoneyVCV::LFO::LFOModule::ProcessArgs &args) override;
 
+    /**
+     * @brief Store extra internal data in the "data" property of the module's JSON object.
+     *
+     * @return json_t
+     */
     ::json_t *dataToJson() override;
 
+    /**
+     * @brief Load internal data from the "data" property of the module's JSON object.
+     * Not called if "data" property is not present.
+     *
+     * @param rootJ
+     */
     void dataFromJson(::json_t *rootJ) override;
 
 private:
+
     STONEYDSP_DECLARE_NON_COPYABLE(LFOModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOModule)
 };
@@ -125,20 +152,34 @@ private:
 //==============================================================================
 
 /**
- * @brief The `LFOWidget` class.
+ * @brief The `LFOWidget` struct.
  *
  */
 struct LFOWidget final :
     ::rack::Widget
 {
 public:
+
+    using DrawArgs = ::rack::Widget::DrawArgs;
+
+    /**
+     * @brief Construct a new `LFOWidget` object.
+     *
+     */
     LFOWidget();
+
+    /**
+     * @brief Destroy the `LFOWidget` object.
+     *
+     */
     ~LFOWidget();
+
     /**
      * @brief Advances the module by one frame.
      *
      */
     void step() override;
+
     /**
      * @brief Draws the widget to the NanoVG context.
      * When overriding, call the superclass's draw(args) to recurse to
@@ -146,10 +187,22 @@ public:
      *
      * @param args
      */
-    void draw(const ::rack::Widget::DrawArgs &args) override;
+    void draw(const ::StoneyDSP::StoneyVCV::LFO::LFOWidget::DrawArgs &args) override;
+
+    /**
+     * @brief
+     *
+     */
     ::rack::FramebufferWidget *lfoWidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
     ::rack::Widget *panelBorder;
+
 private:
+
     STONEYDSP_DECLARE_NON_COPYABLE(LFOWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOWidget)
 };
@@ -165,11 +218,36 @@ struct LFOModuleWidget final :
     ::rack::app::ModuleWidget
 {
 public:
+
+    /**
+     * @brief Construct a new `LFOModuleWidget` object.
+     *
+     * @param module
+     *
+     */
     LFOModuleWidget(::StoneyDSP::StoneyVCV::LFO::LFOModule* module);
+
+
+    /**
+     * @brief Destroys the `LFOModuleWidget` object.
+     *
+     */
     ~LFOModuleWidget();
-private:
+
+    /**
+     * @brief
+     *
+     */
     ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget;
+
+    /**
+     * @brief
+     *
+     */
     ::rack::FramebufferWidget *lfoModuleWidgetFrameBuffer;
+
+private:
+
     STONEYDSP_DECLARE_NON_COPYABLE(LFOModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOModuleWidget)
 };

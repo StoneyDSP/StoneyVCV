@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="30.48mm"
-   height="128.5mm"
-   viewBox="0 0 30.480002 128.50002"
+   width="30.479999995mm"
+   height="128.693333312mm"
+   viewBox="0 0 30.479999995 128.693333312"
    version="1.1"
    id="svg8"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
@@ -17,6 +17,8 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title861">VCA-light</title>
   <defs
      id="defs2">
     <linearGradient
@@ -106,12 +108,12 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient861"
-       id="linearGradient863"
-       x1="0"
-       y1="232.74998"
-       x2="30.48"
-       y2="232.74998"
-       gradientUnits="userSpaceOnUse" />
+       id="linearGradient1277"
+       gradientUnits="userSpaceOnUse"
+       x1="15.488252"
+       y1="168.68993"
+       x2="15.488252"
+       y2="296.66745" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -124,7 +126,7 @@
      inkscape:cx="52.270921"
      inkscape:cy="249.93407"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer1"
      showgrid="true"
      units="mm"
      inkscape:snap-bbox="true"
@@ -139,29 +141,41 @@
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-nodes="false"
      inkscape:pagecheckerboard="0"
-     showguides="false"
+     showguides="true"
      inkscape:bbox-paths="true"
      inkscape:snap-object-midpoints="true"
-     inkscape:snap-center="true">
+     inkscape:snap-center="true"
+     objecttolerance="10000"
+     guidetolerance="10000"
+     inkscape:lockguides="true">
     <sodipodi:guide
-       position="0,128.50002"
+       position="0,128.693333312"
        orientation="0,115.2"
-       id="guide57950" />
+       id="guide57950"
+       inkscape:locked="true" />
     <sodipodi:guide
-       position="30.480004,128.50002"
+       position="30.479999995,128.693333312"
        orientation="485.66929,0"
-       id="guide57952" />
+       id="guide57952"
+       inkscape:locked="true" />
     <sodipodi:guide
-       position="30.480004,0"
+       position="30.479999995,0"
        orientation="0,-115.2"
-       id="guide57954" />
+       id="guide57954"
+       inkscape:locked="true" />
     <sodipodi:guide
        position="0,0"
        orientation="-485.66929,0"
-       id="guide57956" />
+       id="guide57956"
+       inkscape:locked="true" />
     <inkscape:grid
        type="xygrid"
-       id="grid57958" />
+       id="grid57958"
+       units="mm"
+       spacingx="5.0800007"
+       spacingy="5.0800007"
+       empspacing="5"
+       dotted="false" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -171,6 +185,24 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>VCA-light</dc:title>
+        <dc:date>2024</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Nathan J. Hood</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>MIT</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>StoneyDSP</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:identifier>VCA</dc:identifier>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -181,10 +213,10 @@
      transform="translate(0,-168.49998)"
      style="display:inline">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient863);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.649358;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;fill:url(#linearGradient1277);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.649;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect420"
-       width="30.48"
-       height="128.5"
+       width="30.479999995"
+       height="128.693333312"
        x="5.9211732e-17"
        y="168.49998"
        inkscape:label="bg" />
@@ -196,7 +228,7 @@
        inkscape:label="label_out"><tspan
          x="9.4238281"
          y="28.195283"
-         id="tspan7673">OUT</tspan></text>
+         id="tspan1644">OUT</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,9.8031271,258.06296)"
@@ -205,7 +237,7 @@
        inkscape:label="label_in"><tspan
          x="9.4238281"
          y="28.195283"
-         id="tspan7675">IN</tspan></text>
+         id="tspan1646">IN</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,8.7103445,233.7012)"
@@ -214,7 +246,7 @@
        inkscape:label="label_cv"><tspan
          x="9.4238281"
          y="28.195283"
-         id="tspan7677">CV</tspan></text>
+         id="tspan1648">CV</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,5.8040667,209.3422)"
@@ -223,7 +255,7 @@
        inkscape:label="label_gain"><tspan
          x="9.4238281"
          y="28.195283"
-         id="tspan7679">GAIN</tspan></text>
+         id="tspan1650">GAIN</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,4.0008927,171.33401)"
@@ -232,7 +264,7 @@
        inkscape:label="label_vca"><tspan
          x="9.4238281"
          y="37.632812"
-         id="tspan7681">VCA</tspan></text>
+         id="tspan1652">VCA</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -242,8 +274,8 @@
     <rect
        style="display:none;fill:#ffff00;stroke-width:0.264583"
        id="rect6259"
-       width="30.48"
-       height="128.5"
+       width="30.479999995"
+       height="128.693333312"
        x="-9.7144515e-17"
        y="0"
        inkscape:label="widget" />

@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file HP1.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -29,10 +29,9 @@
  *
  ******************************************************************************/
 
-#if (STONEYVCV_BUILD_HP1 == 1) && (STONEYVCV_BUILD_TESTS == 1)
+#if defined (STONEYVCV_BUILD_HP1) && defined (STONEYVCV_BUILD_TESTS)
 
 #include <catch2/catch_test_macros.hpp>
-// for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "StoneyVCV/HP1.hpp"
@@ -46,12 +45,19 @@ struct HP1Spec final :
     ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    std::string slug;
-    static constexpr int NUM_PARAMS = 0;
-    static constexpr int NUM_INPUTS = 0;
-    static constexpr int NUM_OUTPUTS = 0;
-    static constexpr int NUM_LIGHTS = 0;
-    HP1Spec() : slug("HP1") {};
+    ::std::string slug;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0;
+    ::rack::math::Vec size;
+    HP1Spec()
+    :   slug("HP1"),
+        size(
+            ::rack::window::mm2px(5.079999999F),
+            ::rack::window::mm2px(128.693333312F)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP1Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(HP1Spec)
@@ -72,10 +78,10 @@ TEST_CASE( "HP1", "[HP1]" ) {
     }
     SECTION( "HP1Module" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::PARAMS_LEN == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::INPUTS_LEN == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_PARAMS == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_INPUTS == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::HP1::HP1Module* test_hp1Module = new ::StoneyDSP::StoneyVCV::HP1::HP1Module;

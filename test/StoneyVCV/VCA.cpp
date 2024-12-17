@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file VCA.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -31,13 +31,11 @@
 
 //==============================================================================
 
-#if (STONEYVCV_BUILD_VCA == 1) && (STONEYVCV_BUILD_TESTS == 1)
-
+#if defined (STONEYVCV_BUILD_VCA) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================
 
 #include <catch2/catch_test_macros.hpp>
-// for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 //==============================================================================
@@ -55,12 +53,19 @@ namespace VCA {
 struct VCASpec final : ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    std::string slug;
-    static constexpr int NUM_PARAMS = 1;
-    static constexpr int NUM_INPUTS = 2;
-    static constexpr int NUM_OUTPUTS = 1;
-    static constexpr int NUM_LIGHTS = 1;
-    VCASpec() : slug("VCA") {};
+    ::std::string slug;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 1U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 1U;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 1U;
+    ::rack::math::Vec size;
+    VCASpec()
+    :   slug("VCA"),
+        size(
+            ::rack::window::mm2px(30.479999995F).
+            ::rack::window::mm2px(128.693333312F)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(VCASpec)
     STONEYDSP_DECLARE_NON_COPYABLE(VCASpec)
@@ -89,10 +94,10 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
     SECTION( "VCAModule" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::PARAMS_LEN == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::INPUTS_LEN == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
@@ -146,8 +151,8 @@ TEST_CASE( "VCA", "[VCA]" ) {
     spec.reset();
 }
 
-//==========================================================================
+//==============================================================================
 
 #endif
 
-//==========================================================================
+//==============================================================================

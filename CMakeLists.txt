@@ -23,7 +23,6 @@ set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FOR
 set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
-option(STONEYVCV_COMPILE_RESOURCES                  "Use '-DSTONEYVCV_COMPILE_RESOURCES=ON|OFF' when configuring to toggle this option. Uses CMakeRC to compile some static resources into an embedded filesystem." ON)
 option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." OFF)
 option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
@@ -37,7 +36,6 @@ cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TEST
 # Put components in the correct order of their dependencies on eachother to save tears...
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
-find_package(CMakeRC CONFIG REQUIRED)
 
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
@@ -234,41 +232,6 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
     endif(STONEYVCV_BUILD_TESTS)
 
 endforeach()
-
-#[==================================[CMakeRC]==================================]
-
-if(STONEYVCV_COMPILE_RESOURCES)
-    # TODO: CMakeRC stuff
-    cmrc_add_resource_library(Resources
-        ALIAS StoneyVCV::Resources
-        # NAMESPACE foo
-    )
-    add_library(StoneyDSP::StoneyVCV::Resources ALIAS Resources)
-    target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::Resources)
-    target_compile_definitions(plugin
-        PUBLIC
-            "-DSTONEYVCV_COMPILE_RESOURCES=1"
-    )
-    install(TARGETS Resources;cmrc-base
-        EXPORT ResourcesExport
-        COMPONENT Resources
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    )
-    install(
-        EXPORT ResourcesExport
-        NAMESPACE StoneyDSP::StoneyVCV::
-        FILE "StoneyDSP-StoneyVCV-Resources-targets.cmake"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
-    )
-    export(
-        TARGETS Resources;cmrc-base
-        FILE "share/cmake/StoneyDSP-StoneyVCV-Resources-targets.cmake"
-        NAMESPACE StoneyDSP::StoneyVCV::
-    )
-endif()
 
 #[============================[Write CMake Package]============================]
 
