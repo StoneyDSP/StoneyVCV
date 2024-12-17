@@ -120,8 +120,8 @@ namespace Panels {
 
 ::NVGcolor bgBlack = ::nvgRGBA(0, 0, 0, 255);
 ::NVGcolor bgWhite = ::nvgRGBA(255, 255, 255, 255);
-::StoneyDSP::float_t MIN_WIDTH = 5.079999999F;
-::StoneyDSP::float_t MIN_HEIGHT = 128.693333312F;
+::StoneyDSP::float_t MIN_WIDTH = ::rack::window::mm2px(5.079999999F);
+::StoneyDSP::float_t MIN_HEIGHT = ::rack::window::mm2px(128.693333312F);
 
 //==============================================================================
 
@@ -142,3 +142,5 @@ namespace Panels {
 //==============================================================================
 
 #endif // STONEYVCV_BUILD_PLUGIN
+
+//==============================================================================

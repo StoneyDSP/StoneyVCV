@@ -69,7 +69,9 @@ namespace StoneyVCV
 
 //==============================================================================
 
-// Declare the Plugin, defined in plugin.cpp
+/**
+ * @brief Declare the Plugin instance, defined in `plugin.cpp`
+ */
 extern ::rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
@@ -78,35 +80,88 @@ extern ::rack::plugin::Plugin* pluginInstance;
 // Declare each Model, defined in each module source file
 
 #if defined (STONEYVCV_EXPERIMENTAL)
-    // EXPERIMENTAL MODULES HERE...
+// EXPERIMENTAL MODULES HERE...
+
 #if defined (STONEYVCV_BUILD_VCA)
-namespace VCA {
-extern ::rack::plugin::Model* modelVCA;
-}
-#endif
+    namespace VCA {
+    /** @addtogroup VCA
+     *  @{
+     */
+
+    /**
+     * @brief Declaration of the `VCA` Model instance, defined in `VCA.cpp`.
+     */
+    extern ::rack::plugin::Model* modelVCA;
+
+    /// @} group VCA
+    } // namespace VCA
+#endif // STONEYVCV_BUILD_VCA
+
 #if defined (STONEYVCV_BUILD_LFO)
-namespace LFO {
-extern ::rack::plugin::Model* modelLFO;
-}
-#endif
+    namespace LFO {
+    /** @addtogroup LFO
+     *  @{
+     */
+
+    /**
+     * @brief Declaration of the `LFO` Model instance, defined in `LFO.cpp`.
+     */
+    extern ::rack::plugin::Model* modelLFO;
+
+    /// @} group LFO
+    } // namespace LFO
+#endif // STONEYVCV_BUILD_LFO
+
 #endif // STONEYVCV_EXPERIMENTAL
 
 #if (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
+
 #if defined (STONEYVCV_BUILD_HP4)
-namespace HP4 {
-extern ::rack::plugin::Model* modelHP4;
-}
-#endif
+    namespace HP4 {
+    /** @addtogroup HP4
+     *  @{
+     */
+
+    /**
+     * @brief Declaration of the `HP4` Model instance, defined in `HP4.cpp`.
+     */
+    extern ::rack::plugin::Model* modelHP4;
+
+
+    /// @} group HP4
+    } // namespace HP4
+#endif // STONEYVCV_BUILD_HP4
+
 #if defined (STONEYVCV_BUILD_HP2)
-namespace HP2 {
-extern ::rack::plugin::Model* modelHP2;
-}
-#endif
+    namespace HP2 {
+    /** @addtogroup HP2
+     *  @{
+     */
+
+    /**
+     * @brief Declaration of the `HP2` Model instance, defined in `HP2.cpp`.
+     */
+    extern ::rack::plugin::Model* modelHP2;
+
+    /// @} group HP1
+    } // namespace HP1
+#endif // STONEYVCV_BUILD_HP2
+
 #if defined (STONEYVCV_BUILD_HP1)
-namespace HP1 {
-extern ::rack::plugin::Model* modelHP1;
-}
-#endif
+    namespace HP1 {
+    /** @addtogroup HP1
+     *  @{
+     */
+
+    /**
+     * @brief Declaration of the `HP1` Model instance, defined in `HP1.cpp`.
+     */
+    extern ::rack::plugin::Model* modelHP1;
+
+    /// @} group HP1
+    } // namespace HP1
+#endif // STONEYVCV_BUILD_HP1
+
 #elif (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 0U)
     #warning "No modules found..."
 #endif
@@ -123,9 +178,15 @@ extern ::StoneyDSP::float_t MIN_HEIGHT;
 //==============================================================================
 
 #if defined (STONEYVCV_BUILD_TESTS)
+/**
+ * @brief The `Spec` struct.
+ *
+ * A base class for deriving specs for unit-testing with.
+ *
+ */
 struct Spec {
 public:
-    ::std::string slug;
+    ::std::string slug, name, description;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
@@ -133,13 +194,15 @@ public:
     ::rack::math::Vec size;
     Spec()
     :   slug("Spec"),
+        name(""),
+        description("Unit test spec base class (internal)"),
         size(
             ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH),
             ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT)
         )
     {};
+    ~Spec() = default;
 private:
-    // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(Spec)
     STONEYDSP_DECLARE_NON_MOVEABLE(Spec)
 };
