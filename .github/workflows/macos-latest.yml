@@ -98,6 +98,10 @@ jobs:
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
+    - name: Fetch Rack Executable
+      run: |
+        brew install --cask vcv-rack
+
     - name: Dep
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK

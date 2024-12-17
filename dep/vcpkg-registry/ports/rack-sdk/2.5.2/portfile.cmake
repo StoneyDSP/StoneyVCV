@@ -24,6 +24,11 @@ if(NOT "${VERSION}" STREQUAL "${VCVRACK_RACKSDK_VERSION}")
     return()
 endif()
 
+if(VCPKG_TARGET_IS_MINGW)
+    # Rack-SDK uses the old C runtime...
+    set(VCPKG_POLICY_ALLOW_OBSOLETE_MSVCRT enabled)
+endif()
+
 vcpkg_check_linkage(
     ONLY_DYNAMIC_LIBRARY
 )
@@ -78,35 +83,11 @@ vcpkg_extract_source_archive_ex(
     ARCHIVE "${ARCHIVE}"
 )
 
-## Dirty hack to use the local 'CMakeLists.txt' file under 'dep/VCVRack'...
-# function(_normalize_path var)
-#     message(STATUS "normalizing path: ${var}")
-#     set(path "${${var}}")
-#     file(TO_CMAKE_PATH "${path}" path)
-
-#     while(path MATCHES "//")
-#         string(REPLACE "//" "/" path "${path}")
-#     endwhile()
-
-#     string(REGEX REPLACE "/+$" "" path "${path}")
-#     set("${var}" "${path}" PARENT_SCOPE)
-#     message(STATUS "normalized path: ${var}")
-# endfunction()
-
-
-# function(get_this_dir)
-#     set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
-# endfunction()
-
-# get_this_dir()
-# get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
-# set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack/Rack-SDK")
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO StoneyDSP/Rack-SDK
-    REF 900c74e6a13d11533607221dae0f3ce855a902cf
-    SHA512 0fab568dafeb871e95a7dd6cfdcc1cec989a727ea3f9abbcabda68513f53ceecb44f4c4cfd247cea3d3bb16dce0a89b53c0d991a357f045be53b58a5dc3fb787
+    REF 590bc47115a89306da3823565d6c4acd810a06fb
+    SHA512 4249f6ebca758f205ce62e97ccd02614e8400f69437c1b73af1cad036fa01e5d5c8673d925615ae4cabef1e2164b987b2a5777453f2f808a90379796faf62e55
     HEAD_REF main
 )
 
