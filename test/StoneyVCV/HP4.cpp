@@ -40,8 +40,7 @@
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
-#include "StoneyVCV/HP4.hpp"
+#include <StoneyVCV/HP4.hpp>
 
 //==============================================================================
 
@@ -92,12 +91,18 @@ TEST_CASE( "HP4", "[HP4]" ) {
     //==========================================================================
 
     SECTION( "HP4Module" ) {
+
+        //======================================================================
+
         SECTION( "statics" ) {
             REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_PARAMS == spec.get()->NUM_PARAMS );
             REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_INPUTS == spec.get()->NUM_INPUTS );
             REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
             REQUIRE( ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
+
+        //======================================================================
+
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::HP4::HP4Module* test_hp4Module = new ::StoneyDSP::StoneyVCV::HP4::HP4Module;
             REQUIRE( test_hp4Module->getNumParams() == spec.get()->NUM_PARAMS );
