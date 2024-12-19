@@ -73,27 +73,61 @@ include $(RACK_DIR)/arch.mk
 
 ifdef ARCH_X64
 	TRIPLET_ARCH := x64
+	PRESET_ARCH := x64
 endif
 
 ifdef ARCH_ARM64
 	TRIPLET_ARCH := arm64
+	PRESET_ARCH := arm64
 endif
 
 # Include deps
 ifdef ARCH_WIN
 	TRIPLET_OS := mingw-dynamic
+	PRESET_OS := windows
 endif
 
 ifdef ARCH_LIN
 	TRIPLET_OS := linux
+	PRESET_OS := linux
 endif
 
 ifdef ARCH_MAC
 	TRIPLET_OS := osx
+	PRESET_OS := osx
 endif
 
-FLAGS += -I$(PWD)/build/vcpkg_installed/$(TRIPLET_ARCH)-$(TRIPLET_OS)/include
-LDFLAGS += -L$(PWD)/build/vcpkg_installed/$(TRIPLET_ARCH)-$(TRIPLET_OS)/lib
+ifdef BUILD_TYPE
+	PRESET_CONFIG := $(BUILD_TYPE)
+else
+	ifdef DEBUG
+		PRESET_CONFIG := debug
+	else
+		PRESET_CONFIG := release
+	endif
+endif
+
+# The macro NDEBUG controls whether assert() statements are active or not.
+ifdef DEBUG
+	CFLAGS += -Wall
+	CFLAGS += -Wextra
+	CFLAGS += -DNDEBUG
+	CFLAGS += -D_DEBUG
+endif
+
+ifdef VERBOSE
+	PRESET_VERBOSE := -verbose
+endif
+
+EXTERNAL_DEPS :=
+EXTERNAL_DEPS += StoneyDSP
+EXTERNAL_DEPS += Rack-SDK
+EXTERNAL_DEPS += catch2
+
+PKG_CONFIG_PATH := $(PWD)/build/vcpkg_installed/$(TRIPLET_ARCH)-$(TRIPLET_OS)/lib/pkgconfig:$(PKG_CONFIG_PATH)
+
+FLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags $(EXTERNAL_DEPS))
+LDFLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(EXTERNAL_DEPS))
 
 # FLAGS will be passed to both the C and C++ compiler
 FLAGS += -I$(PWD)/include
@@ -115,37 +149,8 @@ LDFLAGS +=
 DISTRIBUTABLES += res
 DISTRIBUTABLES += LICENSE
 DISTRIBUTABLES += VERSION
+DISTRIBUTABLES += README.md
 DISTRIBUTABLES += $(wildcard presets)
-
-ifdef ARCH_X64
-	PRESET_ARCH := x64
-endif
-
-ifdef ARCH_ARM64
-	PRESET_ARCH := arm64
-endif
-
-ifdef ARCH_WIN
-	PRESET_OS := windows
-endif
-
-ifdef ARCH_LIN
-	PRESET_OS := linux
-endif
-
-ifdef ARCH_MAC
-	PRESET_OS := osx
-endif
-
-ifdef BUILD_TYPE
-	PRESET_CONFIG := $(BUILD_TYPE)
-else
-	PRESET_CONFIG := release
-endif
-
-ifdef VERBOSE
-	PRESET_VERBOSE := -verbose
-endif
 
 PRESET ?= $(PRESET_ARCH)-$(PRESET_OS)-$(PRESET_CONFIG)$(PRESET_VERBOSE)
 
@@ -172,6 +177,12 @@ package: test
 	cmake \
   --install $(PWD)/build \
 	--prefix $(PWD)/install
+
+workflow:
+	cmake \
+  --workflow \
+	--preset $(PRESET) \
+	--fresh
 
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk

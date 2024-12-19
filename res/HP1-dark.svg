@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="5.0799999mm"
-   height="128.5mm"
-   viewBox="0 0 5.0800003 128.50002"
+   width="5.079999999mm"
+   height="128.693333312mm"
+   viewBox="0 0 5.079999999 128.693333312"
    version="1.1"
    id="svg8"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
@@ -23,11 +23,11 @@
        inkscape:collect="always"
        id="linearGradient2291">
       <stop
-         style="stop-color:#2b2b2b;stop-opacity:1;"
+         style="stop-color:#e6e6e6;stop-opacity:1;"
          offset="0"
          id="stop2287" />
       <stop
-         style="stop-color:#2b2b2b;stop-opacity:0;"
+         style="stop-color:#e6e6e6;stop-opacity:0;"
          offset="1"
          id="stop2289" />
     </linearGradient>
@@ -35,10 +35,10 @@
        inkscape:collect="always"
        xlink:href="#linearGradient2291"
        id="linearGradient2293"
-       x1="2.7289679"
-       y1="168.70656"
-       x2="2.5462642"
-       y2="296.67227"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
@@ -48,12 +48,12 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="36.870568"
-     inkscape:cy="191.42391"
+     inkscape:zoom="1"
+     inkscape:cx="36.5"
+     inkscape:cy="271.5"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
+     inkscape:current-layer="layer2"
+     showgrid="true"
      units="mm"
      inkscape:snap-bbox="true"
      inkscape:snap-page="true"
@@ -67,7 +67,11 @@
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-nodes="false"
      inkscape:pagecheckerboard="0"
-     width="30.48mm" />
+     width="30.48mm">
+    <inkscape:grid
+       type="xygrid"
+       id="grid829" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -82,27 +86,28 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-168.49998)">
+     id="layer1">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:#2b2b2b;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       id="rect828"
-       width="5.0799999"
-       height="128.5"
-       x="5.9211732e-17"
-       y="168.49997" />
-    <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient2293);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.265099;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient2293);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="gradient420"
-       width="5.0799999"
-       height="128.5"
-       x="5.9211732e-17"
-       y="168.49997"
+       width="5.079999999"
+       height="128.693333312"
+       x="0"
+       y="0"
        inkscape:label="gradient420" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="components"
-     style="display:none" />
+     style="display:none">
+    <rect
+       style="fill:#ffff00;fill-rule:evenodd;stroke-width:0.5"
+       id="rect895"
+       height="128.693333312"
+       x="0"
+       y="0"
+       width="5.079999999"
+       inkscape:label="widget" />
+  </g>
 </svg>

@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file LFO.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -31,12 +31,11 @@
 
 //==============================================================================
 
-#if (STONEYVCV_BUILD_LFO == 1) && (STONEYVCV_BUILD_TESTS == 1)
+#if defined (STONEYVCV_BUILD_LFO) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================
 
 #include <catch2/catch_test_macros.hpp>
-// for floating point comparisons
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 //==============================================================================
@@ -87,10 +86,10 @@ TEST_CASE( "LFO", "[LFO]" ) {
 
     SECTION( "LFOModule" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::PARAMS_LEN == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::INPUTS_LEN == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::OUTPUTS_LEN == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::LIGHTS_LEN == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_PARAMS == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_INPUTS == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::LFO::LFOModule* test_lfoModule = new ::StoneyDSP::StoneyVCV::LFO::LFOModule;

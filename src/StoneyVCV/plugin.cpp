@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -118,9 +118,10 @@ namespace Panels {
 
 //==============================================================================
 
-::NVGcolor bgBlack = ::nvgRGBA(42, 42, 42, 255);
-
-::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
+::NVGcolor bgBlack = ::nvgRGBA(0, 0, 0, 255);
+::NVGcolor bgWhite = ::nvgRGBA(255, 255, 255, 255);
+::StoneyDSP::float_t MIN_WIDTH = ::rack::window::mm2px(5.079999999F);
+::StoneyDSP::float_t MIN_HEIGHT = ::rack::window::mm2px(128.693333312F);
 
 //==============================================================================
 
@@ -141,3 +142,5 @@ namespace Panels {
 //==============================================================================
 
 #endif // STONEYVCV_BUILD_PLUGIN
+
+//==============================================================================

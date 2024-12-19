@@ -1,4 +1,4 @@
-/**
+/*******************************************************************************
  * @file plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
@@ -29,7 +29,7 @@
  *
  ******************************************************************************/
 
-#if (STONEYVCV_BUILD_PLUGIN == 1) && (STONEYVCV_BUILD_TESTS == 1)
+#if defined (STONEYVCV_BUILD_PLUGIN) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================
 

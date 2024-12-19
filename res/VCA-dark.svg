@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="30.48mm"
-   height="128.5mm"
-   viewBox="0 0 30.480002 128.50002"
+   width="30.479999995mm"
+   height="128.693333312mm"
+   viewBox="0 0 30.479999995 128.693333312"
    version="1.1"
    id="svg8"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
@@ -109,7 +109,7 @@
        id="linearGradient16509"
        x1="0"
        y1="232.74998"
-       x2="30.48"
+       x2="30.479999995"
        y2="232.74998"
        gradientUnits="userSpaceOnUse" />
   </defs>
@@ -144,15 +144,15 @@
      inkscape:snap-object-midpoints="true"
      inkscape:snap-center="true">
     <sodipodi:guide
-       position="0,128.50002"
+       position="0,128.693333312"
        orientation="0,115.2"
        id="guide57950" />
     <sodipodi:guide
-       position="30.480004,128.50002"
+       position="30.479999995,128.693333312"
        orientation="485.66929,0"
        id="guide57952" />
     <sodipodi:guide
-       position="30.480004,0"
+       position="30.479999995,0"
        orientation="0,-115.2"
        id="guide57954" />
     <sodipodi:guide
@@ -181,10 +181,10 @@
      transform="translate(0,-168.49998)"
      style="display:inline">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient16509);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.649358;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient16509);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect420"
-       width="30.48"
-       height="128.5"
+       width="30.479999995"
+       height="128.693333312"
        x="5.9211732e-17"
        y="168.49998"
        inkscape:label="bg" />
@@ -242,8 +242,8 @@
     <rect
        style="display:none;fill:#ffff00;stroke-width:0.264583"
        id="rect6259"
-       width="30.48"
-       height="128.5"
+       width="30.479999995"
+       height="128.693333312"
        x="-9.7144515e-17"
        y="0"
        inkscape:label="widget" />

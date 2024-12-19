@@ -24,6 +24,11 @@ if(NOT "${VERSION}" STREQUAL "${VCVRACK_RACKSDK_VERSION}")
     return()
 endif()
 
+if(VCPKG_TARGET_IS_MINGW)
+    # Rack-SDK uses the old C runtime...
+    set(VCPKG_POLICY_ALLOW_OBSOLETE_MSVCRT enabled)
+endif()
+
 vcpkg_check_linkage(
     ONLY_DYNAMIC_LIBRARY
 )
@@ -78,43 +83,20 @@ vcpkg_extract_source_archive_ex(
     ARCHIVE "${ARCHIVE}"
 )
 
-## Dirty hack to use the local 'CMakeLists.txt' file under 'dep/VCVRack'...
-# function(_normalize_path var)
-#     message(STATUS "normalizing path: ${var}")
-#     set(path "${${var}}")
-#     file(TO_CMAKE_PATH "${path}" path)
-
-#     while(path MATCHES "//")
-#         string(REPLACE "//" "/" path "${path}")
-#     endwhile()
-
-#     string(REGEX REPLACE "/+$" "" path "${path}")
-#     set("${var}" "${path}" PARENT_SCOPE)
-#     message(STATUS "normalized path: ${var}")
-# endfunction()
-
-
-# function(get_this_dir)
-#     set(_this_dir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}" PARENT_SCOPE)
-# endfunction()
-
-# get_this_dir()
-# get_filename_component(__stoneyvcv_dir "${_this_dir}/../../../../../" ABSOLUTE)
-# set(SOURCE_PATH "${__stoneyvcv_dir}/dep/VCVRack/Rack-SDK")
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO StoneyDSP/Rack-SDK
-    REF 900c74e6a13d11533607221dae0f3ce855a902cf
-    SHA512 0fab568dafeb871e95a7dd6cfdcc1cec989a727ea3f9abbcabda68513f53ceecb44f4c4cfd247cea3d3bb16dce0a89b53c0d991a357f045be53b58a5dc3fb787
+    REF 95c6e2fc9b1589f8a719f9fa6819fe7d50d7ad60
+    SHA512 4b5fb5812464a4957bc7a6d63e0da42b706834a6fee7a1892ad7efa0d8f3ab901af0f5559b0e5b8a21d9e5809c1e047503fe8658e54afd23d8921d5ca22af493
     HEAD_REF main
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
-        dep         RACK_SDK_BUILD_DEPS
-        core        RACK_SDK_BUILD_CORE
-        lib         RACK_SDK_BUILD_LIB
+        dep         RACK_SDK_INSTALL_DEPS
+        core        RACK_SDK_INSTALL_CORE
+        lib         RACK_SDK_INSTALL_LIB
+        runtimes    RACK_SDK_INSTALL_RUNTIME_LIBS
 )
 
 # Configure 'dep/VCVRack/CMakeLists.txt' using the unzipped Rack SDK
@@ -123,16 +105,12 @@ vcpkg_cmake_configure(
     OPTIONS
     -DRACK_DIR:PATH="${RACK_DIR}"
     -DVCVRACK_DISABLE_USAGE_MESSAGE:BOOL="TRUE"
-    # Expands to: "-DRACK_SDK_BUILD_DEPS=ON|OFF;-DRACK_SDK_BUILD_CORE=ON|OFF;-DRACK_SDK_BUILD_LIB=ON|OFF"
+    # Expands to: "-DRACK_SDK_BUILD_DEPS=ON|OFF;-DRACK_SDK_BUILD_CORE=ON|OFF;-DRACK_SDK_BUILD_LIB=ON|OFF;-DRACK_SDK_INSTALL_RUNTIME_LIBS=ON|OFF"
     ${FEATURE_OPTIONS}
 )
 vcpkg_cmake_install()
 vcpkg_fixup_pkgconfig()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
-file(
-    INSTALL "${RACK_DIR}/helper.py"
-    DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
-)
 file(
     INSTALL "${SOURCE_PATH}/LICENSE"
     DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
@@ -140,7 +118,7 @@ file(
 )
 string(CONFIGURE [==[
 
-To build a plugin and modules with the VCV Rack API, you can:
+rack-sdk provides CMake targets:
 
 project(MyPlugin)
 
@@ -164,7 +142,9 @@ vcvrack_add_module(MyOtherModule
 
 You can #include '<rack.hpp>' in 'plugin.cpp' and start building with the VCV Rack API and all its' dependencies.
 
-For more examples: https://github.com/StoneyDSP/StoneyVCV/dep/VCVRack/share/cmake/Modules/README.md
+For more examples:
+
+https://github.com/StoneyDSP/Rack-SDK/share/cmake/Modules/README.md
 
 ]==] _VCVRACK_USAGE_FILE @ONLY)
 file(WRITE "${CURRENT_PACKAGES_DIR}/include/rack.hpp" [==[

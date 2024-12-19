@@ -23,7 +23,6 @@ set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FOR
 set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
-option(STONEYVCV_COMPILE_RESOURCES                  "Use '-DSTONEYVCV_COMPILE_RESOURCES=ON|OFF' when configuring to toggle this option. Uses CMakeRC to compile some static resources into an embedded filesystem." ON)
 option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." OFF)
 option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
@@ -37,7 +36,6 @@ cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TEST
 # Put components in the correct order of their dependencies on eachother to save tears...
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
-find_package(CMakeRC CONFIG REQUIRED)
 
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
@@ -81,6 +79,29 @@ if(STONEYVCV_BUILD_PLUGIN)
 endif(STONEYVCV_BUILD_PLUGIN)
 
 #[==[test]==]
+function(stoneyvcv_add_test MODULE)
+    add_library(tests_${MODULE} OBJECT EXCLUDE_FROM_ALL)
+    add_library(StoneyVCV::tests_${MODULE} ALIAS tests_${MODULE})
+    add_library(StoneyDSP::StoneyVCV::tests_${MODULE} ALIAS tests_${MODULE})
+    target_include_directories(tests_${MODULE}
+        PUBLIC
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    )
+    target_sources(tests_${MODULE}
+        PRIVATE
+            "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${MODULE}.cpp"
+    )
+    target_link_libraries(tests_${MODULE}
+        PUBLIC
+            unofficial-vcvrack::rack-sdk::core
+            StoneyDSP::StoneyVCV::${MODULE}
+            Catch2::Catch2
+    )
+    target_compile_features(tests_${MODULE} PUBLIC cxx_std_17)
+    target_compile_features(tests_${MODULE} PUBLIC c_std_17)
+endfunction()
+
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     find_package(Catch2 3.5.2 REQUIRED)
@@ -93,7 +114,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         $<INSTALL_INTERFACE:include>
     )
     target_link_libraries(tests
-        PRIVATE
+        PUBLIC
         unofficial-vcvrack::rack-sdk::lib
         StoneyDSP::StoneyVCV::plugin
         Catch2::Catch2WithMain
@@ -195,13 +216,13 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 
     # Add project version number
     target_compile_definitions(${TARGET}
-                PUBLIC
-                "STONEYVCV_VERSION_MAJOR=${STONEYVCV_VERSION_MAJOR}"
-                "STONEYVCV_VERSION_MINOR=${STONEYVCV_VERSION_MINOR}"
-                "STONEYVCV_VERSION_PATCH=${STONEYVCV_VERSION_PATCH}"
-                "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
-                "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
-            )
+        PUBLIC
+        "STONEYVCV_VERSION_MAJOR=${STONEYVCV_VERSION_MAJOR}"
+        "STONEYVCV_VERSION_MINOR=${STONEYVCV_VERSION_MINOR}"
+        "STONEYVCV_VERSION_PATCH=${STONEYVCV_VERSION_PATCH}"
+        "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
+        "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
+    )
 
     # Toggle plugin module code
     target_compile_definitions(plugin
@@ -219,10 +240,8 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 
     # Toggle unit test code
     if(STONEYVCV_BUILD_TESTS)
-        target_sources(tests
-            PRIVATE
-                "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${TARGET}.cpp"
-        )
+        stoneyvcv_add_test(${TARGET})
+        target_link_libraries(tests PUBLIC StoneyDSP::StoneyVCV::tests_${TARGET})
         target_compile_definitions(${TARGET}
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"
@@ -234,41 +253,6 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
     endif(STONEYVCV_BUILD_TESTS)
 
 endforeach()
-
-#[==================================[CMakeRC]==================================]
-
-if(STONEYVCV_COMPILE_RESOURCES)
-    # TODO: CMakeRC stuff
-    cmrc_add_resource_library(Resources
-        ALIAS StoneyVCV::Resources
-        # NAMESPACE foo
-    )
-    add_library(StoneyDSP::StoneyVCV::Resources ALIAS Resources)
-    target_link_libraries(plugin PUBLIC StoneyDSP::StoneyVCV::Resources)
-    target_compile_definitions(plugin
-        PUBLIC
-            "-DSTONEYVCV_COMPILE_RESOURCES=1"
-    )
-    install(TARGETS Resources;cmrc-base
-        EXPORT ResourcesExport
-        COMPONENT Resources
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    )
-    install(
-        EXPORT ResourcesExport
-        NAMESPACE StoneyDSP::StoneyVCV::
-        FILE "StoneyDSP-StoneyVCV-Resources-targets.cmake"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
-    )
-    export(
-        TARGETS Resources;cmrc-base
-        FILE "share/cmake/StoneyDSP-StoneyVCV-Resources-targets.cmake"
-        NAMESPACE StoneyDSP::StoneyVCV::
-    )
-endif()
 
 #[============================[Write CMake Package]============================]
 
@@ -290,13 +274,13 @@ Cflags: -I${includedir}
 
 configure_file (
   "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+  "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/StoneyVCV.pc"
   @ONLY
 )
 
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/StoneyVCV.pc"
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
 )
@@ -307,7 +291,9 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in" [==[
 include("${CMAKE_CURRENT_LIST_DIR}/StoneyDSP-StoneyVCVConfigVersion.cmake")
 
 include(CMakeFindDependencyMacro)
+
 find_dependency(rack-sdk 2.5.2)
+find_dependency(StoneyDSP 0.0.0)
 
 set(_StoneyVCV_supported_components)
 list(APPEND _StoneyVCV_supported_components
@@ -333,7 +319,7 @@ message(STATUS "Linking with StoneyVCV")
 # generate a basic package config file
 configure_package_config_file(
     "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfig.cmake"
     INSTALL_DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
     # Use custom 'check_required_components' macro
@@ -341,22 +327,28 @@ configure_package_config_file(
 )
 # generate the version file for the config file
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfigVersion.cmake"
     VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
-    COMPATIBILITY AnyNewerVersion
+    COMPATIBILITY ExactVersion
 )
 
 #[===========================[Install CMake Package]===========================]
 
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfigVersion.cmake"
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
 )
 install(DIRECTORY
     "${STONEYVCV_SOURCE_DIR}/res"
+    DESTINATION
+    # This is not a good location to be using...
+    "${CMAKE_INSTALL_PREFIX}"
+)
+install(DIRECTORY
+    "${STONEYVCV_SOURCE_DIR}/presets"
     DESTINATION
     # This is not a good location to be using...
     "${CMAKE_INSTALL_PREFIX}"
@@ -379,4 +371,51 @@ if(STONEYVCV_BUILD_TESTS)
     include(Catch)
     set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
     catch_discover_tests(tests)
+endif()
+
+if(STONEYVCV_IS_TOP_LEVEL)
+    # add CPack to project
+    set(CPACK_PACKAGE_NAME "StoneyVCV")
+    set(CPACK_PACKAGE_VENDOR "StoneyDSP")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "StoneyDSP modules for VCV Rack 2.")
+    set(CPACK_PACKAGE_VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
+    set(CPACK_PACKAGE_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+    set(CPACK_PACKAGE_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+    set(CPACK_PACKAGE_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "StoneyDSP")
+    # set(CPACK_GENERATOR)
+    # list(APPEND CPACK_GENERATOR "ZIP")
+    set(CPACK_SOURCE_IGNORE_FILES)
+    list(APPEND CPACK_SOURCE_IGNORE_FILES
+        "/_CPack_Packages/"
+        "/install/"
+        "/build/"
+        "/dist/"
+        "/out/"
+        "/.git/"
+        "/.github/"
+        "/.vscode/"
+        "/*.zip"
+        "/*.tar"
+        "/*.tar.gz"
+        "/*.tar.xz"
+        "/*.tar.bz2"
+        "/*.tar.Z"
+        "/*.sh"
+        "/*.vcvplugin"
+    )
+    # This must always be after all CPACK\_\* variables are defined
+    include(CPack)
+    cpack_add_component(plugin
+        DISPLAY_NAME "StoneyVCV v${STONEYVCV_VERSION}"
+        DESCRIPTION "StoneyDSP modules for VCV Rack 2."
+        GROUP "StoneyVCV"
+    )
+    foreach(MODULE IN LISTS STONEYVCV_MODULES)
+        cpack_add_component(${MODULE}
+            DISPLAY_NAME "${MODULE} v${STONEYVCV_VERSION}"
+            DESCRIPTION "The ${MODULE} module."
+            GROUP "StoneyVCV"
+        )
+    endforeach()
 endif()
