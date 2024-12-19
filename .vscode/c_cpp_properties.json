@@ -1,14 +1,17 @@
 {
   "version": 4,
+  "env": {
+    "PKG_CONFIG_PATH": [
+      "${workspaceFolder}/build/vcpkg_installed/x64-linux/lib/pkgconfig",
+      "${workspaceFolder}/build/vcpkg_installed/x64-osx/lib/pkgconfig",
+      "${workspaceFolder}/build/vcpkg_installed/x64-mingw-dynamic/lib/pkgconfig"
+    ]
+  },
   "configurations": [
     {
       "name": "Linux",
       "includePath": [
-        "${default}",
-        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
-        "${workspaceFolder}/build/_cmrc/include",
-        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/dep",
-        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/rack"
+        "${default}"
       ],
       "defines": [
         "${default}"
@@ -17,11 +20,10 @@
         "-std=c++11",
         "-Wsuggest-override",
         "-fPIC",
+        "`pkg-config --cflags --libs StoneyDSP`",
+        "`pkg-config --cflags --libs Rack-SDK`",
+        "`pkg-config --cflags --libs catch2-with-main`",
         "-I${workspaceFolder}/include",
-        "-I${workspaceFolder}/build/_cmrc/include",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/dep",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/rack",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
         "-fno-gnu-unique",
         "-MMD",
         "-MP",
@@ -33,7 +35,6 @@
         "-Wextra",
         "-Wno-unused-parameter",
         "-march=nehalem",
-        "-L${workspaceFolder}/build/vcpkg_installed/x64-linux/lib",
         "-lRack",
         "-static-libstdc++",
         "-static-libgcc"
@@ -56,11 +57,7 @@
     {
       "name": "Mac",
       "includePath": [
-        "${default}",
-        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
-        "${workspaceFolder}/build/_cmrc/include",
-        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/dep",
-        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/rack"
+        "${default}"
       ],
       "defines": [
         "${default}"
@@ -69,11 +66,10 @@
         "-std=c++11",
         "-stdlib=libc++",
         "-fPIC",
+        "`pkg-config --cflags --libs StoneyDSP`",
+        "`pkg-config --cflags --libs Rack-SDK`",
+        "`pkg-config --cflags --libs catch2-with-main`",
         "-I${workspaceFolder}/include",
-        "-I${workspaceFolder}/build/_cmrc/include",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/dep",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/rack",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
         "-MMD",
         "-MP",
         "-g",
@@ -86,7 +82,6 @@
         "-march=armv8-a+fp+simd",
         "-mmacosx-version-min=10.9",
         "-L${RACK_DIR}",
-        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/lib",
         "-undefined dynamic_lookup"
       ],
       "browse": {
@@ -107,11 +102,7 @@
     {
       "name": "Windows",
       "includePath": [
-        "${default}",
-        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
-        "${workspaceFolder}\\build\\_cmrc\\include",
-        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\dep",
-        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\rack"
+        "${default}"
       ],
       "defines": [
         "${default}",
@@ -121,11 +112,10 @@
         "-std=c++11",
         "-Wsuggest-override",
         "-fPIC",
+        "`pkg-config --cflags --libs StoneyDSP`",
+        "`pkg-config --cflags --libs Rack-SDK`",
+        "`pkg-config --cflags --libs catch2-with-main`",
         "-I${workspaceFolder}\\include",
-        "-I${workspaceFolder}\\build\\_cmrc\\include",
-        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\dep",
-        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw\\include\\Rack-SDK\\rack",
-        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
         "-MMD",
         "-MP",
         "-g",
@@ -137,7 +127,6 @@
         "-Wno-unused-parameter",
         "-march=nehalem",
         "-municode",
-        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\lib",
         "-lRack",
         "-static-libstdc++"
       ],

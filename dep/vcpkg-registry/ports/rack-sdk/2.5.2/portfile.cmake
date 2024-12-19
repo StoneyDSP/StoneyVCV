@@ -86,16 +86,17 @@ vcpkg_extract_source_archive_ex(
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO StoneyDSP/Rack-SDK
-    REF 590bc47115a89306da3823565d6c4acd810a06fb
-    SHA512 4249f6ebca758f205ce62e97ccd02614e8400f69437c1b73af1cad036fa01e5d5c8673d925615ae4cabef1e2164b987b2a5777453f2f808a90379796faf62e55
+    REF 95c6e2fc9b1589f8a719f9fa6819fe7d50d7ad60
+    SHA512 4b5fb5812464a4957bc7a6d63e0da42b706834a6fee7a1892ad7efa0d8f3ab901af0f5559b0e5b8a21d9e5809c1e047503fe8658e54afd23d8921d5ca22af493
     HEAD_REF main
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
-        dep         RACK_SDK_BUILD_DEPS
-        core        RACK_SDK_BUILD_CORE
-        lib         RACK_SDK_BUILD_LIB
+        dep         RACK_SDK_INSTALL_DEPS
+        core        RACK_SDK_INSTALL_CORE
+        lib         RACK_SDK_INSTALL_LIB
+        runtimes    RACK_SDK_INSTALL_RUNTIME_LIBS
 )
 
 # Configure 'dep/VCVRack/CMakeLists.txt' using the unzipped Rack SDK
@@ -104,16 +105,12 @@ vcpkg_cmake_configure(
     OPTIONS
     -DRACK_DIR:PATH="${RACK_DIR}"
     -DVCVRACK_DISABLE_USAGE_MESSAGE:BOOL="TRUE"
-    # Expands to: "-DRACK_SDK_BUILD_DEPS=ON|OFF;-DRACK_SDK_BUILD_CORE=ON|OFF;-DRACK_SDK_BUILD_LIB=ON|OFF"
+    # Expands to: "-DRACK_SDK_BUILD_DEPS=ON|OFF;-DRACK_SDK_BUILD_CORE=ON|OFF;-DRACK_SDK_BUILD_LIB=ON|OFF;-DRACK_SDK_INSTALL_RUNTIME_LIBS=ON|OFF"
     ${FEATURE_OPTIONS}
 )
 vcpkg_cmake_install()
 vcpkg_fixup_pkgconfig()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
-file(
-    INSTALL "${RACK_DIR}/helper.py"
-    DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
-)
 file(
     INSTALL "${SOURCE_PATH}/LICENSE"
     DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
@@ -121,7 +118,7 @@ file(
 )
 string(CONFIGURE [==[
 
-To build a plugin and modules with the VCV Rack API, you can:
+rack-sdk provides CMake targets:
 
 project(MyPlugin)
 
@@ -145,7 +142,9 @@ vcvrack_add_module(MyOtherModule
 
 You can #include '<rack.hpp>' in 'plugin.cpp' and start building with the VCV Rack API and all its' dependencies.
 
-For more examples: https://github.com/StoneyDSP/StoneyVCV/dep/VCVRack/share/cmake/Modules/README.md
+For more examples:
+
+https://github.com/StoneyDSP/Rack-SDK/share/cmake/Modules/README.md
 
 ]==] _VCVRACK_USAGE_FILE @ONLY)
 file(WRITE "${CURRENT_PACKAGES_DIR}/include/rack.hpp" [==[
