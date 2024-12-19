@@ -33,11 +33,11 @@
 
 //==============================================================================
 
-#include <catch2/catch_test_macros.hpp>
+#include "StoneyVCV/plugin.hpp"
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <catch2/catch_test_macros.hpp>
 
 //==============================================================================
 
@@ -52,6 +52,8 @@ TEST_CASE("plugin", "[plugin]") {
     SECTION( "pluginInstance" ) {
         REQUIRE(::StoneyDSP::StoneyVCV::pluginInstance == nullptr);
     }
+
+    //// assert(box.size.y == ::rack::RACK_GRID_HEIGHT);
 
     SECTION("modules") {
 #ifdef STONEYVCV_EXPERIMENTAL
