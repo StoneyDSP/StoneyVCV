@@ -2,6 +2,9 @@
 # directories above, i.e., `Rack-SDK/plugins/<we are here>`
 RACK_DIR ?= ../..
 
+# If user does not have a VCPKG_ROOT, use the local submodule
+VCPKG_ROOT ?= $(PWD)/dep/vcpkg
+
 # Build version?
 STONEYVCV_VERSION_MAJOR ?= 2
 STONEYVCV_VERSION_MINOR ?= 0
@@ -84,16 +87,19 @@ endif
 ifdef ARCH_WIN
 	TRIPLET_OS := mingw-dynamic
 	PRESET_OS := windows
+	VCPKG_BOOTSTRAP_SCRIPT := $(PWD)/dep/vcpkg/bootstrap-vcpkg.sh
 endif
 
 ifdef ARCH_LIN
 	TRIPLET_OS := linux
 	PRESET_OS := linux
+	VCPKG_BOOTSTRAP_SCRIPT := $(PWD)/dep/vcpkg/bootstrap-vcpkg.sh
 endif
 
 ifdef ARCH_MAC
 	TRIPLET_OS := osx
 	PRESET_OS := osx
+	VCPKG_BOOTSTRAP_SCRIPT := $(PWD)/dep/vcpkg/bootstrap-vcpkg.sh
 endif
 
 ifdef BUILD_TYPE
@@ -186,4 +192,17 @@ workflow:
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
 
-dep: reconfigure
+submodules:
+	git \
+	submodule update \
+	--init \
+	--recursive
+
+vcpkg:
+	$(VCPKG_BOOTSTRAP_SCRIPT)
+
+integrate: vcpkg
+	vcpkg integrate install
+
+dep: submodules vcpkg reconfigure
+	echo "using VCPKG_ROOT=$(VCPKG_ROOT)"
