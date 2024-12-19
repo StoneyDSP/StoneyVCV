@@ -99,12 +99,12 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
         runtimes    RACK_SDK_INSTALL_RUNTIME_LIBS
 )
 
-# Configure 'dep/VCVRack/CMakeLists.txt' using the unzipped Rack SDK
+# Configure Rack-SDK CMake project using the unzipped Rack SDK
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
     -DRACK_DIR:PATH="${RACK_DIR}"
-    -DVCVRACK_DISABLE_USAGE_MESSAGE:BOOL="TRUE"
+    -DRACK_SDK_DISABLE_USAGE_MESSAGE:BOOL="TRUE"
     # Expands to: "-DRACK_SDK_BUILD_DEPS=ON|OFF;-DRACK_SDK_BUILD_CORE=ON|OFF;-DRACK_SDK_BUILD_LIB=ON|OFF;-DRACK_SDK_INSTALL_RUNTIME_LIBS=ON|OFF"
     ${FEATURE_OPTIONS}
 )

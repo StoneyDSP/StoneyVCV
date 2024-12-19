@@ -1,22 +1,38 @@
 {
   "name": "rack-sdk",
   "version": "2.5.2",
-  "description": "VCV Rack 2",
-  "homepage": "https://github.com/VCVRack/Rack",
+  "description": "Unofficial VCV Rack 2 SDK",
+  "homepage": "https://github.com/StoneyDSP/Rack-SDK",
   "supports": "(linux & x64)|(osx & x64)|(osx & arm64)|(windows & mingw & x64)",
   "port-version": 0,
   "default-features": [
-    "dep", "lib"
+    "dep",
+    "lib"
   ],
   "features": {
     "dep": {
       "description": "Rack-SDK's dependencies"
     },
     "lib": {
-      "description": "Rack-SDK's binary-compiled dynamic library"
+      "description": "Rack-SDK's binary-compiled dynamic library",
+      "dependencies": [
+        {
+          "name": "rack-sdk",
+          "default-features": true
+        }
+      ]
     },
     "runtimes": {
-      "description": "Rack-SDK's runtime dependencies"
+      "description": "Rack-SDK's runtime dependencies",
+      "dependencies": [
+        {
+          "name": "rack-sdk",
+          "default-features": false,
+          "features": [
+            "lib"
+          ]
+        }
+      ]
     }
   },
   "dependencies": [
