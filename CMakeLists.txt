@@ -274,13 +274,13 @@ Cflags: -I${includedir}
 
 configure_file (
   "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+  "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/StoneyVCV.pc"
   @ONLY
 )
 
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/share/pkgconfig/StoneyVCV.pc"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/StoneyVCV.pc"
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
 )
@@ -291,7 +291,9 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in" [==[
 include("${CMAKE_CURRENT_LIST_DIR}/StoneyDSP-StoneyVCVConfigVersion.cmake")
 
 include(CMakeFindDependencyMacro)
+
 find_dependency(rack-sdk 2.5.2)
+find_dependency(StoneyDSP 0.0.0)
 
 set(_StoneyVCV_supported_components)
 list(APPEND _StoneyVCV_supported_components
@@ -317,7 +319,7 @@ message(STATUS "Linking with StoneyVCV")
 # generate a basic package config file
 configure_package_config_file(
     "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfig.cmake"
     INSTALL_DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
     # Use custom 'check_required_components' macro
@@ -325,22 +327,28 @@ configure_package_config_file(
 )
 # generate the version file for the config file
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfigVersion.cmake"
     VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
-    COMPATIBILITY AnyNewerVersion
+    COMPATIBILITY ExactVersion
 )
 
 #[===========================[Install CMake Package]===========================]
 
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/share/cmake/StoneyDSP-StoneyVCVConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfigVersion.cmake"
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
 )
 install(DIRECTORY
     "${STONEYVCV_SOURCE_DIR}/res"
+    DESTINATION
+    # This is not a good location to be using...
+    "${CMAKE_INSTALL_PREFIX}"
+)
+install(DIRECTORY
+    "${STONEYVCV_SOURCE_DIR}/presets"
     DESTINATION
     # This is not a good location to be using...
     "${CMAKE_INSTALL_PREFIX}"
@@ -363,4 +371,51 @@ if(STONEYVCV_BUILD_TESTS)
     include(Catch)
     set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
     catch_discover_tests(tests)
+endif()
+
+if(STONEYVCV_IS_TOP_LEVEL)
+    # add CPack to project
+    set(CPACK_PACKAGE_NAME "StoneyVCV")
+    set(CPACK_PACKAGE_VENDOR "StoneyDSP")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "StoneyDSP modules for VCV Rack 2.")
+    set(CPACK_PACKAGE_VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
+    set(CPACK_PACKAGE_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+    set(CPACK_PACKAGE_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+    set(CPACK_PACKAGE_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "StoneyDSP")
+    # set(CPACK_GENERATOR)
+    # list(APPEND CPACK_GENERATOR "ZIP")
+    set(CPACK_SOURCE_IGNORE_FILES)
+    list(APPEND CPACK_SOURCE_IGNORE_FILES
+        "/_CPack_Packages/"
+        "/install/"
+        "/build/"
+        "/dist/"
+        "/out/"
+        "/.git/"
+        "/.github/"
+        "/.vscode/"
+        "/*.zip"
+        "/*.tar"
+        "/*.tar.gz"
+        "/*.tar.xz"
+        "/*.tar.bz2"
+        "/*.tar.Z"
+        "/*.sh"
+        "/*.vcvplugin"
+    )
+    # This must always be after all CPACK\_\* variables are defined
+    include(CPack)
+    cpack_add_component(plugin
+        DISPLAY_NAME "StoneyVCV v${STONEYVCV_VERSION}"
+        DESCRIPTION "StoneyDSP modules for VCV Rack 2."
+        GROUP "StoneyVCV"
+    )
+    foreach(MODULE IN LISTS STONEYVCV_MODULES)
+        cpack_add_component(${MODULE}
+            DISPLAY_NAME "${MODULE} v${STONEYVCV_VERSION}"
+            DESCRIPTION "The ${MODULE} module."
+            GROUP "StoneyVCV"
+        )
+    endforeach()
 endif()
