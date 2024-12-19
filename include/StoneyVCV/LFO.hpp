@@ -84,30 +84,36 @@ namespace LFO
 struct LFOModule final :
     ::rack::engine::Module
 {
+
+    //==========================================================================
+
 public:
 
     using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
+    //==========================================================================
 
-    enum ParamsId {
+    enum IdxParams {
         /** Number of Parameters. */
         NUM_PARAMS
     };
 
-	enum InputsId {
+	enum IdxInputs {
         /** Number of Input ports. */
 		NUM_INPUTS
 	};
 
-	enum OutputsId {
+	enum IdxOutputs {
         /** Number of Output ports. */
 		NUM_OUTPUTS
 	};
 
-	enum LightsId {
+	enum IdxLights {
         /** Number of Lights. */
 		NUM_LIGHTS
 	};
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `LFOModule` object.
@@ -121,19 +127,21 @@ public:
      */
     ~LFOModule();
 
+    //==========================================================================
+
     /**
      * @brief Advances the module by one audio sample.
      *
      * @param args
      */
-    virtual void process(const ::StoneyDSP::StoneyVCV::LFO::LFOModule::ProcessArgs &args) override;
+    virtual void process(const ::StoneyDSP::StoneyVCV::LFO::LFOModule::ProcessArgs& args) override;
 
     /**
      * @brief Store extra internal data in the "data" property of the module's JSON object.
      *
      * @return json_t
      */
-    ::json_t *dataToJson() override;
+    ::json_t* dataToJson() override;
 
     /**
      * @brief Load internal data from the "data" property of the module's JSON object.
@@ -141,9 +149,13 @@ public:
      *
      * @param rootJ
      */
-    void dataFromJson(::json_t *rootJ) override;
+    void dataFromJson(::json_t* rootJ) override;
+
+    //==========================================================================
 
 private:
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(LFOModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOModule)
@@ -158,9 +170,14 @@ private:
 struct LFOWidget final :
     ::rack::Widget
 {
+
+    //==========================================================================
+
 public:
 
     using DrawArgs = ::rack::Widget::DrawArgs;
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `LFOWidget` object.
@@ -168,11 +185,13 @@ public:
      */
     LFOWidget();
 
-    /**
-     * @brief Destroy the `LFOWidget` object.
-     *
-     */
-    ~LFOWidget();
+    // /**
+    //  * @brief Destroy the `LFOWidget` object.
+    //  *
+    //  */
+    // ~LFOWidget();
+
+    //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
@@ -187,21 +206,25 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::LFO::LFOWidget::DrawArgs &args) override;
+    void draw(const ::StoneyDSP::StoneyVCV::LFO::LFOWidget::DrawArgs& args) override;
+
+    //==========================================================================
 
     /**
      * @brief
      *
      */
-    ::rack::FramebufferWidget *lfoWidgetFrameBuffer;
+    ::rack::FramebufferWidget* lfoWidgetFrameBuffer;
 
     /**
      * @brief
      *
      */
-    ::rack::Widget *panelBorder;
+    ::rack::Widget* panelBorder;
 
 private:
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(LFOWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOWidget)
@@ -217,7 +240,12 @@ private:
 struct LFOModuleWidget final :
     ::rack::app::ModuleWidget
 {
+
+    //==========================================================================
+
 public:
+
+    //==========================================================================
 
     /**
      * @brief Construct a new `LFOModuleWidget` object.
@@ -228,25 +256,37 @@ public:
     LFOModuleWidget(::StoneyDSP::StoneyVCV::LFO::LFOModule* module);
 
 
-    /**
-     * @brief Destroys the `LFOModuleWidget` object.
-     *
-     */
-    ~LFOModuleWidget();
+    // /**
+    //  * @brief Destroys the `LFOModuleWidget` object.
+    //  *
+    //  */
+    // ~LFOModuleWidget();
+
+    //==========================================================================
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget;
+    ::rack::math::Vec size;
 
     /**
      * @brief
      *
      */
-    ::rack::FramebufferWidget *lfoModuleWidgetFrameBuffer;
+    ::StoneyDSP::StoneyVCV::LFO::LFOWidget* lfoWidget;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget* lfoModuleWidgetFrameBuffer;
+
+    //==========================================================================
 
 private:
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(LFOModuleWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOModuleWidget)

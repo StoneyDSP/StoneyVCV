@@ -213,12 +213,18 @@ cmake --preset x64-windows-release
 As a further helper, we have also organized our `Makefile` to *automatically detect* a relevant CMake Preset - if not manually chosen - and run CMake for us, using an *even simpler* command, which works on *all* platforms:
 
 ```shell
+make workflow
+```
+
+*The above command will configure the plugin for the host machine's platform; the CPU and OS are detected by the Rack-SDK itself, while the common environment variables `VERBOSE` and `DEBUG` may also be set or unset, to further adapt the behaviour of `make workflow` according to your current environment.*
+
+Further CMake actions and workflows can be triggered via `make` in a similarly environment-sensitive manner:
+
+```shell
 make configure
 ```
 
-*The above command will configure the plugin for the host machine's platform; the CPU and OS are detected by the Rack-SDK itself, while the common environment variables `VERBOSE` and `DEBUG` may also be set or unset, to further adapt the behaviour of `make configure` according to your current environment.*
-
-Further CMake actions and workflows can be triggered via `make` in a similarly environment-sensitive manner:
+*Runs the CMake configure step to generate the binary directory tree*
 
 ```shell
 make reconfigure
