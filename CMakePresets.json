@@ -43,7 +43,7 @@
           "type": "STRING"
         },
         "STONEYVCV_EXPERIMENTAL": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_TESTS": {
@@ -71,7 +71,7 @@
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_MODULE_VCA": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_MODULE_LFO": {
@@ -117,6 +117,9 @@
     {
       "name": "verbose",
       "hidden": true,
+      "inherits": [
+        "base"
+      ],
       "warnings": {
         "dev": true,
         "deprecated": true,
@@ -133,16 +136,35 @@
       }
     },
     {
-      "name": "x64-windows",
+      "name": "windows",
       "hidden": true,
-      "inherits": "base",
-      "displayName": "Windows-only configuration",
-      "description": "This build is only available on Windows",
+      "inherits": [
+        "base"
+      ],
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "autoFormat": true,
+          "hostOS": "Windows",
+          "intelliSenseOptions": {
+            "useCompilerDefaults": true
+          }
+        }
+      }
+    },
+    {
+      "name": "x64-windows",
+      "hidden": true,
+      "inherits": [
+        "base",
+        "windows"
+      ],
+      "displayName": "Windows-only configuration",
+      "description": "This build is only available on Windows",
       "cacheVariables": {
         "VCPKG_HOST_TRIPLET": {
           "value": "x64-mingw-dynamic",
@@ -157,28 +179,29 @@
         "MSYSTEM": "MINGW64",
         "VCPKG_DEFAULT_TRIPLET": "x64-mingw-dynamic",
         "VCPKG_DEFAULT_TARGET_TRIPLET": "x64-mingw-dynamic"
-      },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "autoFormat": true,
-          "hostOS": "Windows",
-          "intelliSenseOptions": {
-            "useCompilerDefaults": true
-          }
-        }
+      }
+    },
+    {
+      "name": "linux",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
       }
     },
     {
       "name": "x64-linux",
       "hidden": true,
-      "inherits": "base",
+      "inherits": [
+        "base",
+        "linux"
+      ],
       "displayName": "Linux-only configuration",
       "description": "This build is only available on Linux",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      },
       "cacheVariables": {
         "VCPKG_HOST_TRIPLET": {
           "value": "x64-linux",
@@ -207,7 +230,9 @@
     {
       "name": "osx",
       "hidden": true,
-      "inherits": "base",
+      "inherits": [
+        "base"
+      ],
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -231,7 +256,10 @@
     {
       "name": "x64-osx",
       "hidden": true,
-      "inherits": "osx",
+      "inherits": [
+        "base",
+        "osx"
+      ],
       "displayName": "MacOS-only configuration",
       "description": "This build is only available on MacOS",
       "condition": {
@@ -267,7 +295,10 @@
     {
       "name": "arm64-osx",
       "hidden": true,
-      "inherits": "base",
+      "inherits": [
+        "base",
+        "osx"
+      ],
       "displayName": "MacOS-only configuration",
       "description": "This build is only available on MacOS",
       "condition": {
@@ -304,6 +335,7 @@
       "name": "x64-linux-debug",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-linux",
         "debug"
       ]
@@ -312,6 +344,7 @@
       "name": "x64-linux-release",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-linux",
         "release"
       ]
@@ -320,6 +353,7 @@
       "name": "x64-linux-debug-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-linux",
         "debug",
         "verbose"
@@ -329,6 +363,7 @@
       "name": "x64-linux-release-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-linux",
         "release",
         "verbose"
@@ -338,6 +373,7 @@
       "name": "x64-windows-debug",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-windows",
         "debug"
       ]
@@ -346,6 +382,7 @@
       "name": "x64-windows-release",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-windows",
         "release"
       ]
@@ -354,6 +391,7 @@
       "name": "x64-windows-debug-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-windows",
         "debug",
         "verbose"
@@ -363,6 +401,7 @@
       "name": "x64-windows-release-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-windows",
         "release",
         "verbose"
@@ -372,6 +411,7 @@
       "name": "x64-osx-debug",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-osx",
         "debug"
       ]
@@ -380,6 +420,7 @@
       "name": "x64-osx-release",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-osx",
         "release"
       ]
@@ -388,6 +429,7 @@
       "name": "x64-osx-debug-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-osx",
         "debug",
         "verbose"
@@ -397,6 +439,7 @@
       "name": "x64-osx-release-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "x64-osx",
         "release",
         "verbose"
@@ -406,6 +449,7 @@
       "name": "arm64-osx-debug",
       "hidden": false,
       "inherits": [
+        "base",
         "arm64-osx",
         "debug"
       ]
@@ -414,6 +458,7 @@
       "name": "arm64-osx-release",
       "hidden": false,
       "inherits": [
+        "base",
         "arm64-osx",
         "release"
       ]
@@ -422,6 +467,7 @@
       "name": "arm64-osx-debug-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "arm64-osx",
         "debug",
         "verbose"
@@ -431,6 +477,7 @@
       "name": "arm64-osx-release-verbose",
       "hidden": false,
       "inherits": [
+        "base",
         "arm64-osx",
         "release",
         "verbose"
@@ -442,12 +489,14 @@
       "name": "base",
       "hidden": true,
       "configurePreset": "base",
+      "inheritConfigureEnvironment": true,
       "description": "Base configuration for all presets"
     },
     {
       "name": "debug",
       "hidden": true,
       "configurePreset": "debug",
+      "inheritConfigureEnvironment": true,
       "configuration": "Debug",
       "inherits": [
         "base"
@@ -457,6 +506,7 @@
       "name": "release",
       "hidden": true,
       "configurePreset": "release",
+      "inheritConfigureEnvironment": true,
       "configuration": "Release",
       "inherits": [
         "base"
@@ -465,6 +515,7 @@
     {
       "name": "verbose",
       "configurePreset": "verbose",
+      "inheritConfigureEnvironment": true,
       "hidden": true,
       "verbose": true,
       "inherits": [
@@ -475,6 +526,7 @@
       "name": "x64-windows",
       "hidden": true,
       "configurePreset": "x64-windows",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -488,6 +540,7 @@
       "name": "x64-linux",
       "hidden": true,
       "configurePreset": "x64-linux",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -501,6 +554,7 @@
       "name": "x64-osx",
       "hidden": true,
       "configurePreset": "x64-osx",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -514,6 +568,7 @@
       "name": "arm64-osx",
       "hidden": true,
       "configurePreset": "arm64-osx",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -527,7 +582,9 @@
       "name": "x64-windows-debug",
       "configurePreset": "x64-windows-debug",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "debug"
       ]
@@ -536,7 +593,9 @@
       "name": "x64-windows-release",
       "configurePreset": "x64-windows-release",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "release"
       ]
@@ -545,7 +604,9 @@
       "name": "x64-windows-debug-verbose",
       "configurePreset": "x64-windows-debug-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "debug",
         "verbose"
@@ -555,7 +616,9 @@
       "name": "x64-windows-release-verbose",
       "configurePreset": "x64-windows-release-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "release",
         "verbose"
@@ -565,7 +628,9 @@
       "name": "x64-linux-debug",
       "configurePreset": "x64-linux-debug",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "debug"
       ]
@@ -574,7 +639,9 @@
       "name": "x64-linux-release",
       "configurePreset": "x64-linux-release",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "release"
       ]
@@ -583,7 +650,9 @@
       "name": "x64-linux-debug-verbose",
       "configurePreset": "x64-linux-debug-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "debug",
         "verbose"
@@ -593,7 +662,9 @@
       "name": "x64-linux-release-verbose",
       "configurePreset": "x64-linux-release-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "release",
         "verbose"
@@ -603,7 +674,9 @@
       "name": "x64-osx-debug",
       "configurePreset": "x64-osx-debug",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "debug"
       ]
@@ -612,7 +685,9 @@
       "name": "x64-osx-release",
       "configurePreset": "x64-osx-release",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "release"
       ]
@@ -621,7 +696,9 @@
       "name": "x64-osx-debug-verbose",
       "configurePreset": "x64-osx-debug-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "debug",
         "verbose"
@@ -631,7 +708,9 @@
       "name": "x64-osx-release-verbose",
       "configurePreset": "x64-osx-release-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "release",
         "verbose"
@@ -641,7 +720,9 @@
       "name": "arm64-osx-debug",
       "configurePreset": "arm64-osx-debug",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "debug"
       ]
@@ -650,7 +731,9 @@
       "name": "arm64-osx-release",
       "configurePreset": "arm64-osx-release",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "release"
       ]
@@ -659,7 +742,9 @@
       "name": "arm64-osx-debug-verbose",
       "configurePreset": "arm64-osx-debug-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "debug",
         "verbose"
@@ -669,7 +754,9 @@
       "name": "arm64-osx-release-verbose",
       "configurePreset": "arm64-osx-release-verbose",
       "hidden": false,
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "release",
         "verbose"
@@ -681,6 +768,7 @@
       "name": "base",
       "hidden": true,
       "configurePreset": "base",
+      "inheritConfigureEnvironment": true,
       "output": {
         "outputOnFailure": true,
         "labelSummary": true
@@ -690,6 +778,7 @@
       "name": "debug",
       "hidden": true,
       "configurePreset": "debug",
+      "inheritConfigureEnvironment": true,
       "configuration": "Debug",
       "inherits": [
         "base"
@@ -702,6 +791,7 @@
       "name": "release",
       "hidden": true,
       "configurePreset": "release",
+      "inheritConfigureEnvironment": true,
       "configuration": "Release",
       "inherits": [
         "base"
@@ -713,6 +803,7 @@
     {
       "name": "verbose",
       "configurePreset": "verbose",
+      "inheritConfigureEnvironment": true,
       "hidden": true,
       "inherits": [
         "base"
@@ -725,6 +816,7 @@
       "name": "x64-windows",
       "hidden": true,
       "configurePreset": "x64-windows",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -738,6 +830,7 @@
       "name": "x64-linux",
       "hidden": true,
       "configurePreset": "x64-linux",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -751,6 +844,7 @@
       "name": "x64-osx",
       "hidden": true,
       "configurePreset": "x64-osx",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -764,6 +858,7 @@
       "name": "arm64-osx",
       "hidden": true,
       "configurePreset": "arm64-osx",
+      "inheritConfigureEnvironment": true,
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -777,7 +872,9 @@
       "name": "x64-windows-debug",
       "hidden": false,
       "configurePreset": "x64-windows-debug",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "debug"
       ]
@@ -786,7 +883,9 @@
       "name": "x64-windows-release",
       "hidden": false,
       "configurePreset": "x64-windows-release",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "release"
       ]
@@ -795,7 +894,9 @@
       "name": "x64-windows-debug-verbose",
       "hidden": false,
       "configurePreset": "x64-windows-debug-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "debug",
         "verbose"
@@ -805,7 +906,9 @@
       "name": "x64-windows-release-verbose",
       "hidden": false,
       "configurePreset": "x64-windows-release-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-windows",
         "release",
         "verbose"
@@ -815,7 +918,9 @@
       "name": "x64-linux-debug",
       "hidden": false,
       "configurePreset": "x64-linux-debug",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "debug"
       ]
@@ -824,7 +929,9 @@
       "name": "x64-linux-release",
       "hidden": false,
       "configurePreset": "x64-linux-release",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "release"
       ]
@@ -833,7 +940,9 @@
       "name": "x64-linux-debug-verbose",
       "hidden": false,
       "configurePreset": "x64-linux-debug-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "debug",
         "verbose"
@@ -843,7 +952,9 @@
       "name": "x64-linux-release-verbose",
       "hidden": false,
       "configurePreset": "x64-linux-release-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-linux",
         "release",
         "verbose"
@@ -853,7 +964,9 @@
       "name": "x64-osx-debug",
       "hidden": false,
       "configurePreset": "x64-osx-debug",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "debug"
       ]
@@ -862,7 +975,9 @@
       "name": "x64-osx-release",
       "hidden": false,
       "configurePreset": "x64-osx-release",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "release"
       ]
@@ -871,7 +986,9 @@
       "name": "x64-osx-debug-verbose",
       "hidden": false,
       "configurePreset": "x64-osx-debug-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "debug",
         "verbose"
@@ -881,7 +998,9 @@
       "name": "x64-osx-release-verbose",
       "hidden": false,
       "configurePreset": "x64-osx-release-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "x64-osx",
         "release",
         "verbose"
@@ -891,7 +1010,9 @@
       "name": "arm64-osx-debug",
       "hidden": false,
       "configurePreset": "arm64-osx-debug",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "debug"
       ]
@@ -900,7 +1021,9 @@
       "name": "arm64-osx-release",
       "hidden": false,
       "configurePreset": "arm64-osx-release",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "release"
       ]
@@ -909,7 +1032,9 @@
       "name": "arm64-osx-debug-verbose",
       "hidden": false,
       "configurePreset": "arm64-osx-debug-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "debug",
         "verbose"
@@ -919,7 +1044,9 @@
       "name": "arm64-osx-release-verbose",
       "hidden": false,
       "configurePreset": "arm64-osx-release-verbose",
+      "inheritConfigureEnvironment": true,
       "inherits": [
+        "base",
         "arm64-osx",
         "release",
         "verbose"
@@ -939,12 +1066,12 @@
     {
       "name": "source",
       "hidden": true,
-      "configFile": "CPackSourceConfig.cmake"
+      "configFile": "${sourceDir}/build/CPackSourceConfig.cmake"
     },
     {
       "name": "build",
       "hidden": true,
-      "configFile": "CPackConfig.cmake"
+      "configFile": "${sourceDir}/build/CPackConfig.cmake"
     },
     {
       "name": "debug",
@@ -1042,6 +1169,7 @@
       "name": "x64-windows-debug",
       "configurePreset": "x64-windows-debug",
       "inherits": [
+        "base",
         "x64-windows",
         "debug",
         "build"
@@ -1052,6 +1180,7 @@
       "name": "x64-windows-release",
       "configurePreset": "x64-windows-release",
       "inherits": [
+        "base",
         "x64-windows",
         "release",
         "build"
@@ -1062,6 +1191,7 @@
       "name": "x64-windows-debug-verbose",
       "configurePreset": "x64-windows-debug-verbose",
       "inherits": [
+        "base",
         "x64-windows",
         "debug",
         "verbose",
@@ -1073,6 +1203,7 @@
       "name": "x64-windows-release-verbose",
       "configurePreset": "x64-windows-release-verbose",
       "inherits": [
+        "base",
         "x64-windows",
         "release",
         "verbose",
@@ -1084,6 +1215,7 @@
       "name": "x64-windows-debug-source",
       "configurePreset": "x64-windows-debug",
       "inherits": [
+        "base",
         "x64-windows",
         "debug",
         "source"
@@ -1094,6 +1226,7 @@
       "name": "x64-windows-release-source",
       "configurePreset": "x64-windows-release",
       "inherits": [
+        "base",
         "x64-windows",
         "release",
         "source"
@@ -1104,6 +1237,7 @@
       "name": "x64-windows-debug-source-verbose",
       "configurePreset": "x64-windows-debug-verbose",
       "inherits": [
+        "base",
         "x64-windows",
         "debug",
         "source",
@@ -1115,6 +1249,7 @@
       "name": "x64-windows-release-source-verbose",
       "configurePreset": "x64-windows-release-verbose",
       "inherits": [
+        "base",
         "x64-windows",
         "release",
         "source",
@@ -1126,6 +1261,7 @@
       "name": "x64-linux-debug",
       "configurePreset": "x64-linux-debug",
       "inherits": [
+        "base",
         "x64-linux",
         "debug",
         "build"
@@ -1136,6 +1272,7 @@
       "name": "x64-linux-release",
       "configurePreset": "x64-linux-release",
       "inherits": [
+        "base",
         "x64-linux",
         "release",
         "build"
@@ -1146,6 +1283,7 @@
       "name": "x64-linux-debug-verbose",
       "configurePreset": "x64-linux-debug-verbose",
       "inherits": [
+        "base",
         "x64-linux",
         "debug",
         "verbose",
@@ -1157,6 +1295,7 @@
       "name": "x64-linux-release-verbose",
       "configurePreset": "x64-linux-release-verbose",
       "inherits": [
+        "base",
         "x64-linux",
         "release",
         "verbose",
@@ -1168,6 +1307,7 @@
       "name": "x64-linux-debug-source",
       "configurePreset": "x64-linux-debug",
       "inherits": [
+        "base",
         "x64-linux",
         "debug",
         "source"
@@ -1178,6 +1318,7 @@
       "name": "x64-linux-release-source",
       "configurePreset": "x64-linux-release",
       "inherits": [
+        "base",
         "x64-linux",
         "release",
         "source"
@@ -1188,6 +1329,7 @@
       "name": "x64-linux-debug-source-verbose",
       "configurePreset": "x64-linux-debug-verbose",
       "inherits": [
+        "base",
         "x64-linux",
         "debug",
         "source",
@@ -1199,6 +1341,7 @@
       "name": "x64-linux-release-source-verbose",
       "configurePreset": "x64-linux-release-verbose",
       "inherits": [
+        "base",
         "x64-linux",
         "release",
         "source",
@@ -1210,6 +1353,7 @@
       "name": "x64-osx-debug",
       "configurePreset": "x64-osx-debug",
       "inherits": [
+        "base",
         "x64-osx",
         "debug",
         "build"
@@ -1220,6 +1364,7 @@
       "name": "x64-osx-release",
       "configurePreset": "x64-osx-release",
       "inherits": [
+        "base",
         "x64-osx",
         "release",
         "build"
@@ -1230,6 +1375,7 @@
       "name": "x64-osx-debug-verbose",
       "configurePreset": "x64-osx-debug-verbose",
       "inherits": [
+        "base",
         "x64-osx",
         "debug",
         "verbose",
@@ -1241,6 +1387,7 @@
       "name": "x64-osx-release-verbose",
       "configurePreset": "x64-osx-release-verbose",
       "inherits": [
+        "base",
         "x64-osx",
         "release",
         "verbose",
@@ -1252,6 +1399,7 @@
       "name": "x64-osx-debug-source",
       "configurePreset": "x64-osx-debug",
       "inherits": [
+        "base",
         "x64-osx",
         "debug",
         "source"
@@ -1262,6 +1410,7 @@
       "name": "x64-osx-release-source",
       "configurePreset": "x64-osx-release",
       "inherits": [
+        "base",
         "x64-osx",
         "release",
         "source"
@@ -1272,6 +1421,7 @@
       "name": "x64-osx-debug-source-verbose",
       "configurePreset": "x64-osx-debug-verbose",
       "inherits": [
+        "base",
         "x64-osx",
         "debug",
         "source",
@@ -1283,6 +1433,7 @@
       "name": "x64-osx-release-source-verbose",
       "configurePreset": "x64-osx-release-verbose",
       "inherits": [
+        "base",
         "x64-osx",
         "release",
         "source",
@@ -1294,6 +1445,7 @@
       "name": "arm64-osx-debug",
       "configurePreset": "arm64-osx-debug",
       "inherits": [
+        "base",
         "arm64-osx",
         "debug",
         "build"
@@ -1304,6 +1456,7 @@
       "name": "arm64-osx-release",
       "configurePreset": "arm64-osx-release",
       "inherits": [
+        "base",
         "arm64-osx",
         "release",
         "build"
@@ -1314,6 +1467,7 @@
       "name": "arm64-osx-debug-verbose",
       "configurePreset": "arm64-osx-debug-verbose",
       "inherits": [
+        "base",
         "arm64-osx",
         "debug",
         "verbose",
@@ -1325,6 +1479,7 @@
       "name": "arm64-osx-release-verbose",
       "configurePreset": "arm64-osx-release-verbose",
       "inherits": [
+        "base",
         "arm64-osx",
         "release",
         "verbose",
@@ -1336,6 +1491,7 @@
       "name": "arm64-osx-debug-source",
       "configurePreset": "arm64-osx-debug",
       "inherits": [
+        "base",
         "arm64-osx",
         "debug",
         "source"
@@ -1346,6 +1502,7 @@
       "name": "arm64-osx-release-source",
       "configurePreset": "arm64-osx-release",
       "inherits": [
+        "base",
         "arm64-osx",
         "release",
         "source"
@@ -1356,6 +1513,7 @@
       "name": "arm64-osx-debug-source-verbose",
       "configurePreset": "arm64-osx-debug-verbose",
       "inherits": [
+        "base",
         "arm64-osx",
         "debug",
         "source",
@@ -1367,6 +1525,7 @@
       "name": "arm64-osx-release-source-verbose",
       "configurePreset": "arm64-osx-release-verbose",
       "inherits": [
+        "base",
         "arm64-osx",
         "release",
         "source",
