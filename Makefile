@@ -2,8 +2,7 @@
 # directories above, i.e., `Rack-SDK/plugins/<we are here>`
 RACK_DIR ?= ../..
 
-# If user does not have a VCPKG_ROOT, use the local submodule
-VCPKG_ROOT ?= $(PWD)/dep/vcpkg
+
 
 # Build version?
 STONEYVCV_VERSION_MAJOR ?= 2
@@ -159,6 +158,24 @@ DISTRIBUTABLES += $(wildcard presets)
 
 PRESET ?= $(PRESET_ARCH)-$(PRESET_OS)-$(PRESET_CONFIG)$(PRESET_VERBOSE)
 
+GIT := git
+VCPKG := vcpkg
+# If user does not have a VCPKG_ROOT, use the local submodule
+VCPKG_ROOT ?= $(PWD)/dep/vcpkg
+
+# If user does not have a CMAKE_TOOLCHAIN_FILE, use the local vcpkg
+CMAKE_TOOLCHAIN_FILE ?= $(VCPKG_ROOT)/scripts/buildsystems/vcpkg.cmake
+
+$(VCPKG_BOOTSTRAP_SCRIPT): $(VCPKG_ROOT)
+	$(shell $(GIT) submodule update --init)
+
+$(VCPKG):
+	$(shell $(VCPKG_BOOTSTRAP_SCRIPT))
+
+integrate: $(VCPKG)
+	$(VCPKG) integrate install
+	@echo "using VCPKG_ROOT=$(VCPKG_ROOT)"
+
 reconfigure:
 	cmake \
 	--preset $(PRESET) \
@@ -189,20 +206,7 @@ workflow:
 	--preset $(PRESET) \
 	--fresh
 
+dep: reconfigure
+
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
-
-submodules:
-	git \
-	submodule update \
-	--init \
-	--recursive
-
-vcpkg:
-	$(VCPKG_BOOTSTRAP_SCRIPT)
-
-integrate: vcpkg
-	vcpkg integrate install
-
-dep: submodules vcpkg reconfigure
-	echo "using VCPKG_ROOT=$(VCPKG_ROOT)"
