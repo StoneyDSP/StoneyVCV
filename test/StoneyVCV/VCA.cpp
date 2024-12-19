@@ -35,13 +35,12 @@
 
 //==============================================================================
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <StoneyVCV/VCA.hpp>
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
-#include "StoneyVCV/VCA.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 //==============================================================================
 
@@ -62,7 +61,7 @@ public:
     VCASpec()
     :   slug("VCA"),
         size(
-            ::rack::window::mm2px(30.479999995F).
+            ::rack::window::mm2px(30.479999995F),
             ::rack::window::mm2px(128.693333312F)
         )
     {};
@@ -87,7 +86,7 @@ TEST_CASE( "VCA", "[VCA]" ) {
     //==========================================================================
 
     SECTION( "files" ) {
-        REQUIRE( STONEYVCV_VCA_HPP_INCLUDED == 1 );
+        REQUIRE(STONEYVCV_VCA_HPP_INCLUDED == 1);
     }
 
     //==========================================================================
