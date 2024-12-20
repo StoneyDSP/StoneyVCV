@@ -46,10 +46,6 @@ jobs:
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    - name: Install VCVRack2Free
-      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
-
     - name: Use MSYS2
       uses: msys2/setup-msys2@v2
       with:
@@ -119,8 +115,22 @@ jobs:
     #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
+    - name: Fetch Rack SDK
+      shell: msys2 {0}
+      run: |
+        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd dep
+        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        cd ..
+
+      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    - name: Install VCVRack2Free
+      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
+
     - name: Make Workflow
       shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make workflow -j 3
 
     # - name: Configure Tests
@@ -157,14 +167,6 @@ jobs:
     #     -j 3
 
       # DEPLOYMENT WORKFLOW
-
-    - name: Fetch Rack SDK
-      shell: msys2 {0}
-      run: |
-        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
 
     - name: Dep
       shell: msys2 {0}
