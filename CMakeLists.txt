@@ -270,18 +270,34 @@ endforeach()
 
 include(CMakePackageConfigHelpers)
 
+get_target_property(__plugin_interface_linker_opts plugin
+    INTERFACE_LINK_OPTIONS
+)
+set(plugin_interface_linker_opts)
+foreach(plugin_linker_opt IN LISTS __plugin_interface_linker_opts)
+    set(plugin_interface_linker_opts "${plugin_linker_opt} ${plugin_interface_linker_opts}")
+endforeach()
+
+get_target_property(__plugin_interface_compiler_opts plugin
+    INTERFACE_COMPILE_OPTIONS
+)
+set(plugin_interface_compiler_opts)
+foreach(plugin_compiler_opt IN LISTS __plugin_interface_compiler_opts)
+    set(plugin_interface_compiler_opts "${plugin_compiler_opt} ${plugin_interface_compiler_opts}")
+endforeach()
+
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in" [==[
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-libdir=/${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=/${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
 
-Name: @PROJECT_NAME@
+Name: StoneyVCV
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 Requires: Rack-SDK = 2.5.2
-Libs: -L${libdir} -lRack
-Cflags: -I${includedir}
+Libs: -L${libdir} -lRack @plugin_interface_linker_opts@
+Cflags: -I${includedir} @plugin_interface_compiler_opts@
 ]==])
 
 configure_file (
@@ -289,6 +305,14 @@ configure_file (
   "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/StoneyVCV.pc"
   @ONLY
 )
+
+unset(plugin_interface_linker_opts)
+unset(__plugin_interface_linker_opts)
+
+unset(plugin_interface_compiler_opts)
+unset(__plugin_interface_compiler_opts)
+
+
 
 install(
     FILES
@@ -357,13 +381,13 @@ install(DIRECTORY
     "${STONEYVCV_SOURCE_DIR}/res"
     DESTINATION
     # This is not a good location to be using...
-    "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_INSTALL_DATADIR}"
 )
 install(DIRECTORY
     "${STONEYVCV_SOURCE_DIR}/presets"
     DESTINATION
     # This is not a good location to be using...
-    "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_INSTALL_DATADIR}"
 )
 install(
     FILES
@@ -372,7 +396,7 @@ install(
     "${STONEYVCV_SOURCE_DIR}/plugin.json"
     DESTINATION
     # This is not a good location to be using...
-    "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_INSTALL_DATADIR}"
 )
 
 #[=============================[Enable Unit Tests]=============================]
