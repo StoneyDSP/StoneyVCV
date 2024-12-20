@@ -36,12 +36,12 @@ jobs:
 
       # REQUIREMENTS
 
-    - name: Install winget
+    - name: install winget
       uses: Cyberboss/install-winget@v1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Install MSYS2
+    - name: install MSYS2
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
@@ -195,7 +195,7 @@ jobs:
         name: StoneyVCV-2.0.1-win64.sh
         path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-win64.exe
 
-    - name: upload
+    - name: upload .vcvplugin
       uses: actions/upload-artifact@v4
       with:
         name: StoneyDSP-StoneyVCV-2.0.1-win-x64.vcvplugin
