@@ -79,16 +79,17 @@ jobs:
     #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
+    - name: Fetch Rack Executable
+      run: |
+        brew install --cask vcv-rack
+
+      # For now, we still need to fetch the SDK's Makefile helpers manually...
     - name: Fetch Rack SDK
       run: |
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
-
-    - name: Fetch Rack Executable
-      run: |
-        brew install --cask vcv-rack
 
     - name: Make Workflow
       shell: bash

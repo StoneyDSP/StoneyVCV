@@ -115,6 +115,11 @@ jobs:
     #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
+      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    - name: Install VCVRack2Free
+      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
+
+      # For now, we still need to fetch the SDK's Makefile helpers manually...
     - name: Fetch Rack SDK
       shell: msys2 {0}
       run: |
@@ -122,10 +127,6 @@ jobs:
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
-
-      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    - name: Install VCVRack2Free
-      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
 
     - name: Make Workflow
       shell: msys2 {0}
