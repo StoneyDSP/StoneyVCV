@@ -47,7 +47,20 @@ jobs:
 
       # DEVELOPER WORKFLOW
 
-    - name: Deps
+    - name: Deps (x86_64)
+      uses: johnwason/vcpkg-action@v6
+      with:
+        # vcpkg triplet to use
+        triplet: x64-osx
+        # GitHub token to authenticate API requests. Recommended to use  github.token
+        token: ${{ github.token }}
+        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+        manifest-dir: ${{ github.workspace }}
+        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+        github-binarycache: false
+        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake sse2neon
+
+    - name: Deps (arm64)
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
