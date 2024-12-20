@@ -31,11 +31,11 @@
 
 //==============================================================================
 
-#include <rack.hpp>
+#include <StoneyVCV/VCA.hpp>
 
 //==============================================================================
 
-#include "StoneyVCV/VCA.hpp"
+#include <rack.hpp>
 
 //==============================================================================
 
@@ -182,44 +182,50 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
 ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module)
 :   size(::rack::window::mm2px(30.479999995F), ::rack::window::mm2px(128.693333312F)),
     vcaWidget(::rack::createWidget<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(::rack::math::Vec(0.0F, 0.0F))),
-    vcaModuleWidgetFrameBuffer(new ::rack::FramebufferWidget)
-{
-    size = box.size;
-    setModule(module);
-    setPanel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
-        // Light-mode panel
-        ::rack::asset::plugin(
-            ::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-light.svg"),
-        // Dark-mode panel
-        ::rack::asset::plugin(
-            ::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-dark.svg")
-    ));
-
-    assert(box.size.x == ::rack::window::mm2px(30.479999995F));
-    assert(box.size.y == ::rack::window::mm2px(128.693333312F));
-
-    // Frame Buffers
-    vcaModuleWidgetFrameBuffer->setSize(box.size);
-    addChild(vcaModuleWidgetFrameBuffer);
-    // Widgets
-    vcaWidget->setSize(box.size);
-    vcaModuleWidgetFrameBuffer->addChild(vcaWidget);
-
+    vcaModuleWidgetFrameBuffer(new ::rack::FramebufferWidget),
     // Screws
-    ::rack::math::Vec screwAPos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, 0.0F); // top-left
-    ::rack::math::Vec screwBPos = ::rack::math::Vec(box.size.x - 2.0F * ::rack::RACK_GRID_WIDTH, 0.0F); // top-right
-    ::rack::math::Vec screwCPos = ::rack::math::Vec(::rack::RACK_GRID_WIDTH, ::rack::RACK_GRID_HEIGHT - ::rack::RACK_GRID_WIDTH); // bottom-left
-    ::rack::math::Vec screwDPos = ::rack::math::Vec(box.size.x - 2.0F * ::rack::RACK_GRID_WIDTH, ::rack::RACK_GRID_HEIGHT - ::rack::RACK_GRID_WIDTH); // bottom-right
-    //
-    ::rack::componentlibrary::ThemedScrew *screwA = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwAPos);
-    ::rack::componentlibrary::ThemedScrew *screwB = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwBPos);
-    ::rack::componentlibrary::ThemedScrew *screwC = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwCPos);
-    ::rack::componentlibrary::ThemedScrew *screwD = ::rack::createWidget<::rack::componentlibrary::ThemedScrew>(screwDPos);
-    //
-    addChild(screwA);
-    addChild(screwB);
-    addChild(screwC);
-    addChild(screwD);
+    screwT1Pos(::rack::math::Vec((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F), (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // top-left
+    screwT2Pos(::rack::math::Vec((size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)), (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // top-right
+    screwB1Pos(::rack::math::Vec((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F), size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // bottom-left
+    screwB2Pos(::rack::math::Vec((size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)), size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // bottom-right
+    screwT1(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwT1Pos)),
+    screwT2(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwT2Pos)),
+    screwB1(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwB1Pos)),
+    screwB2(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwB2Pos)),
+    // Panel
+    panel(
+        ::rack::createPanel<::rack::app::ThemedSvgPanel>(
+            // Light-mode panel
+            ::rack::asset::plugin(
+                ::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-light.svg"
+            ),
+            // Dark-mode panel
+            ::rack::asset::plugin(
+                ::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-dark.svg"
+            )
+        )
+    )
+{
+    setModule(module);
+    setSize(size);
+    setPanel(panel);
+
+    vcaWidget->setSize(this->getSize());
+    addChild(vcaWidget);
+
+    // // Frame Buffer
+    // vcaModuleWidgetFrameBuffer->setSize(box.size);
+    // addChild(vcaModuleWidgetFrameBuffer);
+
+    // // Widget
+    // vcaWidget->setSize(box.size);
+    // vcaModuleWidgetFrameBuffer->addChild(vcaWidget);
+
+    addChild(screwT1);
+    addChild(screwT2);
+    addChild(screwB1);
+    addChild(screwB2);
+
     // Params
     addParam(::rack::createParamCentered<::rack::componentlibrary::RoundBigBlackKnob>(::rack::window::mm2px(::rack::math::Vec(box.size.x * 0.5F, 34.068F)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM));
     // Inputs
@@ -229,6 +235,9 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     addOutput(::rack::createOutputCentered<::rack::componentlibrary::PJ301MPort>(::rack::window::mm2px(::rack::math::Vec(box.size.x * 0.5F, 107.1455F)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT));
     // Lights
     addChild(::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>>(::rack::window::mm2px(::rack::math::Vec(box.size.x * 0.5F, 21.889F)), module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::BLINK_LIGHT));
+
+    assert(this->getSize().x == ::rack::window::mm2px(30.479999995F));
+    assert(this->getSize().y == ::rack::window::mm2px(128.693333312F));
 }
 
 // ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::~VCAModuleWidget()
