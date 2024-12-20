@@ -36,17 +36,12 @@ jobs:
 
       # REQUIREMENTS
 
-    - name: Checkout StoneyVCV code
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-
     - name: Install winget
       uses: Cyberboss/install-winget@v1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Use MSYS2
+    - name: Install MSYS2
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
