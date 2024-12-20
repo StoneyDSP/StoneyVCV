@@ -76,8 +76,6 @@ jobs:
           tree
           ninja
 
-      # DEVELOPER WORKFLOW
-
     - name: checkout StoneyVCV
       uses: actions/checkout@v4
       with:
@@ -128,12 +126,6 @@ jobs:
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
-    - name: make workflow
-      shell: msys2 {0}
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make workflow -j 3
-
     # - name: Configure Tests
     #   shell: msys2 {0}
     #   run: >-
@@ -167,8 +159,6 @@ jobs:
     #     --strip
     #     -j 3
 
-      # DEPLOYMENT WORKFLOW
-
     - name: make dep
       shell: msys2 {0}
       env:
@@ -187,16 +177,28 @@ jobs:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dist -j3
 
-    - name: install
+    - name: make install
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make install -j3
 
+    - name: make workflow
+      shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make workflow -j 3
+
     # List all files in tree
     - name: tree
       shell: msys2 {0}
       run: tree
+
+    - name: upload .exe
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-2.0.1-win64.sh
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-win64.exe
 
     - name: upload
       uses: actions/upload-artifact@v4
