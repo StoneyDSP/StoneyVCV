@@ -86,8 +86,8 @@ vcpkg_extract_source_archive_ex(
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO StoneyDSP/Rack-SDK
-    REF 95c6e2fc9b1589f8a719f9fa6819fe7d50d7ad60
-    SHA512 4b5fb5812464a4957bc7a6d63e0da42b706834a6fee7a1892ad7efa0d8f3ab901af0f5559b0e5b8a21d9e5809c1e047503fe8658e54afd23d8921d5ca22af493
+    REF 5c844d9ccda45c886d517252aa867b3da4e03028
+    SHA512 3a0585e15d01aa08a50efaf06f8b8360cb62beebc04360f138218b2715314396c2c267bb5fe06919e397034fd4f1f290440763995f295b07fea6a6dc06248543
     HEAD_REF main
 )
 
@@ -111,6 +111,7 @@ vcpkg_cmake_configure(
 vcpkg_cmake_install()
 vcpkg_fixup_pkgconfig()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 file(
     INSTALL "${SOURCE_PATH}/LICENSE"
     DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"

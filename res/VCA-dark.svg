@@ -107,10 +107,10 @@
        inkscape:collect="always"
        xlink:href="#linearGradient16507"
        id="linearGradient16509"
-       x1="0"
-       y1="232.74998"
-       x2="30.479999995"
-       y2="232.74998"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
