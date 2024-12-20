@@ -46,6 +46,10 @@
           "value": "ON",
           "type": "BOOL"
         },
+        "STONEYVCV_BUILD_DOCS": {
+          "value": "OFF",
+          "type": "BOOL"
+        },
         "STONEYVCV_BUILD_TESTS": {
           "value": "ON",
           "type": "BOOL"
@@ -203,7 +207,7 @@
         "MSYSTEM": "MINGW64",
         "VCPKG_DEFAULT_TRIPLET": "x64-mingw-dynamic",
         "VCPKG_DEFAULT_TARGET_TRIPLET": "x64-mingw-dynamic",
-        "PKG_CONFIG_PATH": "${sourceDir}/build/vcpkg_installed/x64-mingw-dynamic/lib/pkgconfig${pathListSep}$penv{PKG_CONFIG_PATH}"
+        "PKG_CONFIG_PATH": "${sourceDir}/build/vcpkg_installed/x64-mingw-dynamic/lib/pkgconfig${pathListSep}$env{PKG_CONFIG_PATH}"
       }
     },
     {
