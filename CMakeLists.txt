@@ -24,6 +24,7 @@ set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FOR
 set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
 option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." OFF)
+option(STONEYVCV_BUILD_DOCS "" OFF)
 option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP1   "Use '-DSTONEYVCV_BUILD_MODULE_HP1=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
@@ -37,8 +38,19 @@ cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TEST
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 
+
+
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
+
+#[===================================[docs]===================================]#
+
+if(STONEYVCV_BUILD_DOCS)
+    find_package(Doxygen)
+    doxygen_add_docs(docs
+        CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile"
+    )
+endif()
 
 #[==================================[plugin]==================================]#
 
@@ -258,18 +270,34 @@ endforeach()
 
 include(CMakePackageConfigHelpers)
 
+get_target_property(__plugin_interface_linker_opts plugin
+    INTERFACE_LINK_OPTIONS
+)
+set(plugin_interface_linker_opts)
+foreach(plugin_linker_opt IN LISTS __plugin_interface_linker_opts)
+    set(plugin_interface_linker_opts "${plugin_linker_opt} ${plugin_interface_linker_opts}")
+endforeach()
+
+get_target_property(__plugin_interface_compiler_opts plugin
+    INTERFACE_COMPILE_OPTIONS
+)
+set(plugin_interface_compiler_opts)
+foreach(plugin_compiler_opt IN LISTS __plugin_interface_compiler_opts)
+    set(plugin_interface_compiler_opts "${plugin_compiler_opt} ${plugin_interface_compiler_opts}")
+endforeach()
+
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyVCV.pc.in" [==[
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-libdir=/${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=/${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
 
-Name: @PROJECT_NAME@
+Name: StoneyVCV
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 Requires: Rack-SDK = 2.5.2
-Libs: -L${libdir} -lRack
-Cflags: -I${includedir}
+Libs: -L${libdir} -lRack @plugin_interface_linker_opts@
+Cflags: -I${includedir} @plugin_interface_compiler_opts@
 ]==])
 
 configure_file (
@@ -277,6 +305,14 @@ configure_file (
   "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/StoneyVCV.pc"
   @ONLY
 )
+
+unset(plugin_interface_linker_opts)
+unset(__plugin_interface_linker_opts)
+
+unset(plugin_interface_compiler_opts)
+unset(__plugin_interface_compiler_opts)
+
+
 
 install(
     FILES
@@ -345,13 +381,13 @@ install(DIRECTORY
     "${STONEYVCV_SOURCE_DIR}/res"
     DESTINATION
     # This is not a good location to be using...
-    "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_INSTALL_DATADIR}"
 )
 install(DIRECTORY
     "${STONEYVCV_SOURCE_DIR}/presets"
     DESTINATION
     # This is not a good location to be using...
-    "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_INSTALL_DATADIR}"
 )
 install(
     FILES
@@ -360,7 +396,7 @@ install(
     "${STONEYVCV_SOURCE_DIR}/plugin.json"
     DESTINATION
     # This is not a good location to be using...
-    "${CMAKE_INSTALL_PREFIX}"
+    "${CMAKE_INSTALL_DATADIR}"
 )
 
 #[=============================[Enable Unit Tests]=============================]

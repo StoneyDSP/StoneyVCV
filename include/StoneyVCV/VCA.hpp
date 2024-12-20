@@ -35,14 +35,14 @@
 
 //==============================================================================
 
+#include "StoneyVCV/plugin.hpp"
+
+//==============================================================================
+
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
 #include <StoneyDSP/DSP.hpp>
 #include <StoneyDSP/SIMD.hpp>
-
-//==============================================================================
-
-#include "plugin.hpp"
 
 //==============================================================================
 
@@ -302,6 +302,17 @@ public:
      *
      */
     ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
+
+    //==========================================================================
+
+    ::rack::math::Vec screwT1Pos, screwT2Pos, screwB1Pos, screwB2Pos;
+
+    ::rack::componentlibrary::ThemedScrew* screwT1;
+    ::rack::componentlibrary::ThemedScrew* screwT2;
+    ::rack::componentlibrary::ThemedScrew* screwB1;
+    ::rack::componentlibrary::ThemedScrew* screwB2;
+
+    ::rack::app::ThemedSvgPanel* panel;
 
     //==========================================================================
 
