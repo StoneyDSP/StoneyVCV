@@ -178,20 +178,6 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Darwin"
-      },
-      "cacheVariables": {
-        "CMAKE_OSX_ARCHITECTURES": {
-          "value": "x86_64;arm64",
-          "type": "STRING"
-        },
-        "VCPKG_OSX_ARCHITECTURES": {
-          "value": "x86_64;arm64",
-          "type": "STRING"
-        }
-      },
-      "environment": {
-        "CMAKE_OSX_ARCHITECTURES": "x86_64;arm64",
-        "VCPKG_OSX_ARCHITECTURES": "x86_64;arm64"
       }
     },
     {
