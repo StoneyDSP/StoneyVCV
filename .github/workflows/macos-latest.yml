@@ -42,7 +42,7 @@ jobs:
 
       # DEVELOPER WORKFLOW
 
-    - name: Checkout StoneyVCV code
+    - name: checkout StoneyVCV
       uses: actions/checkout@v4
       with:
         submodules: true
@@ -79,19 +79,21 @@ jobs:
     #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
-    - name: Fetch Rack Executable
+    - name: get Rack Executable
+      shell: bash
       run: |
         brew install --cask vcv-rack
 
       # For now, we still need to fetch the SDK's Makefile helpers manually...
-    - name: Fetch Rack SDK
+    - name: get Rack SDK
+      shell: bash
       run: |
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd dep
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
-    - name: Make Workflow
+    - name: make workflow
       shell: bash
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
@@ -128,35 +130,52 @@ jobs:
 
       # DEPLOYMENT WORKFLOW
 
-    - name: Dep
+    - name: make dep
+      shell: bash
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dep -j 3
 
-    - name: Build
+    - name: make
+      shell: bash
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make -j 3
 
-    - name: Dist
+    - name: make dist
+      shell: bash
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dist -j 3
 
-    - name: Install
+    - name: make install
+      shell: bash
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make install -j 3
 
     # List all files in tree
-    - name: List
+    - name: tree
+      shell: bash
       run: tree
 
-    - name: Upload Build
+    - name: upload vcvplugin
       uses: actions/upload-artifact@v4
       with:
         name: StoneyDSP-StoneyVCV-2.0.1-mac-arm64.vcvplugin
         path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.1-mac-arm64.vcvplugin'
 
-    - name: Get Artifacts
+    - name: upload .sh
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-2.0.1-Darwin.sh
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Darwin.sh
+
+    - name: upload .tar.gz
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-2.0.1-Darwin.tar.gz
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Darwin.tar.gz
+
+    - name: download
       uses: actions/download-artifact@v4

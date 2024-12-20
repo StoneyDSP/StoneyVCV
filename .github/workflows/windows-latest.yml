@@ -78,7 +78,7 @@ jobs:
 
       # DEVELOPER WORKFLOW
 
-    - name: Checkout StoneyVCV code
+    - name: checkout StoneyVCV
       uses: actions/checkout@v4
       with:
         submodules: true
@@ -116,11 +116,11 @@ jobs:
     #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    - name: Install VCVRack2Free
+    - name: get Rack Executable
       run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
 
       # For now, we still need to fetch the SDK's Makefile helpers manually...
-    - name: Fetch Rack SDK
+    - name: get Rack SDK
       shell: msys2 {0}
       run: |
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
@@ -128,7 +128,7 @@ jobs:
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
-    - name: Make Workflow
+    - name: make workflow
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
@@ -169,40 +169,40 @@ jobs:
 
       # DEPLOYMENT WORKFLOW
 
-    - name: Dep
+    - name: make dep
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dep -j 3
 
-    - name: Build
+    - name: make
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make -j3
 
-    - name: Dist
+    - name: make dist
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dist -j3
 
-    - name: Install
+    - name: install
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make install -j3
 
     # List all files in tree
-    - name: Tree
+    - name: tree
       shell: msys2 {0}
       run: tree
 
-    - name: Upload Build
+    - name: upload
       uses: actions/upload-artifact@v4
       with:
         name: StoneyDSP-StoneyVCV-2.0.1-win-x64.vcvplugin
         path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.1-win-x64.vcvplugin'
 
-    - name: Get Artifacts
+    - name: download
       uses: actions/download-artifact@v4
