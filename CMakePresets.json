@@ -43,7 +43,7 @@
           "type": "STRING"
         },
         "STONEYVCV_EXPERIMENTAL": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_DOCS": {
@@ -75,7 +75,7 @@
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_MODULE_VCA": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_MODULE_LFO": {
