@@ -110,10 +110,11 @@
        xlink:href="#linearGradient861"
        id="linearGradient1277"
        gradientUnits="userSpaceOnUse"
-       x1="15.488252"
-       y1="168.68993"
-       x2="15.488252"
-       y2="296.66745" />
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%"
+    />
   </defs>
   <sodipodi:namedview
      id="base"

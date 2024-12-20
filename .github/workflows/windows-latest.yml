@@ -36,21 +36,12 @@ jobs:
 
       # REQUIREMENTS
 
-    - name: Checkout StoneyVCV code
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-
-    - name: Install winget
+    - name: install winget
       uses: Cyberboss/install-winget@v1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    - name: Install VCVRack2Free
-      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
-
-    - name: Use MSYS2
+    - name: install MSYS2
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
@@ -80,9 +71,12 @@ jobs:
           tree
           ninja
 
-      # DEVELOPER WORKFLOW
+    - name: checkout StoneyVCV
+      uses: actions/checkout@v4
+      with:
+        submodules: true
 
-    - name: Deps
+    - name: vcpkg install
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
@@ -95,42 +89,31 @@ jobs:
         github-binarycache: false
         pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
 
-    - name: Configure Tests
-      shell: msys2 {0}
-      run: >-
-        cmake
-        --preset x64-windows-release
-        --fresh
+    # - name: Bootstrap vcpkg
+    #   shell: msys2 {0}
+    #   run: "${{ github.workspace }}/dep/vcpkg/bootstrap-vcpkg.sh"
 
-    - name: Build Tests
-      shell: msys2 {0}
-      run: >-
-        cmake
-        --build ${{ env.BUILD_DIR }}
-        --preset x64-windows-release
-        --target tests
-        -j 3
+    # - name: Enable GitHub Actions Cache backend
+    #   uses: actions/github-script@v7
+    #   with:
+    #     script: |
+    #       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+    #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: Test
-      shell: msys2 {0}
-      run: >-
-        ctest
-        --test-dir ${{ env.BUILD_DIR }}
-        --preset x64-windows-release
-        -j 3
+    # - name: Build ports
+    #   shell: msys2 {0}
+    #   run: ${{ github.workspace }}/vcpkg/vcpkg install
+    #   env:
+    #     # X_VCPKG_ASSET_SOURCES: "clear;x-azurl,https://your.domain.com/container,${{ secrets.SAS }},readwrite"
+    #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+    #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
-    - name: Install
-      shell: msys2 {0}
-      run: >-
-        cmake
-        --install ${{ env.BUILD_DIR }}
-        --prefix ${PWD}/install
-        --strip
-        -j 3
+      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    - name: get Rack Executable
+      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
 
-      # DEPLOYMENT WORKFLOW
-
-    - name: Fetch Rack SDK
+      # For now, we still need to fetch the SDK's Makefile helpers manually...
+    - name: get Rack SDK
       shell: msys2 {0}
       run: |
         curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
@@ -138,40 +121,85 @@ jobs:
         unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
-    - name: Dep
+    # - name: Configure Tests
+    #   shell: msys2 {0}
+    #   run: >-
+    #     cmake
+    #     --preset x64-windows-release
+    #     --fresh
+
+    # - name: Build Tests
+    #   shell: msys2 {0}
+    #   run: >-
+    #     cmake
+    #     --build ${{ env.BUILD_DIR }}
+    #     --preset x64-windows-release
+    #     --target tests
+    #     -j 3
+
+    # - name: Test
+    #   shell: msys2 {0}
+    #   run: >-
+    #     ctest
+    #     --test-dir ${{ env.BUILD_DIR }}
+    #     --preset x64-windows-release
+    #     -j 3
+
+    # - name: Install
+    #   shell: msys2 {0}
+    #   run: >-
+    #     cmake
+    #     --install ${{ env.BUILD_DIR }}
+    #     --prefix ${PWD}/install
+    #     --strip
+    #     -j 3
+
+    - name: make dep
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dep -j 3
 
-    - name: Build
+    - name: make
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make -j3
 
-    - name: Dist
+    - name: make dist
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dist -j3
 
-    - name: Install
+    - name: make install
       shell: msys2 {0}
       env:
         RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make install -j3
 
+    - name: make workflow
+      shell: msys2 {0}
+      env:
+        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
+      run: make workflow -j 3
+
     # List all files in tree
-    - name: Tree
+    - name: tree
       shell: msys2 {0}
       run: tree
 
-    - name: Upload Build
+    - name: upload .exe
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-2.0.1-win64.sh
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-win64.exe
+
+    - name: upload .vcvplugin
       uses: actions/upload-artifact@v4
       with:
         name: StoneyDSP-StoneyVCV-2.0.1-win-x64.vcvplugin
         path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.1-win-x64.vcvplugin'
 
-    - name: Get Artifacts
+    - name: download
       uses: actions/download-artifact@v4

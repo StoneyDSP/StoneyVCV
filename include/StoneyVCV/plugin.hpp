@@ -37,12 +37,12 @@
 
 //==============================================================================
 
-#include <rack.hpp>
-#include <StoneyDSP/Core.hpp>
+#include <StoneyVCV/version.hpp>
 
 //==============================================================================
 
-#include <StoneyVCV/version.hpp>
+#include <rack.hpp>
+#include <StoneyDSP/Core.hpp>
 
 //==============================================================================
 
