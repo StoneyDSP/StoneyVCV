@@ -82,7 +82,7 @@ jobs:
 
       # DEVELOPER WORKFLOW
 
-    - name: Deps
+    - name: vcpkg install
       uses: johnwason/vcpkg-action@v6
       with:
         # vcpkg triplet to use
