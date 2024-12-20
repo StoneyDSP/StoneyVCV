@@ -82,51 +82,81 @@ jobs:
 
       # DEVELOPER WORKFLOW
 
-    - name: vcpkg install
-      uses: johnwason/vcpkg-action@v6
+      # DEVELOPER WORKFLOW
+
+    - name: Checkout StoneyVCV code
+      uses: actions/checkout@v4
       with:
-        # vcpkg triplet to use
-        triplet: x64-mingw-dynamic
-        # GitHub token to authenticate API requests. Recommended to use  github.token
-        token: ${{ github.token }}
-        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
-        manifest-dir: ${{ github.workspace }}
-        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: false
-        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
+        submodules: true
 
-    - name: Configure Tests
+    - name: Bootstrap vcpkg
       shell: msys2 {0}
-      run: >-
-        cmake
-        --preset x64-windows-release
-        --fresh
+      run: "${{ github.workspace }}/dep/vcpkg/bootstrap-vcpkg.sh"
 
-    - name: Build Tests
-      shell: msys2 {0}
-      run: >-
-        cmake
-        --build ${{ env.BUILD_DIR }}
-        --preset x64-windows-release
-        --target tests
-        -j 3
+    - name: Enable GitHub Actions Cache backend
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: Test
+    - name: Build ports
       shell: msys2 {0}
-      run: >-
-        ctest
-        --test-dir ${{ env.BUILD_DIR }}
-        --preset x64-windows-release
-        -j 3
+      run: ${{ github.workspace }}/vcpkg/vcpkg install
+      env:
+        # X_VCPKG_ASSET_SOURCES: "clear;x-azurl,https://your.domain.com/container,${{ secrets.SAS }},readwrite"
+        VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+        VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
-    - name: Install
+    - name: Make Workflow
       shell: msys2 {0}
-      run: >-
-        cmake
-        --install ${{ env.BUILD_DIR }}
-        --prefix ${PWD}/install
-        --strip
-        -j 3
+      run: make workflow -j 3
+
+    # - name: vcpkg install
+    #   uses: johnwason/vcpkg-action@v6
+    #   with:
+    #     # vcpkg triplet to use
+    #     triplet: x64-mingw-dynamic
+    #     # GitHub token to authenticate API requests. Recommended to use  github.token
+    #     token: ${{ github.token }}
+    #     # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+    #     manifest-dir: ${{ github.workspace }}
+    #     # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+    #     github-binarycache: false
+    #     pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
+
+    # - name: Configure Tests
+    #   shell: msys2 {0}
+    #   run: >-
+    #     cmake
+    #     --preset x64-windows-release
+    #     --fresh
+
+    # - name: Build Tests
+    #   shell: msys2 {0}
+    #   run: >-
+    #     cmake
+    #     --build ${{ env.BUILD_DIR }}
+    #     --preset x64-windows-release
+    #     --target tests
+    #     -j 3
+
+    # - name: Test
+    #   shell: msys2 {0}
+    #   run: >-
+    #     ctest
+    #     --test-dir ${{ env.BUILD_DIR }}
+    #     --preset x64-windows-release
+    #     -j 3
+
+    # - name: Install
+    #   shell: msys2 {0}
+    #   run: >-
+    #     cmake
+    #     --install ${{ env.BUILD_DIR }}
+    #     --prefix ${PWD}/install
+    #     --strip
+    #     -j 3
 
       # DEPLOYMENT WORKFLOW
 

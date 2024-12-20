@@ -31,59 +31,83 @@ jobs:
 
       # REQUIREMENTS
 
-    - name: Checkout StoneyVCV code
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's Linux Deps
+      shell: bash
       run: |
         sudo apt-get update && sudo apt install unzip git gdb curl cmake libx11-dev libglu1-mesa-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev zlib1g-dev libasound2-dev libgtk2.0-dev libgtk-3-dev libjack-jackd2-dev jq zstd libpulse-dev pkg-config ninja-build ccache tree
 
       # DEVELOPER WORKFLOW
 
-    - name: vcpkg install
-      uses: johnwason/vcpkg-action@v6
+    - name: Checkout StoneyVCV code
+      uses: actions/checkout@v4
       with:
-        # vcpkg triplet to use
-        triplet: x64-linux
-        # GitHub token to authenticate API requests. Recommended to use  github.token
-        token: ${{ github.token }}
-        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
-        manifest-dir: ${{ github.workspace }}
-        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: false
-        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
+        submodules: true
 
-    - name: Configure Tests
-      run: >-
-        cmake
-        --preset x64-linux-release
-        --fresh
+    - name: Bootstrap vcpkg
+      shell: bash
+      run: "${{ github.workspace }}/dep/vcpkg/bootstrap-vcpkg.sh"
 
-    - name: Build Tests
-      run: >-
-        cmake
-        --build ${{ env.BUILD_DIR }}
-        --preset x64-linux-release
-        --target tests
-        -j 3
+    - name: Enable GitHub Actions Cache backend
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: Test
-      run: >-
-        ctest
-        --test-dir ${{ env.BUILD_DIR }}
-        --preset x64-linux-release
-        -j 3
+    - name: Build ports
+      shell: bash
+      run: ${{ github.workspace }}/vcpkg/vcpkg install
+      env:
+        # X_VCPKG_ASSET_SOURCES: "clear;x-azurl,https://your.domain.com/container,${{ secrets.SAS }},readwrite"
+        VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+        VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
 
-    - name: Install
-      run: >-
-        cmake
-        --install ${{ env.BUILD_DIR }}
-        --prefix ${{ github.workspace }}/install
-        --strip
-        -j 3
+    - name: Make Workflow
+      shell: bash
+      run: make workflow -j 3
+
+    # - name: vcpkg install
+    #   uses: johnwason/vcpkg-action@v6
+    #   with:
+    #     # vcpkg triplet to use
+    #     triplet: x64-linux
+    #     # GitHub token to authenticate API requests. Recommended to use  github.token
+    #     token: ${{ github.token }}
+    #     # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+    #     manifest-dir: ${{ github.workspace }}
+    #     # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+    #     github-binarycache: false
+    #     pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
+
+    # - name: Configure Tests
+    #   run: >-
+    #     cmake
+    #     --preset x64-linux-release
+    #     --fresh
+
+    # - name: Build Tests
+    #   run: >-
+    #     cmake
+    #     --build ${{ env.BUILD_DIR }}
+    #     --preset x64-linux-release
+    #     --target tests
+    #     -j 3
+
+    # - name: Test
+    #   run: >-
+    #     ctest
+    #     --test-dir ${{ env.BUILD_DIR }}
+    #     --preset x64-linux-release
+    #     -j 3
+
+    # - name: Install
+    #   run: >-
+    #     cmake
+    #     --install ${{ env.BUILD_DIR }}
+    #     --prefix ${{ github.workspace }}/install
+    #     --strip
+    #     -j 3
 
       # DEPLOYMENT WORKFLOW
 
