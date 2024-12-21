@@ -39,15 +39,40 @@
 
 //==============================================================================
 
+namespace StoneyDSP {
+namespace StoneyVCV {
+namespace HP4 {
+
+//==============================================================================
+
+::rack::plugin::Model* modelHP4 = ::StoneyDSP::StoneyVCV::HP4::createHP4();
+
+//==============================================================================
+
+static const ::rack::math::Vec HP4Dimensions = (
+    ::rack::window::mm2px(20.3199999965F), // 5.079999999F * 4.0F
+    ::rack::window::mm2px(128.693333312F)
+);
+
+//==============================================================================
+
+} // namespace HP4
+} // namespace StoneyVCV
+} // namespace StoneyDSP
+
+//==============================================================================
+
 ::StoneyDSP::StoneyVCV::HP4::HP4Module::HP4Module()
 {
+    // Assertions
+    DBG("Constructing StoneyVCV::HP4::HP4Module");
     assert(::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_PARAMS == 0U);
     assert(::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_INPUTS == 0U);
     assert(::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_OUTPUTS == 0U);
     assert(::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_LIGHTS == 0U);
 
     // Configure the number of Params, Outputs, Inputs, and Lights.
-    config(
+    this->config(
         ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_PARAMS,
         ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_INPUTS,
         ::StoneyDSP::StoneyVCV::HP4::HP4Module::NUM_OUTPUTS,
@@ -57,109 +82,237 @@
 
 ::StoneyDSP::StoneyVCV::HP4::HP4Module::~HP4Module()
 {
+    DBG("Destroying StoneyVCV::HP4::HP4Module");
 }
 
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::HP4::HP4Widget::HP4Widget()
-:   hp4WidgetFrameBuffer(new ::rack::FramebufferWidget),
-    panelBorder(::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0F, 0.0F)))
+:   hp4WidgetFrameBuffer(new ::rack::widget::FramebufferWidget),
+    panelBorder(::rack::createWidget<::rack::app::PanelBorder>(::rack::math::Vec(0.0F, 0.0F)))
 {
+    // Assertions
+    DBG("Constructing StoneyVCV::HP4::HP4Widget");
+    assert(this->hp4WidgetFrameBuffer != nullptr);
+    assert(this->panelBorder != nullptr);
+
     // Widgets
-    hp4WidgetFrameBuffer->setSize(box.size);
-    addChild(hp4WidgetFrameBuffer);
+    this->hp4WidgetFrameBuffer->setSize(this->getSize());
+    this->addChild(this->hp4WidgetFrameBuffer);
 
     // Border
-    panelBorder->setSize(box.size);
-    hp4WidgetFrameBuffer->addChild(panelBorder);
+    this->panelBorder->setSize(this->getSize());
+    this->hp4WidgetFrameBuffer->addChild(this->panelBorder);
 }
 
-// ::StoneyDSP::StoneyVCV::HP4::HP4Widget::~HP4Widget()
-// {
-// }
+::StoneyDSP::StoneyVCV::HP4::HP4Widget::~HP4Widget()
+{
+    // Assertions
+    DBG("Destroying StoneyVCV::HP4::HP4Widget");
+    assert(!this->parent);
+
+    // Children
+    this->panelBorder->clearChildren();
+    this->hp4WidgetFrameBuffer->clearChildren();
+    this->clearChildren();
+}
 
 void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::step()
 {
-    panelBorder->box.size = box.size;
-    ::rack::Widget::step();
+    const auto& size = this->getSize();
+
+    this->panelBorder->setSize(size);
+    this->hp4WidgetFrameBuffer->setSize(size);
+
+    return ::rack::Widget::step();
 }
 
 void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::HP4::HP4Widget::DrawArgs& args)
 {
-    ::NVGcolor& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    ::NVGcolor& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
+    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
+    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
+    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
+    const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
+    const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
+    const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
+    const auto& size = this->getSize();
 
     // draw Themed BG
     ::nvgBeginPath(args.vg);
-    ::nvgRect(args.vg, 0.0F, 0.0F, box.size.x, box.size.y);
-    ::NVGcolor bg = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    ::nvgFillColor(args.vg, bg);
+    ::nvgRect(args.vg,
+        /** x */0.0F,
+        /** y */0.0F,
+        /** w */size.x,
+        /** h */size.y
+        );
+    ::nvgFillColor(args.vg, bgColor);
     ::nvgFill(args.vg);
-    ::rack::Widget::draw(args);
+
+    // Draw line L
+    ::nvgBeginPath(args.vg);
+    ::nvgMoveTo(args.vg,
+        /** x */minWidth * 0.5F,                         /** 0.5 screws right */
+        /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
+    ::nvgLineTo(args.vg,
+        /** x */minWidth * 0.5F,                         /** 0.5 screws right */
+        /** y */size.y - (minWidth + (minWidth * 0.5F)));/** 1.5 screws up    */
+    ::nvgStrokeColor(args.vg, borderColor);
+    ::nvgStrokeWidth(args.vg, 1.0F);
+    ::nvgStroke(args.vg);
+
+    // Draw line R
+    ::nvgBeginPath(args.vg);
+    ::nvgMoveTo(args.vg,
+        /** x */size.x - (minWidth * 0.5F),              /** 0.5 screws left  */
+        /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
+    ::nvgLineTo(args.vg,
+        /** x */size.x - (minWidth * 0.5F),              /** 0.5 screws left  */
+        /** y */size.y - (minWidth + (minWidth * 0.5F)));/** 1.5 screws up    */
+    ::nvgStrokeColor(args.vg, borderColor);
+    ::nvgStrokeWidth(args.vg, 1.0F);
+    ::nvgStroke(args.vg);
+
+    // Draw line T
+    ::nvgBeginPath(args.vg);
+    ::nvgMoveTo(args.vg,
+        /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
+        /** y */minWidth * 0.5F);                        /** 0.5 screws down  */
+    ::nvgLineTo(args.vg,
+        /** x */size.x - (minWidth + (minWidth * 0.5F)), /** 1.5 screws left  */
+        /** y */minWidth * 0.5F);                        /** 0.5 screws down  */
+    ::nvgStrokeColor(args.vg, borderColor);
+    ::nvgStrokeWidth(args.vg, 1.0F);
+    ::nvgStroke(args.vg);
+
+    // Draw line B
+    ::nvgBeginPath(args.vg);
+    ::nvgMoveTo(args.vg,
+        /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
+        /** y */size.y - (minWidth * 0.5F));             /** 0.5 screws up    */
+    ::nvgLineTo(args.vg,
+        /** x */size.x - (minWidth + (minWidth * 0.5F)), /** 1.5 screws left  */
+        /** y */size.y - (minWidth * 0.5F));             /** 0.5 screws up    */
+    ::nvgStrokeColor(args.vg, borderColor);
+    ::nvgStrokeWidth(args.vg, 1.0F);
+    ::nvgStroke(args.vg);
+
+    ::StoneyDSP::ignoreUnused(minHeight);
+
+    return ::rack::Widget::draw(args);
 }
 
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4::HP4Module* module)
-:   size(::rack::window::mm2px(20.3199999965F), ::rack::window::mm2px(128.693333312F)),
-    hp4Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP4::HP4Widget>(::rack::math::Vec(0.0F, 0.0F))),
-    hp4ModuleWidgetFrameBuffer(new ::rack::FramebufferWidget),
-    // Screws
-    screwT1Pos(::rack::math::Vec((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F), (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // top-left
-    screwT2Pos(::rack::math::Vec((size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)), (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // top-right
-    screwB1Pos(::rack::math::Vec((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F), size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // bottom-left
-    screwB2Pos(::rack::math::Vec((size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)), size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))), // bottom-right
-    screwT1(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwT1Pos)),
-    screwT2(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwT2Pos)),
-    screwB1(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwB1Pos)),
-    screwB2(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwB2Pos)),
+:   size(
+        ::rack::window::mm2px(20.3199999965F),
+        ::rack::window::mm2px(128.693333312F)
+    ),
     // Panel
-    panel(
-        ::rack::createPanel<::rack::app::ThemedSvgPanel>(
-            // Light-mode panel
-            ::rack::asset::plugin(
-                ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-light.svg"
-            ),
-            // Dark-mode panel
-            ::rack::asset::plugin(
-                ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-dark.svg"
-            )
+    panel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
+        // Light-mode panel
+        ::rack::asset::plugin(
+            ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-light.svg"
+        ),
+        // Dark-mode panel
+        ::rack::asset::plugin(
+            ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-dark.svg"
         )
-    )
+    )),
+    hp4Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP4::HP4Widget>(::rack::math::Vec(0.0F, 0.0F))),
+    hp4ModuleWidgetFrameBuffer(new ::rack::widget::FramebufferWidget),
+    screwsPositions{
+        ::rack::math::Vec( // top-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+        ),
+        ::rack::math::Vec( // top-right
+            (this->size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+        ),
+        ::rack::math::Vec( // bottom-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            this->size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+        ),
+        ::rack::math::Vec( // bottom-right
+            (this->size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            this->size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+    },
+    screws{
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[0]),
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[1]),
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[2]),
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[3])
+    },
+    lastPrefersDarkPanels(::rack::settings::preferDarkPanels)
 {
-    setModule(module);
-    setSize(size);
-    setPanel(panel);
+    // Assertions
+    DBG("Constructing StoneyVCV::HP4::HP4ModuleWidget");
+    // assert(module != nullptr);
+    assert(this->hp4Widget != nullptr);
+    assert(this->hp4ModuleWidgetFrameBuffer != nullptr);
+    assert(this->screws != nullptr);
+    assert(this->screws[0] != nullptr);
+    assert(this->screws[1] != nullptr);
+    assert(this->screws[2] != nullptr);
+    assert(this->screws[3] != nullptr);
+    assert(this->panel != nullptr);
 
-    hp4Widget->setSize(this->getSize());
-    addChild(hp4Widget);
+    this->setModule(module);
+    this->setSize(this->size);
+    this->setPanel(this->panel);
+    this->getPanel()->setSize(this->getSize());
 
-    // // Frame Buffer
-    // hp4ModuleWidgetFrameBuffer->setSize(box.size);
-    // addChild(hp4ModuleWidgetFrameBuffer);
+    // Frame Buffer
+    this->hp4ModuleWidgetFrameBuffer->setSize(this->getSize());
+    this->addChild(this->hp4ModuleWidgetFrameBuffer);
 
-    // // Widget
-    // hp4Widget->setSize(box.size);
-    // hp4ModuleWidgetFrameBuffer->addChild(hp4Widget);
+    // Widget
+    this->hp4Widget->setSize(this->getSize());
+    this->hp4ModuleWidgetFrameBuffer->addChild(this->hp4Widget);
 
-    addChild(screwT1);
-    addChild(screwT2);
-    addChild(screwB1);
-    addChild(screwB2);
+    // Screws
+    for(auto screw : this->screws) {
+        this->addChild(screw);
+    }
 
     assert(this->getSize().x == ::rack::window::mm2px(20.3199999965F));
     assert(this->getSize().y == ::rack::window::mm2px(128.693333312F));
+    assert(this->getPanel()->getSize().x == ::rack::window::mm2px(20.3199999965F));
+    assert(this->getPanel()->getSize().y == ::rack::window::mm2px(128.693333312F));
 }
 
-// ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::~HP4ModuleWidget()
-// {
-// }
+::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::~HP4ModuleWidget()
+{
+    // Assertions
+    DBG("Destroying StoneyVCV::HP4::HP4ModuleWidget");
+    assert(!this->parent);
+
+    // Children
+    this->hp4Widget->clearChildren();
+    this->hp4ModuleWidgetFrameBuffer->clearChildren();
+    this->clearChildren();
+}
+
+void ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::step()
+{
+    if(this->lastPrefersDarkPanels != ::rack::settings::preferDarkPanels) {
+        this->hp4ModuleWidgetFrameBuffer->setDirty();
+        this->lastPrefersDarkPanels = ::rack::settings::preferDarkPanels;
+    }
+
+    return ::rack::Widget::step();
+}
+
+//==============================================================================
 
 /**
  *
  */
 ::rack::plugin::Model* ::StoneyDSP::StoneyVCV::HP4::createHP4()
 {
+    DBG("Creating StoneyVCV::HP4::modelHP4");
+
     ::rack::plugin::Model* modelHP4 = ::rack::createModel<
         ::StoneyDSP::StoneyVCV::HP4::HP4Module,
         ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget
@@ -167,18 +320,6 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // STONEYDSP_THROW_IF_FAILED_VOID(modelHP4 == nullptr, bad_alloc);
     return modelHP4;
-}
-
-//==============================================================================
-
-namespace StoneyDSP {
-namespace StoneyVCV {
-namespace HP4 {
-
-::rack::plugin::Model* modelHP4 = ::StoneyDSP::StoneyVCV::HP4::createHP4();
-
-}
-}
 }
 
 //==============================================================================

@@ -82,7 +82,6 @@ namespace HP2
 struct HP2Module final :
     ::rack::engine::Module
 {
-
     //==========================================================================
 
 public:
@@ -123,7 +122,7 @@ public:
      * @brief Destroys the `HP2Module` object.
      *
      */
-    ~HP2Module();
+    virtual ~HP2Module();
 
     //==========================================================================
 
@@ -142,14 +141,13 @@ private:
  *
  */
 struct HP2Widget final :
-    ::rack::Widget
+    ::rack::widget::Widget
 {
-
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::Widget::DrawArgs;
+    using DrawArgs = ::rack::widget::Widget::DrawArgs;
 
     //==========================================================================
 
@@ -159,11 +157,11 @@ public:
      */
     HP2Widget();
 
-    // /**
-    //  * @brief Destroys the `HP2Widget` object.
-    //  *
-    //  */
-    // ~HP2Widget();
+    /**
+     * @brief Destroys the `HP2Widget` object.
+     *
+     */
+    virtual ~HP2Widget();
 
     //==========================================================================
 
@@ -171,7 +169,7 @@ public:
      * @brief Advances the module by one frame.
      *
      */
-    void step() override;
+    virtual void step() override;
 
     /**
      * @brief Draws the widget to the NanoVG context.
@@ -180,25 +178,25 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::HP2::HP2Widget::DrawArgs& args) override;
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget* hp2WidgetFrameBuffer;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::Widget* panelBorder;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::HP2::HP2Widget::DrawArgs& args) override;
 
     //==========================================================================
 
 private:
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::widget::FramebufferWidget* hp2WidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::widget::Widget* panelBorder;
 
     //==========================================================================
 
@@ -215,7 +213,6 @@ private:
 struct HP2ModuleWidget final :
     ::rack::app::ModuleWidget
 {
-
     //==========================================================================
 
 public:
@@ -230,11 +227,23 @@ public:
      */
     HP2ModuleWidget(::StoneyDSP::StoneyVCV::HP2::HP2Module* module);
 
-    // /**
-    //  * @brief Destroys the `HP2ModuleWidget` object.
-    //  *
-    //  */
-    // ~HP2ModuleWidget();
+    /**
+     * @brief Destroys the `HP2ModuleWidget` object.
+     *
+     */
+    virtual ~HP2ModuleWidget();
+
+    //==========================================================================
+
+    /**
+     * @brief Advances the module by one frame.
+     *
+     */
+    virtual void step() override;
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
@@ -242,6 +251,11 @@ public:
      * @brief
      */
     ::rack::math::Vec size;
+
+    /**
+     * @brief
+     */
+    ::rack::app::ThemedSvgPanel* panel;
 
     /**
      * @brief
@@ -253,22 +267,29 @@ public:
      * @brief
      *
      */
-    ::rack::FramebufferWidget* hp2ModuleWidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget* hp2ModuleWidgetFrameBuffer;
 
     //==========================================================================
 
-    ::rack::math::Vec screwT1Pos, screwT2Pos, screwB1Pos, screwB2Pos;
+    /**
+     * @brief
+     *
+     */
+    const ::rack::math::Vec screwsPositions [4];
 
-    ::rack::componentlibrary::ThemedScrew* screwT1;
-    ::rack::componentlibrary::ThemedScrew* screwT2;
-    ::rack::componentlibrary::ThemedScrew* screwB1;
-    ::rack::componentlibrary::ThemedScrew* screwB2;
-
-    ::rack::app::ThemedSvgPanel* panel;
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::ThemedScrew* screws [4];
 
     //==========================================================================
 
-private:
+    /**
+     * @brief
+     *
+     */
+    bool lastPrefersDarkPanels;
 
     //==========================================================================
 

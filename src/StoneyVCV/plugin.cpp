@@ -118,10 +118,42 @@ namespace Panels {
 
 //==============================================================================
 
-::NVGcolor bgBlack = ::nvgRGBA(0, 0, 0, 255);
-::NVGcolor bgWhite = ::nvgRGBA(255, 255, 255, 255);
+::NVGcolor bgBlack = ::nvgRGBA(43, 43, 43, 255);
+::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
+::NVGcolor borderColor = nvgRGBAf(0.5F, 0.5F, 0.5F, 0.5F);
 ::StoneyDSP::float_t MIN_WIDTH = ::rack::window::mm2px(5.079999999F);
 ::StoneyDSP::float_t MIN_HEIGHT = ::rack::window::mm2px(128.693333312F);
+
+//==============================================================================
+
+void addScrewsToWidget(::rack::widget::Widget* widget)
+{
+    const auto& size = widget->getSize();
+
+    const ::rack::math::Vec screwsPositions [4] = {
+        ::rack::math::Vec( // top-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+        ::rack::math::Vec( // top-right
+            (size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+        ::rack::math::Vec( // bottom-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            (size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))),
+        ::rack::math::Vec(// bottom-right
+            (size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)))
+    };
+    ::rack::ThemedScrew* screws [4] = {
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwsPositions[0]),
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwsPositions[1]),
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwsPositions[2]),
+        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(screwsPositions[3])
+    };
+    for(auto screw : screws) {
+        widget->addChild(screw);
+    }
+}
 
 //==============================================================================
 
