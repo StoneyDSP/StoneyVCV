@@ -11,12 +11,10 @@ StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 
 ## Quickstart
 
-```shell
-git clone https://github.com/StoneyDSP/StoneyVCV.git
-```
+Note: We recommend using [vcpkg](https://github.com/microsoft/vcpkg) and setting the `VCPKG_ROOT` enviroment variable, to acquire some headers and libraries for building, developing, testing, and debugging StoneyVCV for VCV Rack2.
 
 ```shell
-make dep
+git clone https://github.com/StoneyDSP/StoneyVCV.git && cd StoneyVCV
 ```
 
 ```shell
@@ -46,10 +44,13 @@ make install
 Complete the [Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) section of the [VCV Rack Plugin Development guide](https://vcvrack.com/manual/Building). Briefly, you will need the following installations at minimum:
 
 - VCV Rack 2 Free
+- vcpkg
 - CMake
 - Ninja
 - GNU Make
 - A Bash-like command line
+
+*(NOTE: for Windows, use MSYS's default 'msys' shell to install Rack's dependencies via pacman, and <b>then</b> use the 'mingw64' shell for the commands below, and use unix-style transformed paths, such as `/c/Users/...`)*
 
 StoneyVCV can be built in three ways:
 
@@ -63,19 +64,17 @@ StoneyVCV can be built in three ways:
 
 ## Build and Install StoneyVCV for VCV Rack 2 with Make
 
+Note: We recommend using [vcpkg](https://github.com/microsoft/vcpkg) and setting the `VCPKG_ROOT` enviroment variable, to acquire some headers and libraries for building, developing, testing, and debugging StoneyVCV for VCV Rack2.
+
 Download or clone the StoneyVCV source code, e.g.
 
 ```shell
-git clone https://github.com/StoneyDSP/StoneyVCV.git
+git clone https://github.com/StoneyDSP/StoneyVCV.git && cd StoneyVCV
 ```
 
-```shell
-cd StoneyVCV
-```
+If using the Rack SDK workflow, unzip it (anywhere) and set the `RACK_DIR` environment variable by running `export RACK_DIR="path/to/unzipped/Rack-SDK"` in the terminal, before running the next commands.
 
-If using the Rack SDK workflow, unzip it and set the `RACK_DIR` environment variable by running `export RACK_DIR="path/to/unzipped/Rack-SDK"` in the terminal, before running the next commands.
-
-*(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as '/c/Users/...')*
+*(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as `/c/Users/...`)*
 
 Build StoneyVCV.
 
@@ -101,13 +100,13 @@ make install
 
 ## Develop, Test, and Debug StoneyVCV for VCV Rack 2 with CMake and Catch2
 
-Note: We recommend using [vcpkg](https://github.com/microsoft/vcpkg) to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2.
+Note: We recommend using [vcpkg](https://github.com/microsoft/vcpkg) and setting the `VCPKG_ROOT` enviroment variable, to acquire some headers and libraries for developing, testing, and debugging StoneyVCV for VCV Rack2.
 
 StoneyVCV is built and tested using the Rack SDK v2.5.2 for all platforms. We use vcpkg to fetch a fresh copy of the correct SDK files when the below commands are run as shown; the fetched SDK files are parsed into CMake targets, which interface with our testing targets.
 
-We recommend setting the `VCPKG_ROOT` environment variable in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct environment. *(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as '/c/Users/...')*
+We recommend setting the `VCPKG_ROOT` environment variable in your shell, and launching your IDE from that shell, to ensure the IDE runs in the correct environment.
 
-We recommend *not* setting the `RACK_DIR` environment variable when running the below commands, as it may interfere with vcpkg.
+*(NOTE: for Windows, use MSYS's 'mingw64' shell for these commands, and use unix-style transformed paths, such as `/c/Users/...`)*
 
 Download or clone the StoneyVCV source code, e.g.
 
@@ -250,7 +249,14 @@ make test
 make package
 ```
 
-*Creates a local directory (`./install`) containing a distributable package, unarchived*
+*Creates a set of distributable packages and installers for the built plugin in the `./build` directory*
+
+```shell
+make package_source
+```
+
+*Creates a set of distributable packages of the source tree in the `./build` directory*
+
 
 The GitHub Workflows in our repository may be a useful reference, if any doubts.
 

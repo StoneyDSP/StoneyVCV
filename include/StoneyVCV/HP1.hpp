@@ -82,7 +82,6 @@ namespace HP1
 struct HP1Module final :
     ::rack::engine::Module
 {
-
     //==========================================================================
 
 public:
@@ -123,7 +122,7 @@ public:
      * @brief Destroys the `HP1Module` object.
      *
      */
-    ~HP1Module();
+    virtual ~HP1Module();
 
     //==========================================================================
 
@@ -142,11 +141,13 @@ private:
  *
  */
 struct HP1Widget final :
-    ::rack::Widget
+    ::rack::widget::Widget
 {
+    //==========================================================================
+
 public:
 
-    using DrawArgs = ::rack::Widget::DrawArgs;
+    using DrawArgs = ::rack::widget::Widget::DrawArgs;
 
     //==========================================================================
 
@@ -156,11 +157,11 @@ public:
      */
     HP1Widget();
 
-    // /**
-    //  * @brief Destroys the `HP1Widget` object.
-    //  *
-    //  */
-    // ~HP1Widget();
+    /**
+     * @brief Destroys the `HP1Widget` object.
+     *
+     */
+    virtual ~HP1Widget();
 
     //==========================================================================
 
@@ -168,7 +169,7 @@ public:
      * @brief Advances the module by one frame.
      *
      */
-    void step() override;
+    virtual void step() override;
 
     /**
      * @brief Draws the widget to the NanoVG context.
@@ -177,7 +178,7 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::HP1::HP1Widget::DrawArgs& args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::HP1::HP1Widget::DrawArgs& args) override;
 
     //==========================================================================
 
@@ -185,13 +186,13 @@ public:
      * @brief
      *
      */
-    ::rack::FramebufferWidget* hp1WidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget* hp1WidgetFrameBuffer;
 
     /**
      * @brief
      *
      */
-    ::rack::Widget* panelBorder;
+    ::rack::widget::Widget* panelBorder;
 
     //==========================================================================
 
@@ -212,7 +213,6 @@ private:
 struct HP1ModuleWidget final :
     ::rack::app::ModuleWidget
 {
-
     //==========================================================================
 
 public:
@@ -227,12 +227,35 @@ public:
      */
     HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module* module);
 
+    /**
+     * @brief Destroys the `HP1ModuleWidget` object.
+     *
+     */
+    virtual ~HP1ModuleWidget();
+
+    //==========================================================================
+
+    /**
+     * @brief Advances the module by one frame.
+     *
+     */
+    virtual void step() override;
+
+    //==========================================================================
+
+private:
+
     //==========================================================================
 
     /**
      * @brief
      */
-    ::rack::math::Vec size;
+    const ::rack::math::Vec size;
+
+    /**
+     * @brief
+     */
+    ::rack::app::ThemedSvgPanel* panel;
 
     /**
      * @brief
@@ -244,20 +267,29 @@ public:
      * @brief
      *
      */
-    ::rack::FramebufferWidget* hp1ModuleWidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget* hp1ModuleWidgetFrameBuffer;
 
     //==========================================================================
 
-    ::rack::math::Vec screwTPos, screwBPos;
+    /**
+     * @brief
+     *
+     */
+    const ::rack::math::Vec screwsPositions [2];
 
-    ::rack::componentlibrary::ThemedScrew* screwT;
-    ::rack::componentlibrary::ThemedScrew* screwB;
-
-    ::rack::app::ThemedSvgPanel* panel;
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::ThemedScrew* screws [2];
 
     //==========================================================================
 
-private:
+    /**
+     * @brief
+     *
+     */
+    bool lastPrefersDarkPanels;
 
     //==========================================================================
 
