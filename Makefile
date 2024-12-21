@@ -174,8 +174,13 @@ test: build
 
 package: test
 	cmake \
-  --install $(PWD)/build \
-	--prefix $(PWD)/install
+  --build $(PWD)/build \
+	--target $@
+
+package_source: test
+	cmake \
+  --build $(PWD)/build \
+	--target $@
 
 workflow:
 	cmake \
@@ -183,7 +188,27 @@ workflow:
 	--preset $(PRESET) \
 	--fresh
 
+source: configure
+	cmake \
+  --install $(PWD)/build \
+	--prefix $(PWD)/dist \
+	--component $@
+
+# package: test
+# 	cmake \
+#   --install $(PWD)/build \
+# 	--prefix $(PWD)/install
+
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
 
+# These are "main" Makefile targets which most Rack plugin devs expect
+
 dep: reconfigure
+
+all: dep
+	$(MAKE) -f $(RACK_DIR)/plugin.mk $@
+
+clean:
+	cmake --build $(PWD)/build --target $@
+	$(MAKE) -f $(RACK_DIR)/plugin.mk $@
