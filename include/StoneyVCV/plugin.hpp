@@ -46,6 +46,17 @@
 
 //==============================================================================
 
+#ifdef STONEYDSP_DEBUG
+#include <iostream>
+#define DBG(msg) \
+::std::cerr << msg << std::endl
+#else
+#define DBG(msg) \
+::StoneyDSP::ignoreUnused(msg)
+#endif
+
+//==============================================================================
+
 namespace StoneyDSP
 {
 /** @addtogroup StoneyDSP
@@ -77,6 +88,7 @@ extern ::rack::plugin::Plugin* pluginInstance;
 //==============================================================================
 
 #if defined (STONEYVCV_BUILD_MODULES)
+
 // Declare each Model, defined in each module source file
 
 #if defined (STONEYVCV_EXPERIMENTAL)
@@ -169,8 +181,12 @@ extern ::rack::plugin::Plugin* pluginInstance;
 namespace Panels {
 extern ::NVGcolor bgBlack;
 extern ::NVGcolor bgWhite;
+extern ::NVGcolor borderColor;
 extern ::StoneyDSP::float_t MIN_WIDTH;
 extern ::StoneyDSP::float_t MIN_HEIGHT;
+
+extern void addScrewsToWidget(::rack::widget::Widget* widget);
+
 }
 
 #endif // STONEYVCV_BUILD_MODULES
