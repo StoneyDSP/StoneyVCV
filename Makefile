@@ -209,6 +209,6 @@ dep: reconfigure
 all: dep
 	$(MAKE) -f $(RACK_DIR)/plugin.mk $@
 
-clean:
-	cmake --build $(PWD)/build --target $@
-	$(MAKE) -f $(RACK_DIR)/plugin.mk $@
+# clean:
+# 	cmake --build $(PWD)/build --target $@
+# 	$(MAKE) -f $(RACK_DIR)/plugin.mk $@
