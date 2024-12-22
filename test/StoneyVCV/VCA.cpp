@@ -52,7 +52,7 @@ namespace VCA {
 struct VCASpec final : ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    ::std::string slug;
+    ::std::string slug, name , description;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 1U;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 1U;
@@ -60,6 +60,8 @@ public:
     ::rack::math::Vec size;
     VCASpec()
     :   slug("VCA"),
+        name(""),
+        description(""),
         size(
             ::rack::window::mm2px(30.479999995F),
             ::rack::window::mm2px(128.693333312F)
@@ -140,9 +142,30 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
     //==========================================================================
 
-    SECTION( "instance" ) {
+    SECTION( "createVCA" ) {
+
+        ::rack::plugin::Model* test_modelVCA = ::StoneyDSP::StoneyVCV::VCA::createVCA();
+        REQUIRE( test_modelVCA != nullptr );
+
+        SECTION( "createModule" ) {
+
+            auto test_module = test_modelVCA->createModule();
+            REQUIRE( test_module != nullptr );
+
+            // SECTION( "createModuleWidget" ) {
+            //     auto test_moduleWidget = test_modelVCA->createModuleWidget(test_module);
+            //     REQUIRE( test_moduleWidget != nullptr );
+            // }
+        }
+    }
+
+    //==========================================================================
+
+    SECTION( "modelVCA" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->slug == spec.get()->slug );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->name == spec.get()->name );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->description == spec.get()->description );
     }
 
     //==========================================================================
