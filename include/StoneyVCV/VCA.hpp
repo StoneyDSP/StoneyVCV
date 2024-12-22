@@ -117,16 +117,16 @@ public:
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCOModule` object.
+     * @brief Construct a new `VCAModule` object.
      *
      */
     VCAModule();
 
     /**
-     * @brief Destroy the `VCOModule` object.
+     * @brief Destroy the `VCAModule` object.
      *
      */
-    ~VCAModule();
+    virtual ~VCAModule();
 
     //==========================================================================
 
@@ -142,7 +142,7 @@ public:
      *
      * @return json_t
      */
-    ::json_t *dataToJson() override;
+    virtual ::json_t *dataToJson() override;
 
     /**
      * @brief Load internal data from the "data" property of the module's JSON object.
@@ -150,7 +150,7 @@ public:
      *
      * @param rootJ
      */
-    void dataFromJson(::json_t *rootJ) override;
+    virtual void dataFromJson(::json_t *rootJ) override;
 
     //==========================================================================
 
@@ -171,6 +171,8 @@ public:
      *
      */
 	::StoneyDSP::float_t lastGains[16] = {};
+
+    ::rack::dsp::ClockDivider lightDivider;
 
     //==========================================================================
 
@@ -201,16 +203,16 @@ public:
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCOWidget` object.
+     * @brief Construct a new `VCAWidget` object.
      *
      */
     VCAWidget();
 
-    // /**
-    //  * @brief Destroys the `VCOWidget` object.
-    //  *
-    //  */
-    // ~VCAWidget();
+    /**
+     * @brief Destroys the `VCAWidget` object.
+     *
+     */
+    virtual ~VCAWidget();
 
     //==========================================================================
 
@@ -218,7 +220,7 @@ public:
      * @brief Advances the module by one frame.
      *
      */
-    void step() override;
+    virtual void step() override;
 
     /**
      * @brief Draws the widget to the NanoVG context.
@@ -227,7 +229,11 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
@@ -241,11 +247,7 @@ public:
      * @brief
      *
      */
-    ::rack::Widget *panelBorder;
-
-    //==========================================================================
-
-private:
+    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
@@ -270,53 +272,88 @@ public:
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCOModuleWidget` object.
+     * @brief Construct a new `VCAModuleWidget` object.
      *
      * @param module
      *
      */
     VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module);
 
-    // /**
-    //  * @brief Destroys the `VCOModuleWidget` object.
-    //  *
-    //  */
-    // ~VCAModuleWidget();
+    /**
+     * @brief Destroys the `VCAModuleWidget` object.
+     *
+     */
+    virtual ~VCAModuleWidget();
 
     //==========================================================================
 
     /**
-     * @brief
+     * @brief Advances the module by one frame.
      *
      */
-    ::rack::math::Vec size;
-
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::StoneyVCV::VCA::VCAWidget *vcaWidget;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
-
-    //==========================================================================
-
-    ::rack::math::Vec screwT1Pos, screwT2Pos, screwB1Pos, screwB2Pos;
-
-    ::rack::componentlibrary::ThemedScrew* screwT1;
-    ::rack::componentlibrary::ThemedScrew* screwT2;
-    ::rack::componentlibrary::ThemedScrew* screwB1;
-    ::rack::componentlibrary::ThemedScrew* screwB2;
-
-    ::rack::app::ThemedSvgPanel* panel;
+    virtual void step() override;
 
     //==========================================================================
 
 private:
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    const ::rack::math::Vec size;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::app::ThemedSvgPanel* panel;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::VCA::VCAWidget* vcaWidget;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget* vcaModuleWidgetFrameBuffer;
+
+    //==========================================================================
+
+    ::rack::componentlibrary::RoundBigBlackKnob* gainKnob;
+
+    // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
+
+    ::rack::componentlibrary::PJ301MPort* portCvInput;
+    ::rack::componentlibrary::PJ301MPort* portVcaInput;
+    ::rack::componentlibrary::PJ301MPort* portVcaOutput;
+
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>* lightVca;
+
+    /**
+     * @brief
+     *
+     */
+    const ::rack::math::Vec screwsPositions [4];
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::ThemedScrew* screws [4];
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    bool lastPrefersDarkPanels;
 
     //==========================================================================
 
