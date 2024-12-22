@@ -6,7 +6,7 @@
   "author": "Nathan J. Hood",
   "authorEmail": "nathanjhood@googlemail.com",
   "license": "MIT",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "minRackVersion": "2.5.2",
   "authorUrl": "https://github.com/nathanjhood",
   "pluginUrl": "https://github.com/StoneyDSP/StoneyVCV",
@@ -37,6 +37,15 @@
       "description": "4hp Panel Spacer",
       "tags": [
         "Blank"
+      ]
+    },
+    {
+      "slug": "VCA",
+      "name": "VCA",
+      "description": "Simple Voltage-controlled Oscillator",
+      "tags": [
+        "Voltage-controlled Oscillator",
+        "Polyphonic"
       ]
     }
   ]
