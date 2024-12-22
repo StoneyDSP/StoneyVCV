@@ -91,8 +91,7 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 
-#if defined (STONEYVCV_EXPERIMENTAL)
-// EXPERIMENTAL MODULES HERE...
+#if (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 2U)
 
 #if defined (STONEYVCV_BUILD_VCA)
     namespace VCA {
@@ -109,22 +108,7 @@ extern ::rack::plugin::Plugin* pluginInstance;
     } // namespace VCA
 #endif // STONEYVCV_BUILD_VCA
 
-#if defined (STONEYVCV_BUILD_LFO)
-    namespace LFO {
-    /** @addtogroup LFO
-     *  @{
-     */
-
-    /**
-     * @brief Declaration of the `LFO` Model instance, defined in `LFO.cpp`.
-     */
-    extern ::rack::plugin::Model* modelLFO;
-
-    /// @} group LFO
-    } // namespace LFO
-#endif // STONEYVCV_BUILD_LFO
-
-#endif // STONEYVCV_EXPERIMENTAL
+#endif // STONEYVCV_VERSION_PATCH >= 2
 
 #if (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
 
@@ -177,6 +161,27 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #elif (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 0U)
     #warning "No modules found..."
 #endif
+
+#if defined (STONEYVCV_EXPERIMENTAL)
+#warning "Building experimental modules..."
+// EXPERIMENTAL MODULES HERE...
+
+#if defined (STONEYVCV_BUILD_LFO)
+    namespace LFO {
+    /** @addtogroup LFO
+     *  @{
+     */
+
+    /**
+     * @brief Declaration of the `LFO` Model instance, defined in `LFO.cpp`.
+     */
+    extern ::rack::plugin::Model* modelLFO;
+
+    /// @} group LFO
+    } // namespace LFO
+#endif // STONEYVCV_BUILD_LFO
+
+#endif // STONEYVCV_EXPERIMENTAL
 
 namespace Panels {
 extern ::NVGcolor bgBlack;

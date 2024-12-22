@@ -75,15 +75,11 @@ void init(::rack::plugin::Plugin* p) {
 
     ::StoneyDSP::StoneyVCV::pluginInstance = p;
 
-#ifdef STONEYVCV_EXPERIMENTAL
-    // EXPERIMENTAL MODULES HERE...
+#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 2)
 #ifdef STONEYVCV_BUILD_VCA
     p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
 #endif
-#ifdef STONEYVCV_BUILD_LFO
-    p->addModel(::StoneyDSP::StoneyVCV::LFO::modelLFO);
-#endif
-#endif // STONEYVCV_EXPERIMENTAL
+#endif // STONEYVCV_VERSION_PATCH >= 2
 
 #if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
 #ifdef STONEYVCV_BUILD_HP4
@@ -98,6 +94,14 @@ void init(::rack::plugin::Plugin* p) {
 #elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
     #warning "No modules found..."
 #endif
+
+#ifdef STONEYVCV_EXPERIMENTAL
+    #warning "Building experimental modules..."
+    // EXPERIMENTAL MODULES HERE...
+#ifdef STONEYVCV_BUILD_LFO
+    p->addModel(::StoneyDSP::StoneyVCV::LFO::modelLFO);
+#endif
+#endif // STONEYVCV_EXPERIMENTAL
 
     // Any other plugin initialization may go here.
     // As an alternative, consider lazy-loading assets and lookup tables when
