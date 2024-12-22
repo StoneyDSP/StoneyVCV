@@ -11,7 +11,11 @@
     {
       "name": "Linux",
       "includePath": [
+        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/dep",
+        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include/Rack-SDK/rack",
+        "${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
         "${default}"
+
       ],
       "defines": [
         "${default}"
@@ -24,6 +28,7 @@
         "`pkg-config --cflags --libs Rack-SDK`",
         "`pkg-config --cflags --libs catch2-with-main`",
         "-I${workspaceFolder}/include",
+        "-I${workspaceFolder}/build/vcpkg_installed/x64-linux/include",
         "-fno-gnu-unique",
         "-MMD",
         "-MP",
@@ -36,6 +41,7 @@
         "-Wno-unused-parameter",
         "-march=nehalem",
         "-lRack",
+        "-L${workspaceFolder}/build/vcpkg_installed/x64-linux/lib",
         "-static-libstdc++",
         "-static-libgcc"
       ],
@@ -57,6 +63,9 @@
     {
       "name": "Mac",
       "includePath": [
+        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/dep",
+        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include/Rack-SDK/rack",
+        "${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
         "${default}"
       ],
       "defines": [
@@ -70,6 +79,8 @@
         "`pkg-config --cflags --libs Rack-SDK`",
         "`pkg-config --cflags --libs catch2-with-main`",
         "-I${workspaceFolder}/include",
+        "-I${workspaceFolder}/build/vcpkg_installed/x64-osx/include",
+        "-I${workspaceFolder}/build/vcpkg_installed/arm64-osx/include",
         "-MMD",
         "-MP",
         "-g",
@@ -81,7 +92,9 @@
         "-Wno-unused-parameter",
         "-march=armv8-a+fp+simd",
         "-mmacosx-version-min=10.9",
-        "-L${RACK_DIR}",
+        "-lRack",
+        "-L${workspaceFolder}/build/vcpkg_installed/x64-osx/lib",
+        "-L${workspaceFolder}/build/vcpkg_installed/arm64-osx/lib",
         "-undefined dynamic_lookup"
       ],
       "browse": {
@@ -102,11 +115,14 @@
     {
       "name": "Windows",
       "includePath": [
+        "${workspaceFolder}\\build\\vcpkg_installed\\x64-linux\\include\\Rack-SDK\\dep",
+        "${workspaceFolder}\\build\\vcpkg_installed\\x64-linux\\include\\Rack-SDK\\rack",
+        "${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
         "${default}"
       ],
       "defines": [
-        "${default}",
-        "_USE_MATH_DEFINES"
+        "_USE_MATH_DEFINES",
+        "${default}"
       ],
       "compilerArgs": [
         "-std=c++11",
@@ -116,6 +132,7 @@
         "`pkg-config --cflags --libs Rack-SDK`",
         "`pkg-config --cflags --libs catch2-with-main`",
         "-I${workspaceFolder}\\include",
+        "-I${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
         "-MMD",
         "-MP",
         "-g",
@@ -128,6 +145,7 @@
         "-march=nehalem",
         "-municode",
         "-lRack",
+        "-L${workspaceFolder}\\build\\vcpkg_installed\\x64-mingw-dynamic\\include",
         "-static-libstdc++"
       ],
       "browse": {
