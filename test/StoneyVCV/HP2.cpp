@@ -114,6 +114,15 @@ TEST_CASE( "HP2", "[HP2]" ) {
         }
     }
 
+    // //==========================================================================
+
+    // SECTION( "HP2ModuleWidget" ) {
+    //     ::StoneyDSP::StoneyVCV::HP2::HP2Module* test_hp2Module = new ::StoneyDSP::StoneyVCV::HP2::HP2Module;
+    //     ::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget* test_hp2ModuleWidget = new ::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget(test_hp2Module);
+    //     delete test_hp2ModuleWidget;
+    //     delete test_hp2Module;
+    // }
+
     //==========================================================================
 
     SECTION( "instance" ) {

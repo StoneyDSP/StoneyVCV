@@ -9,26 +9,12 @@
   "configurePresets": [
     {
       "name": "base",
-      "description": "Base configuration for all presets",
+      "description": "Base configuration options for all presets",
+      "hidden": true,
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
-      "installDir": "${sourceDir}/install",
+      "installDir": "${sourceDir}/dist",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-      "hidden": true,
-      "warnings": {
-        "dev": false,
-        "unusedCli": false,
-        "uninitialized": false
-      },
-      "errors": {
-        "dev": false,
-        "deprecated": false
-      },
-      "environment": {
-        "VCPKG_ROOT": "$penv{VCPKG_ROOT}",
-        "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg-registry/ports",
-        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg-registry/triplets"
-      },
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": {
           "value": "ON",
@@ -83,13 +69,21 @@
           "type": "BOOL"
         }
       },
-      "vendor": {
-        "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "autoFormat": true,
-          "intelliSenseOptions": {
-            "useCompilerDefaults": true
-          }
-        }
+      "environment": {
+        "ARCH_NAME": "$env{ARCH_OS}-$env{ARCH_CPU}",
+        "PLUGINS_DIR": "$env{RACK_USER_DIR}/plugins-$env{ARCH_OS}-$env{ARCH_CPU}",
+        "VCPKG_ROOT": "$penv{VCPKG_ROOT}",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg-registry/ports",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg-registry/triplets"
+      },
+      "warnings": {
+        "dev": false,
+        "unusedCli": false,
+        "uninitialized": false
+      },
+      "errors": {
+        "dev": false,
+        "deprecated": false
       }
     },
     {
@@ -140,6 +134,28 @@
       }
     },
     {
+      "name": "x64",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "environment": {
+        "ARCH_CPU": "x64",
+        "ARCH_X64": "1"
+      }
+    },
+    {
+      "name": "arm64",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "environment": {
+        "ARCH_CPU": "arm64",
+        "ARCH_ARM64": "1"
+      }
+    },
+    {
       "name": "windows",
       "hidden": true,
       "inherits": [
@@ -157,6 +173,11 @@
           "intelliSenseOptions": {
             "useCompilerDefaults": true
           }
+        },
+        "environment": {
+          "RACK_USER_DIR": "$penv{LOCALAPPDATA}/Rack2",
+          "ARCH_OS": "win",
+          "ARCH_WIN": "1"
         }
       }
     },
@@ -170,6 +191,12 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
+      },
+      "environment": {
+        "XDG_DATA_HOME": "$penv{HOME}/.local/share",
+	      "RACK_USER_DIR": "$env{XDG_DATA_HOME}/Rack2",
+        "ARCH_OS": "lin",
+        "ARCH_LIN": "1"
       }
     },
     {
@@ -182,6 +209,11 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Darwin"
+      },
+      "environment": {
+        "RACK_USER_DIR": "$penv{HOME}/Library/Application Support/Rack2",
+        "ARCH_OS": "mac",
+        "ARCH_MAC": "1"
       }
     },
     {
@@ -190,7 +222,7 @@
       "description": "This build is only available on Windows x64",
       "hidden": true,
       "inherits": [
-        "base",
+        "x64",
         "windows"
       ],
       "cacheVariables": {
@@ -214,7 +246,7 @@
       "name": "x64-linux",
       "hidden": true,
       "inherits": [
-        "base",
+        "x64",
         "linux"
       ],
       "displayName": "Linux-only configuration",
@@ -249,7 +281,7 @@
       "name": "x64-osx",
       "hidden": true,
       "inherits": [
-        "base",
+        "x64",
         "osx"
       ],
       "displayName": "MacOS-only configuration",
@@ -284,7 +316,7 @@
       "name": "arm64-osx",
       "hidden": true,
       "inherits": [
-        "base",
+        "arm64",
         "osx"
       ],
       "displayName": "MacOS-only configuration",
@@ -319,7 +351,6 @@
       "name": "x64-linux-debug",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-linux",
         "debug"
       ]
@@ -328,7 +359,6 @@
       "name": "x64-linux-release",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-linux",
         "release"
       ]
@@ -337,7 +367,6 @@
       "name": "x64-linux-debug-verbose",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-linux",
         "debug",
         "verbose"
@@ -347,7 +376,6 @@
       "name": "x64-linux-release-verbose",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-linux",
         "release",
         "verbose"
@@ -357,7 +385,6 @@
       "name": "x64-windows-debug",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-windows",
         "debug"
       ]
@@ -366,7 +393,6 @@
       "name": "x64-windows-release",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-windows",
         "release"
       ]
@@ -375,7 +401,6 @@
       "name": "x64-windows-debug-verbose",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-windows",
         "debug",
         "verbose"
@@ -385,7 +410,6 @@
       "name": "x64-windows-release-verbose",
       "hidden": false,
       "inherits": [
-        "base",
         "x64-windows",
         "release",
         "verbose"
@@ -395,8 +419,6 @@
       "name": "x64-osx-debug",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "x64-osx",
         "debug"
       ]
@@ -405,8 +427,6 @@
       "name": "x64-osx-release",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "x64-osx",
         "release"
       ]
@@ -415,8 +435,6 @@
       "name": "x64-osx-debug-verbose",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "x64-osx",
         "debug",
         "verbose"
@@ -426,8 +444,6 @@
       "name": "x64-osx-release-verbose",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "x64-osx",
         "release",
         "verbose"
@@ -437,8 +453,6 @@
       "name": "arm64-osx-debug",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "arm64-osx",
         "debug"
       ]
@@ -447,8 +461,6 @@
       "name": "arm64-osx-release",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "arm64-osx",
         "release"
       ]
@@ -457,8 +469,6 @@
       "name": "arm64-osx-debug-verbose",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "arm64-osx",
         "debug",
         "verbose"
@@ -468,8 +478,6 @@
       "name": "arm64-osx-release-verbose",
       "hidden": false,
       "inherits": [
-        "base",
-        "osx",
         "arm64-osx",
         "release",
         "verbose"
