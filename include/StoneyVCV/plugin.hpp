@@ -91,95 +91,98 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 
-#if (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 2U)
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 2U)
 
-#if defined (STONEYVCV_BUILD_VCA)
-    namespace VCA {
-    /** @addtogroup VCA
-     *  @{
-     */
+    #if defined (STONEYVCV_BUILD_VCA)
+        namespace VCA {
+        /** @addtogroup VCA
+         *  @{
+         */
 
-    /**
-     * @brief Declaration of the `VCA` Model instance, defined in `VCA.cpp`.
-     */
-    extern ::rack::plugin::Model* modelVCA;
+        /**
+         * @brief Declaration of the `VCA` Model instance, defined in `VCA.cpp`.
+         */
+        extern ::rack::plugin::Model* modelVCA;
 
-    /// @} group VCA
-    } // namespace VCA
-#endif // STONEYVCV_BUILD_VCA
+        /// @} group VCA
+        } // namespace VCA
+    #endif // STONEYVCV_BUILD_VCA
 
 #endif // STONEYVCV_VERSION_PATCH >= 2
 
-#if (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
 
-#if defined (STONEYVCV_BUILD_HP4)
-    namespace HP4 {
-    /** @addtogroup HP4
-     *  @{
-     */
+    #if defined (STONEYVCV_BUILD_HP4)
+        namespace HP4 {
+        /** @addtogroup HP4
+         *  @{
+         */
 
-    /**
-     * @brief Declaration of the `HP4` Model instance, defined in `HP4.cpp`.
-     */
-    extern ::rack::plugin::Model* modelHP4;
+        /**
+         * @brief Declaration of the `HP4` Model instance, defined in `HP4.cpp`.
+         */
+        extern ::rack::plugin::Model* modelHP4;
 
 
-    /// @} group HP4
-    } // namespace HP4
-#endif // STONEYVCV_BUILD_HP4
+        /// @} group HP4
+        } // namespace HP4
+    #endif // STONEYVCV_BUILD_HP4
 
-#if defined (STONEYVCV_BUILD_HP2)
-    namespace HP2 {
-    /** @addtogroup HP2
-     *  @{
-     */
+    #if defined (STONEYVCV_BUILD_HP2)
+        namespace HP2 {
+        /** @addtogroup HP2
+         *  @{
+         */
 
-    /**
-     * @brief Declaration of the `HP2` Model instance, defined in `HP2.cpp`.
-     */
-    extern ::rack::plugin::Model* modelHP2;
+        /**
+         * @brief Declaration of the `HP2` Model instance, defined in `HP2.cpp`.
+         */
+        extern ::rack::plugin::Model* modelHP2;
 
-    /// @} group HP1
-    } // namespace HP1
-#endif // STONEYVCV_BUILD_HP2
+        /// @} group HP1
+        } // namespace HP1
+    #endif // STONEYVCV_BUILD_HP2
 
-#if defined (STONEYVCV_BUILD_HP1)
-    namespace HP1 {
-    /** @addtogroup HP1
-     *  @{
-     */
+    #if defined (STONEYVCV_BUILD_HP1)
+        namespace HP1 {
+        /** @addtogroup HP1
+         *  @{
+         */
 
-    /**
-     * @brief Declaration of the `HP1` Model instance, defined in `HP1.cpp`.
-     */
-    extern ::rack::plugin::Model* modelHP1;
+        /**
+         * @brief Declaration of the `HP1` Model instance, defined in `HP1.cpp`.
+         */
+        extern ::rack::plugin::Model* modelHP1;
 
-    /// @} group HP1
-    } // namespace HP1
-#endif // STONEYVCV_BUILD_HP1
+        /// @} group HP1
+        } // namespace HP1
+    #endif // STONEYVCV_BUILD_HP1
 
-#elif (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 0U)
+#endif
+
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH < 1U)
     #warning "No modules found..."
 #endif
 
 #if defined (STONEYVCV_EXPERIMENTAL)
 #warning "Building experimental modules..."
-// EXPERIMENTAL MODULES HERE...
 
-#if defined (STONEYVCV_BUILD_LFO)
-    namespace LFO {
-    /** @addtogroup LFO
-     *  @{
-     */
+    // EXPERIMENTAL MODULES HERE...
 
-    /**
-     * @brief Declaration of the `LFO` Model instance, defined in `LFO.cpp`.
-     */
-    extern ::rack::plugin::Model* modelLFO;
+    #if defined (STONEYVCV_BUILD_LFO)
+        namespace LFO {
+        /** @addtogroup LFO
+         *  @{
+         */
 
-    /// @} group LFO
-    } // namespace LFO
-#endif // STONEYVCV_BUILD_LFO
+        /**
+         * @brief Declaration of the `LFO` Model instance, defined in `LFO.cpp`.
+         */
+        extern ::rack::plugin::Model* modelLFO;
+
+        /// @} group LFO
+        } // namespace LFO
+    #endif // STONEYVCV_BUILD_LFO
 
 #endif // STONEYVCV_EXPERIMENTAL
 
