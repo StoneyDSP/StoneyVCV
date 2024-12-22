@@ -444,16 +444,29 @@ if(STONEYVCV_IS_TOP_LEVEL)
     )
     # This must always be after all CPACK\_\* variables are defined
     include(CPack)
+    cpack_add_component_group("${STONEYVCV_SLUG}"
+        DISPLAY_NAME "${STONEYVCV_SLUG}"
+        DESCRIPTION "${STONEYVCV_BRAND} modules for VCV Rack 2."
+        EXPANDED
+    )
+    cpack_add_component_group(plugin
+        DISPLAY_NAME "plugin"
+        PARENT_GROUP "${STONEYVCV_SLUG}"
+    )
+    cpack_add_component_group(development
+        DISPLAY_NAME "development"
+        PARENT_GROUP "${STONEYVCV_SLUG}"
+    )
     cpack_add_component(plugin
         DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
-        DESCRIPTION "${STONEYVCV_BRAND} modules for VCV Rack 2."
-        GROUP "${STONEYVCV_SLUG}"
+        DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
+        GROUP "plugin"
     )
     foreach(MODULE IN LISTS STONEYVCV_MODULES)
         cpack_add_component(${MODULE}
             DISPLAY_NAME "${MODULE} v${STONEYVCV_VERSION}"
-            DESCRIPTION "The ${MODULE} module."
-            GROUP "plugin"
+            DESCRIPTION "The ${MODULE} module developer files."
+            GROUP "development"
         )
     endforeach()
 endif()
