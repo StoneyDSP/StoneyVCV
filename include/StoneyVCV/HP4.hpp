@@ -122,7 +122,7 @@ public:
      * @brief Destroys the `HP4Module` object.
      *
      */
-    ~HP4Module();
+    virtual ~HP4Module();
 
     //==========================================================================
 
@@ -141,7 +141,7 @@ private:
  *
  */
 struct HP4Widget final :
-    ::rack::Widget
+    ::rack::widget::Widget
 {
 
     //==========================================================================
@@ -150,7 +150,7 @@ public:
 
     //==========================================================================
 
-    using DrawArgs = ::rack::Widget::DrawArgs;
+    using DrawArgs = ::rack::widget::Widget::DrawArgs;
 
     //==========================================================================
 
@@ -160,17 +160,17 @@ public:
      */
     HP4Widget();
 
-    // /**
-    //  * @brief Destroys the `HP4Widget` object.
-    //  *
-    //  */
-    // ~HP4Widget();
+    /**
+     * @brief Destroys the `HP4Widget` object.
+     *
+     */
+    virtual ~HP4Widget();
 
     /**
      * @brief Advances the module by one frame.
      *
      */
-    void step() override;
+    virtual void step() override;
 
     /**
      * @brief Draws the widget to the NanoVG context.
@@ -179,25 +179,25 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::HP4::HP4Widget::DrawArgs& args) override;
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget* hp4WidgetFrameBuffer;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::Widget* panelBorder;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::HP4::HP4Widget::DrawArgs& args) override;
 
     //==========================================================================
 
 private:
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::widget::FramebufferWidget* hp4WidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::app::PanelBorder* panelBorder;
 
     //==========================================================================
 
@@ -227,18 +227,35 @@ public:
      */
     HP4ModuleWidget(::StoneyDSP::StoneyVCV::HP4::HP4Module* module);
 
-    // /**
-    //  * @brief Destroys the `HP4ModuleWidget` object.
-    //  *
-    //  */
-    // ~HP4ModuleWidget();
+    /**
+     * @brief Destroys the `HP4ModuleWidget` object.
+     *
+     */
+    virtual ~HP4ModuleWidget();
+
+    //==========================================================================
+
+    /**
+     * @brief Advances the module by one frame.
+     *
+     */
+    virtual void step() override;
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
     /**
      * @brief
      */
-    ::rack::math::Vec size;
+    const ::rack::math::Vec size;
+
+    /**
+     * @brief
+     */
+    ::rack::app::ThemedSvgPanel* panel;
 
     /**
      * @brief
@@ -250,22 +267,29 @@ public:
      * @brief
      *
      */
-    ::rack::FramebufferWidget* hp4ModuleWidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget* hp4ModuleWidgetFrameBuffer;
 
     //==========================================================================
 
-    ::rack::math::Vec screwT1Pos, screwT2Pos, screwB1Pos, screwB2Pos;
+    /**
+     * @brief
+     *
+     */
+    const ::rack::math::Vec screwsPositions [4];
 
-    ::rack::componentlibrary::ThemedScrew* screwT1;
-    ::rack::componentlibrary::ThemedScrew* screwT2;
-    ::rack::componentlibrary::ThemedScrew* screwB1;
-    ::rack::componentlibrary::ThemedScrew* screwB2;
-
-    ::rack::app::ThemedSvgPanel* panel;
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::ThemedScrew* screws [4];
 
     //==========================================================================
 
-private:
+    /**
+     * @brief
+     *
+     */
+    bool lastPrefersDarkPanels;
 
     //==========================================================================
 

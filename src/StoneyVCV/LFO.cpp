@@ -41,6 +41,11 @@
 
 ::StoneyDSP::StoneyVCV::LFO::LFOModule::LFOModule()
 {
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_PARAMS == 0U);
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_INPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_OUTPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_LIGHTS == 0U);
+
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
         ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_PARAMS,
@@ -52,7 +57,6 @@
 
 ::StoneyDSP::StoneyVCV::LFO::LFOModule::~LFOModule()
 {
-
 }
 
 void ::StoneyDSP::StoneyVCV::LFO::LFOModule::process(const ::StoneyDSP::StoneyVCV::LFO::LFOModule::ProcessArgs &args)
@@ -74,21 +78,26 @@ void ::StoneyDSP::StoneyVCV::LFO::LFOModule::dataFromJson(::json_t *rootJ)
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::LFO::LFOWidget::LFOWidget()
+:   lfoWidgetFrameBuffer(new ::rack::FramebufferWidget),
+    panelBorder(::rack::createWidget<::rack::PanelBorder>(::rack::math::Vec(0.0F, 0.0F)))
 {
     // Widgets
-    lfoWidgetFrameBuffer = new ::rack::FramebufferWidget;
     lfoWidgetFrameBuffer->setSize(box.size);
     addChild(lfoWidgetFrameBuffer);
+
+    // Border
+    panelBorder->setSize(box.size);
+    hp1WidgetFrameBuffer->addChild(panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::LFO::LFOWidget::~LFOWidget()
-{
-    // delete lfoWidgetFrameBuffer;
-}
+// ::StoneyDSP::StoneyVCV::LFO::LFOWidget::~LFOWidget()
+// {
+//     delete panelBorder;
+//     delete lfoWidgetFrameBuffer;
+// }
 
 void ::StoneyDSP::StoneyVCV::LFO::LFOWidget::step()
 {
-    panelBorder->box.size = box.size;
     ::rack::Widget::step();
 }
 
