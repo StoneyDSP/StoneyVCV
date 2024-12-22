@@ -29,7 +29,7 @@
           "type": "STRING"
         },
         "STONEYVCV_EXPERIMENTAL": {
-          "value": "ON",
+          "value": "OFF",
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_DOCS": {
