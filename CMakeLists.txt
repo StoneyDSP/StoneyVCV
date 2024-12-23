@@ -2,11 +2,15 @@ cmake_minimum_required(VERSION 3.23...3.31 FATAL_ERROR)
 
 #[=================================[STONEYVCV]=================================]
 
+set(STONEYVCV_BRAND "StoneyDSP" CACHE STRING "" FORCE)
+set(STONEYVCV_SLUG "StoneyVCV" CACHE STRING "" FORCE)
+
 project(STONEYVCV
-    VERSION 2.0.1.0
-    DESCRIPTION "StoneyDSP Modules for VCV Rack 2."
-    HOMEPAGE_URL "https://github.com/StoneyDSP/StoneyVCV"
+    VERSION 2.0.2.0
+    DESCRIPTION "${STONEYVCV_BRAND} Modules for VCV Rack 2."
+    HOMEPAGE_URL "https://github.com/${STONEYVCV_BRAND}/${STONEYVCV_SLUG}"
 )
+
 set(PROJECT_NAME "StoneyVCV" CACHE STRING "" FORCE)
 
 enable_language(C)
@@ -27,18 +31,16 @@ option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENT
 option(STONEYVCV_BUILD_DOCS "" OFF)
 option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
 cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
-cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP1   "Use '-DSTONEYVCV_BUILD_MODULE_HP1=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP2   "Use '-DSTONEYVCV_BUILD_MODULE_HP2=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_MODULE_HP4   "Use '-DSTONEYVCV_BUILD_MODULE_HP4=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_MODULE_VCA   "Use '-DSTONEYVCV_BUILD_MODULE_VCA=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL" ON)
-cmake_dependent_option(STONEYVCV_BUILD_MODULE_LFO   "Use '-DSTONEYVCV_BUILD_MODULE_LFO=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL" ON)
+cmake_dependent_option(STONEYVCV_BUILD_HP1          "Use '-DSTONEYVCV_BUILD_HP1=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
+cmake_dependent_option(STONEYVCV_BUILD_HP2          "Use '-DSTONEYVCV_BUILD_HP2=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
+cmake_dependent_option(STONEYVCV_BUILD_HP4          "Use '-DSTONEYVCV_BUILD_HP4=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
+cmake_dependent_option(STONEYVCV_BUILD_VCA          "Use '-DSTONEYVCV_BUILD_VCA=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
+cmake_dependent_option(STONEYVCV_BUILD_LFO          "Use '-DSTONEYVCV_BUILD_LFO=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL" ON)
 cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TESTS=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_IS_TOP_LEVEL" ON)
 
 # Put components in the correct order of their dependencies on eachother to save tears...
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
-
-
 
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
@@ -58,12 +60,12 @@ if(STONEYVCV_BUILD_PLUGIN)
 
     # create rack-sdk plugin target
     vcvrack_add_plugin(
-        SLUG StoneyVCV
-        BRAND StoneyDSP
-            HEADERS "include/StoneyVCV/plugin.hpp" "include/StoneyVCV/version.hpp"
-        SOURCES "src/StoneyVCV/plugin.cpp"
-            VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
-            SOVERSION "${STONEYVCV_VERSION_MAJOR}"
+        SLUG "${STONEYVCV_SLUG}"
+        BRAND "${STONEYVCV_BRAND}"
+        HEADERS "include/${STONEYVCV_SLUG}/plugin.hpp" "include/${STONEYVCV_SLUG}/version.hpp"
+        SOURCES "src/${STONEYVCV_SLUG}/plugin.cpp"
+        VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
+        SOVERSION "${STONEYVCV_VERSION_MAJOR}"
         EXPORT
         INSTALL
     )
@@ -93,8 +95,8 @@ endif(STONEYVCV_BUILD_PLUGIN)
 #[==[test]==]
 function(stoneyvcv_add_test MODULE)
     add_library(tests_${MODULE} OBJECT EXCLUDE_FROM_ALL)
-    add_library(StoneyVCV::tests_${MODULE} ALIAS tests_${MODULE})
-    add_library(StoneyDSP::StoneyVCV::tests_${MODULE} ALIAS tests_${MODULE})
+    add_library(${STONEYVCV_SLUG}::tests_${MODULE} ALIAS tests_${MODULE})
+    add_library(${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::tests_${MODULE} ALIAS tests_${MODULE})
     target_include_directories(tests_${MODULE}
         PUBLIC
         $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
@@ -102,12 +104,12 @@ function(stoneyvcv_add_test MODULE)
     )
     target_sources(tests_${MODULE}
         PRIVATE
-            "${STONEYVCV_SOURCE_DIR}/test/StoneyVCV/${MODULE}.cpp"
+            "${STONEYVCV_SOURCE_DIR}/test/${STONEYVCV_SLUG}/${MODULE}.cpp"
     )
     target_link_libraries(tests_${MODULE}
         PUBLIC
             unofficial-vcvrack::rack-sdk::core
-            StoneyDSP::StoneyVCV::${MODULE}
+            ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::${MODULE}
             Catch2::Catch2
     )
     target_compile_features(tests_${MODULE} PUBLIC cxx_std_17)
@@ -119,7 +121,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     find_package(Catch2 3.5.2 REQUIRED)
     add_executable(tests)
     add_executable(StoneyVCV::tests ALIAS tests)
-    add_executable(StoneyDSP::StoneyVCV::tests ALIAS tests)
+    add_executable(${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::tests ALIAS tests)
     target_include_directories(tests
         PUBLIC
         $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
@@ -128,7 +130,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     target_link_libraries(tests
         PUBLIC
         unofficial-vcvrack::rack-sdk::lib
-        StoneyDSP::StoneyVCV::plugin
+        ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::plugin
         Catch2::Catch2WithMain
     )
     set_target_properties(tests
@@ -158,14 +160,14 @@ if(STONEYVCV_BUILD_MODULES)
 
     set(STONEYVCV_MODULES)
     list(APPEND STONEYVCV_MODULES # List of enabled modules
-        HP1
-        HP2
         HP4
+        HP2
+        HP1
+        VCA
     )
 
     set(STONEYVCV_EXPERIMENTAL_MODULES)
     list(APPEND STONEYVCV_EXPERIMENTAL_MODULES # List of enabled experimental modules
-        VCA
         LFO
     )
 
@@ -175,15 +177,15 @@ if(STONEYVCV_BUILD_MODULES)
 
     foreach(MODULE IN LISTS STONEYVCV_MODULES)
 
-        if(STONEYVCV_BUILD_MODULE_${MODULE}) # Toggle module code with -D
+        if(STONEYVCV_BUILD_${MODULE}) # Toggle module code with -D
 
             vcvrack_add_module(${MODULE}
-                SLUG StoneyVCV
-                BRAND StoneyDSP
-                HEADERS "include/StoneyVCV/${MODULE}.hpp"
-                SOURCES "src/StoneyVCV/${MODULE}.cpp"
-                VERSION 0.0.1
-                SOVERSION 0
+                SLUG "${STONEYVCV_SLUG}"
+                BRAND "${STONEYVCV_BRAND}"
+                HEADERS "include/${STONEYVCV_SLUG}/${MODULE}.hpp"
+                SOURCES "src/${STONEYVCV_SLUG}/${MODULE}.cpp"
+                VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
+                SOVERSION "${STONEYVCV_VERSION_MAJOR}"
                 EXPORT
                 INSTALL
             )
@@ -253,7 +255,7 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
     # Toggle unit test code
     if(STONEYVCV_BUILD_TESTS)
         stoneyvcv_add_test(${TARGET})
-        target_link_libraries(tests PUBLIC StoneyDSP::StoneyVCV::tests_${TARGET})
+        target_link_libraries(tests PUBLIC ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::tests_${TARGET})
         target_compile_definitions(${TARGET}
             PUBLIC
                 "-DSTONEYVCV_BUILD_TESTS=1"
@@ -316,54 +318,54 @@ unset(__plugin_interface_compiler_opts)
 
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/StoneyVCV.pc"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/pkgconfig/${STONEYVCV_SLUG}.pc"
     DESTINATION
     "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
 )
 
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in" [==[
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}Config.cmake.in" [==[
 @PACKAGE_INIT@
 
-include("${CMAKE_CURRENT_LIST_DIR}/StoneyDSP-StoneyVCVConfigVersion.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/@STONEYVCV_BRAND@-@STONEYVCV_SLUG@ConfigVersion.cmake")
 
 include(CMakeFindDependencyMacro)
 
 find_dependency(rack-sdk 2.5.2)
 find_dependency(StoneyDSP 0.0.0)
 
-set(_StoneyVCV_supported_components)
-list(APPEND _StoneyVCV_supported_components
+set(_@STONEYVCV_SLUG@_supported_components)
+list(APPEND _@STONEYVCV_SLUG@_supported_components
     @STONEYVCV_TARGETS@
 )
 
 ## Custom 'check_required_components' macro
-foreach(_requested_component ${StoneyVCV_FIND_COMPONENTS})
-  if (NOT _requested_component IN_LIST _StoneyVCV_supported_components)
-    set(StoneyVCV_FOUND False)
-    set(StoneyVCV_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
+foreach(_requested_component ${@STONEYVCV_SLUG@_FIND_COMPONENTS})
+  if (NOT _requested_component IN_LIST _@STONEYVCV_SLUG@_supported_components)
+    set(@STONEYVCV_SLUG@_FOUND False)
+    set(@STONEYVCV_SLUG@_NOT_FOUND_MESSAGE "Unsupported component: ${_requested_component}")
   endif()
-  include("${CMAKE_CURRENT_LIST_DIR}/StoneyVCV${_requested_component}Targets.cmake")
-  message(STATUS "Linking with StoneyVCV::${_requested_component}")
+  include("${CMAKE_CURRENT_LIST_DIR}/@STONEYVCV_SLUG@${_requested_component}Targets.cmake")
+  message(STATUS "Linking with @STONEYVCV_SLUG@::${_requested_component}")
 endforeach()
 
-unset(_StoneyVCV_supported_components)
+unset(_@STONEYVCV_SLUG@_supported_components)
 
 # Tell the user what to do
-message(STATUS "Linking with StoneyVCV")
+message(STATUS "Linking with @STONEYVCV_SLUG@")
 
 ]==])
 # generate a basic package config file
 configure_package_config_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/StoneyDSP-StoneyVCVConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}Config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/${STONEYVCV_BRAND}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}Config.cmake"
     INSTALL_DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/${STONEYVCV_BRAND}"
     # Use custom 'check_required_components' macro
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
 # generate the version file for the config file
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/${STONEYVCV_BRAND}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}ConfigVersion.cmake"
     VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
     COMPATIBILITY ExactVersion
 )
@@ -372,10 +374,10 @@ write_basic_package_version_file(
 
 install(
     FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/StoneyDSP/StoneyDSP-StoneyVCVConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/${STONEYVCV_BRAND}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}Config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/${STONEYVCV_BRAND}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}ConfigVersion.cmake"
     DESTINATION
-    "${CMAKE_INSTALL_LIBDIR}/cmake/StoneyDSP"
+    "${CMAKE_INSTALL_LIBDIR}/cmake/${STONEYVCV_BRAND}"
 )
 install(DIRECTORY
     "${STONEYVCV_SOURCE_DIR}/res"
@@ -411,14 +413,14 @@ endif()
 
 if(STONEYVCV_IS_TOP_LEVEL)
     # add CPack to project
-    set(CPACK_PACKAGE_NAME "StoneyVCV")
-    set(CPACK_PACKAGE_VENDOR "StoneyDSP")
+    set(CPACK_PACKAGE_NAME "${STONEYVCV_SLUG}")
+    set(CPACK_PACKAGE_VENDOR "${STONEYVCV_BRAND}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "StoneyDSP modules for VCV Rack 2.")
     set(CPACK_PACKAGE_VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
     set(CPACK_PACKAGE_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
     set(CPACK_PACKAGE_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
     set(CPACK_PACKAGE_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "StoneyDSP")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${STONEYVCV_BRAND}")
     # set(CPACK_GENERATOR)
     # list(APPEND CPACK_GENERATOR "ZIP")
     set(CPACK_SOURCE_IGNORE_FILES)
@@ -442,16 +444,31 @@ if(STONEYVCV_IS_TOP_LEVEL)
     )
     # This must always be after all CPACK\_\* variables are defined
     include(CPack)
+    # cpack_add_component_group("${STONEYVCV_SLUG}"
+    #     DISPLAY_NAME "${STONEYVCV_SLUG}"
+    #     DESCRIPTION "${STONEYVCV_BRAND} modules for VCV Rack 2."
+    #     EXPANDED
+    # )
+    # cpack_add_component_group(plugin
+    #     DISPLAY_NAME "plugin"
+    #     PARENT_GROUP "${STONEYVCV_SLUG}"
+    # )
+    # cpack_add_component_group(development
+    #     DISPLAY_NAME "development"
+    #     PARENT_GROUP "${STONEYVCV_SLUG}"
+    # )
     cpack_add_component(plugin
-        DISPLAY_NAME "StoneyVCV v${STONEYVCV_VERSION}"
-        DESCRIPTION "StoneyDSP modules for VCV Rack 2."
-        GROUP "StoneyVCV"
+        DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
+        DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
+        # GROUP "plugin"
+        GROUP "${STONEYVCV_SLUG}"
     )
     foreach(MODULE IN LISTS STONEYVCV_MODULES)
         cpack_add_component(${MODULE}
             DISPLAY_NAME "${MODULE} v${STONEYVCV_VERSION}"
-            DESCRIPTION "The ${MODULE} module."
-            GROUP "StoneyVCV"
+            DESCRIPTION "The ${MODULE} module developer files."
+            # GROUP "development"
+            GROUP "${STONEYVCV_SLUG}"
         )
     endforeach()
 endif()
