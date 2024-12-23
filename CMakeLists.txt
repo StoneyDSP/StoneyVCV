@@ -45,15 +45,51 @@ find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
 
-#[===================================[docs]===================================]#
-
-if(STONEYVCV_BUILD_DOCS)
-    find_package(Doxygen)
-    doxygen_add_docs(docs
-        CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile"
-    )
-endif()
-
+#[=================================[StoneyVCV]=================================]
+# Core interface library - base dependency carrier
+add_library("${STONEYVCV_SLUG}" INTERFACE)
+add_library("${STONEYVCV_BRAND}::${STONEYVCV_SLUG}" ALIAS "${STONEYVCV_SLUG}")
+configure_file("include/StoneyVCV.hpp" "include/StoneyVCV.hpp")
+target_sources("${STONEYVCV_SLUG}"
+    INTERFACE
+    FILE_SET stoneyvcv_INTERFACE_HEADERS
+    TYPE HEADERS
+    BASE_DIRS
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    FILES
+    $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}.hpp>
+    $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}.hpp>
+)
+# Add project version number
+target_compile_definitions("${STONEYVCV_SLUG}"
+    INTERFACE
+    "STONEYVCV_VERSION_MAJOR=${STONEYVCV_VERSION_MAJOR}"
+    "STONEYVCV_VERSION_MINOR=${STONEYVCV_VERSION_MINOR}"
+    "STONEYVCV_VERSION_PATCH=${STONEYVCV_VERSION_PATCH}"
+    "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
+    "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
+)
+install(TARGETS ${STONEYVCV_SLUG}
+    EXPORT ${STONEYVCV_SLUG}Exports
+    COMPONENT ${STONEYVCV_SLUG}
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILE_SET stoneyvcv_INTERFACE_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+install(EXPORT ${STONEYVCV_SLUG}Exports
+    FILE "${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-targets.cmake"
+    NAMESPACE ${STONEYVCV_BRAND}::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${STONEYVCV_BRAND}"
+)
+export(SETUP ${STONEYVCV_SLUG}Exports)
+export(
+    EXPORT ${STONEYVCV_SLUG}Exports
+    FILE "lib/cmake/${STONEYVCV_BRAND}/$${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-targets.cmake"
+    NAMESPACE ${STONEYVCV_BRAND}::
+)
 #[==================================[plugin]==================================]#
 
 if(STONEYVCV_BUILD_PLUGIN)
@@ -69,6 +105,8 @@ if(STONEYVCV_BUILD_PLUGIN)
         EXPORT
         INSTALL
     )
+
+    target_link_libraries(plugin PUBLIC "${STONEYVCV_BRAND}::${STONEYVCV_SLUG}")
 
     target_compile_definitions(plugin
         PUBLIC
@@ -268,6 +306,16 @@ foreach(TARGET IN LISTS STONEYVCV_TARGETS)
 
 endforeach()
 
+#[===================================[docs]===================================]#
+
+if(STONEYVCV_BUILD_DOCS)
+    find_package(Doxygen)
+    doxygen_add_docs(docs
+        CONFIG_FILE "${STONEYVCV_SOURCE_DIR}/docs/Doxyfile"
+        WORKING_DIRECTORY "${STONEYVCV_SOURCE_DIR}/docs"
+    )
+endif()
+
 #[============================[Write CMake Package]============================]
 
 include(CMakePackageConfigHelpers)
@@ -457,6 +505,11 @@ if(STONEYVCV_IS_TOP_LEVEL)
     #     DISPLAY_NAME "development"
     #     PARENT_GROUP "${STONEYVCV_SLUG}"
     # )
+    cpack_add_component("${STONEYVCV_SLUG}"
+        DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
+        DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
+        GROUP "${STONEYVCV_SLUG}"
+    )
     cpack_add_component(plugin
         DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
         DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
