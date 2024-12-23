@@ -1,12 +1,52 @@
 cmake_minimum_required(VERSION 3.23...3.31 FATAL_ERROR)
 
-#[=================================[STONEYVCV]=================================]
+#[==============================[Version control]==============================]
 
 set(STONEYVCV_BRAND "StoneyDSP" CACHE STRING "" FORCE)
 set(STONEYVCV_SLUG "StoneyVCV" CACHE STRING "" FORCE)
+set(STONEYVCV_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "" FORCE)
+set(STONEYVCV_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE PATH "" FORCE)
 
+# https://softwareengineering.stackexchange.com/questions/141973/how-do-you-achieve-a-numeric-versioning-scheme-with-git
+# 'git rev-list HEAD | wc -l'
+find_package(Git REQUIRED)
+execute_process(
+    COMMAND "${GIT_EXECUTABLE}" "rev-list" "HEAD"
+    COMMAND "wc" "-l"
+    WORKING_DIRECTORY "${STONEYVCV_SOURCE_DIR}"
+    OUTPUT_VARIABLE _STONEYVCV_GIT_COMMIT_COUNT
+    ERROR_VARIABLE _STONEYVCV_GIT_COMMIT_COUNT_ERROR
+)
+if(_STONEYVCV_GIT_COMMIT_COUNT_ERROR)
+    message(SEND_ERROR "${_STONEYVCV_GIT_COMMIT_COUNT_ERROR}")
+endif()
+execute_process(
+    COMMAND "${GIT_EXECUTABLE}" "rev-parse" "HEAD"
+    WORKING_DIRECTORY "${STONEYVCV_SOURCE_DIR}"
+    OUTPUT_VARIABLE _STONEYVCV_GIT_REF_HEAD
+    ERROR_VARIABLE _STONEYVCV_GIT_REF_HEAD_ERROR
+)
+if(_STONEYVCV_GIT_REF_HEAD_ERROR)
+    message(SEND_ERROR "${_STONEYVCV_GIT_REF_HEAD_ERROR}")
+endif()
+execute_process(
+    COMMAND "${GIT_EXECUTABLE}" rev-parse --abbrev-ref --symbolic-full-name HEAD
+    WORKING_DIRECTORY "${STONEYVCV_SOURCE_DIR}"
+    OUTPUT_VARIABLE _STONEYVCV_GIT_BRANCH
+    ERROR_VARIABLE _STONEYVCV_GIT_BRANCH_ERROR
+)
+if(_STONEYVCV_GIT_BRANCH_ERROR)
+    message(SEND_ERROR "${_STONEYVCV_GIT_BRANCH_ERROR}")
+endif()
+string(STRIP "${_STONEYVCV_GIT_COMMIT_COUNT}" STONEYVCV_GIT_COMMIT_COUNT)
+string(STRIP "${_STONEYVCV_GIT_REF_HEAD}" _STONEYVCV_GIT_REF_HEAD)
+string(STRIP "${_STONEYVCV_GIT_BRANCH}" STONEYVCV_GIT_BRANCH)
+
+string(HEX "${_STONEYVCV_GIT_REF_HEAD}" STONEYVCV_GIT_REF_HEAD)
+
+#[==================================[project]==================================]
 project(STONEYVCV
-    VERSION 2.0.2.0
+    VERSION "2.0.${STONEYVCV_GIT_COMMIT_COUNT}.${STONEYVCV_GIT_REF_HEAD}"
     DESCRIPTION "${STONEYVCV_BRAND} Modules for VCV Rack 2."
     HOMEPAGE_URL "https://github.com/${STONEYVCV_BRAND}/${STONEYVCV_SLUG}"
 )
@@ -18,14 +58,6 @@ enable_language(CXX)
 
 include(CMakeDependentOption)
 include(GNUInstallDirs)
-
-set(STONEYVCV_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "" FORCE)
-set(STONEYVCV_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE PATH "" FORCE)
-set(STONEYVCV_VERSION_MAJOR "${CMAKE_PROJECT_VERSION_MAJOR}" CACHE STRING "" FORCE)
-set(STONEYVCV_VERSION_MINOR "${CMAKE_PROJECT_VERSION_MINOR}" CACHE STRING "" FORCE)
-set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FORCE)
-set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
-set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
 option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." OFF)
 option(STONEYVCV_BUILD_DOCS "" OFF)
@@ -41,6 +73,41 @@ cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TEST
 # Put components in the correct order of their dependencies on eachother to save tears...
 find_package(rack-sdk 2.5.2 REQUIRED COMPONENTS dep core lib CONFIG)
 find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
+
+set(STONEYVCV_VERSION_MAJOR "${CMAKE_PROJECT_VERSION_MAJOR}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION_MINOR "${CMAKE_PROJECT_VERSION_MINOR}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION_TWEAK "${CMAKE_PROJECT_VERSION_TWEAK}" CACHE STRING "" FORCE)
+set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
+
+# Validate plugin.json
+vcvrack_get_plugin_version()
+if(NOT "${VCVRACK_PLUGIN_VERSION}" STREQUAL "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
+    set(_STONEYVCV_ERROR_STRING [==[
+
+There is a mismatch between plugin versions in 'plugin.json' and 'CMakeLists.txt':
+plugin.json#version: @VCVRACK_PLUGIN_VERSION@
+project(VERSION @STONEYVCV_VERSION_MAJOR@.@STONEYVCV_VERSION_MINOR@.@STONEYVCV_VERSION_PATCH@
+Please update the version number in the following files in order to silence this error:
+@STONEYVCV_SOURCE_DIR@/plugin.json
+@STONEYVCV_SOURCE_DIR@/CMakeLists.txt
+    ]==])
+    string(CONFIGURE "${_STONEYVCV_ERROR_STRING}" STONEYVCV_ERROR_STRING @ONLY)
+    ## TODO: Track and update "version" field in 'plugin.json' somehow...
+    # if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+    #     message(SEND_ERROR "${STONEYVCV_ERROR_STRING}")
+    #     return()
+    # elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        message(WARNING "${STONEYVCV_ERROR_STRING}")
+    # endif()
+endif()
+
+set(STONEYVCV_VERSION_FILE "${STONEYVCV_SOURCE_DIR}/VERSION")
+file(WRITE "${STONEYVCV_VERSION_FILE}.tmp" "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}.${STONEYVCV_VERSION_TWEAK}\n")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different "${STONEYVCV_VERSION_FILE}.tmp" "${STONEYVCV_VERSION_FILE}")
+file(REMOVE "${STONEYVCV_VERSION_FILE}.tmp")
+set(STONEYVCV_VERSION_FILE "${STONEYVCV_VERSION_FILE}" CACHE INTERNAL "StoneyVCV current version file." FORCE)
+
 
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
@@ -62,6 +129,11 @@ target_sources("${STONEYVCV_SLUG}"
     $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}.hpp>
 )
 # Add project version number
+set_target_properties("${STONEYVCV_SLUG}"
+    PROPERTIES
+    VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
+    SOVERSION "${STONEYVCV_VERSION_MAJOR}"
+)
 target_compile_definitions("${STONEYVCV_SLUG}"
     INTERFACE
     "STONEYVCV_VERSION_MAJOR=${STONEYVCV_VERSION_MAJOR}"
@@ -98,10 +170,16 @@ export(
     FILE "lib/cmake/${STONEYVCV_BRAND}/$${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-targets.cmake"
     NAMESPACE ${STONEYVCV_BRAND}::
 )
+message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG} v${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
 
 #[==================================[plugin]==================================]#
 
 if(STONEYVCV_BUILD_PLUGIN)
+
+    set(plugin_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+    set(plugin_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+    set(plugin_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
+    set(plugin_VERSION "${plugin_VERSION_MAJOR}.${plugin_VERSION_MINOR}.${plugin_VERSION_PATCH}")
 
     # create rack-sdk plugin target
     vcvrack_add_plugin(
@@ -136,14 +214,26 @@ if(STONEYVCV_BUILD_PLUGIN)
     )
 
     list(APPEND STONEYVCV_TARGETS plugin) # Collect list of targets to build...
+    message(STATUS "Added target: ${STONEYVCV_SLUG}::${STONEYVCV_BRAND}::plugin v${plugin_VERSION}")
 
 endif(STONEYVCV_BUILD_PLUGIN)
 
 #[==[test]==]
 function(stoneyvcv_add_test MODULE)
+
+    set(tests_${MODULE}_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+    set(tests_${MODULE}_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+    set(tests_${MODULE}_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
+    set(tests_${MODULE}_VERSION "${tests_${MODULE}_VERSION_MAJOR}.${tests_${MODULE}_VERSION_MINOR}.${tests_${MODULE}_VERSION_PATCH}")
+
     add_library(tests_${MODULE} OBJECT EXCLUDE_FROM_ALL)
     add_library(${STONEYVCV_SLUG}::tests_${MODULE} ALIAS tests_${MODULE})
     add_library(${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::tests_${MODULE} ALIAS tests_${MODULE})
+    set_target_properties(tests_${MODULE}
+        PROPERTIES
+            VERSION "${tests_${MODULE}_VERSION}"
+            SOVERSION "${tests_${MODULE}_VERSION_MAJOR}"
+        )
     target_include_directories(tests_${MODULE}
         PUBLIC
         $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
@@ -159,13 +249,27 @@ function(stoneyvcv_add_test MODULE)
             ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::${MODULE}
             Catch2::Catch2
     )
+    target_compile_definitions(tests_${MODULE}
+        PUBLIC
+            "-Dtests_${MODULE}_VERSION_MAJOR=${tests_${MODULE}_VERSION_MAJOR}"
+            "-Dtests_${MODULE}_VERSION_MINOR=${tests_${MODULE}_VERSION_MINOR}"
+            "-Dtests_${MODULE}_VERSION_PATCH=${tests_${MODULE}_VERSION_PATCH}"
+            "-Dtests_${MODULE}_VERSION=${tests_${MODULE}_VERSION}"
+    )
     target_compile_features(tests_${MODULE} PUBLIC cxx_std_17)
     target_compile_features(tests_${MODULE} PUBLIC c_std_17)
+    message(STATUS "Added target: ${STONEYVCV_SLUG}::${STONEYVCV_BRAND}::tests_${MODULE} v${tests_${MODULE}_VERSION}")
 endfunction()
 
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
 
     find_package(Catch2 3.5.2 REQUIRED)
+
+    set(tests_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+    set(tests_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+    set(tests_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
+    set(tests_VERSION "${tests_VERSION_MAJOR}.${tests_VERSION_MINOR}.${tests_VERSION_PATCH}")
+
     add_executable(tests)
     add_executable(StoneyVCV::tests ALIAS tests)
     add_executable(${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::tests ALIAS tests)
@@ -182,11 +286,20 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     )
     set_target_properties(tests
         PROPERTIES
+        VERSION "${tests_VERSION}"
+        SOVERSION "${tests_VERSION_MAJOR}"
         RUNTIME_OUTPUT_DIRECTORY "${STONEYVCV_BINARY_DIR}/test"
         RUNTIME_OUTPUT_NAME "tests"
     )
     target_compile_features(tests PUBLIC cxx_std_17)
     target_compile_features(tests PUBLIC c_std_17)
+    target_compile_definitions(tests
+        PUBLIC
+        "-Dtests_VERSION_MAJOR=${tests_VERSION_MAJOR}"
+        "-Dtests_VERSION_MINOR=${tests_VERSION_MINOR}"
+        "-Dtests_VERSION_PATCH=${tests_VERSION_PATCH}"
+        "-Dtests_VERSION=${tests_VERSION}"
+    )
     if(STONEYVCV_BUILD_PLUGIN)
         target_compile_definitions(tests
             PUBLIC
@@ -199,6 +312,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
                 "-DSTONEYVCV_BUILD_MODULES=1"
         )
     endif()
+    message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::tests v${tests_VERSION}")
 endif()
 
 #[==================================[Modules]==================================]
@@ -226,24 +340,40 @@ if(STONEYVCV_BUILD_MODULES)
 
         if(STONEYVCV_BUILD_${MODULE}) # Toggle module code with -D
 
+            set(${MODULE}_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+            set(${MODULE}_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+            execute_process(
+                COMMAND "${GIT_EXECUTABLE}" rev-list module/${MODULE}
+                COMMAND wc -l
+                OUTPUT_VARIABLE ${MODULE}_VERSION_PATCH
+                ERROR_VARIABLE _${MODULE}_VERSION_PATCH
+            )
+            if(${_${MODULE}_VERSION_PATCH})
+                message(WARNING "git: could not find a corresponding module/${MODULE} branch for module ${MODULE}")
+            endif()
+            string(STRIP "${${MODULE}_VERSION_PATCH}" ${MODULE}_VERSION_PATCH)
+            set(${MODULE}_VERSION "${${MODULE}_VERSION_MAJOR}.${${MODULE}_VERSION_MINOR}.${${MODULE}_VERSION_PATCH}")
+
             vcvrack_add_module(${MODULE}
                 SLUG "${STONEYVCV_SLUG}"
                 BRAND "${STONEYVCV_BRAND}"
                 HEADERS "include/${STONEYVCV_SLUG}/${MODULE}.hpp"
                 SOURCES "src/${STONEYVCV_SLUG}/${MODULE}.cpp"
-                VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
+                VERSION "${${MODULE}_VERSION}"
                 SOVERSION "${STONEYVCV_VERSION_MAJOR}"
                 EXPORT
                 INSTALL
             )
-            list(APPEND STONEYVCV_TARGETS ${MODULE}) # Collect enabled modules
-
             target_compile_definitions(${MODULE}
                 PUBLIC
                     "-DSTONEYVCV_BUILD_PLUGIN=1"
                     "-DSTONEYVCV_BUILD_MODULES=1"
                     "-DSTONEYVCV_BUILD_${MODULE}=1"
+                    "-D${MODULE}_VERSION=${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${${MODULE}_VERSION_PATCH}"
             )
+
+            list(APPEND STONEYVCV_TARGETS ${MODULE}) # Collect enabled modules
+            message(STATUS "Added target: ${STONEYVCV_SLUG}::${STONEYVCV_BRAND}::${MODULE} v${${MODULE}_VERSION}")
 
         endif()
 
@@ -323,6 +453,13 @@ if(STONEYVCV_BUILD_DOCS)
         CONFIG_FILE "${STONEYVCV_SOURCE_DIR}/docs/Doxyfile"
         WORKING_DIRECTORY "${STONEYVCV_SOURCE_DIR}"
     )
+    # add_library(${STONEYVCV_SLUG}::docs ALIAS docs)
+    # add_library(${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::docs ALIAS docs)
+    set_target_properties(docs PROPERTIES
+        VERSION "${STONEYVCV_VERSION}"
+        SOVERSION "${STONEYVCV_VERSION_MAJOR}"
+    )
+    message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::docs v${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
 endif()
 
 #[============================[Write CMake Package]============================]
@@ -534,3 +671,14 @@ if(STONEYVCV_IS_TOP_LEVEL)
         )
     endforeach()
 endif()
+
+# Tell the user about the plugin (sanity check)
+# vcvrack_get_plugin_json()
+# message(STATUS "${VCVRACK_PLUGIN_JSON}")
+
+vcvrack_use_jq(
+    COMMAND ".modules | length" "plugin.json"
+    OUTPUT_VARIABLE STONEYVCV_MODULES_COUNT
+)
+string(STRIP "${STONEYVCV_MODULES_COUNT}" STONEYVCV_MODULES_COUNT)
+message(DEBUG "number of modules: ${STONEYVCV_MODULES_COUNT}")
