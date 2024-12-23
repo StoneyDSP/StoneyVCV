@@ -190,6 +190,10 @@ namespace Panels {
 extern ::NVGcolor bgBlack;
 extern ::NVGcolor bgWhite;
 extern ::NVGcolor borderColor;
+extern ::NVGcolor bgGradientBlackS0;
+extern ::NVGcolor bgGradientBlackS1;
+extern ::NVGcolor bgGradientWhiteS0;
+extern ::NVGcolor bgGradientWhiteS1;
 extern ::StoneyDSP::float_t MIN_WIDTH;
 extern ::StoneyDSP::float_t MIN_HEIGHT;
 
