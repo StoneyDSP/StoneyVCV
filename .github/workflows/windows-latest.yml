@@ -192,14 +192,14 @@ jobs:
     - name: upload .exe
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-win64.exe
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-win64.exe
+        name: StoneyVCV-2.0.972-win64.exe
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.972-win64.exe
 
     - name: upload .vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-2.0.1-win-x64.vcvplugin
-        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.1-win-x64.vcvplugin'
+        name: StoneyDSP-StoneyVCV-2.0.972-win-x64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.972-win-x64.vcvplugin'
 
     - name: download
       uses: actions/download-artifact@v4

@@ -158,20 +158,20 @@ jobs:
     - name: upload vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-2.0.1-mac-arm64.vcvplugin
-        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.1-mac-arm64.vcvplugin'
+        name: StoneyDSP-StoneyVCV-2.0.972-mac-arm64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.972-mac-arm64.vcvplugin'
 
     - name: upload .sh
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-Darwin.sh
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Darwin.sh
+        name: StoneyVCV-2.0.972-Darwin.sh
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.972-Darwin.sh
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-Darwin.tar.gz
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Darwin.tar.gz
+        name: StoneyVCV-2.0.972-Darwin.tar.gz
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.972-Darwin.tar.gz
 
     - name: download
       uses: actions/download-artifact@v4

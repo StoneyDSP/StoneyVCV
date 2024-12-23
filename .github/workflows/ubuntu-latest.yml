@@ -158,26 +158,26 @@ jobs:
     - name: upload vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-2.0.1-lin-x64.vcvplugin
-        path: ${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.1-lin-x64.vcvplugin
+        name: StoneyDSP-StoneyVCV-2.0.972-lin-x64.vcvplugin
+        path: ${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.972-lin-x64.vcvplugin
 
     - name: upload .sh
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-Linux.sh
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Linux.sh
+        name: StoneyVCV-2.0.972-Linux.sh
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.972-Linux.sh
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-Linux.tar.gz
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Linux.tar.gz
+        name: StoneyVCV-2.0.972-Linux.tar.gz
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.972-Linux.tar.gz
 
     - name: upload .tar.Z
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-Linux.tar.Z
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Linux.tar.Z
+        name: StoneyVCV-2.0.972-Linux.tar.Z
+        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.972-Linux.tar.Z
 
     - name: download
       uses: actions/download-artifact@v4
