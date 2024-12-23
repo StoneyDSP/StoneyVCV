@@ -656,18 +656,24 @@ if(STONEYVCV_IS_TOP_LEVEL)
     #     DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
     #     GROUP "${STONEYVCV_SLUG}"
     # )
+    cpack_add_component(${STONEYVCV_SLUG}
+        DISPLAY_NAME "${STONEYVCV_SLUG}"
+        DESCRIPTION "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}."
+        # GROUP "plugin"
+        # GROUP "${STONEYVCV_SLUG}"
+    )
     cpack_add_component(plugin
         DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
         DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
         # GROUP "plugin"
-        GROUP "${STONEYVCV_SLUG}"
+        # GROUP "${STONEYVCV_SLUG}"
     )
     foreach(MODULE IN LISTS STONEYVCV_MODULES)
         cpack_add_component(${MODULE}
             DISPLAY_NAME "${MODULE} v${STONEYVCV_VERSION}"
             DESCRIPTION "The ${MODULE} module developer files."
             # GROUP "development"
-            GROUP "${STONEYVCV_SLUG}"
+            # GROUP "${STONEYVCV_SLUG}"
         )
     endforeach()
 endif()
