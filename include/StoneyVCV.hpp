@@ -1,13 +1,12 @@
 /*******************************************************************************
- * @file StoneyVCV.hpp
+ * @file include/StoneyVCV.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief @PROJECT_DESCRIPTION@
  * @version @STONEYVCV_VERSION@
- * @date 2024-11-11
  *
- * @copyright Copyright (c) 2024
+ * @copyright MIT License
  *
- * MIT License
+ * Copyright (c) 2024 Nathan J. Hood <nathanjhood@googlemail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
