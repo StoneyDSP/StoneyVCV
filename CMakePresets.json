@@ -48,23 +48,23 @@
           "value": "ON",
           "type": "BOOL"
         },
-        "STONEYVCV_BUILD_MODULE_HP4": {
+        "STONEYVCV_BUILD_HP4": {
           "value": "ON",
           "type": "BOOL"
         },
-        "STONEYVCV_BUILD_MODULE_HP2": {
+        "STONEYVCV_BUILD_HP2": {
           "value": "ON",
           "type": "BOOL"
         },
-        "STONEYVCV_BUILD_MODULE_HP1": {
+        "STONEYVCV_BUILD_HP1": {
           "value": "ON",
           "type": "BOOL"
         },
-        "STONEYVCV_BUILD_MODULE_VCA": {
-          "value": "OFF",
+        "STONEYVCV_BUILD_VCA": {
+          "value": "ON",
           "type": "BOOL"
         },
-        "STONEYVCV_BUILD_MODULE_LFO": {
+        "STONEYVCV_BUILD_LFO": {
           "value": "OFF",
           "type": "BOOL"
         }
