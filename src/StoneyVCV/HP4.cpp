@@ -132,12 +132,14 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
     const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
     const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
     const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
+    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
+    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
     const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
     const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
     const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
     const auto& size = this->getSize();
 
-    // draw Themed BG
+    // Draw Themed BG
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg,
         /** x */0.0F,
@@ -146,6 +148,25 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
         /** h */size.y
         );
     ::nvgFillColor(args.vg, bgColor);
+    ::nvgFill(args.vg);
+
+    // Draw themed BG gradient
+    const auto& bgGradient = ::nvgLinearGradient(args.vg,
+        size.x * 0.5,
+        0.0F,
+        size.x * 0.5,
+        380.0F,
+        bgGradientS0,
+        bgGradientS1
+    );
+    ::nvgBeginPath(args.vg);
+    ::nvgRect(args.vg,
+        /** x */0.0F,
+        /** y */0.0F,
+        /** w */size.x,
+        /** h */size.y
+        );
+    ::nvgFillPaint(args.vg, bgGradient);
     ::nvgFill(args.vg);
 
     // Draw line L
