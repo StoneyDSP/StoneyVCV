@@ -46,7 +46,7 @@ find_package(StoneyDSP 0.0.0 REQUIRED COMPONENTS Core SIMD DSP CONFIG)
 set(STONEYVCV_TARGETS)
 
 #[=================================[StoneyVCV]=================================]
-# Core interface library - base dependency carrier
+# Core interface library - base dependency carrier for other developers
 add_library("${STONEYVCV_SLUG}" INTERFACE)
 add_library("${STONEYVCV_BRAND}::${STONEYVCV_SLUG}" ALIAS "${STONEYVCV_SLUG}")
 configure_file("include/StoneyVCV.hpp" "include/StoneyVCV.hpp")
@@ -70,6 +70,11 @@ target_compile_definitions("${STONEYVCV_SLUG}"
     "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
     "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
 )
+target_link_libraries(${STONEYVCV_SLUG}
+    INTERFACE
+        unofficial-vcvrack::rack-sdk::core
+        StoneyDSP::Core
+)
 install(TARGETS ${STONEYVCV_SLUG}
     EXPORT ${STONEYVCV_SLUG}Exports
     COMPONENT ${STONEYVCV_SLUG}
@@ -90,6 +95,7 @@ export(
     FILE "lib/cmake/${STONEYVCV_BRAND}/$${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-targets.cmake"
     NAMESPACE ${STONEYVCV_BRAND}::
 )
+
 #[==================================[plugin]==================================]#
 
 if(STONEYVCV_BUILD_PLUGIN)
