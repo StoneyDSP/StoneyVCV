@@ -1,13 +1,12 @@
 /*******************************************************************************
- * @file VCA.hpp
+ * @file include/StoneyVCV/VCA.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 0.0.0
- * @date 2024-11-11
+ * @brief @PROJECT_DESCRIPTION@
+ * @version @VCA_VERSION@
  *
- * @copyright Copyright (c) 2024
+ * @copyright MIT License
  *
- * MIT License
+ * Copyright (c) 2024 Nathan J. Hood <nathanjhood@googlemail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +31,8 @@
 #pragma once
 
 #define STONEYVCV_VCA_HPP_INCLUDED 1
+
+#if defined (STONEYVCV_BUILD_VCA)
 
 //==============================================================================
 
@@ -66,7 +67,7 @@ namespace StoneyVCV
  * @brief The `VCA` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
- * @namespace VCA
+ * @version @HP2_VERSION@
  *
  */
 namespace VCA
@@ -384,5 +385,9 @@ private:
 
   /// @} group StoneyDSP
 } // namespace StoneyDSP
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_VCA)
 
 //==============================================================================

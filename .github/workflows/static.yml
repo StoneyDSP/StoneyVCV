@@ -28,29 +28,33 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    
+
     steps:
-    
+
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Install VCV's Linux Deps
         run: |
           sudo apt-get update && sudo apt install make doxygen
-        
+
+      - name: Configure StoneyVCV
+        working-directory: ${{ github.workspace }}
+        run: make reconfigure -j 3
+
       - name: Make Doxygen
-        working-directory: ${{ github.workspace }}/docs
-        run: make -j 3
-        
+        working-directory: ${{ github.workspace }}
+        run: make docs -j 3
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload HTML
-          path: './docs/html'
-          
+          path: '${{ github.workspace }}/build/docs/html'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
