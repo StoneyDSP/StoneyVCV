@@ -1,5 +1,5 @@
 /*******************************************************************************
- * @file plugin.cpp
+ * @file src/StoneyVCV/plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 2.0.1
@@ -29,10 +29,18 @@ namespace StoneyVCV {
 
 //==============================================================================
 
+namespace Plugin {
+
+//==============================================================================
+
 /**
  * @brief The `StoneyDSP` VCV Rack Plugin instance.
  */
 ::rack::plugin::Plugin* pluginInstance;
+
+//==============================================================================
+
+} // namespace Plugin
 
 //==============================================================================
 
@@ -53,7 +61,7 @@ namespace StoneyVCV {
  */
 void init(::rack::plugin::Plugin* p) {
 
-    ::StoneyDSP::StoneyVCV::pluginInstance = p;
+    ::StoneyDSP::StoneyVCV::Plugin::pluginInstance = p;
 
 #if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 2)
 

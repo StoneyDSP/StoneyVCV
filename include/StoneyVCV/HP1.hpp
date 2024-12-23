@@ -1,13 +1,12 @@
 /*******************************************************************************
- * @file HP1.hpp
+ * @file include/StoneyVCV/HP1.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief @PROJECT_DESCRIPTION@
- * @version @STONEYVCV_VERSION@
- * @date 2024-11-11
+ * @version @HP1_VERSION@
  *
- * @copyright Copyright (c) 2024
+ * @copyright MIT License
  *
- * MIT License
+ * Copyright (c) 2024 Nathan J. Hood <nathanjhood@googlemail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +65,7 @@ namespace StoneyVCV
  * @brief The `HP1` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
- * @namespace HP1
+ * @version @HP2_VERSION@
  *
  */
 namespace HP1
