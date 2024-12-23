@@ -70,7 +70,10 @@ target_compile_definitions("${STONEYVCV_SLUG}"
     "STONEYVCV_VERSION_TWEAK=${STONEYVCV_VERSION_TWEAK}"
     "STONEYVCV_VERSION=${STONEYVCV_VERSION}"
 )
-target_link_libraries(${STONEYVCV_SLUG}
+# bump C++ version up from Rack-SDK
+target_compile_features("${STONEYVCV_SLUG}" INTERFACE cxx_std_17)
+target_compile_features("${STONEYVCV_SLUG}" INTERFACE c_std_17)
+target_link_libraries("${STONEYVCV_SLUG}"
     INTERFACE
         unofficial-vcvrack::rack-sdk::core
         StoneyDSP::Core
@@ -318,7 +321,7 @@ if(STONEYVCV_BUILD_DOCS)
     find_package(Doxygen)
     doxygen_add_docs(docs
         CONFIG_FILE "${STONEYVCV_SOURCE_DIR}/docs/Doxyfile"
-        WORKING_DIRECTORY "${STONEYVCV_SOURCE_DIR}/docs"
+        WORKING_DIRECTORY "${STONEYVCV_SOURCE_DIR}"
     )
 endif()
 
