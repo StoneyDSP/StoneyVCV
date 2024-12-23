@@ -1,33 +1,14 @@
 /*******************************************************************************
- * @file VCA.cpp
+ * @file src/StoneyVCV/VCA.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 0.0.0
+ * @version 2.0.2
  * @date 2024-11-11
  *
- * @copyright Copyright (c) 2024
- *
- * MIT License
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * therights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/orsell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
+
+#if defined (STONEYVCV_BUILD_VCA)
 
 //==============================================================================
 
@@ -232,6 +213,8 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
     const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
     const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
+    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
+    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
     const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
     const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
     const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
@@ -246,6 +229,25 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         size.y
     );
     ::nvgFillColor(args.vg, bgColor);
+    ::nvgFill(args.vg);
+
+    // Draw themed BG gradient
+    const auto& bgGradient = ::nvgLinearGradient(args.vg,
+        size.x * 0.5,
+        0.0F,
+        size.x * 0.5,
+        380.0F,
+        bgGradientS0,
+        bgGradientS1
+    );
+    ::nvgBeginPath(args.vg);
+    ::nvgRect(args.vg,
+        /** x */0.0F,
+        /** y */0.0F,
+        /** w */size.x,
+        /** h */size.y
+        );
+    ::nvgFillPaint(args.vg, bgGradient);
     ::nvgFill(args.vg);
 
     // Draw line L
@@ -313,11 +315,11 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         ::rack::createPanel<::rack::app::ThemedSvgPanel>(
             // Light-mode panel
             ::rack::asset::plugin(
-                ::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-light.svg"
+                ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/VCA-light.svg"
             ),
             // Dark-mode panel
             ::rack::asset::plugin(
-                ::StoneyDSP::StoneyVCV::pluginInstance, "res/VCA-dark.svg"
+                ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/VCA-dark.svg"
             )
         )
     ),
@@ -495,5 +497,9 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::step()
     // STONEYDSP_THROW_IF_FAILED_VOID(modelVCO == nullptr, bad_alloc);
     return modelVCA;
 }
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_VCA)
 
 //==============================================================================

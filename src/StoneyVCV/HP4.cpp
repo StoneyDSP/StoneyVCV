@@ -1,33 +1,15 @@
 /*******************************************************************************
- * @file HP4.cpp
+ * @file src/StoneyVCV/HP4.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.0
+ * @version 2.0.2
  * @date 2024-11-11
  *
- * @copyright Copyright (c) 2024
- *
- * MIT License
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * therights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/orsell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
+
+#if defined (STONEYVCV_BUILD_HP4)
 
 //==============================================================================
 
@@ -233,11 +215,11 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
     panel(::rack::createPanel<::rack::app::ThemedSvgPanel>(
         // Light-mode panel
         ::rack::asset::plugin(
-            ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-light.svg"
+            ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/HP4-light.svg"
         ),
         // Dark-mode panel
         ::rack::asset::plugin(
-            ::StoneyDSP::StoneyVCV::pluginInstance, "res/HP4-dark.svg"
+            ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/HP4-dark.svg"
         )
     )),
     hp4Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP4::HP4Widget>(::rack::math::Vec(0.0F, 0.0F))),
@@ -342,5 +324,9 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::step()
     // STONEYDSP_THROW_IF_FAILED_VOID(modelHP4 == nullptr, bad_alloc);
     return modelHP4;
 }
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_HP4)
 
 //==============================================================================
