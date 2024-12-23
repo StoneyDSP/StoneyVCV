@@ -24,6 +24,10 @@ env:
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "win-x64"
   MSYSTEM: "MINGW64"
+  STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
+  STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
+  STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
+  STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
 
 jobs:
   windows:
@@ -193,14 +197,14 @@ jobs:
     - name: upload .exe
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.980-win64.exe
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.980-win64.exe
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
+        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
 
     - name: upload .vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-2.0.980-win-x64.vcvplugin
-        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.980-win-x64.vcvplugin'
+        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin'
 
     - name: download
       uses: actions/download-artifact@v4
