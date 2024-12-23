@@ -199,6 +199,14 @@ source: configure
 #   --install $(PWD)/build \
 # 	--prefix $(PWD)/install
 
+# Include the docs target
+$(PWD)/build/docs/html: configure
+	cd docs
+	doxygen $(PWD)/docs/Doxyfile
+	cd $(PWD)
+
+docs: $(PWD)/build/docs/html
+
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
 
