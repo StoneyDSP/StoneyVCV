@@ -25,7 +25,10 @@ env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "mac-x64+arm64"
-
+  STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
+  STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
+  STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
+  STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
 
 jobs:
   macos:
@@ -44,6 +47,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: true
+        fetch-depth: 0
 
     - name: vcpkg install
       uses: johnwason/vcpkg-action@v6
@@ -158,20 +162,20 @@ jobs:
     - name: upload vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-2.0.1-mac-arm64.vcvplugin
-        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-2.0.1-mac-arm64.vcvplugin'
+        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-mac-arm64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-mac-arm64.vcvplugin'
 
     - name: upload .sh
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-Darwin.sh
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Darwin.sh
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
+        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-2.0.1-Darwin.tar.gz
-        path: ${{ github.workspace }}/dist/StoneyVCV-2.0.1-Darwin.tar.gz
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
+        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
 
     - name: download
       uses: actions/download-artifact@v4

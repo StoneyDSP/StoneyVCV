@@ -5,8 +5,8 @@ RACK_DIR ?= ../..
 # Build version?
 STONEYVCV_VERSION_MAJOR ?= 2
 STONEYVCV_VERSION_MINOR ?= 0
-STONEYVCV_VERSION_PATCH ?= 2
-STONEYVCV_VERSION_TWEAK ?= 0
+STONEYVCV_VERSION_PATCH ?= $(strip $(shell git rev-list HEAD | wc -l))
+STONEYVCV_VERSION_TWEAK ?= $(strip $(shell git rev-parse HEAD))
 
 FLAGS += -DSTONEYVCV_VERSION_MAJOR=$(STONEYVCV_VERSION_MAJOR)
 FLAGS += -DSTONEYVCV_VERSION_MINOR=$(STONEYVCV_VERSION_MINOR)
@@ -198,6 +198,14 @@ source: configure
 # 	cmake \
 #   --install $(PWD)/build \
 # 	--prefix $(PWD)/install
+
+# Include the docs target
+$(PWD)/build/docs/html: configure
+	cd docs
+	doxygen $(PWD)/docs/Doxyfile
+	cd $(PWD)
+
+docs: $(PWD)/build/docs/html
 
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
