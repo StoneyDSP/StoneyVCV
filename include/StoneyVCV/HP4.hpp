@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @file HP4.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 0.0.1
+ * @brief @PROJECT_DESCRIPTION@
+ * @version @STONEYVCV_VERSION@
  * @date 2024-11-11
  *
  * @copyright Copyright (c) 2024
@@ -32,6 +32,8 @@
 #pragma once
 
 #define STONEYVCV_HP4_HPP_INCLUDED 1
+
+#if defined (STONEYVCV_BUILD_HP4)
 
 //==============================================================================
 
@@ -320,5 +322,9 @@ private:
 
   /// @} group StoneyDSP
 } // namespace StoneyDSP
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_HP4)
 
 //==============================================================================

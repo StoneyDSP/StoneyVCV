@@ -29,6 +29,8 @@
  *
  ******************************************************************************/
 
+#if defined (STONEYVCV_BUILD_HP2)
+
 //==============================================================================
 
 #include <StoneyVCV/HP1.hpp>
@@ -296,5 +298,9 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget::step()
     // STONEYDSP_THROW_IF_FAILED_VOID(modelHP1 == nullptr, bad_alloc);
     return modelHP1;
 }
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_HP4)
 
 //==============================================================================

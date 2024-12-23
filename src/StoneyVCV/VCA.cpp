@@ -29,6 +29,8 @@
  *
  ******************************************************************************/
 
+#if defined (STONEYVCV_BUILD_VCA)
+
 //==============================================================================
 
 #include <StoneyVCV/VCA.hpp>
@@ -495,5 +497,9 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::step()
     // STONEYDSP_THROW_IF_FAILED_VOID(modelVCO == nullptr, bad_alloc);
     return modelVCA;
 }
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_VCA)
 
 //==============================================================================
