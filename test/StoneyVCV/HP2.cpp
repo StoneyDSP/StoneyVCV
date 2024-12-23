@@ -53,7 +53,7 @@ struct HP2Spec final :
     ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    std::string slug;
+    std::string slug, name, description;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
@@ -61,6 +61,8 @@ public:
     ::rack::math::Vec size;
     HP2Spec()
     :   slug("HP2"),
+        name(""),
+        description(""),
         size(
             ::rack::window::mm2px(5.079999999F * 2.0F),
             ::rack::window::mm2px(128.693333312F)
@@ -125,9 +127,30 @@ TEST_CASE( "HP2", "[HP2]" ) {
 
     //==========================================================================
 
-    SECTION( "instance" ) {
+    SECTION( "createHP1" ) {
+
+        ::rack::plugin::Model* test_modelHP2 = ::StoneyDSP::StoneyVCV::HP2::createHP2();
+        REQUIRE( test_modelHP2 != nullptr );
+
+        SECTION( "createModule" ) {
+
+            auto test_module = test_modelHP2->createModule();
+            REQUIRE( test_module != nullptr );
+
+            // SECTION( "createModuleWidget" ) {
+            //     auto test_moduleWidget = test_modelHP2->createModuleWidget(test_module);
+            //     REQUIRE( test_moduleWidget != nullptr );
+            // }
+        }
+    }
+
+    //==========================================================================
+
+    SECTION( "modelHP2" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2 != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->slug == spec.get()->slug );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->name == spec.get()->name );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->description == spec.get()->description );
     }
 
     //==========================================================================
