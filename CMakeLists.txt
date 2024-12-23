@@ -651,11 +651,11 @@ if(STONEYVCV_IS_TOP_LEVEL)
     #     DISPLAY_NAME "development"
     #     PARENT_GROUP "${STONEYVCV_SLUG}"
     # )
-    cpack_add_component("${STONEYVCV_SLUG}"
-        DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
-        DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
-        GROUP "${STONEYVCV_SLUG}"
-    )
+    # cpack_add_component("${STONEYVCV_SLUG}"
+    #     DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
+    #     DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
+    #     GROUP "${STONEYVCV_SLUG}"
+    # )
     cpack_add_component(plugin
         DISPLAY_NAME "${STONEYVCV_SLUG} v${STONEYVCV_VERSION}"
         DESCRIPTION "${STONEYVCV_BRAND} plugin for VCV Rack 2."
