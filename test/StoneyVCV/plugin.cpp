@@ -58,35 +58,40 @@ TEST_CASE("plugin", "[plugin]") {
     SECTION("modules") {
 #ifdef STONEYVCV_EXPERIMENTAL
     // EXPERIMENTAL MODULES HERE...
-#ifdef STONEYVCV_BUILD_VCA
-        SECTION( "VCA" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
-        }
-#endif
-#ifdef STONEYVCV_BUILD_LFO
+    #ifdef STONEYVCV_BUILD_LFO
         SECTION( "LFO" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::LFO::modelLFO != nullptr);
         }
-#endif
+    #endif
 #endif
 
-#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-#ifdef STONEYVCV_BUILD_HP4
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 2U)
+    #ifdef STONEYVCV_BUILD_VCA
+        SECTION( "VCA" ) {
+            REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
+        }
+    #endif
+#endif
+
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
+    #ifdef STONEYVCV_BUILD_HP4
         SECTION( "HP4" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::HP4::modelHP4 != nullptr);
         }
-#endif
-#ifdef STONEYVCV_BUILD_HP2
+    #endif
+    #ifdef STONEYVCV_BUILD_HP2
         SECTION( "HP2" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::HP2::modelHP2 != nullptr);
         }
-#endif
-#ifdef STONEYVCV_BUILD_HP1
+    #endif
+    #ifdef STONEYVCV_BUILD_HP1
         SECTION( "HP1" ) {
             REQUIRE(::StoneyDSP::StoneyVCV::HP1::modelHP1 != nullptr);
         }
+    #endif
 #endif
-#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
+
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH < 1U)
     #warning "No modules found..."
 #endif
     }
@@ -94,6 +99,6 @@ TEST_CASE("plugin", "[plugin]") {
 
 //==============================================================================
 
-#endif
+#endif // defined (STONEYVCV_BUILD_PLUGIN) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================
