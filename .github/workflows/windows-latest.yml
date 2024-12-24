@@ -133,17 +133,17 @@ jobs:
 
     # Upload build artefacts
 
-    - name: upload .exe
-      uses: actions/upload-artifact@v4
-      with:
-        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
-
     - name: upload .vcvplugin
       uses: actions/upload-artifact@v4
       with:
         name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin
         path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin'
+
+    - name: upload .exe
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
 
     # Download build artefacts
 

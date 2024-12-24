@@ -115,19 +115,19 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.sh
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.sh
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.sh
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.gz
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.gz
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.gz
 
     - name: upload .tar.Z
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.Z
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.Z
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.Z
 
     # Download build artefacts
 

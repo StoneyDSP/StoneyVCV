@@ -112,13 +112,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
 
     # Download build artefacts
 
