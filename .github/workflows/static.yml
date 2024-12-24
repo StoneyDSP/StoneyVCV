@@ -38,9 +38,21 @@ jobs:
         run: |
           sudo apt-get update && sudo apt install make doxygen
 
+      - name: vcpkg install
+        uses: johnwason/vcpkg-action@v6
+        with:
+          # vcpkg triplet to use
+          triplet: x64-linux
+          # GitHub token to authenticate API requests. Recommended to use  github.token
+          token: ${{ github.token }}
+          # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
+          manifest-dir: ${{ github.workspace }}
+          # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
+          github-binarycache: false
+
       - name: Configure StoneyVCV
         working-directory: ${{ github.workspace }}
-        run: make reconfigure -j 3
+        run: cmake --preset x64-linux-release --fresh -j 3
 
       - name: Make Doxygen
         working-directory: ${{ github.workspace }}
