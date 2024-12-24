@@ -21,6 +21,16 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CMAKE_BUILD_PARALLEL_LEVEL: 3
+  CMAKE_INSTALL_PARALLEL_LEVEL: 3
+  VCPKG_MAX_CONCURRENCY: 3
+  STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
+  STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
+  STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
+  STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
+
 jobs:
   # Single deploy job since we're just deploying
   deploy:
@@ -48,11 +58,11 @@ jobs:
           # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
           manifest-dir: ${{ github.workspace }}
           # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-          github-binarycache: false
+          github-binarycache: true
 
       - name: Configure StoneyVCV
         working-directory: ${{ github.workspace }}
-        run: cmake --preset x64-linux-release --fresh -j 3
+        run: cmake --preset x64-linux-release --fresh
 
       - name: Make Doxygen
         working-directory: ${{ github.workspace }}
