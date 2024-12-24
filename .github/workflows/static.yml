@@ -42,8 +42,11 @@ jobs:
 
     steps:
 
-      - name: Checkout
+      - name: checkout StoneyVCV
         uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
 
       - name: Install VCV's Linux Deps
         run: |
