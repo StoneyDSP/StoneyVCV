@@ -1,5 +1,5 @@
 /*******************************************************************************
- * @file include/StoneyVCV/version.hpp
+ * @file include/StoneyVCV.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief @PROJECT_DESCRIPTION@
  * @version @STONEYVCV_VERSION@
@@ -30,6 +30,11 @@
 
 #pragma once
 
-#define STONEYVCV_VERSION_HPP_INCLUDED 1
+#define STONEYVCV_HPP_INCLUDED 1
 
-// TODO...
+//==============================================================================
+
+#include <rack.hpp>
+#include <StoneyDSP/Core.hpp>
+
+//==============================================================================
