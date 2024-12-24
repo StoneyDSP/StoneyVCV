@@ -47,7 +47,7 @@ jobs:
 
       - name: Install VCV's Linux Deps
         run: |
-          sudo apt-get update && sudo apt install make doxygen ninja cmake
+          sudo apt-get update && sudo apt install make doxygen ninja-build cmake
 
       - name: vcpkg install
         uses: johnwason/vcpkg-action@v6
