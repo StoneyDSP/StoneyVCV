@@ -224,12 +224,12 @@ DISTRIBUTABLES += $(wildcard presets)
 
 PRESET ?= $(PRESET_ARCH)-$(PRESET_OS)-$(PRESET_CONFIG)$(PRESET_VERBOSE)
 
-reconfigure:
+reconfigure: sdk submodules
 	cmake \
 	--preset $(PRESET) \
   --fresh
 
-configure:
+configure: sdk submodules
 	cmake \
 	--preset $(PRESET)
 
@@ -279,7 +279,7 @@ source: configure
 docs: $(PWD)/build/docs/html
 
 # These are "main" Makefile targets which most Rack plugin devs expect
-dep: sdk submodules reconfigure
+dep: reconfigure
 
 $(RACK_DIR)/plugin.mk: sdk
 
