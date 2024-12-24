@@ -225,12 +225,12 @@ DISTRIBUTABLES += $(wildcard presets)
 PRESET ?= $(PRESET_ARCH)-$(PRESET_OS)-$(PRESET_CONFIG)$(PRESET_VERBOSE)
 
 reconfigure: sdk submodules
-	cmake \
+	VCPKG_ROOT=$(VCPKG_ROOT) cmake \
 	--preset $(PRESET) \
   --fresh
 
 configure: sdk submodules
-	cmake \
+	VCPKG_ROOT=$(VCPKG_ROOT) cmake \
 	--preset $(PRESET)
 
 build: configure
