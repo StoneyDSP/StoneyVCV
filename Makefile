@@ -254,7 +254,7 @@ package_source: test
 	--target $@
 
 workflow: vcpkg
-	cmake \
+	VCPKG_ROOT=$(VCPKG_ROOT) cmake \
   --workflow \
 	--preset $(PRESET) \
 	--fresh
