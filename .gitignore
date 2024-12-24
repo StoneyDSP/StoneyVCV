@@ -1,25 +1,28 @@
 # Artefact directories
 #
-/_CPack_Packages
-/vcpkg_installed
-/install
-/build
-/dist
-/bin
-/out
+*/_CPack_Packages
+*/vcpkg_installed
+*/install
+*/build
+*/dist
+*/bin
+*/out
 
 # Artefact files
 #
-/*.so
-/*.dylib
-/*.dll
-**.zip
-**.tar
-**.gz
-**.bz2
-**.sh
-**.tar.Z
-**.vcvplugin
+*/*.so
+*/*.dylib
+*/*.dll
+*/*.zip
+*/*.tar
+*/*.gz
+*/*.bz2
+*/*.sh
+*/*.tar.Z
+*/*.vcvplugin
+*/Rack-SDK
+*/vcpkg-cache
+!/vcpkg-cache/.gitkeep
 
 # Resource files
 #
