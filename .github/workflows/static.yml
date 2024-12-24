@@ -44,7 +44,7 @@ jobs:
 
       - name: Make Doxygen
         working-directory: ${{ github.workspace }}
-        run: make docs -j 3
+        run: doxygen ${{ github.workspace }}/docs/Doxyfile
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
