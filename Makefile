@@ -49,10 +49,10 @@ submodules:
 ./dep/vcpkg/bootstrap-vcpkg.sh: ./dep/vcpkg
 
 # Use vcpkg
-vcpkg: ./dep/vcpkg/bootstrap-vcpkg.sh
+./dep/vcpkg/vcpkg: ./dep/vcpkg/bootstrap-vcpkg.sh
 
-VCPKG := vcpkg
 VCPKG_ROOT ?= ./dep/vcpkg
+VCPKG := $(VCPKG_ROOT)/vcpkg
 
 # Rack-SDK
 RACK_SDK_VERSION_MAJOR := 2
@@ -276,7 +276,7 @@ package_source: test
   --build $(PWD)/build \
 	--target $@
 
-workflow: vcpkg
+workflow: $(VCPKG_ROOT)/vcpkg
 	VCPKG_ROOT=$(VCPKG_ROOT) cmake \
   --workflow \
 	--preset $(PRESET) \
@@ -316,4 +316,24 @@ include $(RACK_DIR)/plugin.mk
 # 	$(MAKE) -f $(RACK_DIR)/plugin.mk $@ -E RACK_DIR=$(RACK_DIR)
 # 	$(MAKE) -f ./dep/Makefile $@
 
-# .PHONY: sdk
+.PHONY:
+	submodules
+	sdk
+	verion-major
+	version-minor
+	version-patch
+	version-tweak
+	version-build
+	version-package
+	version-all
+	version
+	reconfigure
+	configure
+	build
+	test
+	package
+	package_source
+	workflow
+	source
+	docs
+	dep
