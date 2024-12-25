@@ -67,7 +67,7 @@ RACK_SDK_URL := https://vcvrack.com/downloads/$(RACK_SDK_FILENAME)
 	$(shell $(CURL) $(RACK_SDK_URL) -o $@)
 
 ./dep/Rack-SDK: ./dep/$(RACK_SDK_FILENAME)
-	$(UNZIP) ./dep/$(RACK_SDK_FILENAME) -d ./dep
+	$(shell $(UNZIP) -q ./dep/$(RACK_SDK_FILENAME) -d ./dep)
 
 # Target: 'make sdk'
 sdk: ./dep/Rack-SDK
@@ -315,3 +315,5 @@ include $(RACK_DIR)/plugin.mk
 # clean:
 # 	$(MAKE) -f $(RACK_DIR)/plugin.mk $@ -E RACK_DIR=$(RACK_DIR)
 # 	$(MAKE) -f ./dep/Makefile $@
+
+# .PHONY: sdk
