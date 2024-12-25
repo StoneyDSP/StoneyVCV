@@ -1109,11 +1109,11 @@
     {
       "name": "base",
       "hidden": true,
-      "packageVersion": "2.0.1",
-      "vendorName": "StoneyDSP",
-      "packageName": "StoneyVCV",
       "packageDirectory": "${sourceDir}/install",
       "configurePreset": "base",
+      "inherits": [
+        "options"
+      ],
       "inheritConfigureEnvironment": true
     },
     {
