@@ -18,7 +18,8 @@ env:
   CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-  RACK_SDK_VERSION: 2.5.2
+  RACK_SDK_VERSION_MAJOR: 2
+  RACK_SDK_VERSION: ${{ env.RACK_SDK_VERSION_MAJOR }}.5.2
   RACK_SDK_PLATFORM: "lin-x64"
   # STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
   # STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
@@ -64,7 +65,14 @@ jobs:
     # Output package name (don't do this at home)
     - name: make version
       shell: bash
-      run: echo STONEYVCV_VERSION=2.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+      run: |
+        echo STONEYVCV_VERSION_MAJOR=${{ env.RACK_SDK_VERSION_MAJOR }} >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_MINOR=0 >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_PATCH=$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_TWEAK=$(git rev-parse HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_BUILD=$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1').$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_GIT_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
 
     - name: make dep
       shell: bash
