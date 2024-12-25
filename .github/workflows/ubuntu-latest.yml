@@ -53,7 +53,7 @@ jobs:
       run: |
         EOF=$(uuidgen)
         echo "STONEYVCV_CONFIG<<$EOF" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_MAJOR=$(echo $(make version-major))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MAJOR=$(echo $())" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION_MINOR=$(echo $(make version-minor))" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION_PATCH=$(echo $(make version-patch))" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION_TWEAK=$(echo $(make version-tweak))" >> $GITHUB_ENV
@@ -68,7 +68,7 @@ jobs:
       run: |
         curl https://vcvrack.com/downloads/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd dep
-        unzip RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        unzip -q RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
     # CI helpers
@@ -118,24 +118,28 @@ jobs:
       with:
         name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-lin-x64.vcvplugin
         path: ${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-lin-x64.vcvplugin
+        if-no-files-found: error
 
     - name: upload .sh
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.sh
         path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.sh
+        if-no-files-found: error
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.gz
         path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.gz
+        if-no-files-found: error
 
     - name: upload .tar.Z
       uses: actions/upload-artifact@v4
       with:
         name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.Z
         path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Linux.tar.Z
+        if-no-files-found: error
 
     # Download build artefacts
 
