@@ -57,7 +57,7 @@ jobs:
         unzip RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
         cd ..
 
-    CI helpers
+    # CI helpers
     - name: Enable GitHub Actions Cache backend
       uses: actions/github-script@v7
       with:
