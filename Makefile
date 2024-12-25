@@ -84,7 +84,7 @@ STONEYVCV_VERSION_TWEAK ?= $(strip $(shell $(GIT) rev-parse HEAD))
 STONEYVCV_VERSION_BUILD ?= $(strip $(shell $(GIT) rev-parse --short HEAD))
 STONEYVCV_VERSION ?= $(STONEYVCV_VERSION_MAJOR).$(STONEYVCV_VERSION_MINOR).$(STONEYVCV_VERSION_PATCH).$(STONEYVCV_VERSION_TWEAK)
 
-version-major: sdk
+version-major:
 	@echo $(STONEYVCV_VERSION_MAJOR)
 version-minor:
 	@echo $(STONEYVCV_VERSION_MINOR)
