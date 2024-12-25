@@ -73,7 +73,7 @@ jobs:
         echo "STONEYVCV_VERSION_PACKAGE=\"$(make version-package)"\" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION=\"$(make version)"\" >> $GITHUB_ENV
         echo "$EOF" >> $GITHUB_ENV
-        echo "STONEYVCV_CONFIG"
+        echo "$STONEYVCV_CONFIG"
 
     # - name: Build ports
     #   shell: bash
