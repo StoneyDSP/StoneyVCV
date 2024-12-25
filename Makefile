@@ -1,12 +1,108 @@
+GIT := git
+CURL := curl
+ZIP := zip
+UNZIP := unzip
+JQ := jq
+
+ifdef CROSS_COMPILE
+	MACHINE := $(CROSS_COMPILE)
+else
+	MACHINE ?= $(shell $(CC) -dumpmachine)
+endif
+
+ifneq (,$(findstring x86_64-,$(MACHINE)))
+	ARCH_X64 := 1
+	ARCH_CPU := x64
+else ifneq (,$(findstring arm64-,$(MACHINE)))
+	ARCH_ARM64 := 1
+	ARCH_CPU := arm64
+else ifneq (,$(findstring aarch64-,$(MACHINE)))
+	ARCH_ARM64 := 1
+	ARCH_CPU := arm64
+else
+$(error Could not determine CPU architecture of $(MACHINE))
+endif
+
+ifneq (,$(findstring -darwin,$(MACHINE)))
+	ARCH_MAC := 1
+	ARCH_OS := mac
+else ifneq (,$(findstring -mingw32,$(MACHINE)))
+	ARCH_WIN := 1
+	ARCH_OS := win
+else ifneq (,$(findstring -linux,$(MACHINE)))
+	ARCH_LIN := 1
+	ARCH_OS := lin
+else
+$(error Could not determine operating system of $(MACHINE))
+endif
+
+ARCH_NAME := $(ARCH_OS)-$(ARCH_CPU)
+
+# Fetch submodules
+submodules:
+	$(shell $(GIT) submodule update --init --recursive)
+
+# Fetch vcpkg
+./dep/vcpkg: submodules
+
+# Bootstrap vcpkg
+./dep/vcpkg/bootstrap-vcpkg.sh: ./dep/vcpkg
+
+# Use vcpkg
+./dep/vcpkg/vcpkg: ./dep/vcpkg/bootstrap-vcpkg.sh
+
+VCPKG_ROOT ?= ./dep/vcpkg
+VCPKG := $(VCPKG_ROOT)/vcpkg
+
+# Rack-SDK
+RACK_SDK_VERSION_MAJOR := 2
+RACK_SDK_VERSION_MINOR ?= 5
+RACK_SDK_VERSION_BUILD ?= 2
+RACK_SDK_VERSION ?= $(RACK_SDK_VERSION_MAJOR).$(RACK_SDK_VERSION_MINOR).$(RACK_SDK_VERSION_BUILD)
+RACK_SDK_PLATFORM ?= $(ARCH_OS)-$(ARCH_CPU)
+RACK_SDK_FILENAME := Rack-SDK-$(RACK_SDK_VERSION)-$(RACK_SDK_PLATFORM).zip
+RACK_SDK_URL := https://vcvrack.com/downloads/$(RACK_SDK_FILENAME)
+
+./dep/$(RACK_SDK_FILENAME):
+	$(shell $(CURL) $(RACK_SDK_URL) -o $@)
+
+./dep/Rack-SDK: ./dep/$(RACK_SDK_FILENAME)
+	$(shell $(UNZIP) -q ./dep/$(RACK_SDK_FILENAME) -d ./dep)
+
+# Target: 'make sdk'
+sdk: ./dep/Rack-SDK
+
 # If RACK_DIR is not defined when calling the Makefile, default to two
 # directories above, i.e., `Rack-SDK/plugins/<we are here>`
-RACK_DIR ?= ../..
+RACK_DIR ?= ./dep/Rack-SDK
 
-# Build version?
+# StoneyVCV
 STONEYVCV_VERSION_MAJOR ?= 2
 STONEYVCV_VERSION_MINOR ?= 0
-STONEYVCV_VERSION_PATCH ?= $(strip $(shell git rev-list HEAD | wc -l))
-STONEYVCV_VERSION_TWEAK ?= $(strip $(shell git rev-parse HEAD))
+STONEYVCV_VERSION_PATCH ?= $(strip $(shell $(GIT) rev-list HEAD | wc -l))
+STONEYVCV_VERSION_TWEAK ?= $(strip $(shell $(GIT) rev-parse HEAD))
+STONEYVCV_VERSION_BUILD ?= $(strip $(shell $(GIT) rev-parse --short HEAD))
+STONEYVCV_VERSION ?= $(STONEYVCV_VERSION_MAJOR).$(STONEYVCV_VERSION_MINOR).$(STONEYVCV_VERSION_PATCH).$(STONEYVCV_VERSION_TWEAK)
+
+version-major:
+	@echo $(STONEYVCV_VERSION_MAJOR)
+version-minor:
+	@echo $(STONEYVCV_VERSION_MINOR)
+version-patch:
+	@echo $(STONEYVCV_VERSION_PATCH)
+version-tweak:
+	@echo $(STONEYVCV_VERSION_TWEAK)
+version-build:
+	@echo $(STONEYVCV_VERSION_BUILD)
+version:
+	@echo $(STONEYVCV_VERSION)
+
+version-package:
+	@echo $(STONEYVCV_VERSION_MAJOR).$(STONEYVCV_VERSION_MINOR).$(STONEYVCV_VERSION_PATCH)-r$(STONEYVCV_VERSION_BUILD)
+
+version-all: version-major version-minor version-patch version-tweak
+	@echo $(STONEYVCV_VERSION)
+	@echo $(STONEYVCV_VERSION_MAJOR).$(STONEYVCV_VERSION_MINOR).$(STONEYVCV_VERSION_PATCH)-r$(STONEYVCV_VERSION_BUILD)
 
 FLAGS += -DSTONEYVCV_VERSION_MAJOR=$(STONEYVCV_VERSION_MAJOR)
 FLAGS += -DSTONEYVCV_VERSION_MINOR=$(STONEYVCV_VERSION_MINOR)
@@ -67,8 +163,6 @@ STONEYVCV_BUILD_TESTS ?= 0
 ifeq ($(STONEYVCV_BUILD_TESTS),1)
 	FLAGS += -DSTONEYVCV_BUILD_TESTS=$(STONEYVCV_BUILD_TESTS)
 endif
-
-include $(RACK_DIR)/arch.mk
 
 ifdef ARCH_X64
 	TRIPLET_ARCH := x64
@@ -153,13 +247,13 @@ DISTRIBUTABLES += $(wildcard presets)
 
 PRESET ?= $(PRESET_ARCH)-$(PRESET_OS)-$(PRESET_CONFIG)$(PRESET_VERBOSE)
 
-reconfigure:
-	cmake \
+reconfigure: sdk submodules
+	VCPKG_ROOT=$(VCPKG_ROOT) cmake \
 	--preset $(PRESET) \
   --fresh
 
-configure:
-	cmake \
+configure: sdk submodules
+	VCPKG_ROOT=$(VCPKG_ROOT) cmake \
 	--preset $(PRESET)
 
 build: configure
@@ -182,8 +276,8 @@ package_source: test
   --build $(PWD)/build \
 	--target $@
 
-workflow:
-	cmake \
+workflow: $(VCPKG_ROOT)/vcpkg
+	VCPKG_ROOT=$(VCPKG_ROOT) cmake \
   --workflow \
 	--preset $(PRESET) \
 	--fresh
@@ -200,23 +294,46 @@ source: configure
 # 	--prefix $(PWD)/install
 
 # Include the docs target
-$(PWD)/build/docs/html: configure
+./build/docs/html: configure
 	cd docs
-	doxygen $(PWD)/docs/Doxyfile
+	doxygen ./docs/Doxyfile
 	cd $(PWD)
 
 docs: $(PWD)/build/docs/html
 
+# These are "main" Makefile targets which most Rack plugin devs expect
+dep: reconfigure
+
+$(RACK_DIR)/plugin.mk: sdk
+
 # Include the Rack plugin Makefile framework
 include $(RACK_DIR)/plugin.mk
 
-# These are "main" Makefile targets which most Rack plugin devs expect
-
-dep: reconfigure
-
-all: dep
-	$(MAKE) -f $(RACK_DIR)/plugin.mk $@
+# all: dep
+# 	$(MAKE) -f $(RACK_DIR)/plugin.mk $@ -E RACK_DIR=$(RACK_DIR)
 
 # clean:
-# 	cmake --build $(PWD)/build --target $@
-# 	$(MAKE) -f $(RACK_DIR)/plugin.mk $@
+# 	$(MAKE) -f $(RACK_DIR)/plugin.mk $@ -E RACK_DIR=$(RACK_DIR)
+# 	$(MAKE) -f ./dep/Makefile $@
+
+.PHONY:
+	submodules
+	sdk
+	verion-major
+	version-minor
+	version-patch
+	version-tweak
+	version-build
+	version-package
+	version-all
+	version
+	reconfigure
+	configure
+	build
+	test
+	package
+	package_source
+	workflow
+	source
+	docs
+	dep

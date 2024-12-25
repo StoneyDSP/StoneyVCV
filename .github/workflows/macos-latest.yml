@@ -16,19 +16,16 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  VCPKG_ROOT: ${{ github.workspace }}/vcpkg
-  BUILD_DIR: ${{ github.workspace }}/build
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  SCCACHE_GHA_ENABLED: "true"
-  SCCACHE_CACHE_MULTIARCH: 1
-  SCCACHE_RECACHE: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
+  RACK_SDK_VERSION_MAJOR: 2
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "mac-x64+arm64"
-  STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
-  STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
-  STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
-  STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
+  # STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
+  # STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
+  # STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
+  # STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
 
 jobs:
   macos:
@@ -36,7 +33,7 @@ jobs:
 
     steps:
 
-      # REQUIREMENTS
+      # Requirements
 
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's macOS Deps
@@ -49,133 +46,88 @@ jobs:
         submodules: true
         fetch-depth: 0
 
-    - name: vcpkg install
-      uses: johnwason/vcpkg-action@v6
-      with:
-        # vcpkg triplet to use
-        triplet: arm64-osx
-        # GitHub token to authenticate API requests. Recommended to use  github.token
-        token: ${{ github.token }}
-        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
-        manifest-dir: ${{ github.workspace }}
-        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: false
-        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake sse2neon
-
-    # - name: Bootstrap vcpkg
-    #   shell: bash
-    #   run: "${{ github.workspace }}/dep/vcpkg/bootstrap-vcpkg.sh"
-
-    # - name: Enable GitHub Actions Cache backend
-    #   uses: actions/github-script@v7
-    #   with:
-    #     script: |
-    #       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-    #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
-    # - name: Build ports
-    #   shell: bash
-    #   run: ${{ github.workspace }}/vcpkg/vcpkg install
-    #   env:
-    #     # X_VCPKG_ASSET_SOURCES: "clear;x-azurl,https://your.domain.com/container,${{ secrets.SAS }},readwrite"
-    #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-    #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
-
     - name: get Rack Executable
       shell: bash
       run: |
         brew install --cask vcv-rack
 
-      # For now, we still need to fetch the SDK's Makefile helpers manually...
-    - name: get Rack SDK
+    # CI helpers
+    - name: Enable GitHub Actions Cache backend
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    # Output package name (don't do this at home)
+    - name: make version
       shell: bash
       run: |
-        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
-
-    # - name: Configure Tests
-    #   run: >-
-    #     cmake
-    #     --preset arm64-osx-release
-    #     --fresh
-
-    # - name: Build Tests
-    #   run: >-
-    #     cmake
-    #     --build ${{ env.BUILD_DIR }}
-    #     --preset arm64-osx-release
-    #     --target tests
-    #     -j 3
-
-    # - name: Test
-    #   run: >-
-    #     ctest
-    #     --test-dir ${{ env.BUILD_DIR }}
-    #     --preset arm64-osx-release
-    #     -j 3
-
-    # - name: Install
-    #   run: >-
-    #     cmake
-    #     --install ${{ env.BUILD_DIR }}
-    #     --prefix ${{ github.workspace }}/install
-    #     --strip
-    #     -j 3
+        echo STONEYVCV_VERSION_MAJOR=${{ env.RACK_SDK_VERSION_MAJOR }} >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_MINOR=0 >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_PATCH=$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_TWEAK=$(git rev-parse HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_BUILD=$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_PACKAGE=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_GIT_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
 
     - name: make dep
       shell: bash
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dep -j 3
+
+    # Developer workflow
+
+    - name: make workflow
+      shell: bash
+      run: make workflow -j 3
+
+    # Deployment workflow
 
     - name: make
       shell: bash
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make -j 3
 
     - name: make dist
       shell: bash
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dist -j 3
 
     - name: make install
       shell: bash
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make install -j 3
 
-    - name: make workflow
-      shell: bash
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make workflow -j 3
+    # List all artefact directories
 
-    # List all files in tree
     - name: tree
       shell: bash
-      run: tree
+      run: |
+        tree ${{ github.workspace }}/dist
+        tree ${{ github.workspace }}/install
+
+    # Upload build artefacts
 
     - name: upload vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-mac-arm64.vcvplugin
-        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-mac-arm64.vcvplugin'
+        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-mac-arm64.vcvplugin
+        path: ${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-mac-arm64.vcvplugin
+        if-no-files-found: error
 
     - name: upload .sh
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.sh
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.sh
+        if-no-files-found: error
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.tar.gz
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.tar.gz
+        if-no-files-found: error
+
+    # Download build artefacts
 
     - name: download
       uses: actions/download-artifact@v4
