@@ -77,7 +77,7 @@ sdk: ./dep/Rack-SDK
 RACK_DIR ?= ./dep/Rack-SDK
 
 # StoneyVCV
-STONEYVCV_VERSION_MAJOR ?= $(RACK_SDK_VERSION_MAJOR)
+STONEYVCV_VERSION_MAJOR ?= 2
 STONEYVCV_VERSION_MINOR ?= 0
 STONEYVCV_VERSION_PATCH ?= $(strip $(shell $(GIT) rev-list HEAD | wc -l))
 STONEYVCV_VERSION_TWEAK ?= $(strip $(shell $(GIT) rev-parse HEAD))
