@@ -54,5 +54,14 @@
       }
 
     }
+  ],
+  "packagePresets": [
+    {
+      "name": "options",
+      "hidden": true,
+      "vendorName": "StoneyDSP",
+      "packageName": "StoneyVCV",
+      "packageDirectory": "${sourceDir}/install"
+    }
   ]
 }
