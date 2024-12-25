@@ -13,13 +13,11 @@ concurrency:
 
 env:
   DISPLAY: :0
-  BUILD_DIR: ${{ github.workspace }}/build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-  SCCACHE_GHA_ENABLED: "true"
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "lin-x64"
   # STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
@@ -65,32 +63,21 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
+    # Output package name
     - name: make version
       shell: bash
       run: |
-        STONEYVCV_VERSION_MAJOR=$(make version-major)
-        STONEYVCV_VERSION_MINOR=$(make version-minor)
-        STONEYVCV_VERSION_PATCH=$(make version-patch)
-        STONEYVCV_VERSION_TWEAK=$(make version-tweak)
-        STONEYVCV_VERSION_BUILD=$(make version-build)
-        STONEYVCV_VERSION_PACKAGE=$(make version-package)
-        STONEYVCV_VERSION=$(make version)
-
-        echo "STONEYVCV_VERSION_MAJOR=$STONEYVCV_VERSION_MAJOR" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_MINOR=$STONEYVCV_VERSION_MINOR" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PATCH=$STONEYVCV_VERSION_PATCH" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_TWEAK=$STONEYVCV_VERSION_TWEAK" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_BUILD=$STONEYVCV_VERSION_BUILD" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PACKAGE=$STONEYVCV_VERSION_PACKAGE" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION=$STONEYVCV_VERSION" >> $GITHUB_ENV
-
-    # - name: Build ports
-    #   shell: bash
-    #   run: ${{ github.workspace }}/vcpkg/vcpkg install
-    #   env:
-    #     # X_VCPKG_ASSET_SOURCES: "clear;x-azurl,https://your.domain.com/container,${{ secrets.SAS }},readwrite"
-    #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-    #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
+        EOF=$(uuidgen)
+        echo "STONEYVCV_CONFIG<<$EOF" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MAJOR=$(echo $(make version-major))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MINOR=$(echo $(make version-minor))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PATCH=$(echo $(make version-patch))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_TWEAK=$(echo $(make version-tweak))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_BUILD=$(echo $(make version-build))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PACKAGE=$(echo $(make version-package))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION=$(echo $(make version))" >> $GITHUB_ENV
+        echo "$EOF" >> $GITHUB_ENV
+        echo $STONEYVCV_CONFIG
 
     # Deployment workflow
 
