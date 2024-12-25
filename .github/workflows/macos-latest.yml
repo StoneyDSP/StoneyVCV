@@ -61,7 +61,7 @@ jobs:
     # Output package name (don't do this at home)
     - name: make version
       shell: bash
-      run: STONEYVCV_VERSION_PATCH=$(git rev-list HEAD | wc -l) echo STONEYVCV_VERSION=2.0.$STONEYVCV_VERSION_PATCH >> $GITHUB_ENV
+      run: echo "STONEYVCV_VERSION=2.0.$(git rev-list HEAD | wc -l)" >> $GITHUB_ENV
 
     - name: make dep
       shell: bash
