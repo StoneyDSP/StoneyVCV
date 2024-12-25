@@ -18,6 +18,10 @@ git clone https://github.com/StoneyDSP/StoneyVCV.git && cd StoneyVCV
 ```
 
 ```shell
+make dep
+```
+
+```shell
 make
 ```
 
@@ -30,7 +34,6 @@ make install
 Complete the [Setting up your development environment](https://vcvrack.com/manual/Building#Setting-up-your-development-environment) section of the [VCV Rack Plugin Development guide](https://vcvrack.com/manual/Building). Briefly, you will need the following installations at minimum:
 
 - VCV Rack 2 Free
-- vcpkg
 - CMake
 - Ninja
 - GNU Make
