@@ -66,10 +66,8 @@ jobs:
     - name: get Rack Executable
       shell: bash
       run: |
-        curl https://vcvrack.com/downloads/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip -q RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
+        curl https://vcvrack.com/downloads/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ${{ github.workspace }}/dep/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+        unzip -q ${{ github.workspace }}/dep/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -d ${{ github.workspace }}/dep
 
     # CI helpers
     - name: Enable GitHub Actions Cache backend
