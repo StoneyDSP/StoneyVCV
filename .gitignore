@@ -1,12 +1,12 @@
 # Artefact directories
 #
-*/_CPack_Packages
-*/vcpkg_installed
-*/install
-*/build
-*/dist
-*/bin
-*/out
+/_CPack_Packages
+/vcpkg_installed
+/install
+/build
+/dist
+/bin
+/out
 
 # Artefact files
 #
