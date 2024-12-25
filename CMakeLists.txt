@@ -240,7 +240,7 @@ if(STONEYVCV_BUILD_PLUGIN)
     )
 
     list(APPEND STONEYVCV_TARGETS plugin) # Collect list of targets to build...
-    message(STATUS "Added target: ${STONEYVCV_SLUG}::${STONEYVCV_BRAND}::plugin v${plugin_VERSION}")
+    message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::plugin v${plugin_VERSION}")
 
 endif(STONEYVCV_BUILD_PLUGIN)
 
@@ -284,7 +284,7 @@ function(stoneyvcv_add_test MODULE)
     )
     target_compile_features(tests_${MODULE} PUBLIC cxx_std_17)
     target_compile_features(tests_${MODULE} PUBLIC c_std_17)
-    message(STATUS "Added target: ${STONEYVCV_SLUG}::${STONEYVCV_BRAND}::tests_${MODULE} v${tests_${MODULE}_VERSION}")
+    message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::tests_${MODULE} v${tests_${MODULE}_VERSION}")
 endfunction()
 
 if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
@@ -399,7 +399,7 @@ if(STONEYVCV_BUILD_MODULES)
             )
 
             list(APPEND STONEYVCV_TARGETS ${MODULE}) # Collect enabled modules
-            message(STATUS "Added target: ${STONEYVCV_SLUG}::${STONEYVCV_BRAND}::${MODULE} v${${MODULE}_VERSION}")
+            message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::${MODULE} v${${MODULE}_VERSION}")
 
         endif()
 
