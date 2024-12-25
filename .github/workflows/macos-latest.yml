@@ -51,13 +51,13 @@ jobs:
       run: |
         EOF=$(uuidgen)
         echo "STONEYVCV_CONFIG<<$EOF" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_MAJOR=$(echo $(make version-major))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_MINOR=$(echo $(make version-minor))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PATCH=$(echo $(make version-patch))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_TWEAK=$(echo $(make version-tweak))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_BUILD=$(echo $(make version-build))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PACKAGE=$(echo $(make version-package))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION=$(echo $(make version))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MAJOR=$(echo $(`make version-major`))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MINOR=$(echo $(`make version-minor`))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PATCH=$(echo $(`make version-patch`))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_TWEAK=$(echo $(`make version-tweak`))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_BUILD=$(echo $(`make version-build`))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PACKAGE=$(echo $(`make version-package`))" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION=$(echo $(`make version`))" >> $GITHUB_ENV
         echo "$EOF" >> $GITHUB_ENV
         echo $STONEYVCV_CONFIG
 
