@@ -68,6 +68,7 @@ jobs:
         echo STONEYVCV_VERSION_PATCH=$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
         echo STONEYVCV_VERSION_TWEAK=$(git rev-parse HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
         echo STONEYVCV_VERSION_BUILD=$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_PACKAGE=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
         echo STONEYVCV_VERSION=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1').$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
         echo STONEYVCV_GIT_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
 
@@ -115,15 +116,15 @@ jobs:
     - name: upload .sh
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
-        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.sh
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.sh
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.sh
         if-no-files-found: error
 
     - name: upload .tar.gz
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
-        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-Darwin.tar.gz
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.tar.gz
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-Darwin.tar.gz
         if-no-files-found: error
 
     # Download build artefacts
