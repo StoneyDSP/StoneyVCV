@@ -17,6 +17,7 @@ env:
   CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_MANIFEST_MODE: ON
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   BUILD_DIR: build
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SCCACHE_GHA_ENABLED: "true"
@@ -84,16 +85,35 @@ jobs:
     - name: get Rack Executable
       run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
 
-    # - name: Enable GitHub Actions Cache backend
-    #   uses: actions/github-script@v7
-    #   with:
-    #     script: |
-    #       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-    #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+    - name: Enable GitHub Actions Cache backend
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: make version
       shell: bash
-      run: echo "STONEYVCV_VERSION=$(make version)" >> $GITHUB_ENV
+      run: |
+        STONEYVCV_VERSION_MAJOR=$(make version-major)
+        STONEYVCV_VERSION_MINOR=$(make version-minor)
+        STONEYVCV_VERSION_PATCH=$(make version-patch)
+        STONEYVCV_VERSION_TWEAK=$(make version-tweak)
+        STONEYVCV_VERSION_BUILD=$(make version-build)
+        STONEYVCV_VERSION_PACKAGE=$(make version-package)
+        STONEYVCV_VERSION=$(make version)
+
+        EOF=$(uuidgen)
+        echo "STONEYVCV_CONFIG<<$EOF" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MAJOR=$STONEYVCV_VERSION_MAJOR" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MINOR=$STONEYVCV_VERSION_MINOR" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PATCH=$STONEYVCV_VERSION_PATCH" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_TWEAK=$STONEYVCV_VERSION_TWEAK" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_BUILD=$STONEYVCV_VERSION_BUILD" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PACKAGE=$STONEYVCV_VERSION_PACKAGE" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION=$STONEYVCV_VERSION" >> $GITHUB_ENV
+        echo "$EOF" >> $GITHUB_ENV
+        echo "$STONEYVCV_CONFIG"
 
     # - name: Build ports
     #   shell: msys2 {0}
@@ -140,14 +160,14 @@ jobs:
     - name: upload .vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-$STONEYVCV_VERSION-win-x64.vcvplugin
-        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-$STONEYVCV_VERSION-win-x64.vcvplugin'
+        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin'
 
     - name: upload .exe
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyVCV-$STONEYVCV_VERSION-win64.exe
-        path: ${{ github.workspace }}/install/StoneyVCV-$STONEYVCV_VERSION-win64.exe
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
 
     # Download build artefacts
 
