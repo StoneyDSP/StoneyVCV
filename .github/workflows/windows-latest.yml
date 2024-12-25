@@ -92,15 +92,19 @@ jobs:
     #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: make version
-      shell: bash
+      shell: msys2 {0}
       run: |
-        echo "STONEYVCV_VERSION_MAJOR=$(make version-major)" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_MINOR=$(make version-minor)" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PATCH=$(make version-patch)" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_TWEAK=$(make version-tweak)" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_BUILD=$(make version-build)" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PACKAGE=$(make version-package)" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION=$(make version)" >> $GITHUB_ENV
+        EOF=$(uuidgen)
+        echo "STONEYVCV_CONFIG<<$EOF" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MAJOR=\"$(make version-major)"\" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_MINOR=\"$(make version-minor)"\" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PATCH=\"$(make version-patch)"\" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_TWEAK=\"$(make version-tweak)"\" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_BUILD=\"$(make version-build)"\" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION_PACKAGE=\"$(make version-package)"\" >> $GITHUB_ENV
+        echo "STONEYVCV_VERSION=\"$(make version)"\" >> $GITHUB_ENV
+        echo "$EOF" >> $GITHUB_ENV
+        echo "STONEYVCV_CONFIG"
 
     # - name: Build ports
     #   shell: msys2 {0}
