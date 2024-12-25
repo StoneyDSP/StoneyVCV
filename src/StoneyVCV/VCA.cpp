@@ -30,7 +30,7 @@ namespace VCA {
 
 //==============================================================================
 
-static const ::rack::math::Vec HP4Dimensions = (
+static const ::rack::math::Vec VCADimensions = (
     ::rack::window::mm2px(30.479999995F), // 5.079999999F * 3.0F
     ::rack::window::mm2px(128.693333312F)
 );
@@ -90,8 +90,11 @@ static const ::rack::math::Vec HP4Dimensions = (
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args)
 {
-    auto vca_input = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT];
-    auto cv_input = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT];
+    auto& vca_input = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT];
+    auto& cv_input = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT];
+    auto& gain_param = params[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM];
+    auto& vca_output = outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT];
+    auto& blink_light = lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::BLINK_LIGHT];
 
     // Get desired number of channels from a "primary" input.
 	// If this input is unpatched, getChannels() returns 0, but we should
@@ -103,16 +106,16 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     });
 
     // Panel-based params are monophonic by nature
-    float level = params[::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM].getValue();
+    const auto& level = gain_param.getValue();
 
     for (::StoneyDSP::size_t c = 0; c < numChannels; c++) {
         // Get input
-        float in = inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT].getPolyVoltage(c);
+        auto in = vca_input.getPolyVoltage(c);
 
         // Get gain
         auto gainApply = level;
-        if (inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT].isConnected()) {
-            auto cv = ::rack::math::clamp(inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT].getPolyVoltage(c) / 10.0F, 0.0F, 1.0F);
+        if (cv_input.isConnected()) {
+            auto cv = ::rack::math::clamp(cv_input.getPolyVoltage(c) / 10.0F, 0.0F, 1.0F);
             gainApply *= cv;
         }
 
@@ -121,29 +124,29 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
         lastGains[c] = gainApply;
 
         // Set output
-        outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT].setVoltage(in, c);
+        vca_output.setVoltage(in, c);
     }
 
-	outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT].setChannels(numChannels);
+	vca_output.setChannels(numChannels);
 	lastChannels = numChannels;
 
     // Lights
     if (lightDivider.process()) {
         for (::StoneyDSP::size_t c = 0; c < numChannels; c++) {
             // Get output
-            float out = outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT].getPolyVoltage(c);
+            float out = vca_output.getPolyVoltage(c);
 
             // Get gain
             auto gainApply = level;
-            if (inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT].isConnected()) {
-                auto cv = ::rack::math::clamp(inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT].getPolyVoltage(c) / 10.0F, 0.0F, 1.0F);
+            if (cv_input.isConnected()) {
+                auto cv = ::rack::math::clamp(cv_input.getPolyVoltage(c) / 10.0F, 0.0F, 1.0F);
                 gainApply *= cv;
             }
 
             // Apply gain
             auto lightsGain = out * gainApply;
 
-            lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::BLINK_LIGHT].setBrightnessSmooth(
+            blink_light.setBrightnessSmooth(
                 ::std::abs(lightsGain),
                 args.sampleTime
             );
