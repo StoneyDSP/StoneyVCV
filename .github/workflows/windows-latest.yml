@@ -94,7 +94,7 @@ jobs:
     # Output package name (don't do this at home)
     - name: make version
       shell: msys2 {0}
-      run: echo STONEYVCV_VERSION=2.0.$(git rev-list HEAD | wc -l) >> $GITHUB_ENV
+      run: echo STONEYVCV_VERSION=2.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
 
     - name: make dep
       shell: msys2 {0}
