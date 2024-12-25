@@ -109,8 +109,8 @@ jobs:
     - name: upload vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-mac-arm64.vcvplugin
-        path: ${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-mac-arm64.vcvplugin
+        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-mac-arm64.vcvplugin
+        path: ${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-mac-arm64.vcvplugin
         if-no-files-found: error
 
     - name: upload .sh
