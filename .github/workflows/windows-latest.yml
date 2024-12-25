@@ -17,17 +17,16 @@ env:
   CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
   VCPKG_MANIFEST_MODE: ON
-  VCPKG_ROOT: "vcpkg"
-  BUILD_DIR: build
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  SCCACHE_GHA_ENABLED: "true"
+  RACK_SDK_VERSION_MAJOR: 2
   RACK_SDK_VERSION: 2.5.2
   RACK_SDK_PLATFORM: "win-x64"
   MSYSTEM: "MINGW64"
-  STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
-  STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
-  STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
-  STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
+  # STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
+  # STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
+  # STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
+  # STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
 
 jobs:
   windows:
@@ -38,14 +37,14 @@ jobs:
 
     steps:
 
-      # REQUIREMENTS
+      # Requirements
 
     - name: install winget
       uses: Cyberboss/install-winget@v1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: install MSYS2
+    - name: install VCV's MSYS2 Deps
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
@@ -81,130 +80,80 @@ jobs:
         submodules: true
         fetch-depth: 0
 
-    - name: vcpkg install
-      uses: johnwason/vcpkg-action@v6
-      with:
-        # vcpkg triplet to use
-        triplet: x64-mingw-dynamic
-        # GitHub token to authenticate API requests. Recommended to use  github.token
-        token: ${{ github.token }}
-        # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
-        manifest-dir: ${{ github.workspace }}
-        # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-        github-binarycache: false
-        pkgs: catch2 simde vcpkg-cmake-config vcpkg-cmake
-
-    # - name: Bootstrap vcpkg
-    #   shell: msys2 {0}
-    #   run: "${{ github.workspace }}/dep/vcpkg/bootstrap-vcpkg.sh"
-
-    # - name: Enable GitHub Actions Cache backend
-    #   uses: actions/github-script@v7
-    #   with:
-    #     script: |
-    #       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-    #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
-    # - name: Build ports
-    #   shell: msys2 {0}
-    #   run: ${{ github.workspace }}/vcpkg/vcpkg install
-    #   env:
-    #     # X_VCPKG_ASSET_SOURCES: "clear;x-azurl,https://your.domain.com/container,${{ secrets.SAS }},readwrite"
-    #     VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-    #     VCPKG_OVERLAY_PORTS: "${{ github.workspace }}/dep/vcpkg/ports"
-
-      # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: get Rack Executable
       run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
 
-      # For now, we still need to fetch the SDK's Makefile helpers manually...
-    - name: get Rack SDK
+    # CI helper
+    - name: Enable GitHub Actions Cache backend
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    # Output package name (don't do this at home)
+    - name: make version
       shell: msys2 {0}
       run: |
-        curl https://vcvrack.com/downloads/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ./dep/Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd dep
-        unzip Rack-SDK-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
-        cd ..
-
-    # - name: Configure Tests
-    #   shell: msys2 {0}
-    #   run: >-
-    #     cmake
-    #     --preset x64-windows-release
-    #     --fresh
-
-    # - name: Build Tests
-    #   shell: msys2 {0}
-    #   run: >-
-    #     cmake
-    #     --build ${{ env.BUILD_DIR }}
-    #     --preset x64-windows-release
-    #     --target tests
-    #     -j 3
-
-    # - name: Test
-    #   shell: msys2 {0}
-    #   run: >-
-    #     ctest
-    #     --test-dir ${{ env.BUILD_DIR }}
-    #     --preset x64-windows-release
-    #     -j 3
-
-    # - name: Install
-    #   shell: msys2 {0}
-    #   run: >-
-    #     cmake
-    #     --install ${{ env.BUILD_DIR }}
-    #     --prefix ${PWD}/install
-    #     --strip
-    #     -j 3
+        echo STONEYVCV_VERSION_MAJOR=${{ env.RACK_SDK_VERSION_MAJOR }} >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_MINOR=0 >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_PATCH=$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_TWEAK=$(git rev-parse HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_BUILD=$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION_PACKAGE=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_GIT_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
 
     - name: make dep
       shell: msys2 {0}
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make dep -j 3
 
-    - name: make
-      shell: msys2 {0}
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make -j3
-
-    - name: make dist
-      shell: msys2 {0}
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make dist -j3
-
-    - name: make install
-      shell: msys2 {0}
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
-      run: make install -j3
+    # Developer workflow
 
     - name: make workflow
       shell: msys2 {0}
-      env:
-        RACK_DIR: ${{ github.workspace }}/dep/Rack-SDK
       run: make workflow -j 3
 
-    # List all files in tree
+    # Deployment workflow
+
+    - name: make
+      shell: msys2 {0}
+      run: make -j 3
+
+    - name: make dist
+      shell: msys2 {0}
+      run: make dist -j 3
+
+    - name: make install
+      shell: msys2 {0}
+      run: make install -j 3
+
+    # List all artefact directories
+
     - name: tree
       shell: msys2 {0}
-      run: tree
+      run: |
+        tree ./dist
+        tree ./install
 
-    - name: upload .exe
-      uses: actions/upload-artifact@v4
-      with:
-        name: StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
-        path: ${{ github.workspace }}/dist/StoneyVCV-${{ env.STONEYVCV_VERSION }}-win64.exe
+    # Upload build artefacts
 
     - name: upload .vcvplugin
       uses: actions/upload-artifact@v4
       with:
-        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin
-        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION }}-win-x64.vcvplugin'
+        name: StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-win-x64.vcvplugin
+        path: '${{ github.workspace }}/dist/StoneyDSP-StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-win-x64.vcvplugin'
+        if-no-files-found: error
+
+    - name: upload .exe
+      uses: actions/upload-artifact@v4
+      with:
+        name: StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-win64.exe
+        path: ${{ github.workspace }}/install/StoneyVCV-${{ env.STONEYVCV_VERSION_PACKAGE }}-win64.exe
+        if-no-files-found: error
+
+    # Download build artefacts
 
     - name: download
       uses: actions/download-artifact@v4
