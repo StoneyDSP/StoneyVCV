@@ -79,18 +79,6 @@ jobs:
         submodules: true
         fetch-depth: 0
 
-    # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
-    - name: get Rack Executable
-      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
-
-    # CI helpers
-    - name: Enable GitHub Actions Cache backend
-      uses: actions/github-script@v7
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
     # Output package name
     - name: make version
       shell: bash
@@ -106,6 +94,18 @@ jobs:
         echo "STONEYVCV_VERSION=$(echo $(make version))" >> $GITHUB_ENV
         echo "$EOF" >> $GITHUB_ENV
         echo $STONEYVCV_CONFIG
+
+    # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
+    - name: get Rack Executable
+      run: winget install VCVRack.VCVRack --disable-interactivity --accept-source-agreements
+
+    # CI helpers
+    - name: Enable GitHub Actions Cache backend
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     # Deployment workflow
 

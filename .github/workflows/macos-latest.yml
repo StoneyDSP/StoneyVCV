@@ -45,19 +45,6 @@ jobs:
         submodules: true
         fetch-depth: 0
 
-    - name: get Rack Executable
-      shell: bash
-      run: |
-        brew install --cask vcv-rack
-
-    # CI helpers
-    - name: Enable GitHub Actions Cache backend
-      uses: actions/github-script@v7
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
     # Output package name
     - name: make version
       shell: bash
@@ -73,6 +60,19 @@ jobs:
         echo "STONEYVCV_VERSION=$(echo $(make version))" >> $GITHUB_ENV
         echo "$EOF" >> $GITHUB_ENV
         echo $STONEYVCV_CONFIG
+
+    - name: get Rack Executable
+      shell: bash
+      run: |
+        brew install --cask vcv-rack
+
+    # CI helpers
+    - name: Enable GitHub Actions Cache backend
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     # Deployment workflow
 
