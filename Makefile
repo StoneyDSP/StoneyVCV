@@ -2,6 +2,7 @@ GIT := git
 CURL := curl
 ZIP := zip
 UNZIP := unzip
+JQ := jq
 
 ifdef CROSS_COMPILE
 	MACHINE := $(CROSS_COMPILE)
