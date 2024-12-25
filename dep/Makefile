@@ -1,0 +1,27 @@
+GIT := git
+CURL := curl
+ZIP := zip
+UNZIP := unzip
+
+RACK_SDK_VERSION_MAJOR := 2
+RACK_SDK_VERSION_MINOR ?= 52
+RACK_SDK_VERSION_BUILD ?= 2
+RACK_SDK_VERSION ?= 2.5.2
+RACK_SDK_PLATFORM ?= lin-x64
+RACK_SDK_FILENAME := Rack-SDK-$(RACK_SDK_VERSION)-$(RACK_SDK_PLATFORM).zip
+RACK_SDK_URL := https://vcvrack.com/downloads/$(RACK_SDK_FILENAME)
+
+./$(RACK_SDK_FILENAME):
+	$(shell $(CURL) $(RACK_SDK_URL) -o $@)
+
+./Rack-SDK: ./$(RACK_SDK_FILENAME)
+	$(shell $(UNZIP) ./$(RACK_SDK_FILENAME))
+
+sdk: ./Rack-SDK
+
+CLEAN_TARGETS :=
+CLEAN_TARGETS += ./Rack-SDK
+CLEAN_TARGETS += ./$(RACK_SDK_FILENAME)
+
+clean:
+	$(shell rm -rf $(CLEAN_TARGETS))
