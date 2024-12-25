@@ -78,7 +78,7 @@ jobs:
         echo STONEYVCV_VERSION_BUILD=$(echo $(make version-build)) >> $GITHUB_ENV
         echo STONEYVCV_VERSION_PACKAGE=$(echo $(make version-package)) >> $GITHUB_ENV
         echo STONEYVCV_VERSION=$(echo $(make version)) >> $GITHUB_ENV
-        echo "$EOF >> $GITHUB_ENV"
+        echo "$EOF" >> $GITHUB_ENV
         echo $STONEYVCV_CONFIG
 
     # Developer workflow
