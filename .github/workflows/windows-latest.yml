@@ -91,25 +91,14 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: make dep
-      shell: msys2 {0}
-      run: make dep -j 3
-
     # Output package name (don't do this at home)
     - name: make version
       shell: msys2 {0}
-      run: |
-        EOF=$(uuidgen)
-        echo "STONEYVCV_CONFIG<<$EOF" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_MAJOR=$(echo $(make version-major))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_MINOR=$(echo $(make version-minor))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PATCH=$(echo $(make version-patch))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_TWEAK=$(echo $(make version-tweak))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_BUILD=$(echo $(make version-build))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION_PACKAGE=$(echo $(make version-package))" >> $GITHUB_ENV
-        echo "STONEYVCV_VERSION=$(echo $(make version))" >> $GITHUB_ENV
-        echo "$EOF" >> $GITHUB_ENV
-        echo $STONEYVCV_CONFIG
+      run: echo STONEYVCV_VERSION=2.0.$(git rev-list HEAD | wc -l) >> $GITHUB_ENV
+
+    - name: make dep
+      shell: msys2 {0}
+      run: make dep -j 3
 
     # Developer workflow
 
