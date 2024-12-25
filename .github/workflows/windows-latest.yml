@@ -102,7 +102,7 @@ jobs:
         echo STONEYVCV_VERSION_TWEAK=$(git rev-parse HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
         echo STONEYVCV_VERSION_BUILD=$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
         echo STONEYVCV_VERSION_PACKAGE=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
-        echo STONEYVCV_VERSION=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1').$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+        echo STONEYVCV_VERSION=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
         echo STONEYVCV_GIT_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
 
     - name: make dep
