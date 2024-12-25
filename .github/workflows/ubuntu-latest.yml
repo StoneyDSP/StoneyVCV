@@ -76,8 +76,6 @@ jobs:
         STONEYVCV_VERSION_PACKAGE=$(make version-package)
         STONEYVCV_VERSION=$(make version)
 
-        EOF=$(uuidgen)
-        echo "STONEYVCV_CONFIG<<$EOF" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION_MAJOR=$STONEYVCV_VERSION_MAJOR" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION_MINOR=$STONEYVCV_VERSION_MINOR" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION_PATCH=$STONEYVCV_VERSION_PATCH" >> $GITHUB_ENV
@@ -85,8 +83,6 @@ jobs:
         echo "STONEYVCV_VERSION_BUILD=$STONEYVCV_VERSION_BUILD" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION_PACKAGE=$STONEYVCV_VERSION_PACKAGE" >> $GITHUB_ENV
         echo "STONEYVCV_VERSION=$STONEYVCV_VERSION" >> $GITHUB_ENV
-        echo "$EOF" >> $GITHUB_ENV
-        echo "$STONEYVCV_CONFIG"
 
     # - name: Build ports
     #   shell: bash
