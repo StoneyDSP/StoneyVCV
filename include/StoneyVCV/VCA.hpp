@@ -169,23 +169,17 @@ private:
 
     //==========================================================================
 
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::size_t lastChannels = 1;
+    // /**
+    //  * @brief
+    //  *
+    //  */
+    // ::StoneyDSP::size_t lastNumChannels;
 
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::float_t gain;
-
-    /**
-     * @brief
-     *
-     */
-	::StoneyDSP::float_t lastGains[16] = {};
+    // /**
+    //  * @brief
+    //  *
+    //  */
+	// ::StoneyDSP::float_t lastGains[16] = {};
 
     ::rack::dsp::ClockDivider lightDivider;
 
@@ -338,9 +332,9 @@ private:
 
     // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
 
-    ::rack::componentlibrary::PJ301MPort* portCvInput;
-    ::rack::componentlibrary::PJ301MPort* portVcaInput;
-    ::rack::componentlibrary::PJ301MPort* portVcaOutput;
+    ::rack::componentlibrary::ThemedPJ301MPort* portCvInput;
+    ::rack::componentlibrary::ThemedPJ301MPort* portVcaInput;
+    ::rack::componentlibrary::ThemedPJ301MPort* portVcaOutput;
 
     ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>* lightVca;
 
