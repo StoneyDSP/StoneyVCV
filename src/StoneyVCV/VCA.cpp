@@ -47,7 +47,11 @@ static const ::rack::math::Vec VCADimensions = (
 } // namespace StoneyDSP
 
 ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCAModule()
-:   gain(0.0F)
+// :   lastNumChannels(std::max<::StoneyDSP::size_t>({
+//         1,
+//         (::StoneyDSP::size_t)this->inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT].getChannels(),
+//         (::StoneyDSP::size_t)this->inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT].getChannels()
+//     }))
 {
     // Assertions
     DBG("Constructing StoneyVCV::VCA::VCAModule");
