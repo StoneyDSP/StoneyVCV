@@ -46,41 +46,45 @@ static const ::rack::math::Vec VCADimensions = (
 {
     // Assertions
     DBG("Constructing StoneyVCV::VCA::VCAModule");
-    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS == 1U);
-    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS == 2U);
-    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS == 1U);
-    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_LIGHTS == 1U);
+    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::NUM_PARAMS == 1U);
+    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::NUM_INPUTS == 2U);
+    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::NUM_OUTPUTS == 1U);
+    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::NUM_LIGHTS == 1U);
 
     // Configure the number of Params, Outputs, Inputs, and Lights.
     this->config(
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS,
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS,
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS,
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_LIGHTS
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::NUM_PARAMS,
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::NUM_INPUTS,
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::NUM_OUTPUTS,
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::NUM_LIGHTS
     );
-    configParam(
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM,     // paramId
-        0.0F,                                                   // minValue
-        1.0F,                                                   // maxValue
-        1.0F,                                                   // defaultValue
-        "Gain",                                                 // name
-        "%",                                                    // unit
-        0.0F,                                                   // displayBase
-        100.0F                                                  // displayMultiplier
+    this->configParam(
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM,          // paramId
+        0.0F,                                                                   // minValue
+        1.0F,                                                                   // maxValue
+        1.0F,                                                                   // defaultValue
+        "Gain",                                                                 // name
+        "%",                                                                    // unit
+        0.0F,                                                                   // displayBase
+        100.0F                                                                  // displayMultiplier
     );
-    configInput(
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT,      // portID
-        "IN"                                                    // name
+    this->configInput(
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT,           // portID
+        "IN"                                                                    // name
     );
-    configInput(
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT,       // portID
-        "CV"                                                    // name
+    this->configInput(
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT,            // portID
+        "CV"                                                                    // name
     );
-    configOutput(
-        ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT,     // portID
-        "OUT"                                                   // name
+    this->configOutput(
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT,         // portID
+        "OUT"                                                                   // name
     );
-    lightDivider.setDivision(128);
+    this->configBypass(                                                         // Route input to output on bypass
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT,
+        ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT
+    );
+    this->lightDivider.setDivision(128);
 }
 
 ::StoneyDSP::StoneyVCV::VCA::VCAModule::~VCAModule()
