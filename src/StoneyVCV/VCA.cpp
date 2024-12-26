@@ -222,35 +222,36 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::step()
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args)
 {
+    const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
+    const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
+    const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
     const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
     const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
     const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
     const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
     const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
-    const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
-    const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
-    const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
+
     const auto& size = this->getSize();
 
     // draw Themed BG
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg,
-        0.0F,
-        0.0F,
-        size.x,
-        size.y
+        /** x */0.0F,
+        /** y */0.0F,
+        /** w */size.x,
+        /** h */size.y
     );
     ::nvgFillColor(args.vg, bgColor);
     ::nvgFill(args.vg);
 
     // Draw themed BG gradient
     const auto& bgGradient = ::nvgLinearGradient(args.vg,
-        size.x * 0.5,
-        0.0F,
-        size.x * 0.5,
-        380.0F,
-        bgGradientS0,
-        bgGradientS1
+        /** x */size.x * 0.5,
+        /** Y */0.0F,
+        /** w */size.x * 0.5,
+        /** h */380.0F,
+        /** s1 */bgGradientS0,
+        /** s2 */bgGradientS1
     );
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg,
@@ -258,7 +259,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         /** y */0.0F,
         /** w */size.x,
         /** h */size.y
-        );
+    );
     ::nvgFillPaint(args.vg, bgGradient);
     ::nvgFill(args.vg);
 
@@ -345,7 +346,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
                 0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 15.0F)
             ),
             module,
-            ::StoneyDSP::StoneyVCV::VCA::VCAModule::GAIN_PARAM
+            ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM
         )
     ),
     // gainSlider(
@@ -367,7 +368,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
                 size.y - ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 20.0F)
             ),
             module,
-            ::StoneyDSP::StoneyVCV::VCA::VCAModule::CV_INPUT
+            ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT
         )
     ),
     portVcaInput(
@@ -377,7 +378,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
                 size.y - ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 10.0F)
             ),
             module,
-            ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_INPUT
+            ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT
         )
     ),
     portVcaOutput(
@@ -387,7 +388,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
                 size.y - ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 5.0F)
             ),
             module,
-            ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCA_OUTPUT
+            ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT
         )
     ),
     // Lights
@@ -397,7 +398,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
                 size.x * 0.5F,
                 0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 10.0F)
             ),
-            module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::BLINK_LIGHT
+            module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT
         )
     ),
     // Screws
@@ -412,11 +413,12 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         ),
         ::rack::math::Vec( // bottom-left
             (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
-            this->size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+            (this->size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
         ),
         ::rack::math::Vec( // bottom-right
             (this->size.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
-            this->size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (this->size.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
+        ),
     },
     screws{
         ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[0]),
@@ -431,11 +433,10 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     // assert(module != nullptr);
     assert(this->vcaWidget != nullptr);
     assert(this->vcaModuleWidgetFrameBuffer != nullptr);
-    assert(this->screws != nullptr);
-    assert(this->screws[0] != nullptr);
-    assert(this->screws[1] != nullptr);
-    assert(this->screws[2] != nullptr);
-    assert(this->screws[3] != nullptr);
+    for(const auto& screw : this->screws) {
+        assert(screw != nullptr);
+    }
+
     assert(this->panel != nullptr);
 
     this->setModule(module);
@@ -452,7 +453,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     this->vcaModuleWidgetFrameBuffer->addChild(this->vcaWidget);
 
     // Screws
-    for(auto screw : this->screws) {
+    for(const auto& screw : this->screws) {
         this->addChild(screw);
     }
 

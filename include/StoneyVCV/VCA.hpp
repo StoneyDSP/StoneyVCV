@@ -78,22 +78,6 @@ namespace VCA
 
 //==============================================================================
 
-/**
- * @brief The `VCAModule` struct.
- *
- */
-struct VCAModule final :
-    ::rack::engine::Module
-{
-
-    //==========================================================================
-
-public:
-
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
-
-    //==========================================================================
-
     enum IdxParams {
         GAIN_PARAM,
         NUM_PARAMS
@@ -145,13 +129,14 @@ public:
      */
     virtual ::json_t *dataToJson() override;
 
-    /**
-     * @brief Load internal data from the "data" property of the module's JSON object.
-     * Not called if "data" property is not present.
-     *
-     * @param rootJ
-     */
-    virtual void dataFromJson(::json_t *rootJ) override;
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     //==========================================================================
 
@@ -177,10 +162,6 @@ public:
 
     //==========================================================================
 
-private:
-
-    //==========================================================================
-
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
 };
@@ -191,8 +172,7 @@ private:
  * @brief The `VCAWidget` struct.
  *
  */
-struct VCAWidget final :
-    ::rack::Widget
+struct VCAWidget final : virtual ::rack::Widget
 {
 
     //==========================================================================
@@ -262,8 +242,7 @@ private:
  * @brief The `VCAModuleWidget` struct.
  *
  */
-struct VCAModuleWidget final :
-    ::rack::app::ModuleWidget
+struct VCAModuleWidget final : virtual ::rack::app::ModuleWidget
 {
 
     //==========================================================================
