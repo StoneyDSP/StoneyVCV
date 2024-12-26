@@ -26,7 +26,12 @@ namespace VCA {
 
 //==============================================================================
 
-::rack::plugin::Model* modelVCA = ::StoneyDSP::StoneyVCV::VCA::createVCA();
+::rack::plugin::Model* modelVCA = ::StoneyDSP::StoneyVCV::VCA::createModelVCA(
+/** name        */"VCA",
+/** description */"Voltage-controlled Oscillator. Supports polyphony.",
+/** manualUrl   */"https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html",
+/** hidden      */false
+);
 
 //==============================================================================
 
@@ -493,15 +498,32 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::step()
 
 //==============================================================================
 
-::rack::plugin::Model* ::StoneyDSP::StoneyVCV::VCA::createVCA() // STONEYDSP_NOEXCEPT(false)
+::rack::plugin::Model* ::StoneyDSP::StoneyVCV::VCA::createModelVCA(
+    ::std::string name,
+    ::std::string description,
+    ::std::string manualUrl,
+    bool hidden
+) noexcept(false) // STONEYDSP_NOEXCEPT(false)
 {
     DBG("Creating StoneyVCV::VCA::modelVCA");
 
     ::rack::plugin::Model* modelVCA = ::rack::createModel<
         ::StoneyDSP::StoneyVCV::VCA::VCAModule,
         ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget
-    >("VCA");
-    // STONEYDSP_THROW_IF_FAILED_VOID(modelVCO == nullptr, bad_alloc);
+    >("VCA"); // slug must never change!
+
+    if(modelVCA == nullptr)
+        throw ::rack::Exception("createModelVCA generated a nullptr");
+
+    if(!description.empty())
+        modelVCA->description = description;
+    if(!manualUrl.empty())
+        modelVCA->manualUrl = manualUrl;
+    if(!name.empty())
+        modelVCA->name = name;
+    if(!hidden)
+        modelVCA->hidden = hidden;
+
     return modelVCA;
 }
 
