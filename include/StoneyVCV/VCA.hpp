@@ -78,26 +78,48 @@ namespace VCA
 
 //==============================================================================
 
-    enum IdxParams {
-        GAIN_PARAM,
-        NUM_PARAMS
-    };
+enum IdxParams {
+    GAIN_PARAM,
+    NUM_PARAMS
+};
 
-	enum IdxInputs {
-		VCA_INPUT,
-        CV_INPUT,
-		NUM_INPUTS
-	};
+enum IdxInputs {
+    VCA_INPUT,
+    CV_INPUT,
+    NUM_INPUTS
+};
 
-	enum IdxOutputs {
-		VCA_OUTPUT,
-		NUM_OUTPUTS
-	};
+enum IdxOutputs {
+    VCA_OUTPUT,
+    NUM_OUTPUTS
+};
 
-	enum IdxLights {
-		BLINK_LIGHT,
-		NUM_LIGHTS
-	};
+enum IdxLights {
+    BLINK_LIGHT,
+    NUM_LIGHTS
+};
+//==============================================================================
+
+/**
+ * @brief The `VCAModule` struct.
+ *
+ */
+struct VCAModule final : virtual ::rack::engine::Module
+{
+
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    using IdxParams = ::StoneyDSP::StoneyVCV::VCA::IdxParams;
+
+    using IdxInputs = ::StoneyDSP::StoneyVCV::VCA::IdxInputs;
+
+    using IdxOutputs = ::StoneyDSP::StoneyVCV::VCA::IdxOutputs;
+
+    using IdxLights = ::StoneyDSP::StoneyVCV::VCA::IdxLights;
 
     //==========================================================================
 
