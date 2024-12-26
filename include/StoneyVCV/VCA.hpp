@@ -367,9 +367,19 @@ private:
 /**
  * @brief
  *
+ * @param name
+ * @param description
+ * @param manualUrl
+ * @param hidden
+ *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createVCA(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model *createModelVCA(
+    ::std::string name = "",
+    ::std::string description = "",
+    ::std::string manualUrl = "",
+    bool hidden = true
+) noexcept(false); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
