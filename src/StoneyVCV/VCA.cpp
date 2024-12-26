@@ -105,6 +105,33 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     auto& vca_output = this->outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT];
     auto& blink_light = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT];
 
+    // Panel-based params are monophonic by nature,
+    // so don't iterate over them
+    const auto& gain = gain_param.getValue();
+
+    // Mono process block
+    // {
+    //     // Get input
+    //     auto in = vca_input.getVoltage();
+
+    //     // Get gain
+    //     auto gainApply = gain;
+
+    //     // Get CV
+    //     if (cv_input.isConnected()) {
+    //         // scale
+    //         const auto& scaled_cv = (0.1F * cv_input.getVoltage()); // 0-100%
+    //         // clamp
+    //         gainApply *= ::rack::math::clamp(scaled_cv, 0.0F, 1.0F); // 0-1
+    //     }
+
+    //     // Apply gain
+    //     in *= gainApply;
+
+    //     // Set output
+    //     vca_output.setVoltage(in);
+    // }
+
     // Get desired number of channels from a "primary" input.
 	// If this input is unpatched, getChannels() returns 0, but we should
     // still generate 1 channel of output.
@@ -114,53 +141,36 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
         (::StoneyDSP::size_t)cv_input.getChannels()
     });
 
-    // Panel-based params are monophonic by nature
-    const auto& level = gain_param.getValue();
-
+    // Poly process block
     for (::StoneyDSP::size_t c = 0; c < numChannels; c++) {
+
         // Get input
         auto in = vca_input.getPolyVoltage(c);
 
         // Get gain
-        auto gainApply = level;
+        auto gainApply = gain;
+
+        // Get CV
         if (cv_input.isConnected()) {
-            auto cv = ::rack::math::clamp(cv_input.getPolyVoltage(c) / 10.0F, 0.0F, 1.0F);
-            gainApply *= cv;
+            const auto& scaled_cv = 0.1F * cv_input.getPolyVoltage(c); // 0-100%
+            gainApply *= ::rack::math::clamp(scaled_cv, 0.0F, 1.0F);
         }
 
         // Apply gain
         in *= gainApply;
-        lastGains[c] = gainApply;
+        // lastGains[c] = gainApply;
 
         // Set output
         vca_output.setVoltage(in, c);
     }
 
 	vca_output.setChannels(numChannels);
-	lastChannels = numChannels;
+	// lastNumChannels = numChannels;
 
     // Lights
-    if (lightDivider.process()) {
-        for (::StoneyDSP::size_t c = 0; c < numChannels; c++) {
-            // Get output
-            float out = vca_output.getPolyVoltage(c);
-
-            // Get gain
-            auto gainApply = level;
-            if (cv_input.isConnected()) {
-                auto cv = ::rack::math::clamp(cv_input.getPolyVoltage(c) / 10.0F, 0.0F, 1.0F);
-                gainApply *= cv;
-            }
-
-            // Apply gain
-            auto lightsGain = out * gainApply;
-
-            blink_light.setBrightnessSmooth(
-                ::std::abs(lightsGain),
-                args.sampleTime
-            );
-        }
-    }
+    ::StoneyDSP::ignoreUnused(blink_light);
+    // if (lightDivider.process()) {
+    // }
 }
 
 // ::json_t *::StoneyDSP::StoneyVCV::VCA::VCAModule::dataToJson()
@@ -362,7 +372,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     // ),
     // Ports
     portCvInput(
-        ::rack::createInputCentered<::rack::componentlibrary::PJ301MPort>(
+        ::rack::createInputCentered<::rack::componentlibrary::ThemedPJ301MPort>(
             ::rack::math::Vec(
                 size.x * 0.5F,
                 size.y - ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 20.0F)
@@ -372,7 +382,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         )
     ),
     portVcaInput(
-        ::rack::createInputCentered<::rack::componentlibrary::PJ301MPort>(
+        ::rack::createInputCentered<::rack::componentlibrary::ThemedPJ301MPort>(
             ::rack::math::Vec(
                 size.x * 0.5F,
                 size.y - ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 10.0F)
@@ -382,7 +392,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         )
     ),
     portVcaOutput(
-        ::rack::createOutputCentered<::rack::componentlibrary::PJ301MPort>(
+        ::rack::createOutputCentered<::rack::componentlibrary::ThemedPJ301MPort>(
             ::rack::math::Vec(
                 size.x * 0.5F,
                 size.y - ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 5.0F)
