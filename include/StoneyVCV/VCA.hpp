@@ -67,7 +67,7 @@ namespace StoneyVCV
  * @brief The `VCA` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
- * @version @HP2_VERSION@
+ * @version @VCA_VERSION@
  *
  */
 namespace VCA
