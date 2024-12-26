@@ -32,19 +32,22 @@ namespace VCA {
 struct VCASpec final : ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    ::std::string slug, name , description;
+    const ::std::string slug, name , description, manualUrl;
+    const bool hidden;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 1U;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 1U;
     static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 1U;
-    ::rack::math::Vec size;
+    const ::rack::math::Vec size;
     VCASpec()
     :   slug("VCA"),
-        name(""),
-        description(""),
+        name("VCA"),
+        description("Voltage-controlled Oscillator. Supports polyphony."),
+        manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html"),
+        hidden(false),
         size(
-            ::rack::window::mm2px(30.479999995F),
-            ::rack::window::mm2px(128.693333312F)
+            45.0F, // ::rack::window::mm2px(30.479999995F),
+            380.0F //::rack::window::mm2px(128.693333312F)
         )
     {};
 private:
@@ -75,10 +78,10 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
     SECTION( "VCAModule" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::NUM_PARAMS == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::NUM_INPUTS == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
@@ -92,7 +95,7 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
     //==========================================================================
 
-    SECTION( "VCAModuleWidget" ) {
+    // SECTION( "VCAModuleWidget" ) {
         // ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
         // ::rack::app::ModuleWidget* test_vcaModuleWidget = new ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget(dynamic_cast<::StoneyDSP::StoneyVCV::VCA::VCAModule*>(test_vcaModule));
         // std::shared_ptr<::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget> test_vcaModuleWidget = std::make_shared<::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget>();
@@ -118,13 +121,13 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
         // delete test_vcaModuleWidget;
         // delete test_vcaModule;
-    }
+    // }
 
     //==========================================================================
 
-    SECTION( "createVCA" ) {
+    SECTION( "createModelVCA" ) {
 
-        ::rack::plugin::Model* test_modelVCA = ::StoneyDSP::StoneyVCV::VCA::createVCA();
+        ::rack::plugin::Model* test_modelVCA = ::StoneyDSP::StoneyVCV::VCA::createModelVCA();
         REQUIRE( test_modelVCA != nullptr );
 
         SECTION( "createModule" ) {
@@ -146,6 +149,8 @@ TEST_CASE( "VCA", "[VCA]" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->slug == spec.get()->slug );
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->name == spec.get()->name );
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->description == spec.get()->description );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->manualUrl == spec.get()->manualUrl );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->hidden == spec.get()->hidden );
     }
 
     //==========================================================================
