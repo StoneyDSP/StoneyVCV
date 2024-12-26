@@ -144,13 +144,20 @@ public:
      */
     virtual void process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args) override;
 
-    /**
-     * @brief Store extra internal data in the "data" property of the module's JSON object.
-     *
-     * @return json_t
-     */
-    virtual ::json_t *dataToJson() override;
+    // /**
+    //  * @brief Store extra internal data in the "data" property of the module's JSON object.
+    //  *
+    //  * @return json_t
+    //  */
+    // virtual ::json_t *dataToJson() override;
 
+    // /**
+    //  * @brief Load internal data from the "data" property of the module's JSON object.
+    //  * Not called if "data" property is not present.
+    //  *
+    //  * @param rootJ
+    //  */
+    // virtual void dataFromJson(::json_t *rootJ) override;
 
     //==========================================================================
 

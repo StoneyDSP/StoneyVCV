@@ -163,20 +163,20 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     }
 }
 
-::json_t *::StoneyDSP::StoneyVCV::VCA::VCAModule::dataToJson()
-{
-    ::json_t *rootJ = ::json_object();
-    ::json_object_set_new(rootJ, "gain", ::json_real(gain));
+// ::json_t *::StoneyDSP::StoneyVCV::VCA::VCAModule::dataToJson()
+// {
+//     ::json_t *rootJ = ::json_object();
+//     ::json_object_set_new(rootJ, "gain", ::json_real(gain));
 
-    return rootJ;
-}
+//     return rootJ;
+// }
 
-void ::StoneyDSP::StoneyVCV::VCA::VCAModule::dataFromJson(::json_t *rootJ)
-{
-    ::json_t *gainJ = ::json_object_get(rootJ, "gain");
-    if (gainJ)
-        gain = json_number_value(gainJ);
-}
+// void ::StoneyDSP::StoneyVCV::VCA::VCAModule::dataFromJson(::json_t *rootJ)
+// {
+//     ::json_t *gainJ = ::json_object_get(rootJ, "gain");
+//     if (gainJ)
+//         gain = json_number_value(gainJ);
+// }
 
 //==============================================================================
 
