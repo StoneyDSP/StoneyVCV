@@ -304,6 +304,18 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
         $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
     )
+    configure_file("test/${STONEYVCV_SLUG}/test.hpp" "test/${STONEYVCV_SLUG}/test.hpp")
+    target_sources(tests
+        PUBLIC
+        FILE_SET stoneyvcv_TESTS_PUBLIC_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/test>
+        $<INSTALL_INTERFACE:test>
+        FILES
+        $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/test/${STONEYVCV_SLUG}/test.hpp>
+        $<INSTALL_INTERFACE:test/${STONEYVCV_SLUG}/test.hpp>
+    )
     target_link_libraries(tests
         PUBLIC
         unofficial-vcvrack::rack-sdk::lib
