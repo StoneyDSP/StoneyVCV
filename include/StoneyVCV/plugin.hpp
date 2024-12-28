@@ -224,39 +224,6 @@ extern void addScrewsToWidget(::rack::widget::Widget* widget);
 
 //==============================================================================
 
-#if defined (STONEYVCV_BUILD_TESTS)
-/**
- * @brief The `Spec` struct.
- *
- * A base class for deriving specs for unit-testing with.
- *
- */
-struct Spec {
-public:
-    ::std::string slug, name, description;
-    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0U;
-    ::rack::math::Vec size;
-    Spec()
-    :   slug("Spec"),
-        name(""),
-        description("Unit test spec base class (internal)"),
-        size(
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH),
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT)
-        )
-    {};
-    ~Spec() = default;
-private:
-    STONEYDSP_DECLARE_NON_COPYABLE(Spec)
-    STONEYDSP_DECLARE_NON_MOVEABLE(Spec)
-};
-#endif
-
-//==============================================================================
-
   /// @} group StoneyVCV
 } // namespace StoneyVCV
 
