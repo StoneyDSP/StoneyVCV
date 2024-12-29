@@ -244,33 +244,19 @@ namespace StoneyVCV {
  *  @{
  */
 
-struct Tools final {
-public:
-    static float clampVoltageUni(float voltage)
-    {
-        return ::rack::math::clamp(voltage, 0.0F, 12.0F);
-    }
+namespace Tools {
+/** @addtogroup Tools
+ *  @{
+ */
+const extern ::StoneyDSP::float_t vMin;
+const extern ::StoneyDSP::float_t vMax;
+const extern ::StoneyDSP::float_t vNominal;
+const extern ::StoneyDSP::float_t vBias;
+const extern ::StoneyDSP::float_t vGround;
+const extern ::StoneyDSP::float_t vFloor;
 
-    static float clampVoltageBi(float voltage)
-    {
-        return ::rack::math::clamp(voltage, -12.0F, 12.0F);
-    }
-
-    static float voltageToSample(float voltage)
-    {
-        return ::StoneyDSP::StoneyVCV::Tools::clampVoltageUni(voltage) * 0.1F;
-    }
-    static constexpr ::StoneyDSP::float_t vMin = (-12.0F);
-    static constexpr ::StoneyDSP::float_t vMax = (12.0F);
-    static constexpr ::StoneyDSP::float_t vNominal = (10.0F);
-    static constexpr ::StoneyDSP::float_t vBias = (0.0F);
-    static constexpr ::StoneyDSP::float_t vGround = 0.0F;
-    static constexpr ::StoneyDSP::float_t vFloor = (0.0F);
-private:
-    STONEYDSP_DECLARE_NON_CONSTRUCTABLE(Tools)
-    STONEYDSP_DECLARE_NON_COPYABLE(Tools)
-    STONEYDSP_DECLARE_NON_MOVEABLE(Tools)
-};
+  /// @} group Tools
+} // namespace Tools
 
 // Declare an abstract base class with a pure virtual destructor.
 // It's the simplest possible abstract class.
