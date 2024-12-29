@@ -121,15 +121,15 @@ namespace Panels {
 
 //==============================================================================
 
-::NVGcolor bgBlack = ::nvgRGBA(43, 43, 43, 255);
-::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
-::NVGcolor borderColor = nvgRGBAf(0.5F, 0.5F, 0.5F, 0.5F);
-::NVGcolor bgGradientBlackS0 = ::nvgRGB(42, 42, 43);
-::NVGcolor bgGradientBlackS1 = ::nvgRGB(23, 23, 23);
-::NVGcolor bgGradientWhiteS0 = ::nvgRGB(235, 235, 235);
-::NVGcolor bgGradientWhiteS1 = ::nvgRGB(225, 225, 225);
-::StoneyDSP::float_t MIN_WIDTH = ::rack::window::mm2px(5.079999999F);
-::StoneyDSP::float_t MIN_HEIGHT = ::rack::window::mm2px(128.693333312F);
+const ::NVGcolor bgBlack = ::nvgRGBA(43, 43, 43, 255);
+const ::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
+const ::NVGcolor borderColor = nvgRGBAf(0.5F, 0.5F, 0.5F, 0.5F);
+const ::NVGcolor bgGradientBlackS0 = ::nvgRGB(42, 42, 43);
+const ::NVGcolor bgGradientBlackS1 = ::nvgRGB(23, 23, 23);
+const ::NVGcolor bgGradientWhiteS0 = ::nvgRGB(235, 235, 235);
+const ::NVGcolor bgGradientWhiteS1 = ::nvgRGB(225, 225, 225);
+const ::StoneyDSP::float_t MIN_WIDTH = 15.0F; //::rack::window::mm2px(5.079999999F);
+const ::StoneyDSP::float_t MIN_HEIGHT = 380.0F; // ::rack::window::mm2px(128.693333312F);
 
 //==============================================================================
 

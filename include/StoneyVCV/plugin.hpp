@@ -204,15 +204,15 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #endif // STONEYVCV_EXPERIMENTAL
 
 namespace Panels {
-extern ::NVGcolor bgBlack;
-extern ::NVGcolor bgWhite;
-extern ::NVGcolor borderColor;
-extern ::NVGcolor bgGradientBlackS0;
-extern ::NVGcolor bgGradientBlackS1;
-extern ::NVGcolor bgGradientWhiteS0;
-extern ::NVGcolor bgGradientWhiteS1;
-extern ::StoneyDSP::float_t MIN_WIDTH;
-extern ::StoneyDSP::float_t MIN_HEIGHT;
+const extern ::NVGcolor bgBlack;
+const extern ::NVGcolor bgWhite;
+const extern ::NVGcolor borderColor;
+const extern ::NVGcolor bgGradientBlackS0;
+const extern ::NVGcolor bgGradientBlackS1;
+const extern ::NVGcolor bgGradientWhiteS0;
+const extern ::NVGcolor bgGradientWhiteS1;
+const extern ::StoneyDSP::float_t MIN_WIDTH;
+const extern ::StoneyDSP::float_t MIN_HEIGHT;
 extern void addScrewsToWidget(::rack::widget::Widget* widget);
 }
 
