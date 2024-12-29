@@ -3,14 +3,13 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "make install",
+      "label": "make",
       "command": "make",
-      "args": [
-        "install"
-      ],
+      "args": [],
       "options": {
         "env": {
-          // "DEBUG": "1"
+          // "VERBOSE": "1",
+          "DEBUG": "1"
         }
       },
       "problemMatcher": [
@@ -18,6 +17,63 @@
       ],
       "dependsOn": [
         "cmake preset"
+      ]
+    },
+    {
+      "type": "shell",
+      "label": "make dist",
+      "command": "make",
+      "args": [
+        "dist"
+      ],
+      "options": {
+        "env": {
+          // "VERBOSE": "1",
+          "DEBUG": "1"
+        }
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": [
+        "cmake preset"
+      ]
+    },
+    {
+      "type": "shell",
+      "label": "make install",
+      "command": "make",
+      "args": [
+        "install"
+      ],
+      "options": {
+        "env": {
+          // "VERBOSE": "1",
+          "DEBUG": "1"
+        }
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": [
+        "cmake preset"
+      ]
+    },
+    {
+      "type": "shell",
+      "label": "make workflow",
+      "command": "make",
+      "args": [
+        "workflow"
+      ],
+      "options": {
+        "env": {
+          // "VERBOSE": "1",
+          "DEBUG": "1"
+        }
+      },
+      "problemMatcher": [
+        "$gcc"
       ]
     },
     {
