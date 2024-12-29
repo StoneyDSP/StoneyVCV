@@ -117,17 +117,37 @@ namespace StoneyVCV {
 
 //==============================================================================
 
+namespace Tools {
+
+//==============================================================================
+
+const ::StoneyDSP::float_t vMin = (-12.0F);
+const ::StoneyDSP::float_t vMax = (12.0F);
+const ::StoneyDSP::float_t vNominal = (10.0F);
+const ::StoneyDSP::float_t vBias = (0.0F);
+const ::StoneyDSP::float_t vGround = (0.0F);
+const ::StoneyDSP::float_t vFloor = (0.0F);
+
+//==============================================================================
+
+} // namespace Tools
+
+//==============================================================================
+
 namespace Panels {
 
 //==============================================================================
 
-const ::NVGcolor bgBlack = ::nvgRGBA(43, 43, 43, 255);
 const ::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
+const ::NVGcolor bgGradientWhiteS0 = ::nvgRGBA(235, 235, 235, 0);
+const ::NVGcolor bgGradientWhiteS1 = ::nvgRGBA(225, 225, 225, 255);
+
+const ::NVGcolor bgBlack = ::nvgRGBA(43, 43, 43, 255);
+const ::NVGcolor bgGradientBlackS0 = ::nvgRGBA(42, 42, 43, 0);
+const ::NVGcolor bgGradientBlackS1 = ::nvgRGBA(23, 23, 23, 255);
+
 const ::NVGcolor borderColor = nvgRGBAf(0.5F, 0.5F, 0.5F, 0.5F);
-const ::NVGcolor bgGradientBlackS0 = ::nvgRGB(42, 42, 43);
-const ::NVGcolor bgGradientBlackS1 = ::nvgRGB(23, 23, 23);
-const ::NVGcolor bgGradientWhiteS0 = ::nvgRGB(235, 235, 235);
-const ::NVGcolor bgGradientWhiteS1 = ::nvgRGB(225, 225, 225);
+
 const ::StoneyDSP::float_t MIN_WIDTH = 15.0F; //::rack::window::mm2px(5.079999999F);
 const ::StoneyDSP::float_t MIN_HEIGHT = 380.0F; // ::rack::window::mm2px(128.693333312F);
 
