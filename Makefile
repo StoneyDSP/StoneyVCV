@@ -225,7 +225,7 @@ FLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags $(EXTERN
 LDFLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(EXTERNAL_DEPS))
 
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += -I$(PWD)/include
+FLAGS += -I$(PWD)/build/include
 CFLAGS +=
 CXXFLAGS +=
 
