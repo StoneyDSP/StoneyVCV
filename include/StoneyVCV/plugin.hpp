@@ -47,11 +47,9 @@
 
 #ifdef STONEYDSP_DEBUG
 #include <iostream>
-#define DBG(msg) \
-::std::cerr << msg << std::endl
+#define DBG(msg, ...) do { ::std::cerr << std::string(msg, ##__VA_ARGS__) << std::endl; } while (0)
 #else
-#define DBG(msg) \
-::StoneyDSP::ignoreUnused(msg)
+#define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
 #endif
 
 //==============================================================================
