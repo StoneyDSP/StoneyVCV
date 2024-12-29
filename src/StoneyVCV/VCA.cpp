@@ -83,12 +83,25 @@ template <typename T>
 template <typename T>
 void ::StoneyDSP::StoneyVCV::VCA::VCAEngine<T>::processSample(T* sample)
 {
-    T& input = *sample;
+    *sample *= this->getGain();
+}
+
+template <typename T>
+void ::StoneyDSP::StoneyVCV::VCA::VCAEngine<T>::processSampleSimd(::StoneyDSP::SIMD::float_4 *v)
+{
+    ::StoneyDSP::SIMD::float_4& input = *v;
     input *= this->gain;
 }
 
 template <typename T>
-void ::StoneyDSP::StoneyVCV::VCA::VCAEngine<T>::setGain(T newGain)
+void ::StoneyDSP::StoneyVCV::VCA::VCAEngine<T>::processSampleSimd(::StoneyDSP::SIMD::double_2 *v)
+{
+    ::StoneyDSP::SIMD::double_2& input = *v;
+    input *= this->gain;
+}
+
+template <typename T>
+void ::StoneyDSP::StoneyVCV::VCA::VCAEngine<T>::setGain(const T &newGain)
 {
     this->gain = newGain;
 }
@@ -101,6 +114,8 @@ T& ::StoneyDSP::StoneyVCV::VCA::VCAEngine<T>::getGain() noexcept
 
 template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::float_t>;
 template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::double_t>;
+// template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::rack::simd::float_4>;
+// template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::SIMD::double_2>;
 
 //==============================================================================
 
@@ -114,7 +129,7 @@ template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::double_t>;
     assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::NUM_PARAMS == 1U);
     assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::NUM_INPUTS == 2U);
     assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::NUM_OUTPUTS == 1U);
-    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::NUM_LIGHTS == 2U);
+    assert(::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::NUM_LIGHTS == 1U);
 
     // Configure the number of Params, Outputs, Inputs, and Lights.
     this->config(
@@ -135,15 +150,15 @@ template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::double_t>;
     );
     this->configInput(
         ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT,           // portID
-        "IN"                                                                    // name
+        "Signal"                                                                // name
     );
     this->configInput(
         ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT,            // portID
-        "CV"                                                                    // name
+        "Control Voltage"                                                       // name
     );
     this->configOutput(
         ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT,         // portID
-        "OUT"                                                                   // name
+        "Signal"                                                                // name
     );
     this->configBypass(                                                         // Route input to output on bypass
         ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT,
@@ -175,12 +190,11 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     auto &gain_param = this->params[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM];
     auto &vca_output = this->outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT];
     auto &blink_light = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 0];
-    auto &blink_light_r = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 1];
+    // auto &blink_light_r = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 1];
 
-    // const auto &vMin = ::StoneyDSP::StoneyVCV::Tools::vMin;
-    // const auto &vMax = ::StoneyDSP::StoneyVCV::Tools::vMax;
-    const auto &vNominal = ::StoneyDSP::StoneyVCV::Tools::vNominal;
-    const auto &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
+    // if (!vca_input.isConnected() && !vca_output.isConnected() && !cv_input.isConnected()) {
+    //     return;
+    // }
 
     // Panel-based params are monophonic by nature,
     // so don't iterate over them
@@ -189,20 +203,22 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     // Get desired number of channels from a "primary" input.
 	// If this input is unpatched, getChannels() returns 0, but we should
     // still generate 1 channel of output.
-    ::StoneyDSP::size_t numChannels = std::max<::StoneyDSP::size_t>({
+    ::std::size_t numChannels = ::std::max<::std::size_t>({
         1U,
-        static_cast<::StoneyDSP::size_t>(vca_input.getChannels()),
-        static_cast<::StoneyDSP::size_t>(cv_input.getChannels())
+        static_cast<unsigned>(vca_input.getChannels()),
+        static_cast<unsigned>(cv_input.getChannels())
     });
 
     // Poly process block
-    for (::StoneyDSP::size_t channel = 0U; channel < numChannels; channel++) {
+    for (::std::size_t channel = 0U; channel < numChannels; channel++ /** channel += 4 */ ) {
+
+        // const auto& cchannel = channel / 4;
 
         // Get input or 0v
         auto input = vca_input.getNormalPolyVoltage(vFloor, channel);
 
         // Get cv or 10v as 0..1
-        const auto &cv = ::rack::clamp(cv_input.getNormalPolyVoltage(vNominal, channel), vFloor, vNominal) * gain * 0.01F;
+        const auto &cv = ::rack::clamp(cv_input.getNormalPolyVoltage(vNominal, channel) * gain * 0.01F, vFloor, vNominal);
 
         // Apply gain
         this->engine[channel].setGain(cv);
@@ -221,12 +237,16 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
 
     // Lights
     if (this->lightDivider.process()) {
-        auto lightValue = *::std::max_element(this->lightGains.begin(), this->lightGains.end());
+        auto lightValue = *::std::max_element<StoneyDSP::float_t *>(this->lightGains.begin(), this->lightGains.end());
+        // blink_light.setBrightnessSmooth(
+        //     1 - (lightValue * lightValue),
+        //     this->lightDivider.getDivision() * args.sampleTime
+        // );
+        // blink_light_r.setBrightnessSmooth(
+        //     (lightValue * lightValue),
+        //     this->lightDivider.getDivision() * args.sampleTime
+        // );
         blink_light.setBrightnessSmooth(
-            1 - (lightValue * lightValue),
-            this->lightDivider.getDivision() * args.sampleTime
-        );
-        blink_light_r.setBrightnessSmooth(
             (lightValue * lightValue),
             this->lightDivider.getDivision() * args.sampleTime
         );
@@ -252,7 +272,11 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
 
 ::StoneyDSP::StoneyVCV::VCA::VCAWidget::VCAWidget()
 :   vcaWidgetFrameBuffer(new ::rack::widget::FramebufferWidget),
-    panelBorder(::rack::createWidget<::rack::app::PanelBorder>(::rack::math::Vec(0.0F, 0.0F)))
+    panelBorder(
+        ::rack::createWidget<::rack::app::PanelBorder>(
+            ::rack::math::Vec(0.0F, 0.0F)
+        )
+    )
 {
     // Assertions
     DBG("Constructing StoneyVCV::VCA::VCAWidget");
@@ -319,7 +343,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         /** x */size.x * 0.5,
         /** Y */0.0F,
         /** w */size.x * 0.5,
-        /** h */380.0F,
+        /** h */size.y,
         /** s1 */bgGradientS0,
         /** s2 */bgGradientS1
     );
@@ -462,8 +486,17 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         )
     ),
     // Lights
+    // lightVca(
+    //     ::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight>>(
+    //         ::rack::math::Vec(
+    //             size.x * 0.5F,
+    //             0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 10.0F)
+    //         ),
+    //         module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT
+    //     )
+    // ),
     lightVca(
-        ::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight>>(
+        ::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>>(
             ::rack::math::Vec(
                 size.x * 0.5F,
                 0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 10.0F)
@@ -539,13 +572,10 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     // Lights
     this->addChild(this->lightVca);
 
-    // INFO("size.x = %f", this->getSize().x);
-    // INFO("size.y = %f", this->getSize().y);
-
-    assert(static_cast<unsigned int>(this->getSize().x) == 15U * 6U);
-    assert(static_cast<unsigned int>(this->getSize().y) == 380U);
-    assert(static_cast<unsigned int>(this->getPanel()->getSize().x) == 15U * 6U);
-    assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == 380U);
+    assert(static_cast<unsigned int>(this->getSize().x) == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
+    assert(static_cast<unsigned int>(this->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
+    assert(static_cast<unsigned int>(this->getPanel()->getSize().x) == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
+    assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
 ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::~VCAModuleWidget()

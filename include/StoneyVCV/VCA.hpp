@@ -80,29 +80,6 @@ namespace VCA
 
 //==============================================================================
 
-enum IdxParams {
-    GAIN_PARAM,
-    NUM_PARAMS
-};
-
-enum IdxInputs {
-    VCA_INPUT,
-    CV_INPUT,
-    NUM_INPUTS
-};
-
-enum IdxOutputs {
-    VCA_OUTPUT,
-    NUM_OUTPUTS
-};
-
-enum IdxLights {
-    ENUMS(BLINK_LIGHT, 2),
-    NUM_LIGHTS
-};
-
-//==============================================================================
-
 /**
  * @brief The `VCAEngine` struct.
  *
@@ -124,9 +101,13 @@ public:
 
     //==========================================================================
 
-    void processSample(T* sample) override;
+    void processSample(T *sample) override;
 
-    void setGain(T newGain);
+    void processSampleSimd(::StoneyDSP::SIMD::float_4 *v);
+
+    void processSampleSimd(::StoneyDSP::SIMD::double_2 *v);
+
+    void setGain(const T &newGain);
 
     T& getGain() noexcept;
 
@@ -136,8 +117,16 @@ private:
 
     //==========================================================================
 
+    /**
+     * @brief
+     *
+     */
     T gain;
 
+    /**
+     * @brief
+     *
+     */
     T lastGain;
 
     STONEYDSP_DECLARE_NON_COPYABLE(VCAEngine)
@@ -159,13 +148,26 @@ public:
 
     //==========================================================================
 
-    using IdxParams = ::StoneyDSP::StoneyVCV::VCA::IdxParams;
+    enum IdxParams {
+        GAIN_PARAM,
+        NUM_PARAMS
+    };
 
-    using IdxInputs = ::StoneyDSP::StoneyVCV::VCA::IdxInputs;
+    enum IdxInputs {
+        VCA_INPUT,
+        CV_INPUT,
+        NUM_INPUTS
+    };
 
-    using IdxOutputs = ::StoneyDSP::StoneyVCV::VCA::IdxOutputs;
+    enum IdxOutputs {
+        VCA_OUTPUT,
+        NUM_OUTPUTS
+    };
 
-    using IdxLights = ::StoneyDSP::StoneyVCV::VCA::IdxLights;
+    enum IdxLights {
+        BLINK_LIGHT, // ENUMS(BLINK_LIGHT, 2),
+        NUM_LIGHTS
+    };
 
     //==========================================================================
 
@@ -200,13 +202,37 @@ private:
 
     //==========================================================================
 
+    /**
+     * @brief
+     *
+     */
     ::rack::dsp::ClockDivider lightDivider;
 
+    /**
+     * @brief
+     *
+     */
     ::std::array<::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::float_t>, 16> engine;
 
+    /**
+     * @brief
+     *
+     */
     ::std::array<::StoneyDSP::float_t, 16> lightGains;
 
     //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    const ::StoneyDSP::float_t &vNominal = ::StoneyDSP::StoneyVCV::Tools::vNominal;
+
+    /**
+     * @brief
+     *
+     */
+    const ::StoneyDSP::float_t &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
 
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
@@ -351,18 +377,38 @@ private:
 
     //==========================================================================
 
+    /**
+     * @brief
+     *
+     */
     ::rack::componentlibrary::RoundBigBlackKnob *gainKnob;
 
     // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
 
+    /**
+     * @brief
+     *
+     */
     ::rack::componentlibrary::ThemedPJ301MPort *portCvInput;
+
+    /**
+     * @brief
+     *
+     */
     ::rack::componentlibrary::ThemedPJ301MPort *portVcaInput;
+
+    /**
+     * @brief
+     *
+     */
     ::rack::componentlibrary::ThemedPJ301MPort *portVcaOutput;
 
     /**
      * @brief 3mm LED showing a smoothed CV value.
      */
-    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca;
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca;
+
+    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca;
 
     /**
      * @brief
@@ -374,7 +420,7 @@ private:
      * @brief
      *
      */
-    ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
 
     //==========================================================================
 
