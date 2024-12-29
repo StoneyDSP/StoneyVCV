@@ -202,10 +202,12 @@ endif
 
 # The macro NDEBUG controls whether assert() statements are active or not.
 ifdef DEBUG
-	CFLAGS += -Wall
-	CFLAGS += -Wextra
-	CFLAGS += -DNDEBUG
-	CFLAGS += -D_DEBUG
+	# FLAGS += -Wall
+	# FLAGS += -Wextra
+	# FLAGS += -DDEBUG
+	FLAGS += -D_DEBUG
+else
+	FLAGS += -DNDEBUG
 endif
 
 ifdef VERBOSE
