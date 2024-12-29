@@ -2,6 +2,48 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "type": "shell",
+      "label": "make install",
+      "command": "make",
+      "args": [
+        "install"
+      ],
+      "options": {
+        "env": {
+          // "DEBUG": "1"
+        }
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "dependsOn": [
+        "cmake preset"
+      ]
+    },
+    {
+      "type": "shell",
+      "command": "cmake",
+      "label": "cmake preset",
+      "linux": {
+        "args": [
+          "--preset x64-linux-debug"
+        ]
+      },
+      "windows": {
+        "args": [
+          "--preset x64-windows-debug"
+        ]
+      },
+      "osx": {
+        "args": [
+          "--preset x64-osx-debug"
+        ]
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
       "type": "cmake",
       "label": "CMake: build",
       "command": "build",
