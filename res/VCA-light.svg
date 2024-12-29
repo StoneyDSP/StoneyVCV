@@ -2,319 +2,80 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="30.479999995mm"
-   height="128.693333312mm"
-   viewBox="0 0 30.479999995 128.693333312"
+   width="90"
+   height="380"
+   viewBox="0 0 90 380"
    version="1.1"
-   id="svg8"
+   id="svg5"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    sodipodi:docname="VCA-light.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <title
-     id="title861">VCA-light</title>
-  <defs
-     id="defs2">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient861">
-      <stop
-         style="stop-color:#e6e6e6;stop-opacity:1;"
-         offset="0"
-         id="stop857" />
-      <stop
-         style="stop-color:#e6e6e6;stop-opacity:0;"
-         offset="1"
-         id="stop859" />
-    </linearGradient>
-    <rect
-       x="9.423316"
-       y="9.3203659"
-       width="97.915321"
-       height="56.086918"
-       id="rect23681" />
-    <rect
-       x="9.3649778"
-       y="10.590077"
-       width="97.819229"
-       height="45.074745"
-       id="rect10745" />
-    <rect
-       x="2.3882711"
-       y="197.01765"
-       width="108.48863"
-       height="54.755924"
-       id="rect3859" />
-    <rect
-       x="101.231"
-       y="145.25896"
-       width="99.915756"
-       height="132.34869"
-       id="rect75604" />
-    <rect
-       x="4.9440608"
-       y="9.3878298"
-       width="91.483231"
-       height="41.861526"
-       id="rect69658" />
-    <rect
-       x="0.93267077"
-       y="-2.5852184"
-       width="114.33593"
-       height="41.4133"
-       id="rect46872" />
-    <rect
-       x="9.2768307"
-       y="7.8563037"
-       width="100.69958"
-       height="49.552719"
-       id="rect37756" />
-    <rect
-       x="15.558717"
-       y="12.646636"
-       width="100.25369"
-       height="46.194748"
-       id="rect33256" />
-    <rect
-       x="9.423316"
-       y="9.3203659"
-       width="97.915321"
-       height="56.086918"
-       id="rect26403" />
-    <rect
-       x="9.423316"
-       y="9.3203659"
-       width="97.915321"
-       height="56.086918"
-       id="rect30163" />
-    <rect
-       x="9.423316"
-       y="9.3203659"
-       width="97.915321"
-       height="56.086918"
-       id="rect39089" />
-    <rect
-       x="9.423316"
-       y="9.3203659"
-       width="97.915321"
-       height="56.086918"
-       id="rect39307" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient861"
-       id="linearGradient1277"
-       gradientUnits="userSpaceOnUse"
-       x1="0%"
-       y1="0%"
-       x2="0%"
-       y2="100%"
-    />
-  </defs>
+   xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
-     id="base"
+     id="namedview7"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.1383002"
-     inkscape:cx="52.270921"
-     inkscape:cy="249.93407"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     units="mm"
-     inkscape:snap-bbox="true"
-     inkscape:snap-page="true"
-     inkscape:bbox-nodes="true"
-     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     width="45px"
+     inkscape:zoom="1"
+     inkscape:cx="115.5"
+     inkscape:cy="177.5"
      inkscape:window-width="1370"
      inkscape:window-height="836"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:snap-bbox-midpoints="true"
-     inkscape:snap-nodes="false"
-     inkscape:pagecheckerboard="0"
-     showguides="true"
-     inkscape:bbox-paths="true"
-     inkscape:snap-object-midpoints="true"
-     inkscape:snap-center="true"
-     objecttolerance="10000"
-     guidetolerance="10000"
-     inkscape:lockguides="true">
-    <sodipodi:guide
-       position="0,128.693333312"
-       orientation="0,115.2"
-       id="guide57950"
-       inkscape:locked="true" />
-    <sodipodi:guide
-       position="30.479999995,128.693333312"
-       orientation="485.66929,0"
-       id="guide57952"
-       inkscape:locked="true" />
-    <sodipodi:guide
-       position="30.479999995,0"
-       orientation="0,-115.2"
-       id="guide57954"
-       inkscape:locked="true" />
-    <sodipodi:guide
-       position="0,0"
-       orientation="-485.66929,0"
-       id="guide57956"
-       inkscape:locked="true" />
-    <inkscape:grid
-       type="xygrid"
-       id="grid57958"
-       units="mm"
-       spacingx="5.0800007"
-       spacingy="5.0800007"
-       empspacing="5"
-       dotted="false" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>VCA-light</dc:title>
-        <dc:date>2024</dc:date>
-        <dc:creator>
-          <cc:Agent>
-            <dc:title>Nathan J. Hood</dc:title>
-          </cc:Agent>
-        </dc:creator>
-        <dc:rights>
-          <cc:Agent>
-            <dc:title>MIT</dc:title>
-          </cc:Agent>
-        </dc:rights>
-        <dc:publisher>
-          <cc:Agent>
-            <dc:title>StoneyDSP</dc:title>
-          </cc:Agent>
-        </dc:publisher>
-        <dc:identifier>VCA</dc:identifier>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1308">
+      <stop
+         style="stop-color:#e1e1e1;stop-opacity:1;"
+         offset="0"
+         id="stop1304" />
+      <stop
+         style="stop-color:#e1e1e1;stop-opacity:0;"
+         offset="1"
+         id="stop1306" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1308"
+       id="linearGradient1310"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-168.49998)"
-     style="display:inline">
+     id="layer1">
     <rect
-       style="display:inline;opacity:1;fill:url(#linearGradient1277);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.649;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       id="rect420"
-       width="30.479999995"
-       height="128.693333312"
-       x="5.9211732e-17"
-       y="168.49998"
-       inkscape:label="bg" />
-    <text
-       xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,6.5688768,282.41922)"
-       id="text39305"
-       style="font-style:normal;font-weight:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect39307);fill:#2b2b2b;fill-opacity:1;stroke:none"
-       inkscape:label="label_out"><tspan
-         x="9.4238281"
-         y="28.195283"
-         id="tspan1644">OUT</tspan></text>
-    <text
-       xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,9.8031271,258.06296)"
-       id="text39087"
-       style="font-style:normal;font-weight:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect39089);fill:#2b2b2b;fill-opacity:1;stroke:none"
-       inkscape:label="label_in"><tspan
-         x="9.4238281"
-         y="28.195283"
-         id="tspan1646">IN</tspan></text>
-    <text
-       xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,8.7103445,233.7012)"
-       id="text26401"
-       style="font-style:normal;font-weight:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect26403);fill:#2b2b2b;fill-opacity:1;stroke:none"
-       inkscape:label="label_cv"><tspan
-         x="9.4238281"
-         y="28.195283"
-         id="tspan1648">CV</tspan></text>
-    <text
-       xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,5.8040667,209.3422)"
-       id="text30161"
-       style="font-style:normal;font-weight:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect30163);fill:#2b2b2b;fill-opacity:1;stroke:none"
-       inkscape:label="label_gain"><tspan
-         x="9.4238281"
-         y="28.195283"
-         id="tspan1650">GAIN</tspan></text>
-    <text
-       xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,4.0008927,171.33401)"
-       id="text23679"
-       style="font-style:normal;font-weight:normal;font-size:32px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect23681);fill:#2b2b2b;fill-opacity:1;stroke:none"
-       inkscape:label="label_vca"><tspan
-         x="9.4238281"
-         y="37.632812"
-         id="tspan1652">VCA</tspan></text>
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="components"
-     style="display:inline">
+       style="fill:#ebebeb;fill-opacity:1;fill-rule:evenodd;stroke-width:2.45291"
+       id="rect846"
+       width="90"
+       height="380"
+       x="0"
+       y="0" />
     <rect
-       style="display:none;fill:#ffff00;stroke-width:0.264583"
-       id="rect6259"
-       width="30.479999995"
-       height="128.693333312"
-       x="-9.7144515e-17"
-       y="0"
-       inkscape:label="widget" />
-    <circle
-       style="display:inline;opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.783828;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       id="circle4958"
-       cx="15.24"
-       cy="107.14508"
-       r="3.1353126"
-       inkscape:label="output" />
-    <circle
-       r="3.135313"
-       cy="82.786079"
-       cx="15.24"
-       id="circle4956"
-       style="display:inline;opacity:1;vector-effect:none;fill:#00ff00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.783828;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       inkscape:label="input" />
-    <circle
-       r="3.135313"
-       cy="58.427071"
-       cx="15.24"
-       id="circle6283"
-       style="display:inline;opacity:1;vector-effect:none;fill:#00ff00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.783828;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       inkscape:label="cv" />
-    <ellipse
-       style="display:inline;opacity:1;vector-effect:none;fill:#ff0000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.48828;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       id="path4954"
-       cx="15.24"
-       cy="34.068066"
-       inkscape:label="gain"
-       rx="5.953125"
-       ry="5.9531269" />
-    <circle
-       inkscape:label="light"
-       r="1.5"
-       cy="21.888565"
-       cx="15.24"
-       id="circle66"
-       style="display:inline;opacity:1;vector-effect:none;fill:#ff00ff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
+       style="display:inline;fill:url(#linearGradient1310);fill-opacity:1;fill-rule:evenodd;stroke-width:2.45291"
+       id="rect914"
+       width="90"
+       height="380"
+       x="0"
+       y="0" />
   </g>
 </svg>
