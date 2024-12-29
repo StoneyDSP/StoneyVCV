@@ -36,7 +36,7 @@
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
@@ -95,9 +95,53 @@ enum IdxOutputs {
 };
 
 enum IdxLights {
-    BLINK_LIGHT,
+    ENUMS(BLINK_LIGHT, 2),
     NUM_LIGHTS
 };
+
+//==============================================================================
+
+/**
+ * @brief The `VCAEngine` struct.
+ *
+ */
+template<typename T>
+struct VCAEngine : virtual ::StoneyDSP::StoneyVCV::Engine<T>
+{
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    VCAEngine();
+
+    VCAEngine(T sample);
+
+    ~VCAEngine() noexcept;
+
+    //==========================================================================
+
+    void processSample(T* sample) override;
+
+    void setGain(T newGain);
+
+    T& getGain() noexcept;
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    T gain;
+
+    T lastGain;
+
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAEngine)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAEngine)
+};
+
 //==============================================================================
 
 /**
@@ -133,7 +177,7 @@ public:
      * @brief Destroy the `VCAModule` object.
      *
      */
-    virtual ~VCAModule();
+    virtual ~VCAModule() noexcept;
 
     //==========================================================================
 
@@ -143,21 +187,6 @@ public:
      * @param args
      */
     virtual void process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args) override;
-
-    // /**
-    //  * @brief Store extra internal data in the "data" property of the module's JSON object.
-    //  *
-    //  * @return json_t
-    //  */
-    // virtual ::json_t *dataToJson() override;
-
-    // /**
-    //  * @brief Load internal data from the "data" property of the module's JSON object.
-    //  * Not called if "data" property is not present.
-    //  *
-    //  * @param rootJ
-    //  */
-    // virtual void dataFromJson(::json_t *rootJ) override;
 
     //==========================================================================
 
@@ -169,19 +198,11 @@ private:
 
     //==========================================================================
 
-    // /**
-    //  * @brief
-    //  *
-    //  */
-    // ::StoneyDSP::size_t lastNumChannels;
-
-    // /**
-    //  * @brief
-    //  *
-    //  */
-	// ::StoneyDSP::float_t lastGains[16] = {};
-
     ::rack::dsp::ClockDivider lightDivider;
+
+    ::std::array<::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::float_t>, 16> engine;
+
+    ::std::array<::StoneyDSP::float_t, 16> lightGains;
 
     //==========================================================================
 
@@ -280,7 +301,7 @@ public:
      * @param module
      *
      */
-    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module);
+    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule *module);
 
     /**
      * @brief Destroys the `VCAModuleWidget` object.
@@ -312,43 +333,46 @@ private:
      * @brief
      *
      */
-    ::rack::app::ThemedSvgPanel* panel;
+    ::rack::app::ThemedSvgPanel *panel;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::VCA::VCAWidget* vcaWidget;
+    ::StoneyDSP::StoneyVCV::VCA::VCAWidget *vcaWidget;
 
     /**
      * @brief
      *
      */
-    ::rack::FramebufferWidget* vcaModuleWidgetFrameBuffer;
+    ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
 
     //==========================================================================
 
-    ::rack::componentlibrary::RoundBigBlackKnob* gainKnob;
+    ::rack::componentlibrary::RoundBigBlackKnob *gainKnob;
 
     // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
 
-    ::rack::componentlibrary::ThemedPJ301MPort* portCvInput;
-    ::rack::componentlibrary::ThemedPJ301MPort* portVcaInput;
-    ::rack::componentlibrary::ThemedPJ301MPort* portVcaOutput;
+    ::rack::componentlibrary::ThemedPJ301MPort *portCvInput;
+    ::rack::componentlibrary::ThemedPJ301MPort *portVcaInput;
+    ::rack::componentlibrary::ThemedPJ301MPort *portVcaOutput;
 
-    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>* lightVca;
+    /**
+     * @brief 3mm LED showing a smoothed CV value.
+     */
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca;
 
     /**
      * @brief
      *
      */
-    const ::rack::math::Vec screwsPositions [4];
+    const ::std::array<::rack::math::Vec, 4> screwsPositions;
 
     /**
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedScrew* screws [4];
+    ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
 
     //==========================================================================
 
