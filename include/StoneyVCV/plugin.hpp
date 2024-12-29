@@ -213,9 +213,7 @@ extern ::NVGcolor bgGradientWhiteS0;
 extern ::NVGcolor bgGradientWhiteS1;
 extern ::StoneyDSP::float_t MIN_WIDTH;
 extern ::StoneyDSP::float_t MIN_HEIGHT;
-
 extern void addScrewsToWidget(::rack::widget::Widget* widget);
-
 }
 
 #endif // STONEYVCV_BUILD_MODULES
@@ -235,3 +233,69 @@ extern void addScrewsToWidget(::rack::widget::Widget* widget);
 #endif // STONEYVCV_BUILD_PLUGIN
 
 //==============================================================================
+
+namespace StoneyDSP {
+/** @addtogroup StoneyDSP
+ *  @{
+ */
+
+namespace StoneyVCV {
+/** @addtogroup StoneyVCV
+ *  @{
+ */
+
+struct Tools final {
+public:
+    static float clampVoltageUni(float voltage)
+    {
+        return ::rack::math::clamp(voltage, 0.0F, 12.0F);
+    }
+
+    static float clampVoltageBi(float voltage)
+    {
+        return ::rack::math::clamp(voltage, -12.0F, 12.0F);
+    }
+
+    static float voltageToSample(float voltage)
+    {
+        return ::StoneyDSP::StoneyVCV::Tools::clampVoltageUni(voltage) * 0.1F;
+    }
+    static constexpr ::StoneyDSP::float_t vMin = (-12.0F);
+    static constexpr ::StoneyDSP::float_t vMax = (12.0F);
+    static constexpr ::StoneyDSP::float_t vNominal = (10.0F);
+    static constexpr ::StoneyDSP::float_t vBias = (0.0F);
+    static constexpr ::StoneyDSP::float_t vGround = 0.0F;
+    static constexpr ::StoneyDSP::float_t vFloor = (0.0F);
+private:
+    STONEYDSP_DECLARE_NON_CONSTRUCTABLE(Tools)
+    STONEYDSP_DECLARE_NON_COPYABLE(Tools)
+    STONEYDSP_DECLARE_NON_MOVEABLE(Tools)
+};
+
+// Declare an abstract base class with a pure virtual destructor.
+// It's the simplest possible abstract class.
+template <typename T>
+struct Engine
+{
+public:
+    Engine() {
+        DBG("Creating StoneyDSP::StoneyVCV::Engine");
+    };
+    virtual ~Engine() noexcept = 0;                                             // pure virtual
+    virtual void processSample(T* sample) = 0;                                  // pure virtual
+};
+
+template<class T>
+::StoneyDSP::StoneyVCV::Engine<T>::~Engine() noexcept
+{
+    DBG("Destroying StoneyDSP::StoneyVCV::Engine");
+}
+
+template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::float_t>;
+template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::double_t>;
+
+  /// @} group StoneyVCV
+} // namespace StoneyVCV
+
+  /// @} group StoneyDSP
+} // namespace StoneyDSP
