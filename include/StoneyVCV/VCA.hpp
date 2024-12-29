@@ -45,6 +45,8 @@
 #include <StoneyDSP/DSP.hpp>
 #include <StoneyDSP/SIMD.hpp>
 
+#include <array>
+
 //==============================================================================
 
 namespace StoneyDSP
