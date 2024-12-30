@@ -55,7 +55,7 @@ public:
             380.0F //::rack::window::mm2px(128.693333312F)
         )
     {};
-    ~HP1Spec() = default;
+    ~HP4Spec() = default;
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(HP4Spec)
     STONEYDSP_DECLARE_NON_COPYABLE(HP4Spec)
