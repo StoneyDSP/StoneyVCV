@@ -9,22 +9,22 @@
   "license" : "MIT",
   "manualUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production/README.md",
   "minRackVersion" : "2.5.2",
-  "modules" : 
+  "modules" :
   [
     {
-      "description" : "1hp Panel Spacer",
+      "description" : "1hp Panel Spacer.",
       "name" : "HP1",
       "slug" : "HP1",
       "tags" : [ "Blank" ]
     },
     {
-      "description" : "2hp Panel Spacer",
+      "description" : "2hp Panel Spacer.",
       "name" : "HP2",
       "slug" : "HP2",
       "tags" : [ "Blank" ]
     },
     {
-      "description" : "4hp Panel Spacer",
+      "description" : "4hp Panel Spacer.",
       "name" : "HP4",
       "slug" : "HP4",
       "tags" : [ "Blank" ]
