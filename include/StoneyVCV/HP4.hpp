@@ -36,12 +36,14 @@
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+#include <array>
 
 //==============================================================================
 
@@ -80,16 +82,13 @@ namespace HP4
  * @brief The `HP4Module` struct.
  *
  */
-struct HP4Module final :
-    ::rack::engine::Module
+struct HP4Module final : virtual ::rack::engine::Module
 {
     //==========================================================================
 
 public:
 
     //==========================================================================
-
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     enum IdxParams {
         /** Number of Parameters. */
@@ -123,7 +122,7 @@ public:
      * @brief Destroys the `HP4Module` object.
      *
      */
-    virtual ~HP4Module();
+    virtual ~HP4Module() noexcept;
 
     //==========================================================================
 
@@ -141,8 +140,7 @@ private:
  * @brief The `HP2Widget` struct.
  *
  */
-struct HP4Widget final :
-    ::rack::widget::Widget
+struct HP4Widget final : virtual ::rack::widget::Widget
 {
 
     //==========================================================================
@@ -212,8 +210,7 @@ private:
  * @brief The `HP4ModuleWidget` struct.
  *
  */
-struct HP4ModuleWidget final :
-    ::rack::app::ModuleWidget
+struct HP4ModuleWidget final : virtual ::rack::app::ModuleWidget
 {
 
     //==========================================================================
@@ -256,19 +253,19 @@ private:
     /**
      * @brief
      */
-    ::rack::app::ThemedSvgPanel* panel;
+    ::rack::app::ThemedSvgPanel *panel;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::HP4::HP4Widget* hp4Widget;
+    ::StoneyDSP::StoneyVCV::HP4::HP4Widget *hp4Widget;
 
     /**
      * @brief
      *
      */
-    ::rack::widget::FramebufferWidget* hp4ModuleWidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget *hp4ModuleWidgetFrameBuffer;
 
     //==========================================================================
 
@@ -276,13 +273,14 @@ private:
      * @brief
      *
      */
-    const ::rack::math::Vec screwsPositions [4];
+    const ::std::array<::rack::math::Vec, 4> screwsPositions;
 
     /**
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedScrew* screws [4];
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+
 
     //==========================================================================
 
@@ -303,9 +301,19 @@ private:
 /**
  * @brief
  *
+ * @param name
+ * @param description
+ * @param manualUrl
+ * @param hidden
+ *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model* createHP4(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model* createModelHP4(
+    ::std::string name = "",
+    ::std::string description = "",
+    ::std::string manualUrl = "",
+    bool hidden = true
+) noexcept(false);
 
 //==============================================================================
 
