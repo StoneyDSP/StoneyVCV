@@ -32,7 +32,7 @@ namespace VCA {
 
 ::rack::plugin::Model* modelVCA = ::StoneyDSP::StoneyVCV::VCA::createModelVCA(
 /** name        */"VCA",
-/** description */"Voltage-controlled Oscillator. Supports polyphony.",
+/** description */"Voltage-controlled Amplifier. Supports polyphony.",
 /** manualUrl   */"https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html",
 /** hidden      */false
 );
