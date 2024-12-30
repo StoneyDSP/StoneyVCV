@@ -36,12 +36,14 @@
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+#include <array>
 
 //==============================================================================
 
@@ -80,16 +82,14 @@ namespace HP2
  * @brief The `HP2Module` struct.
  *
  */
-struct HP2Module final :
-    ::rack::engine::Module
+struct HP2Module final : virtual ::rack::engine::Module
 {
+
     //==========================================================================
 
 public:
 
     //==========================================================================
-
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     enum IdxParams {
         /** Number of Parameters. */
@@ -123,7 +123,7 @@ public:
      * @brief Destroys the `HP2Module` object.
      *
      */
-    virtual ~HP2Module();
+    virtual ~HP2Module() noexcept;
 
     //==========================================================================
 
@@ -141,9 +141,9 @@ private:
  * @brief The `HP2Widget` struct.
  *
  */
-struct HP2Widget final :
-    ::rack::widget::Widget
+struct HP2Widget final : virtual ::rack::Widget
 {
+
     //==========================================================================
 
 public:
@@ -191,13 +191,13 @@ private:
      * @brief
      *
      */
-    ::rack::widget::FramebufferWidget* hp2WidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget *hp2WidgetFrameBuffer;
 
     /**
      * @brief
      *
      */
-    ::rack::widget::Widget* panelBorder;
+    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
@@ -211,9 +211,9 @@ private:
  * @brief The `HP2ModuleWidget` struct.
  *
  */
-struct HP2ModuleWidget final :
-    ::rack::app::ModuleWidget
+struct HP2ModuleWidget final : virtual ::rack::app::ModuleWidget
 {
+
     //==========================================================================
 
 public:
@@ -251,7 +251,7 @@ private:
     /**
      * @brief
      */
-    ::rack::math::Vec size;
+    const ::rack::math::Vec size;
 
     /**
      * @brief
@@ -276,13 +276,14 @@ private:
      * @brief
      *
      */
-    const ::rack::math::Vec screwsPositions [4];
+    const ::std::array<::rack::math::Vec, 4> screwsPositions;
 
     /**
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedScrew* screws [4];
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+
 
     //==========================================================================
 
@@ -303,9 +304,19 @@ private:
 /**
  * @brief
  *
+ * @param name
+ * @param description
+ * @param manualUrl
+ * @param hidden
+ *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model* createHP2(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model* createModelHP2(
+    ::std::string name = "",
+    ::std::string description = "",
+    ::std::string manualUrl = "",
+    bool hidden = true
+) noexcept(false); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
