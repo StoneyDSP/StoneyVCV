@@ -32,7 +32,7 @@ namespace HP1 {
 
 ::rack::plugin::Model* modelHP1 = ::StoneyDSP::StoneyVCV::HP1::createModelHP1(
 /** name        */"HP1",
-/** description */"Voltage-controlled Oscillator. Supports polyphony.",
+/** description */"1hp Panel Spacer.",
 /** manualUrl   */"https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html",
 /** hidden      */false
 );

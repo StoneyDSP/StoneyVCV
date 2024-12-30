@@ -47,7 +47,7 @@ public:
     HP1Spec()
     :   slug("HP1"),
         name("HP1"),
-        description("Voltage-controlled Oscillator. Supports polyphony."),
+        description("1hp Panel Spacer."),
         manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html"),
         hidden(false),
         size(
