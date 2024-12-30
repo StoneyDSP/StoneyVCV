@@ -13,7 +13,7 @@
 
 //==============================================================================
 
-#include <StoneyLFO/LFO.hpp>
+#include <StoneyVCV/LFO.hpp>
 
 //==============================================================================
 
@@ -53,23 +53,75 @@ static const ::rack::math::Vec LFODimensions = (
 
 //==============================================================================
 
+template <typename T>
+::StoneyDSP::StoneyVCV::LFO::LFOEngine<T>::LFOEngine()
+:   frequency(static_cast<T>(2.0)),
+    lastFrequency(static_cast<T>(2.0))
+{
+    // Assertions
+    DBG("Constructing StoneyVCV::LFO::LFOEngine");
+}
+
+template <typename T>
+::StoneyDSP::StoneyVCV::LFO::LFOEngine<T>::LFOEngine(T newFrequency)
+:   frequency(newFrequency),
+    lastFrequency(newFrequency)
+{
+    // Assertions
+    DBG("Constructing StoneyVCV::LFO::LFOEngine");
+}
+
+template <typename T>
+::StoneyDSP::StoneyVCV::LFO::LFOEngine<T>::~LFOEngine() noexcept
+{
+    // Assertions
+    DBG("Destroying StoneyVCV::LFO::LFOEngine");
+
+    this->frequency = static_cast<T>(2.0);
+}
+
+template <typename T>
+void ::StoneyDSP::StoneyVCV::LFO::LFOEngine<T>::processSample(T* sample)
+{
+    // We can pass in an owned pointer-to-float, and write the phase to it
+}
+
+template <typename T>
+void ::StoneyDSP::StoneyVCV::LFO::LFOEngine<T>::setFrequency(const T &newFrequency)
+{
+    this->frequency = newFrequency;
+}
+
+template <typename T>
+T& ::StoneyDSP::StoneyVCV::LFO::LFOEngine<T>::getFrequency() noexcept
+{
+    return this->frequency;
+}
+
+template struct ::StoneyDSP::StoneyVCV::LFO::LFOEngine<::StoneyDSP::float_t>;
+template struct ::StoneyDSP::StoneyVCV::LFO::LFOEngine<::StoneyDSP::double_t>;
+// template struct ::StoneyDSP::StoneyVCV::LFO::LFOEngine<::rack::simd::float_4>;
+// template struct ::StoneyDSP::StoneyVCV::LFO::LFOEngine<::StoneyDSP::SIMD::double_2>;
+
+//==============================================================================
+
 ::StoneyDSP::StoneyVCV::LFO::LFOModule::LFOModule()
 {
-    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_PARAMS == 0U);
-    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_INPUTS == 0U);
-    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_OUTPUTS == 0U);
-    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_LIGHTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxParams::NUM_PARAMS == 0U);
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxInputs::NUM_INPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxOutputs::NUM_OUTPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxLights::NUM_LIGHTS == 2U);
 
     // Configure the number of Params, Outputs, Inputs, and Lights.
     config(
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_PARAMS,
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_INPUTS,
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_OUTPUTS,
-        ::StoneyDSP::StoneyVCV::LFO::LFOModule::NUM_LIGHTS
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxParams::NUM_PARAMS,
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxInputs::NUM_INPUTS,
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxOutputs::NUM_OUTPUTS,
+        ::StoneyDSP::StoneyVCV::LFO::LFOModule::IdxLights::NUM_LIGHTS
     );
 }
 
-::StoneyDSP::StoneyVCV::LFO::LFOModule::~LFOModule()
+::StoneyDSP::StoneyVCV::LFO::LFOModule::~LFOModule() noexcept
 {
 }
 
