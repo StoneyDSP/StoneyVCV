@@ -36,12 +36,14 @@
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+#include <array>
 
 //==============================================================================
 
@@ -65,7 +67,7 @@ namespace StoneyVCV
  * @brief The `HP1` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
- * @version @HP2_VERSION@
+ * @version @HP1_VERSION@
  *
  */
 namespace HP1
@@ -80,14 +82,11 @@ namespace HP1
  * @brief The `HP1Module` struct.
  *
  */
-struct HP1Module final :
-    ::rack::engine::Module
+struct HP1Module final : virtual ::rack::engine::Module
 {
     //==========================================================================
 
 public:
-
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     //==========================================================================
 
@@ -123,7 +122,7 @@ public:
      * @brief Destroys the `HP1Module` object.
      *
      */
-    virtual ~HP1Module();
+    virtual ~HP1Module() noexcept;
 
     //==========================================================================
 
@@ -141,8 +140,7 @@ private:
  * @brief The `HP1Widget` struct.
  *
  */
-struct HP1Widget final :
-    ::rack::widget::Widget
+struct HP1Widget final : virtual ::rack::widget::Widget
 {
     //==========================================================================
 
@@ -183,21 +181,21 @@ public:
 
     //==========================================================================
 
-    /**
-     * @brief
-     *
-     */
-    ::rack::widget::FramebufferWidget* hp1WidgetFrameBuffer;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::widget::Widget* panelBorder;
+private:
 
     //==========================================================================
 
-private:
+    /**
+     * @brief
+     *
+     */
+    ::rack::widget::FramebufferWidget *hp1WidgetFrameBuffer;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
@@ -211,9 +209,9 @@ private:
  * @brief The `HP1ModuleWidget` struct.
  *
  */
-struct HP1ModuleWidget final :
-    ::rack::app::ModuleWidget
+struct HP1ModuleWidget final : virtual ::rack::app::ModuleWidget
 {
+
     //==========================================================================
 
 public:
@@ -226,7 +224,7 @@ public:
      * @param module
      *
      */
-    HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module* module);
+    HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module *module);
 
     /**
      * @brief Destroys the `HP1ModuleWidget` object.
@@ -256,19 +254,19 @@ private:
     /**
      * @brief
      */
-    ::rack::app::ThemedSvgPanel* panel;
+    ::rack::app::ThemedSvgPanel *panel;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::HP1::HP1Widget* hp1Widget;
+    ::StoneyDSP::StoneyVCV::HP1::HP1Widget *hp1Widget;
 
     /**
      * @brief
      *
      */
-    ::rack::widget::FramebufferWidget* hp1ModuleWidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
 
     //==========================================================================
 
@@ -276,13 +274,13 @@ private:
      * @brief
      *
      */
-    const ::rack::math::Vec screwsPositions [2];
+    const ::std::array<::rack::math::Vec, 2> screwsPositions;
 
     /**
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedScrew* screws [2];
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 2> screws;
 
     //==========================================================================
 
@@ -303,9 +301,19 @@ private:
 /**
  * @brief
  *
+ * @param name
+ * @param description
+ * @param manualUrl
+ * @param hidden
+ *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model* createHP1(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model* createModelHP1(
+    ::std::string name = "",
+    ::std::string description = "",
+    ::std::string manualUrl = "",
+    bool hidden = true
+) noexcept(false);
 
 //==============================================================================
 

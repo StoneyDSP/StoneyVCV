@@ -37,7 +37,7 @@
       },
       "environment": {
         "ARCH_NAME": "$env{ARCH_OS}-$env{ARCH_CPU}",
-        "PLUGINS_DIR": "$env{RACK_USER_DIR}/plugins-$env{ARCH_OS}-$env{ARCH_CPU}",
+        "PLUGINS_DIR": "$env{RACK_USER_DIR}/plugins-$env{ARCH_NAME}",
         "VCPKG_ROOT": "$penv{VCPKG_ROOT}",
         "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg-registry/ports",
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg-registry/triplets"
