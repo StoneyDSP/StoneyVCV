@@ -202,10 +202,12 @@ endif
 
 # The macro NDEBUG controls whether assert() statements are active or not.
 ifdef DEBUG
-	CFLAGS += -Wall
-	CFLAGS += -Wextra
-	CFLAGS += -DNDEBUG
-	CFLAGS += -D_DEBUG
+	# FLAGS += -Wall
+	# FLAGS += -Wextra
+	# FLAGS += -DDEBUG
+	FLAGS += -D_DEBUG
+else
+	FLAGS += -DNDEBUG
 endif
 
 ifdef VERBOSE
@@ -215,7 +217,7 @@ endif
 EXTERNAL_DEPS :=
 EXTERNAL_DEPS += StoneyDSP
 EXTERNAL_DEPS += Rack-SDK
-EXTERNAL_DEPS += catch2
+# EXTERNAL_DEPS += catch2
 
 PKG_CONFIG_PATH := $(PWD)/build/vcpkg_installed/$(TRIPLET_ARCH)-$(TRIPLET_OS)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
@@ -223,7 +225,7 @@ FLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --cflags $(EXTERN
 LDFLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(EXTERNAL_DEPS))
 
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += -I$(PWD)/include
+FLAGS += -I$(PWD)/build/include
 CFLAGS +=
 CXXFLAGS +=
 
