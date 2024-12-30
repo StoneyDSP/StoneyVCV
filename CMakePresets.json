@@ -1,19 +1,25 @@
 {
+  "$schema": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
   "version": 10,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 31,
     "patch": 0
   },
-
+  "include": [
+    "CMakeOptions.json"
+  ],
   "configurePresets": [
     {
       "name": "base",
       "description": "Base configuration options for all presets",
       "hidden": true,
+      "inherits": [
+        "options"
+      ],
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
-      "installDir": "${sourceDir}/dist",
+      "installDir": "${sourceDir}/install",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": {
@@ -27,51 +33,11 @@
         "CMAKE_CONFIGURATION_TYPES": {
           "value": "Debug;Release",
           "type": "STRING"
-        },
-        "STONEYVCV_EXPERIMENTAL": {
-          "value": "OFF",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_DOCS": {
-          "value": "OFF",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_TESTS": {
-          "value": "ON",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_PLUGIN": {
-          "value": "ON",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_MODULES": {
-          "value": "ON",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_MODULE_HP4": {
-          "value": "ON",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_MODULE_HP2": {
-          "value": "ON",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_MODULE_HP1": {
-          "value": "ON",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_MODULE_VCA": {
-          "value": "OFF",
-          "type": "BOOL"
-        },
-        "STONEYVCV_BUILD_MODULE_LFO": {
-          "value": "ON",
-          "type": "BOOL"
         }
       },
       "environment": {
         "ARCH_NAME": "$env{ARCH_OS}-$env{ARCH_CPU}",
-        "PLUGINS_DIR": "$env{RACK_USER_DIR}/plugins-$env{ARCH_OS}-$env{ARCH_CPU}",
+        "PLUGINS_DIR": "$env{RACK_USER_DIR}/plugins-$env{ARCH_NAME}",
         "VCPKG_ROOT": "$penv{VCPKG_ROOT}",
         "VCPKG_OVERLAY_PORTS": "${sourceDir}/dep/vcpkg-registry/ports",
         "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/dep/vcpkg-registry/triplets"
@@ -1143,11 +1109,11 @@
     {
       "name": "base",
       "hidden": true,
-      "packageVersion": "2.0.1",
-      "vendorName": "StoneyDSP",
-      "packageName": "StoneyVCV",
-      "packageDirectory": "${sourceDir}/dist",
+      "packageDirectory": "${sourceDir}/install",
       "configurePreset": "base",
+      "inherits": [
+        "options"
+      ],
       "inheritConfigureEnvironment": true
     },
     {
