@@ -37,7 +37,8 @@ struct HP1Spec final :
     ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    ::std::string slug, name, description;
+    ::std::string slug, name, description, manualUrl;
+    bool hidden;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0;
@@ -45,11 +46,13 @@ public:
     ::rack::math::Vec size;
     HP1Spec()
     :   slug("HP1"),
-        name(""),
-        description(""),
+        name("HP1"),
+        description("1hp Panel Spacer."),
+        manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html"),
+        hidden(false),
         size(
-            ::rack::window::mm2px(5.079999999F),
-            ::rack::window::mm2px(128.693333312F)
+            15.0F, // ::rack::window::mm2px(5.079999999F),
+            380.0F //::rack::window::mm2px(128.693333312F)
         )
     {};
     ~HP1Spec() = default;
@@ -111,9 +114,9 @@ TEST_CASE( "HP1", "[HP1]" ) {
 
     //==========================================================================
 
-    SECTION( "createHP1" ) {
+    SECTION( "createModelHP1" ) {
 
-        ::rack::plugin::Model* test_modelHP1 = ::StoneyDSP::StoneyVCV::HP1::createHP1();
+        ::rack::plugin::Model* test_modelHP1 = ::StoneyDSP::StoneyVCV::HP1::createModelHP1();
         REQUIRE( test_modelHP1 != nullptr );
 
         SECTION( "createModule" ) {
@@ -135,6 +138,8 @@ TEST_CASE( "HP1", "[HP1]" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::HP1::modelHP1->slug == spec.get()->slug );
         REQUIRE( ::StoneyDSP::StoneyVCV::HP1::modelHP1->name == spec.get()->name );
         REQUIRE( ::StoneyDSP::StoneyVCV::HP1::modelHP1->description == spec.get()->description );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP1::modelHP1->manualUrl == spec.get()->manualUrl );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP1::modelHP1->hidden == spec.get()->hidden );
     }
 
     //==========================================================================

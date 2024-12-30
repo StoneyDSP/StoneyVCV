@@ -182,7 +182,6 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #endif
 
 #if defined (STONEYVCV_EXPERIMENTAL)
-#warning "Building experimental modules..."
 
     // EXPERIMENTAL MODULES HERE...
 
