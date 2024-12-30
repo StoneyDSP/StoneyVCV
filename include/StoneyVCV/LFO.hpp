@@ -393,6 +393,11 @@ private:
     //==========================================================================
 
     /**
+     * @brief 3mm LED showing a smoothed CV value.
+     */
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightLfo;
+
+    /**
      * @brief
      *
      */

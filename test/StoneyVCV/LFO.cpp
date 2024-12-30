@@ -45,9 +45,9 @@ public:
     const ::rack::math::Vec size;
     LFOSpec()
     :   slug("LFO"),
-        name("VCA"),
+        name("LFO"),
         description("Low-frequency Oscillator. Supports polyphony."),
-        manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html"),
+        manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2LFO.html"),
         hidden(false),
         size(
             45.0F, // ::rack::window::mm2px(30.479999995F),
