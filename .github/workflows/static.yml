@@ -26,10 +26,14 @@ env:
   CMAKE_BUILD_PARALLEL_LEVEL: 3
   CMAKE_INSTALL_PARALLEL_LEVEL: 3
   VCPKG_MAX_CONCURRENCY: 3
-  STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
-  STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
-  STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
-  STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+  RACK_SDK_VERSION_MAJOR: 2
+  RACK_SDK_VERSION: 2.5.2
+  RACK_SDK_PLATFORM: "lin-x64"
+  # STONEYVCV_VERSION_MAJOR: ${{ vars.STONEYVCV_VERSION_MAJOR }}
+  # STONEYVCV_VERSION_MINOR: ${{ vars.STONEYVCV_VERSION_MINOR }}
+  # STONEYVCV_VERSION_PATCH: ${{ vars.STONEYVCV_VERSION_PATCH }}
+  # STONEYVCV_VERSION: ${{ vars.STONEYVCV_VERSION_MAJOR }}.${{ vars.STONEYVCV_VERSION_MINOR }}.${{ vars.STONEYVCV_VERSION_PATCH }}
 
 jobs:
   # Single deploy job since we're just deploying
@@ -51,21 +55,36 @@ jobs:
         run: |
           sudo apt-get update && sudo apt install make doxygen ninja-build cmake graphviz
 
-      - name: vcpkg install
-        uses: johnwason/vcpkg-action@v6
+      - name: get Rack Executable
+        shell: bash
+        run: |
+          curl https://vcvrack.com/downloads/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -o ${{ github.workspace }}/dep/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip
+          unzip -q ${{ github.workspace }}/dep/RackFree-${{env.RACK_SDK_VERSION}}-${{env.RACK_SDK_PLATFORM}}.zip -d ${{ github.workspace }}/dep
+
+      # CI helpers
+      - name: Enable GitHub Actions Cache backend
+        uses: actions/github-script@v7
         with:
-          # vcpkg triplet to use
-          triplet: x64-linux
-          # GitHub token to authenticate API requests. Recommended to use  github.token
-          token: ${{ github.token }}
-          # Directory containing vcpkg.json manifest file. Cannot be used with pkgs.
-          manifest-dir: ${{ github.workspace }}
-          # Use vcpkg built-in GitHub binary caching. If not specified, will use the dry-run based file cache.
-          github-binarycache: true
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      # Output package name (don't do this at home)
+      - name: make version
+        shell: bash
+        run: |
+          echo STONEYVCV_VERSION_MAJOR=${{ env.RACK_SDK_VERSION_MAJOR }} >> $GITHUB_ENV
+          echo STONEYVCV_VERSION_MINOR=0 >> $GITHUB_ENV
+          echo STONEYVCV_VERSION_PATCH=$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+          echo STONEYVCV_VERSION_TWEAK=$(git rev-parse HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+          echo STONEYVCV_VERSION_BUILD=$(git rev-parse --short HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
+          echo STONEYVCV_VERSION_PACKAGE=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+          echo STONEYVCV_VERSION=${{ env.RACK_SDK_VERSION_MAJOR }}.0.$(git rev-list HEAD | wc -l | awk '{$1=$1};1') >> $GITHUB_ENV
+          echo STONEYVCV_GIT_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD | awk '{$1=$1};1') >> $GITHUB_ENV
 
       - name: Configure StoneyVCV
         working-directory: ${{ github.workspace }}
-        run: cmake --preset x64-linux-release --fresh
+        run: make configure
 
       - name: Make Doxygen
         working-directory: ${{ github.workspace }}
