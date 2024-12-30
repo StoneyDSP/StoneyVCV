@@ -1,31 +1,30 @@
 /*******************************************************************************
- * @file plugin.hpp
+ * @file include/StoneyVCV/plugin.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 2.0.1
- * @date 2024-11-11
+ * @brief @PROJECT_DESCRIPTION@
+ * @version @plugin_VERSION@
  *
- * @copyright Copyright (c) 2024
+ * @copyright MIT License
  *
- * MIT License
+ * Copyright (c) 2024 Nathan J. Hood <nathanjhood@googlemail.com>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * therights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/orsell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  ******************************************************************************/
 
@@ -48,11 +47,9 @@
 
 #ifdef STONEYDSP_DEBUG
 #include <iostream>
-#define DBG(msg) \
-::std::cerr << msg << std::endl
+#define DBG(msg, ...) do { ::std::cerr << std::string(msg, ##__VA_ARGS__) << std::endl; } while (0)
 #else
-#define DBG(msg) \
-::StoneyDSP::ignoreUnused(msg)
+#define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
 #endif
 
 //==============================================================================
@@ -69,12 +66,27 @@ namespace StoneyDSP
  * @brief The `StoneyVCV` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
- * @namespace StoneyVCV
+ * @version @STONEYVCV_VERSION@
  *
  */
 namespace StoneyVCV
 {
 /** @addtogroup StoneyVCV
+ *  @{
+ */
+
+//==============================================================================
+
+/**
+ * @brief The `Plugin` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @version @plugin_VERSION@
+ *
+ */
+namespace Plugin
+{
+/** @addtogroup Plugin
  *  @{
  */
 
@@ -87,142 +99,124 @@ extern ::rack::plugin::Plugin* pluginInstance;
 
 //==============================================================================
 
+  /// @} group Plugin
+} // namespace Plugin
+
+//==============================================================================
+
 #if defined (STONEYVCV_BUILD_MODULES)
 
 // Declare each Model, defined in each module source file
 
-#if defined (STONEYVCV_EXPERIMENTAL)
-// EXPERIMENTAL MODULES HERE...
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 2U)
 
-#if defined (STONEYVCV_BUILD_VCA)
-    namespace VCA {
-    /** @addtogroup VCA
-     *  @{
-     */
+    #if defined (STONEYVCV_BUILD_VCA)
+        namespace VCA {
+        /** @addtogroup VCA
+         *  @{
+         */
 
-    /**
-     * @brief Declaration of the `VCA` Model instance, defined in `VCA.cpp`.
-     */
-    extern ::rack::plugin::Model* modelVCA;
+        /**
+         * @brief Declaration of the `VCA` Model instance, defined in `VCA.cpp`.
+         */
+        extern ::rack::plugin::Model* modelVCA;
 
-    /// @} group VCA
-    } // namespace VCA
-#endif // STONEYVCV_BUILD_VCA
+        /// @} group VCA
+        } // namespace VCA
+    #endif // STONEYVCV_BUILD_VCA
 
-#if defined (STONEYVCV_BUILD_LFO)
-    namespace LFO {
-    /** @addtogroup LFO
-     *  @{
-     */
+#endif // STONEYVCV_VERSION_PATCH >= 2
 
-    /**
-     * @brief Declaration of the `LFO` Model instance, defined in `LFO.cpp`.
-     */
-    extern ::rack::plugin::Model* modelLFO;
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
 
-    /// @} group LFO
-    } // namespace LFO
-#endif // STONEYVCV_BUILD_LFO
+    #if defined (STONEYVCV_BUILD_HP4)
+        namespace HP4 {
+        /** @addtogroup HP4
+         *  @{
+         */
 
-#endif // STONEYVCV_EXPERIMENTAL
-
-#if (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
-
-#if defined (STONEYVCV_BUILD_HP4)
-    namespace HP4 {
-    /** @addtogroup HP4
-     *  @{
-     */
-
-    /**
-     * @brief Declaration of the `HP4` Model instance, defined in `HP4.cpp`.
-     */
-    extern ::rack::plugin::Model* modelHP4;
+        /**
+         * @brief Declaration of the `HP4` Model instance, defined in `HP4.cpp`.
+         */
+        extern ::rack::plugin::Model* modelHP4;
 
 
-    /// @} group HP4
-    } // namespace HP4
-#endif // STONEYVCV_BUILD_HP4
+        /// @} group HP4
+        } // namespace HP4
+    #endif // STONEYVCV_BUILD_HP4
 
-#if defined (STONEYVCV_BUILD_HP2)
-    namespace HP2 {
-    /** @addtogroup HP2
-     *  @{
-     */
+    #if defined (STONEYVCV_BUILD_HP2)
+        namespace HP2 {
+        /** @addtogroup HP2
+         *  @{
+         */
 
-    /**
-     * @brief Declaration of the `HP2` Model instance, defined in `HP2.cpp`.
-     */
-    extern ::rack::plugin::Model* modelHP2;
+        /**
+         * @brief Declaration of the `HP2` Model instance, defined in `HP2.cpp`.
+         */
+        extern ::rack::plugin::Model* modelHP2;
 
-    /// @} group HP1
-    } // namespace HP1
-#endif // STONEYVCV_BUILD_HP2
+        /// @} group HP1
+        } // namespace HP1
+    #endif // STONEYVCV_BUILD_HP2
 
-#if defined (STONEYVCV_BUILD_HP1)
-    namespace HP1 {
-    /** @addtogroup HP1
-     *  @{
-     */
+    #if defined (STONEYVCV_BUILD_HP1)
+        namespace HP1 {
+        /** @addtogroup HP1
+         *  @{
+         */
 
-    /**
-     * @brief Declaration of the `HP1` Model instance, defined in `HP1.cpp`.
-     */
-    extern ::rack::plugin::Model* modelHP1;
+        /**
+         * @brief Declaration of the `HP1` Model instance, defined in `HP1.cpp`.
+         */
+        extern ::rack::plugin::Model* modelHP1;
 
-    /// @} group HP1
-    } // namespace HP1
-#endif // STONEYVCV_BUILD_HP1
+        /// @} group HP1
+        } // namespace HP1
+    #endif // STONEYVCV_BUILD_HP1
 
-#elif (STONEYVCV_VERSION_MAJOR >= 0U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 0U)
+#endif
+
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH < 1U)
     #warning "No modules found..."
 #endif
 
+#if defined (STONEYVCV_EXPERIMENTAL)
+#warning "Building experimental modules..."
+
+    // EXPERIMENTAL MODULES HERE...
+
+    #if defined (STONEYVCV_BUILD_LFO)
+        namespace LFO {
+        /** @addtogroup LFO
+         *  @{
+         */
+
+        /**
+         * @brief Declaration of the `LFO` Model instance, defined in `LFO.cpp`.
+         */
+        extern ::rack::plugin::Model* modelLFO;
+
+        /// @} group LFO
+        } // namespace LFO
+    #endif // STONEYVCV_BUILD_LFO
+
+#endif // STONEYVCV_EXPERIMENTAL
+
 namespace Panels {
-extern ::NVGcolor bgBlack;
-extern ::NVGcolor bgWhite;
-extern ::NVGcolor borderColor;
-extern ::StoneyDSP::float_t MIN_WIDTH;
-extern ::StoneyDSP::float_t MIN_HEIGHT;
-
+const extern ::NVGcolor bgBlack;
+const extern ::NVGcolor bgWhite;
+const extern ::NVGcolor borderColor;
+const extern ::NVGcolor bgGradientBlackS0;
+const extern ::NVGcolor bgGradientBlackS1;
+const extern ::NVGcolor bgGradientWhiteS0;
+const extern ::NVGcolor bgGradientWhiteS1;
+const extern ::StoneyDSP::float_t MIN_WIDTH;
+const extern ::StoneyDSP::float_t MIN_HEIGHT;
 extern void addScrewsToWidget(::rack::widget::Widget* widget);
-
 }
 
 #endif // STONEYVCV_BUILD_MODULES
-
-//==============================================================================
-
-#if defined (STONEYVCV_BUILD_TESTS)
-/**
- * @brief The `Spec` struct.
- *
- * A base class for deriving specs for unit-testing with.
- *
- */
-struct Spec {
-public:
-    ::std::string slug, name, description;
-    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0U;
-    ::rack::math::Vec size;
-    Spec()
-    :   slug("Spec"),
-        name(""),
-        description("Unit test spec base class (internal)"),
-        size(
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH),
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT)
-        )
-    {};
-    ~Spec() = default;
-private:
-    STONEYDSP_DECLARE_NON_COPYABLE(Spec)
-    STONEYDSP_DECLARE_NON_MOVEABLE(Spec)
-};
-#endif
 
 //==============================================================================
 
@@ -239,3 +233,55 @@ private:
 #endif // STONEYVCV_BUILD_PLUGIN
 
 //==============================================================================
+
+namespace StoneyDSP {
+/** @addtogroup StoneyDSP
+ *  @{
+ */
+
+namespace StoneyVCV {
+/** @addtogroup StoneyVCV
+ *  @{
+ */
+
+namespace Tools {
+/** @addtogroup Tools
+ *  @{
+ */
+const extern ::StoneyDSP::float_t vMin;
+const extern ::StoneyDSP::float_t vMax;
+const extern ::StoneyDSP::float_t vNominal;
+const extern ::StoneyDSP::float_t vBias;
+const extern ::StoneyDSP::float_t vGround;
+const extern ::StoneyDSP::float_t vFloor;
+
+  /// @} group Tools
+} // namespace Tools
+
+// Declare an abstract base class with a pure virtual destructor.
+// It's the simplest possible abstract class.
+template <typename T>
+struct Engine
+{
+public:
+    Engine() {
+        DBG("Creating StoneyDSP::StoneyVCV::Engine");
+    };
+    virtual ~Engine() noexcept = 0;                                             // pure virtual
+    virtual void processSample(T* sample) = 0;                                  // pure virtual
+};
+
+template<class T>
+::StoneyDSP::StoneyVCV::Engine<T>::~Engine() noexcept
+{
+    DBG("Destroying StoneyDSP::StoneyVCV::Engine");
+}
+
+template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::float_t>;
+template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::double_t>;
+
+  /// @} group StoneyVCV
+} // namespace StoneyVCV
+
+  /// @} group StoneyDSP
+} // namespace StoneyDSP

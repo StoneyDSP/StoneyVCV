@@ -1,31 +1,11 @@
 /*******************************************************************************
- * @file HP2.cpp
+ * @file test/StoneyVCV/HP2.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.1
+ * @version 2.0.2
  * @date 2024-11-11
  *
- * @copyright Copyright (c) 2024
- *
- * MIT License
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * therights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/orsell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
 
@@ -44,6 +24,10 @@
 
 //==============================================================================
 
+#include "test.hpp"
+
+//==============================================================================
+
 // Spec goes here...
 
 namespace StoneyDSP {
@@ -53,7 +37,8 @@ struct HP2Spec final :
     ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    std::string slug;
+    ::std::string slug, name, description, manualUrl;
+    bool hidden;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
@@ -61,9 +46,13 @@ public:
     ::rack::math::Vec size;
     HP2Spec()
     :   slug("HP2"),
+        name("HP2"),
+        description("2hp Panel Spacer."),
+        manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2HP2.html"),
+        hidden(false),
         size(
-            ::rack::window::mm2px(5.079999999F * 2.0F),
-            ::rack::window::mm2px(128.693333312F)
+            30.0F, // ::rack::window::mm2px(10.1599999984F),
+            380.0F //::rack::window::mm2px(128.693333312F)
         )
     {};
 private:
@@ -125,9 +114,32 @@ TEST_CASE( "HP2", "[HP2]" ) {
 
     //==========================================================================
 
-    SECTION( "instance" ) {
+    SECTION( "createModelHP2" ) {
+
+        ::rack::plugin::Model* test_modelHP2 = ::StoneyDSP::StoneyVCV::HP2::createModelHP2();
+        REQUIRE( test_modelHP2 != nullptr );
+
+        SECTION( "createModule" ) {
+
+            auto test_module = test_modelHP2->createModule();
+            REQUIRE( test_module != nullptr );
+
+            // SECTION( "createModuleWidget" ) {
+            //     auto test_moduleWidget = test_modelHP2->createModuleWidget(test_module);
+            //     REQUIRE( test_moduleWidget != nullptr );
+            // }
+        }
+    }
+
+    //==========================================================================
+
+    SECTION( "modelHP2" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2 != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->slug == spec.get()->slug );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->name == spec.get()->name );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->description == spec.get()->description );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->manualUrl == spec.get()->manualUrl );
+        REQUIRE( ::StoneyDSP::StoneyVCV::HP2::modelHP2->hidden == spec.get()->hidden );
     }
 
     //==========================================================================

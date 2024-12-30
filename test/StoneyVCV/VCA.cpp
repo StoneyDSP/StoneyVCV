@@ -1,31 +1,11 @@
 /*******************************************************************************
- * @file VCA.cpp
+ * @file test/StoneyVCV/VCA.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
- * @version 0.0.0
+ * @version 2.0.2
  * @date 2024-11-11
  *
- * @copyright Copyright (c) 2024
- *
- * MIT License
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * therights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/orsell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
 
@@ -44,6 +24,10 @@
 
 //==============================================================================
 
+#include "test.hpp"
+
+//==============================================================================
+
 // Spec goes here...
 
 namespace StoneyDSP {
@@ -52,17 +36,22 @@ namespace VCA {
 struct VCASpec final : ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    ::std::string slug;
+    const ::std::string slug, name , description, manualUrl;
+    const bool hidden;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 1U;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 1U;
     static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 1U;
-    ::rack::math::Vec size;
+    const ::rack::math::Vec size;
     VCASpec()
     :   slug("VCA"),
+        name("VCA"),
+        description("Voltage-controlled Oscillator. Supports polyphony."),
+        manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html"),
+        hidden(false),
         size(
-            ::rack::window::mm2px(30.479999995F),
-            ::rack::window::mm2px(128.693333312F)
+            45.0F, // ::rack::window::mm2px(30.479999995F),
+            380.0F //::rack::window::mm2px(128.693333312F)
         )
     {};
 private:
@@ -93,10 +82,10 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
     SECTION( "VCAModule" ) {
         SECTION( "statics" ) {
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS == spec.get()->NUM_PARAMS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS == spec.get()->NUM_INPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
-            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::NUM_PARAMS == spec.get()->NUM_PARAMS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::NUM_INPUTS == spec.get()->NUM_INPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::NUM_OUTPUTS == spec.get()->NUM_OUTPUTS );
+            REQUIRE( ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::NUM_LIGHTS == spec.get()->NUM_LIGHTS );
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
@@ -110,7 +99,7 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
     //==========================================================================
 
-    SECTION( "VCAModuleWidget" ) {
+    // SECTION( "VCAModuleWidget" ) {
         // ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
         // ::rack::app::ModuleWidget* test_vcaModuleWidget = new ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget(dynamic_cast<::StoneyDSP::StoneyVCV::VCA::VCAModule*>(test_vcaModule));
         // std::shared_ptr<::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget> test_vcaModuleWidget = std::make_shared<::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget>();
@@ -136,13 +125,36 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
         // delete test_vcaModuleWidget;
         // delete test_vcaModule;
+    // }
+
+    //==========================================================================
+
+    SECTION( "createModelVCA" ) {
+
+        ::rack::plugin::Model* test_modelVCA = ::StoneyDSP::StoneyVCV::VCA::createModelVCA();
+        REQUIRE( test_modelVCA != nullptr );
+
+        SECTION( "createModule" ) {
+
+            auto test_module = test_modelVCA->createModule();
+            REQUIRE( test_module != nullptr );
+
+            // SECTION( "createModuleWidget" ) {
+            //     auto test_moduleWidget = test_modelVCA->createModuleWidget(test_module);
+            //     REQUIRE( test_moduleWidget != nullptr );
+            // }
+        }
     }
 
     //==========================================================================
 
-    SECTION( "instance" ) {
+    SECTION( "modelVCA" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->slug == spec.get()->slug );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->name == spec.get()->name );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->description == spec.get()->description );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->manualUrl == spec.get()->manualUrl );
+        REQUIRE( ::StoneyDSP::StoneyVCV::VCA::modelVCA->hidden == spec.get()->hidden );
     }
 
     //==========================================================================
@@ -152,6 +164,6 @@ TEST_CASE( "VCA", "[VCA]" ) {
 
 //==============================================================================
 
-#endif
+#endif // defined (STONEYVCV_BUILD_VCA) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================

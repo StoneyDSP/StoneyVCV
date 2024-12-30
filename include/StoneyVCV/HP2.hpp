@@ -1,13 +1,12 @@
 /*******************************************************************************
- * @file HP2.hpp
+ * @file include/StoneyVCV/HP2.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 0.0.1
- * @date 2024-11-11
+ * @brief @PROJECT_DESCRIPTION@
+ * @version @HP2_VERSION@
  *
- * @copyright Copyright (c) 2024
+ * @copyright MIT License
  *
- * MIT License
+ * Copyright (c) 2024 Nathan J. Hood <nathanjhood@googlemail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +32,18 @@
 
 #define STONEYVCV_HP2_HPP_INCLUDED 1
 
+#if defined (STONEYVCV_BUILD_HP2)
+
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+#include <array>
 
 //==============================================================================
 
@@ -64,7 +67,7 @@ namespace StoneyVCV
  * @brief The `HP2` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
- * @namespace HP2
+ * @version @HP2_VERSION@
  *
  */
 namespace HP2
@@ -79,16 +82,14 @@ namespace HP2
  * @brief The `HP2Module` struct.
  *
  */
-struct HP2Module final :
-    ::rack::engine::Module
+struct HP2Module final : virtual ::rack::engine::Module
 {
+
     //==========================================================================
 
 public:
 
     //==========================================================================
-
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     enum IdxParams {
         /** Number of Parameters. */
@@ -122,7 +123,7 @@ public:
      * @brief Destroys the `HP2Module` object.
      *
      */
-    virtual ~HP2Module();
+    virtual ~HP2Module() noexcept;
 
     //==========================================================================
 
@@ -140,9 +141,9 @@ private:
  * @brief The `HP2Widget` struct.
  *
  */
-struct HP2Widget final :
-    ::rack::widget::Widget
+struct HP2Widget final : virtual ::rack::Widget
 {
+
     //==========================================================================
 
 public:
@@ -190,13 +191,13 @@ private:
      * @brief
      *
      */
-    ::rack::widget::FramebufferWidget* hp2WidgetFrameBuffer;
+    ::rack::widget::FramebufferWidget *hp2WidgetFrameBuffer;
 
     /**
      * @brief
      *
      */
-    ::rack::widget::Widget* panelBorder;
+    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
@@ -210,9 +211,9 @@ private:
  * @brief The `HP2ModuleWidget` struct.
  *
  */
-struct HP2ModuleWidget final :
-    ::rack::app::ModuleWidget
+struct HP2ModuleWidget final : virtual ::rack::app::ModuleWidget
 {
+
     //==========================================================================
 
 public:
@@ -250,7 +251,7 @@ private:
     /**
      * @brief
      */
-    ::rack::math::Vec size;
+    const ::rack::math::Vec size;
 
     /**
      * @brief
@@ -275,13 +276,14 @@ private:
      * @brief
      *
      */
-    const ::rack::math::Vec screwsPositions [4];
+    const ::std::array<::rack::math::Vec, 4> screwsPositions;
 
     /**
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedScrew* screws [4];
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+
 
     //==========================================================================
 
@@ -302,9 +304,19 @@ private:
 /**
  * @brief
  *
+ * @param name
+ * @param description
+ * @param manualUrl
+ * @param hidden
+ *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model* createHP2(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model* createModelHP2(
+    ::std::string name = "",
+    ::std::string description = "",
+    ::std::string manualUrl = "",
+    bool hidden = true
+) noexcept(false); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
@@ -320,5 +332,9 @@ private:
 
   /// @} group StoneyDSP
 } // namespace StoneyDSP
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_HP2)
 
 //==============================================================================

@@ -2,112 +2,118 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="5.079999999mm"
-   height="128.693333312mm"
-   viewBox="0 0 5.079999999 128.693333312"
+   width="15"
+   height="380"
+   viewBox="0 0 15 380"
    version="1.1"
-   id="svg8"
+   id="svg5"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    sodipodi:docname="HP1-light.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <defs
-     id="defs2">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient828">
-      <stop
-         style="stop-color:#e6e6e6;stop-opacity:1;"
-         offset="0"
-         id="stop824" />
-      <stop
-         style="stop-color:#e6e6e6;stop-opacity:0;"
-         offset="1"
-         id="stop826" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient828"
-       id="linearGradient830"
-       x1="0%"
-       y1="0%"
-       x2="0%"
-       y2="100%"
-       gradientUnits="userSpaceOnUse" />
-  </defs>
+  <title
+     id="title849">HP1-light</title>
   <sodipodi:namedview
-     id="base"
+     id="namedview7"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0"
-     inkscape:cx="36.870568"
-     inkscape:cy="243.95184"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="px"
      showgrid="false"
-     units="mm"
-     inkscape:snap-bbox="true"
-     inkscape:snap-page="true"
-     inkscape:bbox-nodes="false"
-     inkscape:snap-bbox-edge-midpoints="false"
+     units="px"
+     width="45px"
+     inkscape:zoom="1"
+     inkscape:cx="112.5"
+     inkscape:cy="177.5"
      inkscape:window-width="1370"
      inkscape:window-height="836"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:snap-bbox-midpoints="true"
-     inkscape:snap-nodes="false"
-     inkscape:pagecheckerboard="0"
-     width="30.48mm">
-    <inkscape:grid
-       type="xygrid"
-       id="grid829" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1308"
+       x1="7.5"
+       y1="0"
+       x2="7.5"
+       y2="380"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         style="stop-color:#ebebeb;stop-opacity:1"
+         offset="0"
+         id="stop1304" />
+      <stop
+         style="stop-color:#e1e1e1;stop-opacity:0"
+         offset="1"
+         id="stop1306" />
+    </linearGradient>
+  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     style="display:inline">
     <rect
-       style="display:inline;opacity:1;vector-effect:none;fill:url(#linearGradient2293);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       id="gradient420"
-       width="5.079999999"
-       height="128.693333312"
+       style="display:inline;fill:#e1e1e1;fill-opacity:1;fill-rule:evenodd;stroke-width:1"
+       id="rect846"
+       width="15"
+       height="380"
        x="0"
        y="0"
-       inkscape:label="gradient420" />
+       inkscape:label="panel" />
+    <rect
+       style="display:inline;fill:url(#linearGradient1308);fill-opacity:1;fill-rule:evenodd;stroke-width:1"
+       id="rect914"
+       width="15"
+       height="380"
+       x="0"
+       y="0"
+       inkscape:label="panel_shine" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="components"
-     style="display:none">
+     style="display:inline">
     <rect
-       style="fill:#ffff00;fill-rule:evenodd;stroke-width:0.5"
-       id="rect895"
-       height="128.693333312"
+       style="display:none;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke-width:1"
+       id="rect846-3"
+       width="15"
+       height="380"
        x="0"
        y="0"
-       width="5.079999999"
        inkscape:label="widget" />
   </g>
+  <metadata
+     id="metadata847">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>HP1-light</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Nathan J. Hood</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <cc:license
+           rdf:resource="https://mit-license.org/" />
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Copyright 2024 Nathan J. Hood (MIT License)</dc:title>
+          </cc:Agent>
+        </dc:rights>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
 </svg>

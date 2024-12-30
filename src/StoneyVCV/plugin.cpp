@@ -1,33 +1,15 @@
 /*******************************************************************************
- * @file plugin.cpp
+ * @file src/StoneyVCV/plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief
  * @version 2.0.1
  * @date 2024-11-11
  *
- * @copyright Copyright (c) 2024
- *
- * MIT License
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * therights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/orsell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
+
+#if defined (STONEYVCV_BUILD_PLUGIN)
 
 //==============================================================================
 
@@ -39,8 +21,6 @@
 
 //==============================================================================
 
-#ifdef STONEYVCV_BUILD_PLUGIN
-
 namespace StoneyDSP {
 
 //==============================================================================
@@ -49,10 +29,18 @@ namespace StoneyVCV {
 
 //==============================================================================
 
+namespace Plugin {
+
+//==============================================================================
+
 /**
  * @brief The `StoneyDSP` VCV Rack Plugin instance.
  */
 ::rack::plugin::Plugin* pluginInstance;
+
+//==============================================================================
+
+} // namespace Plugin
 
 //==============================================================================
 
@@ -64,7 +52,7 @@ namespace StoneyVCV {
 
 //==============================================================================
 
-#ifdef STONEYVCV_BUILD_MODULES
+#if defined (STONEYVCV_BUILD_MODULES)
 
 /**
  * @brief The `StoneyDSP` VCV Rack Plugin Initialiser.
@@ -73,31 +61,46 @@ namespace StoneyVCV {
  */
 void init(::rack::plugin::Plugin* p) {
 
-    ::StoneyDSP::StoneyVCV::pluginInstance = p;
+    ::StoneyDSP::StoneyVCV::Plugin::pluginInstance = p;
 
-#ifdef STONEYVCV_EXPERIMENTAL
-    // EXPERIMENTAL MODULES HERE...
-#ifdef STONEYVCV_BUILD_VCA
-    p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
-#endif
-#ifdef STONEYVCV_BUILD_LFO
-    p->addModel(::StoneyDSP::StoneyVCV::LFO::modelLFO);
-#endif
-#endif // STONEYVCV_EXPERIMENTAL
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 2)
 
-#if (STONEYVCV_VERSION_MAJOR >= 0) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-#ifdef STONEYVCV_BUILD_HP4
-    p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
+    #ifdef STONEYVCV_BUILD_VCA
+        p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
+    #endif
+
+#endif // STONEYVCV_VERSION_PATCH >= 2
+
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
+
+    #ifdef STONEYVCV_BUILD_HP4
+        p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
+    #endif
+
+    #ifdef STONEYVCV_BUILD_HP2
+        p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
+    #endif
+
+    #ifdef STONEYVCV_BUILD_HP1
+        p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
+    #endif
+
 #endif
-#ifdef STONEYVCV_BUILD_HP2
-    p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
-#endif
-#ifdef STONEYVCV_BUILD_HP1
-    p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
-#endif
-#elif (STONEYVCV_VERSION_MAJOR) >= 0 && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 0)
+
+#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH < 1U)
     #warning "No modules found..."
 #endif
+
+#ifdef STONEYVCV_EXPERIMENTAL
+
+    #warning "Building experimental modules..."
+    // EXPERIMENTAL MODULES HERE...
+
+    #ifdef STONEYVCV_BUILD_LFO
+        p->addModel(::StoneyDSP::StoneyVCV::LFO::modelLFO);
+    #endif
+
+#endif // STONEYVCV_EXPERIMENTAL
 
     // Any other plugin initialization may go here.
     // As an alternative, consider lazy-loading assets and lookup tables when
@@ -114,15 +117,39 @@ namespace StoneyVCV {
 
 //==============================================================================
 
+namespace Tools {
+
+//==============================================================================
+
+const ::StoneyDSP::float_t vMin = (-12.0F);
+const ::StoneyDSP::float_t vMax = (12.0F);
+const ::StoneyDSP::float_t vNominal = (10.0F);
+const ::StoneyDSP::float_t vBias = (0.0F);
+const ::StoneyDSP::float_t vGround = (0.0F);
+const ::StoneyDSP::float_t vFloor = (0.0F);
+
+//==============================================================================
+
+} // namespace Tools
+
+//==============================================================================
+
 namespace Panels {
 
 //==============================================================================
 
-::NVGcolor bgBlack = ::nvgRGBA(43, 43, 43, 255);
-::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
-::NVGcolor borderColor = nvgRGBAf(0.5F, 0.5F, 0.5F, 0.5F);
-::StoneyDSP::float_t MIN_WIDTH = ::rack::window::mm2px(5.079999999F);
-::StoneyDSP::float_t MIN_HEIGHT = ::rack::window::mm2px(128.693333312F);
+const ::NVGcolor bgWhite = ::nvgRGBA(235, 235, 235, 255);
+const ::NVGcolor bgGradientWhiteS0 = ::nvgRGBA(235, 235, 235, 0);
+const ::NVGcolor bgGradientWhiteS1 = ::nvgRGBA(225, 225, 225, 255);
+
+const ::NVGcolor bgBlack = ::nvgRGBA(43, 43, 43, 255);
+const ::NVGcolor bgGradientBlackS0 = ::nvgRGBA(42, 42, 43, 0);
+const ::NVGcolor bgGradientBlackS1 = ::nvgRGBA(23, 23, 23, 255);
+
+const ::NVGcolor borderColor = nvgRGBAf(0.5F, 0.5F, 0.5F, 0.5F);
+
+const ::StoneyDSP::float_t MIN_WIDTH = 15.0F; //::rack::window::mm2px(5.079999999F);
+const ::StoneyDSP::float_t MIN_HEIGHT = 380.0F; // ::rack::window::mm2px(128.693333312F);
 
 //==============================================================================
 
@@ -169,10 +196,10 @@ void addScrewsToWidget(::rack::widget::Widget* widget)
 
 //==============================================================================
 
-#endif // STONEYVCV_BUILD_MODULES
+#endif // defined (STONEYVCV_BUILD_MODULES)
 
 //==============================================================================
 
-#endif // STONEYVCV_BUILD_PLUGIN
+#endif // defined (STONEYVCV_BUILD_PLUGIN)
 
 //==============================================================================

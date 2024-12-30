@@ -1,13 +1,12 @@
 /*******************************************************************************
- * @file VCA.hpp
+ * @file include/StoneyVCV/VCA.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 0.0.0
- * @date 2024-11-11
+ * @brief @PROJECT_DESCRIPTION@
+ * @version @VCA_VERSION@
  *
- * @copyright Copyright (c) 2024
+ * @copyright MIT License
  *
- * MIT License
+ * Copyright (c) 2024 Nathan J. Hood <nathanjhood@googlemail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +32,11 @@
 
 #define STONEYVCV_VCA_HPP_INCLUDED 1
 
+#if defined (STONEYVCV_BUILD_VCA)
+
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
@@ -43,6 +44,8 @@
 #include <StoneyDSP/Core.hpp>
 #include <StoneyDSP/DSP.hpp>
 #include <StoneyDSP/SIMD.hpp>
+
+#include <array>
 
 //==============================================================================
 
@@ -66,7 +69,7 @@ namespace StoneyVCV
  * @brief The `VCA` namespace.
  * @author Nathan J. Hood (nathanjhood@googlemail.com)
  * @copyright Copyright (c) 2024
- * @namespace VCA
+ * @version @VCA_VERSION@
  *
  */
 namespace VCA
@@ -78,18 +81,70 @@ namespace VCA
 //==============================================================================
 
 /**
+ * @brief The `VCAEngine` struct.
+ *
+ */
+template<typename T>
+struct VCAEngine : virtual ::StoneyDSP::StoneyVCV::Engine<T>
+{
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    VCAEngine();
+
+    VCAEngine(T sample);
+
+    ~VCAEngine() noexcept;
+
+    //==========================================================================
+
+    void processSample(T *sample) override;
+
+    void processSampleSimd(::StoneyDSP::SIMD::float_4 *v);
+
+    void processSampleSimd(::StoneyDSP::SIMD::double_2 *v);
+
+    void setGain(const T &newGain);
+
+    T& getGain() noexcept;
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    T gain;
+
+    /**
+     * @brief
+     *
+     */
+    T lastGain;
+
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAEngine)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAEngine)
+};
+
+//==============================================================================
+
+/**
  * @brief The `VCAModule` struct.
  *
  */
-struct VCAModule final :
-    ::rack::engine::Module
+struct VCAModule final : virtual ::rack::engine::Module
 {
 
     //==========================================================================
 
 public:
-
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     //==========================================================================
 
@@ -98,35 +153,35 @@ public:
         NUM_PARAMS
     };
 
-	enum IdxInputs {
-		VCA_INPUT,
+    enum IdxInputs {
+        VCA_INPUT,
         CV_INPUT,
-		NUM_INPUTS
-	};
+        NUM_INPUTS
+    };
 
-	enum IdxOutputs {
-		VCA_OUTPUT,
-		NUM_OUTPUTS
-	};
+    enum IdxOutputs {
+        VCA_OUTPUT,
+        NUM_OUTPUTS
+    };
 
-	enum IdxLights {
-		BLINK_LIGHT,
-		NUM_LIGHTS
-	};
+    enum IdxLights {
+        BLINK_LIGHT, // ENUMS(BLINK_LIGHT, 2),
+        NUM_LIGHTS
+    };
 
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCOModule` object.
+     * @brief Construct a new `VCAModule` object.
      *
      */
     VCAModule();
 
     /**
-     * @brief Destroy the `VCOModule` object.
+     * @brief Destroy the `VCAModule` object.
      *
      */
-    ~VCAModule();
+    virtual ~VCAModule() noexcept;
 
     //==========================================================================
 
@@ -137,46 +192,47 @@ public:
      */
     virtual void process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args) override;
 
-    /**
-     * @brief Store extra internal data in the "data" property of the module's JSON object.
-     *
-     * @return json_t
-     */
-    ::json_t *dataToJson() override;
-
-    /**
-     * @brief Load internal data from the "data" property of the module's JSON object.
-     * Not called if "data" property is not present.
-     *
-     * @param rootJ
-     */
-    void dataFromJson(::json_t *rootJ) override;
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::size_t lastChannels = 1;
-
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::float_t gain;
-
-    /**
-     * @brief
-     *
-     */
-	::StoneyDSP::float_t lastGains[16] = {};
-
     //==========================================================================
 
 private:
 
     //==========================================================================
+
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::dsp::ClockDivider lightDivider;
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::float_t>, 16> engine;
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::StoneyDSP::float_t, 16> lightGains;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    const ::StoneyDSP::float_t &vNominal = ::StoneyDSP::StoneyVCV::Tools::vNominal;
+
+    /**
+     * @brief
+     *
+     */
+    const ::StoneyDSP::float_t &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
 
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
@@ -188,8 +244,7 @@ private:
  * @brief The `VCAWidget` struct.
  *
  */
-struct VCAWidget final :
-    ::rack::Widget
+struct VCAWidget final : virtual ::rack::Widget
 {
 
     //==========================================================================
@@ -201,16 +256,16 @@ public:
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCOWidget` object.
+     * @brief Construct a new `VCAWidget` object.
      *
      */
     VCAWidget();
 
-    // /**
-    //  * @brief Destroys the `VCOWidget` object.
-    //  *
-    //  */
-    // ~VCAWidget();
+    /**
+     * @brief Destroys the `VCAWidget` object.
+     *
+     */
+    virtual ~VCAWidget();
 
     //==========================================================================
 
@@ -218,7 +273,7 @@ public:
      * @brief Advances the module by one frame.
      *
      */
-    void step() override;
+    virtual void step() override;
 
     /**
      * @brief Draws the widget to the NanoVG context.
@@ -227,7 +282,11 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
@@ -241,11 +300,7 @@ public:
      * @brief
      *
      */
-    ::rack::Widget *panelBorder;
-
-    //==========================================================================
-
-private:
+    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
@@ -259,8 +314,7 @@ private:
  * @brief The `VCAModuleWidget` struct.
  *
  */
-struct VCAModuleWidget final :
-    ::rack::app::ModuleWidget
+struct VCAModuleWidget final : virtual ::rack::app::ModuleWidget
 {
 
     //==========================================================================
@@ -270,18 +324,30 @@ public:
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCOModuleWidget` object.
+     * @brief Construct a new `VCAModuleWidget` object.
      *
      * @param module
      *
      */
-    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module);
+    VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule *module);
 
-    // /**
-    //  * @brief Destroys the `VCOModuleWidget` object.
-    //  *
-    //  */
-    // ~VCAModuleWidget();
+    /**
+     * @brief Destroys the `VCAModuleWidget` object.
+     *
+     */
+    virtual ~VCAModuleWidget();
+
+    //==========================================================================
+
+    /**
+     * @brief Advances the module by one frame.
+     *
+     */
+    virtual void step() override;
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
@@ -289,7 +355,13 @@ public:
      * @brief
      *
      */
-    ::rack::math::Vec size;
+    const ::rack::math::Vec size;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::app::ThemedSvgPanel *panel;
 
     /**
      * @brief
@@ -305,18 +377,58 @@ public:
 
     //==========================================================================
 
-    ::rack::math::Vec screwT1Pos, screwT2Pos, screwB1Pos, screwB2Pos;
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::RoundBigBlackKnob *gainKnob;
 
-    ::rack::componentlibrary::ThemedScrew* screwT1;
-    ::rack::componentlibrary::ThemedScrew* screwT2;
-    ::rack::componentlibrary::ThemedScrew* screwB1;
-    ::rack::componentlibrary::ThemedScrew* screwB2;
+    // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
 
-    ::rack::app::ThemedSvgPanel* panel;
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::ThemedPJ301MPort *portCvInput;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::ThemedPJ301MPort *portVcaInput;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::componentlibrary::ThemedPJ301MPort *portVcaOutput;
+
+    /**
+     * @brief 3mm LED showing a smoothed CV value.
+     */
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca;
+
+    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca;
+
+    /**
+     * @brief
+     *
+     */
+    const ::std::array<::rack::math::Vec, 4> screwsPositions;
+
+    /**
+     * @brief
+     *
+     */
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
 
     //==========================================================================
 
-private:
+    /**
+     * @brief
+     *
+     */
+    bool lastPrefersDarkPanels;
 
     //==========================================================================
 
@@ -329,9 +441,19 @@ private:
 /**
  * @brief
  *
+ * @param name
+ * @param description
+ * @param manualUrl
+ * @param hidden
+ *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createVCA(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model *createModelVCA(
+    ::std::string name = "",
+    ::std::string description = "",
+    ::std::string manualUrl = "",
+    bool hidden = true
+) noexcept(false); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
@@ -347,5 +469,9 @@ private:
 
   /// @} group StoneyDSP
 } // namespace StoneyDSP
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_VCA)
 
 //==============================================================================

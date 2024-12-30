@@ -5,6 +5,7 @@
       "name": "Rack",
       "type": "cppdbg",
       "request": "launch",
+      "preLaunchTask": "make install",
       "targetArchitecture": "x64",
       "program": "${env:HOME}/Downloads/Rack2Free/Rack",
       "cwd": "${env:HOME}/Downloads/Rack2Free",
@@ -48,14 +49,6 @@
         "MIMode": "gdb",
         // "miDebuggerPath": "${workspaceFolder}\\share\\gdbinit"
       }
-    },
-    {
-      "type": "cmake",
-      "request": "launch",
-      "name": "Debug portfile(s)",
-      "cmakeDebugType": "external",
-      "pipeName": "/tmp/vcpkg_ext_portfile_dbg",
-      "preLaunchTask": "Debug vcpkg commands"
     }
   ]
 }

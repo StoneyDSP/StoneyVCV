@@ -1,43 +1,44 @@
 {
-  "$schema": "plugin.schema.json",
-  "slug": "StoneyDSP-StoneyVCV",
-  "name": "StoneyVCV",
-  "brand": "StoneyDSP",
-  "author": "Nathan J. Hood",
-  "authorEmail": "nathanjhood@googlemail.com",
-  "license": "MIT",
-  "version": "2.0.1",
-  "minRackVersion": "2.5.2",
-  "authorUrl": "https://github.com/nathanjhood",
-  "pluginUrl": "https://github.com/StoneyDSP/StoneyVCV",
-  "manualUrl": "https://github.com/StoneyDSP/StoneyVCV/blob/production/README.md",
-  "sourceUrl": "https://github.com/StoneyDSP/StoneyVCV/blob/production",
-  "donateUrl": "https://github.com/StoneyDSP/StoneyVCV/blob/production/.github/FUNDING.yml",
-  "changelogUrl": "https://github.com/StoneyDSP/StoneyVCV/blob/production/CHANGELOG.md",
-  "modules": [
+  "$schema" : "plugin.schema.json",
+  "author" : "Nathan J. Hood",
+  "authorEmail" : "nathanjhood@googlemail.com",
+  "authorUrl" : "https://github.com/nathanjhood",
+  "brand" : "StoneyDSP",
+  "changelogUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production/CHANGELOG.md",
+  "donateUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production/.github/FUNDING.yml",
+  "license" : "MIT",
+  "manualUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production/README.md",
+  "minRackVersion" : "2.5.2",
+  "modules" : 
+  [
     {
-      "slug": "HP1",
-      "name": "HP1",
-      "description": "1hp Panel Spacer",
-      "tags": [
-        "Blank"
-      ]
+      "description" : "1hp Panel Spacer",
+      "name" : "HP1",
+      "slug" : "HP1",
+      "tags" : [ "Blank" ]
     },
     {
-      "slug": "HP2",
-      "name": "HP2",
-      "description": "2hp Panel Spacer",
-      "tags": [
-        "Blank"
-      ]
+      "description" : "2hp Panel Spacer",
+      "name" : "HP2",
+      "slug" : "HP2",
+      "tags" : [ "Blank" ]
     },
     {
-      "slug": "HP4",
-      "name": "HP4",
-      "description": "4hp Panel Spacer",
-      "tags": [
-        "Blank"
-      ]
+      "description" : "4hp Panel Spacer",
+      "name" : "HP4",
+      "slug" : "HP4",
+      "tags" : [ "Blank" ]
+    },
+    {
+      "description" : "Simple Voltage-controlled Oscillator",
+      "name" : "VCA",
+      "slug" : "VCA",
+      "tags" : [ "Voltage-controlled Oscillator", "Polyphonic" ]
     }
-  ]
+  ],
+  "name" : "StoneyVCV",
+  "pluginUrl" : "https://github.com/StoneyDSP/StoneyVCV",
+  "slug" : "StoneyDSP-StoneyVCV",
+  "sourceUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production",
+  "version" : "2.0.1129"
 }

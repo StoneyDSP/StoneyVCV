@@ -1,0 +1,67 @@
+{
+  "$schema": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "version": 10,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 31,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "options",
+      "hidden": true,
+      "cacheVariables": {
+        "STONEYVCV_EXPERIMENTAL": {
+          "value": "OFF",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_DOCS": {
+          "value": "OFF",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_TESTS": {
+          "value": "ON",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_PLUGIN": {
+          "value": "ON",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_MODULES": {
+          "value": "ON",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_HP4": {
+          "value": "ON",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_HP2": {
+          "value": "ON",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_HP1": {
+          "value": "ON",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_VCA": {
+          "value": "ON",
+          "type": "BOOL"
+        },
+        "STONEYVCV_BUILD_LFO": {
+          "value": "OFF",
+          "type": "BOOL"
+        }
+      }
+
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "options",
+      "hidden": true,
+      "vendorName": "StoneyDSP",
+      "packageName": "StoneyVCV",
+      "packageDirectory": "${sourceDir}/install"
+    }
+  ]
+}
