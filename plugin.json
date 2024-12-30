@@ -30,15 +30,15 @@
       "tags" : [ "Blank" ]
     },
     {
-      "description" : "Simple Voltage-controlled Oscillator",
+      "description" : "Voltage-controlled Amplifier. Supports polyphony.",
       "name" : "VCA",
       "slug" : "VCA",
-      "tags" : [ "Voltage-controlled Oscillator", "Polyphonic" ]
+      "tags" : [ "Voltage-controlled Amplifier", "Polyphonic" ]
     }
   ],
   "name" : "StoneyVCV",
   "pluginUrl" : "https://github.com/StoneyDSP/StoneyVCV",
   "slug" : "StoneyDSP-StoneyVCV",
   "sourceUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production",
-  "version" : "2.0.1129"
+  "version" : "2.0.1160"
 }
