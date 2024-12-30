@@ -13,11 +13,43 @@
 
 //==============================================================================
 
-#include <rack.hpp>
+#include <StoneyLFO/LFO.hpp>
 
 //==============================================================================
 
-#include "StoneyVCV/LFO.hpp"
+#include <rack.hpp>
+#include <StoneyDSP/Core.hpp>
+#include <StoneyDSP/DSP.hpp>
+
+#include <array>
+
+//==============================================================================
+
+namespace StoneyDSP {
+namespace StoneyVCV {
+namespace LFO {
+
+//==============================================================================
+
+::rack::plugin::Model* modelLFO = ::StoneyDSP::StoneyVCV::LFO::createModelLFO(
+/** name        */"LFO",
+/** description */"Low-frequency Oscillator. Supports polyphony.",
+/** manualUrl   */"https://stoneydsp.github.io/StoneyVCV/md_docs_2LFO.html",
+/** hidden      */false
+);
+
+//==============================================================================
+
+static const ::rack::math::Vec LFODimensions = (
+    ::rack::window::mm2px(30.479999995F), // 5.079999999F * 3.0F
+    ::rack::window::mm2px(128.693333312F)
+);
+
+//==============================================================================
+
+} // namespace LFO
+} // namespace StoneyVCV
+} // namespace StoneyDSP
 
 //==============================================================================
 
@@ -138,38 +170,22 @@ void ::StoneyDSP::StoneyVCV::LFO::LFOWidget::draw(const ::StoneyDSP::StoneyVCV::
     ::rack::plugin::Model* modelLFO = ::rack::createModel<
         ::StoneyDSP::StoneyVCV::LFO::LFOModule,
         ::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget
-    >("LFO");
-    // STONEYDSP_THROW_IF_FAILED_VOID(modelVCO == nullptr, bad_alloc);
+    >("LFO"); // slug must never change!
+
+    if(modelLFO == nullptr)
+        throw ::rack::Exception("createModelLFO generated a nullptr");
+
+    if(!description.empty())
+        modelLFO->description = description;
+    if(!manualUrl.empty())
+        modelLFO->manualUrl = manualUrl;
+    if(!name.empty())
+        modelLFO->name = name;
+    if(!hidden)
+        modelLFO->hidden = hidden;
+
     return modelLFO;
 }
-
-//==============================================================================
-
-namespace StoneyDSP {
-
-//==============================================================================
-
-namespace StoneyVCV {
-
-//==============================================================================
-
-namespace LFO {
-
-//==============================================================================
-
-::rack::plugin::Model* modelLFO = ::StoneyDSP::StoneyVCV::LFO::createLFO();
-
-//==============================================================================
-
-} // namespace LFO
-
-//==============================================================================
-
-} // namespace StoneyVCV
-
-//==============================================================================
-
-} // namespace StoneyDSP
 
 //==============================================================================
 
