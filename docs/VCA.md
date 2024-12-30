@@ -2,6 +2,8 @@
 
 Voltage-controlled Amplifier.
 
+Supports polyphony.
+
 ## Panel
 
 ### inputs
