@@ -46,7 +46,7 @@ public:
     VCASpec()
     :   slug("VCA"),
         name("VCA"),
-        description("Voltage-controlled Oscillator. Supports polyphony."),
+        description("Voltage-controlled Amplifier. Supports polyphony."),
         manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html"),
         hidden(false),
         size(
