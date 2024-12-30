@@ -47,11 +47,9 @@
 
 #ifdef STONEYDSP_DEBUG
 #include <iostream>
-#define DBG(msg) \
-::std::cerr << msg << std::endl
+#define DBG(msg, ...) do { ::std::cerr << std::string(msg, ##__VA_ARGS__) << std::endl; } while (0)
 #else
-#define DBG(msg) \
-::StoneyDSP::ignoreUnused(msg)
+#define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
 #endif
 
 //==============================================================================
@@ -184,7 +182,6 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #endif
 
 #if defined (STONEYVCV_EXPERIMENTAL)
-#warning "Building experimental modules..."
 
     // EXPERIMENTAL MODULES HERE...
 
@@ -206,54 +203,19 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #endif // STONEYVCV_EXPERIMENTAL
 
 namespace Panels {
-extern ::NVGcolor bgBlack;
-extern ::NVGcolor bgWhite;
-extern ::NVGcolor borderColor;
-extern ::NVGcolor bgGradientBlackS0;
-extern ::NVGcolor bgGradientBlackS1;
-extern ::NVGcolor bgGradientWhiteS0;
-extern ::NVGcolor bgGradientWhiteS1;
-extern ::StoneyDSP::float_t MIN_WIDTH;
-extern ::StoneyDSP::float_t MIN_HEIGHT;
-
+const extern ::NVGcolor bgBlack;
+const extern ::NVGcolor bgWhite;
+const extern ::NVGcolor borderColor;
+const extern ::NVGcolor bgGradientBlackS0;
+const extern ::NVGcolor bgGradientBlackS1;
+const extern ::NVGcolor bgGradientWhiteS0;
+const extern ::NVGcolor bgGradientWhiteS1;
+const extern ::StoneyDSP::float_t MIN_WIDTH;
+const extern ::StoneyDSP::float_t MIN_HEIGHT;
 extern void addScrewsToWidget(::rack::widget::Widget* widget);
-
 }
 
 #endif // STONEYVCV_BUILD_MODULES
-
-//==============================================================================
-
-#if defined (STONEYVCV_BUILD_TESTS)
-/**
- * @brief The `Spec` struct.
- *
- * A base class for deriving specs for unit-testing with.
- *
- */
-struct Spec {
-public:
-    ::std::string slug, name, description;
-    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 0U;
-    ::rack::math::Vec size;
-    Spec()
-    :   slug("Spec"),
-        name(""),
-        description("Unit test spec base class (internal)"),
-        size(
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH),
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT)
-        )
-    {};
-    ~Spec() = default;
-private:
-    STONEYDSP_DECLARE_NON_COPYABLE(Spec)
-    STONEYDSP_DECLARE_NON_MOVEABLE(Spec)
-};
-#endif
 
 //==============================================================================
 
@@ -270,3 +232,55 @@ private:
 #endif // STONEYVCV_BUILD_PLUGIN
 
 //==============================================================================
+
+namespace StoneyDSP {
+/** @addtogroup StoneyDSP
+ *  @{
+ */
+
+namespace StoneyVCV {
+/** @addtogroup StoneyVCV
+ *  @{
+ */
+
+namespace Tools {
+/** @addtogroup Tools
+ *  @{
+ */
+const extern ::StoneyDSP::float_t vMin;
+const extern ::StoneyDSP::float_t vMax;
+const extern ::StoneyDSP::float_t vNominal;
+const extern ::StoneyDSP::float_t vBias;
+const extern ::StoneyDSP::float_t vGround;
+const extern ::StoneyDSP::float_t vFloor;
+
+  /// @} group Tools
+} // namespace Tools
+
+// Declare an abstract base class with a pure virtual destructor.
+// It's the simplest possible abstract class.
+template <typename T>
+struct Engine
+{
+public:
+    Engine() {
+        DBG("Creating StoneyDSP::StoneyVCV::Engine");
+    };
+    virtual ~Engine() noexcept = 0;                                             // pure virtual
+    virtual void processSample(T* sample) = 0;                                  // pure virtual
+};
+
+template<class T>
+::StoneyDSP::StoneyVCV::Engine<T>::~Engine() noexcept
+{
+    DBG("Destroying StoneyDSP::StoneyVCV::Engine");
+}
+
+template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::float_t>;
+template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::double_t>;
+
+  /// @} group StoneyVCV
+} // namespace StoneyVCV
+
+  /// @} group StoneyDSP
+} // namespace StoneyDSP

@@ -58,13 +58,14 @@
     "${workspaceFolder}/include"
   ],
   "C_Cpp.default.defines": [
-    // "STONEYVCV_EXPERIMENTAL",
+    "_DEBUG=1",
+    "STONEYVCV_EXPERIMENTAL",
     "STONEYVCV_BUILD_PLUGIN=1",
     "STONEYVCV_BUILD_MODULES=1",
     "STONEYVCV_BUILD_HP4=1",
     "STONEYVCV_BUILD_HP2=1",
     "STONEYVCV_BUILD_HP1=1",
-    // "STONEYVCV_BUILD_LFO",
+    "STONEYVCV_BUILD_LFO",
     "STONEYVCV_BUILD_VCA=1",
     "STONEYVCV_VERSION_MAJOR=2",
     "STONEYVCV_VERSION_MINOR=0",
@@ -78,6 +79,10 @@
   "C_Cpp.default.mergeConfigurations": true,
   "C_Cpp.default.cStandard": "c11",
   "C_Cpp.default.cppStandard": "c++11",
+  "C_Cpp.clang_format_style": "GNU",
+  "C_Cpp.clang_format_fallbackStyle": "GNU",
+  "C_Cpp.codeAnalysis.clangTidy.enabled": false,
+  "C_Cpp.formatting": "vcFormat",
   "C_Cpp.vcpkg.enabled": false,
   "C_Cpp.files.exclude": {
     "**/.github": true,
@@ -86,7 +91,6 @@
     "**/docs": true,
     "**/share": true,
     "**/install": true,
-    "**/build": true,
     "**/dist": true,
     "**/bin": true
   },

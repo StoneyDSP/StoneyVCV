@@ -18,6 +18,9 @@
 //==============================================================================
 
 #include <rack.hpp>
+#include <StoneyDSP/Core.hpp>
+
+#include <array>
 
 //==============================================================================
 
@@ -27,14 +30,19 @@ namespace HP1 {
 
 //==============================================================================
 
-static const ::rack::math::Vec HP1Dimensions = (
-    ::rack::window::mm2px(5.079999999F),
-    ::rack::window::mm2px(128.693333312F)
+::rack::plugin::Model* modelHP1 = ::StoneyDSP::StoneyVCV::HP1::createModelHP1(
+/** name        */"HP1",
+/** description */"1hp Panel Spacer.",
+/** manualUrl   */"https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html",
+/** hidden      */false
 );
 
 //==============================================================================
 
-::rack::plugin::Model* modelHP1 = ::StoneyDSP::StoneyVCV::HP1::createHP1();
+static const ::rack::math::Vec HP1Dimensions = (
+    ::rack::window::mm2px(5.079999999F),
+    ::rack::window::mm2px(128.693333312F)
+);
 
 //==============================================================================
 
@@ -48,17 +56,17 @@ static const ::rack::math::Vec HP1Dimensions = (
 {
     // Assertions
     DBG("Constructing StoneyVCV::HP1::HP1Module");
-    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_PARAMS == 0U);
-    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_INPUTS == 0U);
-    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_OUTPUTS == 0U);
-    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_LIGHTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxParams::NUM_PARAMS == 0U);
+    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxInputs::NUM_INPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxOutputs::NUM_OUTPUTS == 0U);
+    assert(::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxLights::NUM_LIGHTS == 0U);
 
     // Configure the number of Params, Outputs, Inputs, and Lights.
     this->config(
-        ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_PARAMS,
-        ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_INPUTS,
-        ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_OUTPUTS,
-        ::StoneyDSP::StoneyVCV::HP1::HP1Module::NUM_LIGHTS
+        ::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxParams::NUM_PARAMS,
+        ::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxInputs::NUM_INPUTS,
+        ::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxOutputs::NUM_OUTPUTS,
+        ::StoneyDSP::StoneyVCV::HP1::HP1Module::IdxLights::NUM_LIGHTS
     );
 }
 
@@ -71,7 +79,11 @@ static const ::rack::math::Vec HP1Dimensions = (
 
 ::StoneyDSP::StoneyVCV::HP1::HP1Widget::HP1Widget()
 :   hp1WidgetFrameBuffer(new ::rack::widget::FramebufferWidget),
-    panelBorder(::rack::createWidget<::rack::app::PanelBorder>(::rack::math::Vec(0.0F, 0.0F)))
+    panelBorder(
+        ::rack::createWidget<::rack::app::PanelBorder>(
+            ::rack::math::Vec(0.0F, 0.0F)
+        )
+    )
 {
     // Assertions
     DBG("Constructing StoneyVCV::HP1::HP1Widget");
@@ -111,14 +123,15 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::step()
 
 void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::HP1::HP1Widget::DrawArgs& args)
 {
+    const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
+    const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
+    const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
     const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
     const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
     const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
     const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
     const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
-    const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
-    const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
-    const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
+
     const auto& size = this->getSize();
 
     // Draw Themed BG
@@ -134,12 +147,12 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw themed BG gradient
     const auto& bgGradient = ::nvgLinearGradient(args.vg,
-        size.x * 0.5,
-        0.0F,
-        size.x * 0.5,
-        380.0F,
-        bgGradientS0,
-        bgGradientS1
+        /** x  */size.x * 0.5,
+        /** Y  */0.0F,
+        /** w  */size.x * 0.5,
+        /** h  */size.y,
+        /** s1 */bgGradientS0,
+        /** s2 */bgGradientS1
     );
     ::nvgBeginPath(args.vg);
     ::nvgRect(args.vg,
@@ -172,8 +185,8 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
 
 ::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget::HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module* module)
 :   size(
-        ::rack::window::mm2px(5.079999999F),
-        ::rack::window::mm2px(128.693333312F)
+        15.0F,
+        380.0F
     ),
     // Panel
     panel(
@@ -209,11 +222,8 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
     // Assertions
     DBG("Constructing StoneyVCV::HP1::HP1ModuleWidget");
     // assert(module != nullptr);
-    assert(this->size.x == ::rack::window::mm2px(5.079999999F));
-    assert(this->size.y == ::rack::window::mm2px(128.693333312F));
     assert(this->hp1Widget != nullptr);
     assert(this->hp1ModuleWidgetFrameBuffer != nullptr);
-    assert(this->screws != nullptr);
     assert(this->screws[0] != nullptr);
     assert(this->screws[1] != nullptr);
     assert(this->panel != nullptr);
@@ -236,10 +246,10 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
         this->addChild(screw);
     }
 
-    assert(this->getSize().x == ::rack::window::mm2px(5.079999999F));
-    assert(this->getSize().y == ::rack::window::mm2px(128.693333312F));
-    assert(this->getPanel()->getSize().x == ::rack::window::mm2px(5.079999999F));
-    assert(this->getPanel()->getSize().y == ::rack::window::mm2px(128.693333312F));
+    assert(static_cast<unsigned int>(this->getSize().x) == 1U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
+    assert(static_cast<unsigned int>(this->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
+    assert(static_cast<unsigned int>(this->getPanel()->getSize().x) == 1U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
+    assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
 ::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget::~HP1ModuleWidget()
@@ -266,7 +276,12 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget::step()
 
 //==============================================================================
 
-::rack::plugin::Model* ::StoneyDSP::StoneyVCV::HP1::createHP1()
+::rack::plugin::Model* ::StoneyDSP::StoneyVCV::HP1::createModelHP1(
+    ::std::string name,
+    ::std::string description,
+    ::std::string manualUrl,
+    bool hidden
+) noexcept(false) // STONEYDSP_NOEXCEPT(false)
 {
     DBG("Creating StoneyVCV::HP1::modelHP1");
 
@@ -275,7 +290,18 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget::step()
         ::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget
     >("HP1");
 
-    // STONEYDSP_THROW_IF_FAILED_VOID(modelHP1 == nullptr, bad_alloc);
+    if(modelHP1 == nullptr)
+        throw ::rack::Exception("createModelHP1 generated a nullptr");
+
+    if(!description.empty())
+        modelHP1->description = description;
+    if(!manualUrl.empty())
+        modelHP1->manualUrl = manualUrl;
+    if(!name.empty())
+        modelHP1->name = name;
+    if(!hidden)
+        modelHP1->hidden = hidden;
+
     return modelHP1;
 }
 
