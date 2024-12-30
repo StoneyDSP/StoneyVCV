@@ -119,6 +119,12 @@ private:
      */
     T frequency;
 
+    /**
+     * @brief
+     *
+     */
+    T lastFrequency;
+
     STONEYDSP_DECLARE_NON_COPYABLE(LFOEngine)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOEngine)
 };
