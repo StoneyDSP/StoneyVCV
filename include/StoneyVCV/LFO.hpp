@@ -36,7 +36,7 @@
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
+#include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
@@ -44,6 +44,8 @@
 #include <StoneyDSP/Core.hpp>
 #include <StoneyDSP/DSP.hpp>
 #include <StoneyDSP/SIMD.hpp>
+
+#include <array>
 
 //==============================================================================
 
@@ -79,18 +81,60 @@ namespace LFO
 //==============================================================================
 
 /**
+ * @brief The `LFOEngine` struct.
+ *
+ */
+template<typename T>
+struct LFOEngine : virtual ::StoneyDSP::StoneyVCV::Engine<T>
+{
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    LFOEngine();
+
+    LFOEngine(T sample);
+
+    ~LFOEngine() noexcept;
+
+    //==========================================================================
+
+    void processSample(T *sample) override;
+
+    void setFrequency(const T &newFrequency);
+
+    T& getFrequency() noexcept;
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    T frequency;
+
+    STONEYDSP_DECLARE_NON_COPYABLE(LFOEngine)
+    STONEYDSP_DECLARE_NON_MOVEABLE(LFOEngine)
+};
+
+//==============================================================================
+
+/**
  * @brief The `LFOModule` struct.
  *
  */
-struct LFOModule final :
-    ::rack::engine::Module
+struct LFOModule final : virtual ::rack::engine::Module
 {
 
     //==========================================================================
 
 public:
-
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
 
     //==========================================================================
 
@@ -99,20 +143,21 @@ public:
         NUM_PARAMS
     };
 
-	enum IdxInputs {
+    enum IdxInputs {
         /** Number of Input ports. */
-		NUM_INPUTS
-	};
+        NUM_INPUTS
+    };
 
-	enum IdxOutputs {
+    enum IdxOutputs {
         /** Number of Output ports. */
-		NUM_OUTPUTS
-	};
+        NUM_OUTPUTS
+    };
 
-	enum IdxLights {
+    enum IdxLights {
         /** Number of Lights. */
-		NUM_LIGHTS
-	};
+        ENUMS(BLINK_LIGHT, 2),
+        NUM_LIGHTS
+    };
 
     //==========================================================================
 
@@ -126,7 +171,7 @@ public:
      * @brief Destroy the `LFOModule` object.
      *
      */
-    ~LFOModule();
+    virtual ~LFOModule() noexcept;
 
     //==========================================================================
 
@@ -158,6 +203,44 @@ private:
 
     //==========================================================================
 
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::dsp::ClockDivider lightDivider;
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::StoneyDSP::StoneyVCV::LFO::LFOEngine<::StoneyDSP::float_t>, 16> engine;
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::StoneyDSP::float_t, 16> lightGains;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    const ::StoneyDSP::float_t &vNominal = ::StoneyDSP::StoneyVCV::Tools::vNominal;
+
+    /**
+     * @brief
+     *
+     */
+    const ::StoneyDSP::float_t &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(LFOModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOModule)
 };
@@ -168,8 +251,7 @@ private:
  * @brief The `LFOWidget` struct.
  *
  */
-struct LFOWidget final :
-    ::rack::Widget
+struct LFOWidget final : virtual ::rack::Widget
 {
 
     //==========================================================================
@@ -186,11 +268,11 @@ public:
      */
     LFOWidget();
 
-    // /**
-    //  * @brief Destroy the `LFOWidget` object.
-    //  *
-    //  */
-    // ~LFOWidget();
+    /**
+     * @brief Destroy the `LFOWidget` object.
+     *
+     */
+    virtual ~LFOWidget();
 
     //==========================================================================
 
@@ -198,7 +280,7 @@ public:
      * @brief Advances the module by one frame.
      *
      */
-    void step() override;
+    virtual void step() override;
 
     /**
      * @brief Draws the widget to the NanoVG context.
@@ -208,6 +290,10 @@ public:
      * @param args
      */
     void draw(const ::StoneyDSP::StoneyVCV::LFO::LFOWidget::DrawArgs& args) override;
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
@@ -221,9 +307,7 @@ public:
      * @brief
      *
      */
-    ::rack::Widget* panelBorder;
-
-private:
+    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
@@ -238,8 +322,7 @@ private:
  *
  * @tparam T
  */
-struct LFOModuleWidget final :
-    ::rack::app::ModuleWidget
+struct LFOModuleWidget final : virtual ::rack::app::ModuleWidget
 {
 
     //==========================================================================
@@ -257,35 +340,71 @@ public:
     LFOModuleWidget(::StoneyDSP::StoneyVCV::LFO::LFOModule* module);
 
 
-    // /**
-    //  * @brief Destroys the `LFOModuleWidget` object.
-    //  *
-    //  */
-    // ~LFOModuleWidget();
+    /**
+     * @brief Destroys the `LFOModuleWidget` object.
+     *
+     */
+    virtual ~LFOModuleWidget();
 
     //==========================================================================
 
     /**
-     * @brief
+     * @brief Advances the module by one frame.
      *
      */
-    ::rack::math::Vec size;
-
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::StoneyVCV::LFO::LFOWidget* lfoWidget;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget* lfoModuleWidgetFrameBuffer;
+    virtual void step() override;
 
     //==========================================================================
 
 private:
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    const ::rack::math::Vec size;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::app::ThemedSvgPanel *panel;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget;
+
+    /**
+     * @brief
+     *
+     */
+    ::rack::FramebufferWidget *lfoModuleWidgetFrameBuffer;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    const ::std::array<::rack::math::Vec, 4> screwsPositions;
+
+    /**
+     * @brief
+     *
+     */
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    bool lastPrefersDarkPanels;
 
     //==========================================================================
 
@@ -298,9 +417,19 @@ private:
 /**
  * @brief
  *
+ * @param name
+ * @param description
+ * @param manualUrl
+ * @param hidden
+ *
  * @return `rack::plugin::Model*`
  */
-::rack::plugin::Model *createLFO(); // STONEYDSP_NOEXCEPT(false);
+::rack::plugin::Model *createModelLFO(
+    ::std::string name = "",
+    ::std::string description = "",
+    ::std::string manualUrl = "",
+    bool hidden = true
+) noexcept(false); // STONEYDSP_NOEXCEPT(false);
 
 //==============================================================================
 
