@@ -15,13 +15,12 @@
 
 //==============================================================================
 
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <StoneyVCV/LFO.hpp>
 
 //==============================================================================
 
-#include "StoneyVCV/plugin.hpp"
-#include "StoneyVCV/LFO.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 //==============================================================================
 
@@ -37,12 +36,24 @@ namespace LFO {
 struct LFOSpec final : ::StoneyDSP::StoneyVCV::Spec
 {
 public:
-    std::string slug;
-    static constexpr int NUM_PARAMS = 0;
-    static constexpr int NUM_INPUTS = 0;
-    static constexpr int NUM_OUTPUTS = 0;
-    static constexpr int NUM_LIGHTS = 0;
-    LFOSpec() : slug("LFO") {};
+    const ::std::string slug, name , description, manualUrl;
+    const bool hidden;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 2U;
+    const ::rack::math::Vec size;
+    LFOSpec()
+    :   slug("LFO"),
+        name("LFO"),
+        description("Low-frequency Oscillator. Supports polyphony."),
+        manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2LFO.html"),
+        hidden(false),
+        size(
+            45.0F, // ::rack::window::mm2px(30.479999995F),
+            380.0F //::rack::window::mm2px(128.693333312F)
+        )
+    {};
 private:
     // STONEYDSP_DECLARE_NON_CONSTRUCTABLE(LFOSpec)
     STONEYDSP_DECLARE_NON_COPYABLE(LFOSpec)
@@ -87,39 +98,32 @@ TEST_CASE( "LFO", "[LFO]" ) {
 
     //==========================================================================
 
-    SECTION( "LFOModuleWidget" ) {
-        // ::StoneyDSP::StoneyVCV::LFO::LFOModule* test_lfoModule = new ::StoneyDSP::StoneyVCV::LFO::LFOModule;
-        // ::rack::app::ModuleWidget* test_lfoModuleWidget = new ::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget(dynamic_cast<::StoneyDSP::StoneyVCV::LFO::LFOModule*>(test_lfoModule));
-        // std::shared_ptr<::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget> test_lfoModuleWidget = std::make_shared<::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget>();
-        // REQUIRE( test_lfoModuleWidget.get()->box.size.x == 5.08F );
-        // REQUIRE( test_lfoModuleWidget.get()->box.size.y == 128.5F );
-        // delete test_lfoModuleWidget;
-        // delete test_lfoModule;
+    SECTION( "createModelLFO" ) {
 
-        // REQUIRE_THAT(
-        //     test_lfoModuleWidget.box.size.x,
-        //     Catch::Matchers::WithinRel(5.08 * 3.0, 0.001)
-        // );
+        ::rack::plugin::Model* test_modelLFO = ::StoneyDSP::StoneyVCV::LFO::createModelLFO();
+        REQUIRE( test_modelLFO != nullptr );
 
-        // REQUIRE_THAT(
-        //     test_lfoModuleWidget.box.size.y,
-        //     Catch::Matchers::WithinRel(128.5, 0.001)
-        // );
+        SECTION( "createModule" ) {
 
+            auto test_module = test_modelLFO->createModule();
+            REQUIRE( test_module != nullptr );
 
-        // ::StoneyDSP::StoneyVCV::LFO::LFOModule* test_lfoModule = NULL;
-        // test_lfoModule = dynamic_cast<::StoneyDSP::StoneyVCV::LFO::LFOModule*>(new ::StoneyDSP::StoneyVCV::LFO::LFOModule);
-        // ::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget* test_lfoModuleWidget = new ::StoneyDSP::StoneyVCV::LFO::LFOModuleWidget(test_lfoModule);
-
-        // delete test_lfoModuleWidget;
-        // delete test_lfoModule;
+            // SECTION( "createModuleWidget" ) {
+            //     auto test_moduleWidget = test_modelLFO->createModuleWidget(test_module);
+            //     REQUIRE( test_moduleWidget != nullptr );
+            // }
+        }
     }
 
     //==========================================================================
 
-    SECTION( "instance" ) {
+    SECTION( "modelLFO" ) {
         REQUIRE( ::StoneyDSP::StoneyVCV::LFO::modelLFO != nullptr );
         REQUIRE( ::StoneyDSP::StoneyVCV::LFO::modelLFO->slug == spec.get()->slug );
+        REQUIRE( ::StoneyDSP::StoneyVCV::LFO::modelLFO->name == spec.get()->name );
+        REQUIRE( ::StoneyDSP::StoneyVCV::LFO::modelLFO->description == spec.get()->description );
+        REQUIRE( ::StoneyDSP::StoneyVCV::LFO::modelLFO->manualUrl == spec.get()->manualUrl );
+        REQUIRE( ::StoneyDSP::StoneyVCV::LFO::modelLFO->hidden == spec.get()->hidden );
     }
 
     //==========================================================================
@@ -129,6 +133,6 @@ TEST_CASE( "LFO", "[LFO]" ) {
 
 //==============================================================================
 
-#endif
+#endif // defined (STONEYVCV_BUILD_LFO) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================
