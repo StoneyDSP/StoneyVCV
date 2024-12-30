@@ -5,6 +5,7 @@
       "name": "Rack",
       "type": "cppdbg",
       "request": "launch",
+      "preLaunchTask": "make install",
       "targetArchitecture": "x64",
       "program": "${env:HOME}/Downloads/Rack2Free/Rack",
       "cwd": "${env:HOME}/Downloads/Rack2Free",
