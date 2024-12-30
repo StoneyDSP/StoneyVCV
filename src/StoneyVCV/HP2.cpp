@@ -31,7 +31,7 @@ namespace HP2 {
 
 ::rack::plugin::Model* modelHP2 = ::StoneyDSP::StoneyVCV::HP2::createModelHP2(
 /** name        */"HP2",
-/** description */"Blank panel.",
+/** description */"2hp Panel Spacer.",
 /** manualUrl   */"https://stoneydsp.github.io/StoneyVCV/md_docs_2HP2.html",
 /** hidden      */false
 );
