@@ -36,6 +36,7 @@
 
 //==============================================================================
 
+#include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
@@ -202,6 +203,18 @@ private:
 
     //==========================================================================
 
+    ::rack::engine::Input &getVcaInput() noexcept;
+
+    ::rack::engine::Input &getCvInput() noexcept;
+
+    ::rack::engine::Param &getGainParam() noexcept;
+
+    ::rack::engine::Output &getVcaOutput() noexcept;
+
+    ::rack::engine::Light &getBlinkLight() noexcept;
+
+    //==========================================================================
+
     /**
      * @brief
      *
@@ -244,14 +257,14 @@ private:
  * @brief The `VCAWidget` struct.
  *
  */
-struct VCAWidget final : virtual ::rack::Widget
+struct VCAWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::Widget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs;
 
     //==========================================================================
 
@@ -277,8 +290,7 @@ public:
 
     /**
      * @brief Draws the widget to the NanoVG context.
-     * When overriding, call the superclass's draw(args) to recurse to
-     * children.
+     * Calls the superclass's draw(args) to recurse to children.
      *
      * @param args
      */
@@ -294,13 +306,13 @@ private:
      * @brief
      *
      */
-    ::rack::FramebufferWidget *vcaWidgetFrameBuffer;
+    const ::std::array<::rack::math::Vec, 4> screwsPositions;
 
     /**
      * @brief
      *
      */
-    ::rack::app::PanelBorder *panelBorder;
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
 
     //==========================================================================
 
@@ -389,19 +401,19 @@ private:
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedPJ301MPort *portCvInput;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portCvInput;
 
     /**
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedPJ301MPort *portVcaInput;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaInput;
 
     /**
      * @brief
      *
      */
-    ::rack::componentlibrary::ThemedPJ301MPort *portVcaOutput;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaOutput;
 
     /**
      * @brief 3mm LED showing a smoothed CV value.
@@ -409,18 +421,6 @@ private:
     ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca;
 
     // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca;
-
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::math::Vec, 4> screwsPositions;
-
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
 
     //==========================================================================
 

@@ -82,7 +82,7 @@
   "C_Cpp.clang_format_style": "GNU",
   "C_Cpp.clang_format_fallbackStyle": "GNU",
   "C_Cpp.codeAnalysis.clangTidy.enabled": false,
-  "C_Cpp.formatting": "vcFormat",
+  "C_Cpp.formatting": "default",
   "C_Cpp.vcpkg.enabled": false,
   "C_Cpp.files.exclude": {
     "**/.github": true,
@@ -116,6 +116,20 @@
       "url": "plugin.schema.json"
     }
   ],
+  "[c]": {
+    "editor.wordBasedSuggestions": "off",
+    "editor.semanticHighlighting.enabled": true,
+    "editor.stickyScroll.defaultModel": "foldingProviderModel",
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 4
+  },
+  "[cpp]": {
+    "editor.wordBasedSuggestions": "off",
+    "editor.semanticHighlighting.enabled": true,
+    "editor.stickyScroll.defaultModel": "foldingProviderModel",
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 4
+  },
   "[json]": {
     "editor.quickSuggestions": {
       "strings": true
@@ -160,13 +174,11 @@
     }
   },
   "files.associations": {
-    "**/usage": "plaintext",
     "**.d.ts": "typescript",
     "*.css": "tailwindcss",
     "**.bash**": "shellscript",
     "**.cmake": "cmake",
     ".editorconfig": "editorconfig",
-    "${workspaceFolder}/dep/StoneyDSP/src/StoneyDSP": "cpp",
     "**.vcvm": "json",
     "config.guess": "shellscript",
     "string": "cpp",

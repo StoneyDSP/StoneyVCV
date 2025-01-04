@@ -211,8 +211,13 @@ if(STONEYVCV_BUILD_PLUGIN)
     vcvrack_add_plugin(
         SLUG "${STONEYVCV_SLUG}"
         BRAND "${STONEYVCV_BRAND}"
-        HEADERS "include/${STONEYVCV_SLUG}/plugin.hpp" "include/${STONEYVCV_SLUG}/version.hpp"
-        SOURCES "src/${STONEYVCV_SLUG}/plugin.cpp"
+        HEADERS
+            "include/${STONEYVCV_SLUG}/plugin.hpp"
+            "include/${STONEYVCV_SLUG}/version.hpp"
+            "include/${STONEYVCV_SLUG}/ComponentLibrary.hpp"
+        SOURCES
+            "src/${STONEYVCV_SLUG}/plugin.cpp"
+            "src/${STONEYVCV_SLUG}/ComponentLibrary.cpp"
         VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
         SOVERSION "${STONEYVCV_VERSION_MAJOR}"
         EXPORT
