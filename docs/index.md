@@ -2,6 +2,15 @@
 
 StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 
+[![HP1](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP1-light.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html#gh-light-mode-only)
+[![HP1](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP1-dark.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html#gh-dark-mode-only)
+[![HP2](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP2-light.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP2.html#gh-light-mode-only)
+[![HP2](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP2-dark.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP2.html#gh-dark-mode-only)
+[![HP4](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP4-light.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP4.html#gh-light-mode-only)
+[![HP4](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP4-dark.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP4.html#gh-dark-mode-only)
+[![VCA](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/VCA-light.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html#gh-light-mode-only)
+[![VCA](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/VCA-dark.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2VCA.html#gh-dark-mode-only)
+
 ---
 [![windows](https://github.com/StoneyDSP/StoneyVCV/actions/workflows/windows-latest.yml/badge.svg)](https://github.com/StoneyDSP/StoneyVCV/actions/workflows/windows-latest.yml)
 [![macos](https://github.com/StoneyDSP/StoneyVCV/actions/workflows/macos-latest.yml/badge.svg)](https://github.com/StoneyDSP/StoneyVCV/actions/workflows/macos-latest.yml)
