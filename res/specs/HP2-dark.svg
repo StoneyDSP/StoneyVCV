@@ -29,9 +29,9 @@
      showgrid="false"
      units="px"
      width="45px"
-     inkscape:zoom="1.75"
-     inkscape:cx="85.428571"
-     inkscape:cy="27.142857"
+     inkscape:zoom="2.67"
+     inkscape:cx="85.580524"
+     inkscape:cy="90.449438"
      inkscape:window-width="1370"
      inkscape:window-height="836"
      inkscape:window-x="0"
@@ -241,7 +241,8 @@
        height="380"
        x="0"
        y="0"
-       inkscape:label="panel" />
+       inkscape:label="panel"
+       sodipodi:insensitive="true" />
     <rect
        style="display:inline;fill:url(#linearGradient2053);fill-opacity:1;fill-rule:evenodd;stroke-width:1"
        id="rect914"
@@ -249,13 +250,43 @@
        height="380"
        x="0"
        y="0"
-       inkscape:label="panel_shine" />
+       inkscape:label="panel_shine"
+       sodipodi:insensitive="true" />
+    <line
+       x1="22.4"
+       y1="20.885447"
+       x2="22.4"
+       y2="358.65509"
+       fill="none"
+       stroke="#ededed"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       stroke-width="2.68783"
+       id="line70-3-6"
+       style="display:inline;stroke:#7f7f7f;stroke-width:0.8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.5"
+       sodipodi:insensitive="true"
+       inkscape:label="line_r" />
+    <line
+       x1="7.54"
+       y1="20.885447"
+       x2="7.54"
+       y2="358.65509"
+       fill="none"
+       stroke="#ededed"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       stroke-width="2.68783"
+       id="line70-3"
+       style="display:inline;stroke:#7f7f7f;stroke-width:0.8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.5"
+       sodipodi:insensitive="true"
+       inkscape:label="line_l" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="components"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <rect
        style="display:none;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke-width:1"
        id="rect846-3"
@@ -263,12 +294,23 @@
        height="380"
        x="0"
        y="0"
-       inkscape:label="widget" />
+       inkscape:label="widget"
+       sodipodi:insensitive="true" />
+    <rect
+       style="display:inline;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#7f7f7f;stroke-width:0.805087;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.5"
+       id="rect1904"
+       width="29.194914"
+       height="379.19492"
+       x="0.40254325"
+       y="0.40254325"
+       inkscape:label="panelBorder"
+       sodipodi:insensitive="true" />
     <g
        id="g927-6-7"
        transform="translate(15,365.0001)"
        inkscape:label="screw_br"
-       style="display:inline">
+       style="display:inline"
+       sodipodi:insensitive="true">
       <linearGradient
          id="linearGradient1557"
          gradientUnits="userSpaceOnUse"
@@ -292,7 +334,8 @@
          cy="7.4998999"
          r="6.5"
          id="circle909-1-1"
-         style="fill:url(#linearGradient3370)" />
+         style="fill:url(#linearGradient3370)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1562"
          gradientUnits="userSpaceOnUse"
@@ -316,7 +359,8 @@
          cy="7.4993701"
          r="5.8119402"
          id="circle916-0-3"
-         style="fill:url(#linearGradient3372)" />
+         style="fill:url(#linearGradient3372)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1567"
          gradientUnits="userSpaceOnUse"
@@ -340,17 +384,20 @@
          cy="7.4993701"
          r="5.3648701"
          id="circle923-6-4"
-         style="fill:url(#linearGradient3374)" />
+         style="fill:url(#linearGradient3374)"
+         sodipodi:insensitive="true" />
       <path
          fill="#171717"
          d="M 10.96888,6.81044 9.00527,6.57518 C 8.70384,6.53907 8.46625,6.30138 8.43026,5.99993 L 8.19598,4.03765 C 8.18577,3.95212 8.11322,3.88772 8.02708,3.88772 H 6.97294 c -0.08613,0 -0.15867,0.06438 -0.16889,0.1499 L 6.5692,6.00102 C 6.53314,6.30251 6.29544,6.54016 5.99394,6.57616 L 4.03118,6.81049 C 3.94565,6.8207 3.88125,6.89325 3.88125,6.97939 v 1.0542 c 0,0.08613 0.06438,0.15866 0.1499,0.16889 l 1.96299,0.2348 C 6.29557,8.47333 6.5332,8.71096 6.56925,9.0124 l 0.23479,1.96293 c 0.01023,0.08552 0.08277,0.1499 0.16889,0.1499 h 1.0542 c 0.08612,0 0.15865,-0.06436 0.16889,-0.14986 L 8.43123,9.01219 C 8.46734,8.7108 8.70495,8.47324 9.00635,8.43719 l 1.96249,-0.2347 c 0.08552,-0.01023 0.1499,-0.08276 0.1499,-0.16889 V 6.97933 c 10e-6,-0.08612 -0.06435,-0.15865 -0.14986,-0.16889 z"
-         id="path925-0-7" />
+         id="path925-0-7"
+         sodipodi:insensitive="true" />
     </g>
     <g
        id="g927-9"
        transform="translate(0,365.0001)"
        inkscape:label="screw_bl"
-       style="display:inline">
+       style="display:inline"
+       sodipodi:insensitive="true">
       <linearGradient
          id="linearGradient1540"
          gradientUnits="userSpaceOnUse"
@@ -374,7 +421,8 @@
          cy="7.4998999"
          r="6.5"
          id="circle909-3"
-         style="fill:url(#linearGradient3376)" />
+         style="fill:url(#linearGradient3376)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1545"
          gradientUnits="userSpaceOnUse"
@@ -398,7 +446,8 @@
          cy="7.4993701"
          r="5.8119402"
          id="circle916-9"
-         style="fill:url(#linearGradient3378)" />
+         style="fill:url(#linearGradient3378)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1550"
          gradientUnits="userSpaceOnUse"
@@ -422,17 +471,20 @@
          cy="7.4993701"
          r="5.3648701"
          id="circle923-8"
-         style="fill:url(#linearGradient3380)" />
+         style="fill:url(#linearGradient3380)"
+         sodipodi:insensitive="true" />
       <path
          fill="#171717"
          d="M 10.96888,6.81044 9.00527,6.57518 C 8.70384,6.53907 8.46625,6.30138 8.43026,5.99993 L 8.19598,4.03765 C 8.18577,3.95212 8.11322,3.88772 8.02708,3.88772 H 6.97294 c -0.08613,0 -0.15867,0.06438 -0.16889,0.1499 L 6.5692,6.00102 C 6.53314,6.30251 6.29544,6.54016 5.99394,6.57616 L 4.03118,6.81049 C 3.94565,6.8207 3.88125,6.89325 3.88125,6.97939 v 1.0542 c 0,0.08613 0.06438,0.15866 0.1499,0.16889 l 1.96299,0.2348 C 6.29557,8.47333 6.5332,8.71096 6.56925,9.0124 l 0.23479,1.96293 c 0.01023,0.08552 0.08277,0.1499 0.16889,0.1499 h 1.0542 c 0.08612,0 0.15865,-0.06436 0.16889,-0.14986 L 8.43123,9.01219 C 8.46734,8.7108 8.70495,8.47324 9.00635,8.43719 l 1.96249,-0.2347 c 0.08552,-0.01023 0.1499,-0.08276 0.1499,-0.16889 V 6.97933 c 10e-6,-0.08612 -0.06435,-0.15865 -0.14986,-0.16889 z"
-         id="path925-9" />
+         id="path925-9"
+         sodipodi:insensitive="true" />
     </g>
     <g
        id="g927-6"
        transform="translate(15,1.001358e-4)"
        inkscape:label="screw_tr"
-       style="display:inline">
+       style="display:inline"
+       sodipodi:insensitive="true">
       <linearGradient
          id="linearGradient1262"
          gradientUnits="userSpaceOnUse"
@@ -456,7 +508,8 @@
          cy="7.4998999"
          r="6.5"
          id="circle909-1"
-         style="fill:url(#linearGradient3382)" />
+         style="fill:url(#linearGradient3382)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1267"
          gradientUnits="userSpaceOnUse"
@@ -480,7 +533,8 @@
          cy="7.4993701"
          r="5.8119402"
          id="circle916-0"
-         style="fill:url(#linearGradient3384)" />
+         style="fill:url(#linearGradient3384)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1272"
          gradientUnits="userSpaceOnUse"
@@ -504,17 +558,20 @@
          cy="7.4993701"
          r="5.3648701"
          id="circle923-6"
-         style="fill:url(#linearGradient3386)" />
+         style="fill:url(#linearGradient3386)"
+         sodipodi:insensitive="true" />
       <path
          fill="#171717"
          d="M 10.96888,6.81044 9.00527,6.57518 C 8.70384,6.53907 8.46625,6.30138 8.43026,5.99993 L 8.19598,4.03765 C 8.18577,3.95212 8.11322,3.88772 8.02708,3.88772 H 6.97294 c -0.08613,0 -0.15867,0.06438 -0.16889,0.1499 L 6.5692,6.00102 C 6.53314,6.30251 6.29544,6.54016 5.99394,6.57616 L 4.03118,6.81049 C 3.94565,6.8207 3.88125,6.89325 3.88125,6.97939 v 1.0542 c 0,0.08613 0.06438,0.15866 0.1499,0.16889 l 1.96299,0.2348 C 6.29557,8.47333 6.5332,8.71096 6.56925,9.0124 l 0.23479,1.96293 c 0.01023,0.08552 0.08277,0.1499 0.16889,0.1499 h 1.0542 c 0.08612,0 0.15865,-0.06436 0.16889,-0.14986 L 8.43123,9.01219 C 8.46734,8.7108 8.70495,8.47324 9.00635,8.43719 l 1.96249,-0.2347 c 0.08552,-0.01023 0.1499,-0.08276 0.1499,-0.16889 V 6.97933 c 10e-6,-0.08612 -0.06435,-0.15865 -0.14986,-0.16889 z"
-         id="path925-0" />
+         id="path925-0"
+         sodipodi:insensitive="true" />
     </g>
     <g
        id="g927"
        transform="translate(0,1.001358e-4)"
        inkscape:label="screw_tl"
-       style="display:inline">
+       style="display:inline"
+       sodipodi:insensitive="true">
       <linearGradient
          id="linearGradient1010"
          gradientUnits="userSpaceOnUse"
@@ -538,7 +595,8 @@
          cy="7.4998999"
          r="6.5"
          id="circle909"
-         style="fill:url(#linearGradient2359)" />
+         style="fill:url(#linearGradient2359)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1017"
          gradientUnits="userSpaceOnUse"
@@ -562,7 +620,8 @@
          cy="7.4993701"
          r="5.8119402"
          id="circle916"
-         style="fill:url(#linearGradient2361)" />
+         style="fill:url(#linearGradient2361)"
+         sodipodi:insensitive="true" />
       <linearGradient
          id="linearGradient1024"
          gradientUnits="userSpaceOnUse"
@@ -586,11 +645,13 @@
          cy="7.4993701"
          r="5.3648701"
          id="circle923"
-         style="fill:url(#linearGradient2363)" />
+         style="fill:url(#linearGradient2363)"
+         sodipodi:insensitive="true" />
       <path
          fill="#171717"
          d="M 10.96888,6.81044 9.00527,6.57518 C 8.70384,6.53907 8.46625,6.30138 8.43026,5.99993 L 8.19598,4.03765 C 8.18577,3.95212 8.11322,3.88772 8.02708,3.88772 H 6.97294 c -0.08613,0 -0.15867,0.06438 -0.16889,0.1499 L 6.5692,6.00102 C 6.53314,6.30251 6.29544,6.54016 5.99394,6.57616 L 4.03118,6.81049 C 3.94565,6.8207 3.88125,6.89325 3.88125,6.97939 v 1.0542 c 0,0.08613 0.06438,0.15866 0.1499,0.16889 l 1.96299,0.2348 C 6.29557,8.47333 6.5332,8.71096 6.56925,9.0124 l 0.23479,1.96293 c 0.01023,0.08552 0.08277,0.1499 0.16889,0.1499 h 1.0542 c 0.08612,0 0.15865,-0.06436 0.16889,-0.14986 L 8.43123,9.01219 C 8.46734,8.7108 8.70495,8.47324 9.00635,8.43719 l 1.96249,-0.2347 c 0.08552,-0.01023 0.1499,-0.08276 0.1499,-0.16889 V 6.97933 c 10e-6,-0.08612 -0.06435,-0.15865 -0.14986,-0.16889 z"
-         id="path925" />
+         id="path925"
+         sodipodi:insensitive="true" />
     </g>
   </g>
   <metadata
