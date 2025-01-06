@@ -387,7 +387,7 @@ if(STONEYVCV_BUILD_MODULES)
             set(${MODULE}_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
             set(${MODULE}_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
             execute_process(
-                COMMAND "${GIT_EXECUTABLE}" rev-list module/${MODULE}
+                COMMAND "${GIT_EXECUTABLE}" rev-list origin/module/${MODULE}
                 COMMAND wc -l
                 OUTPUT_VARIABLE ${MODULE}_VERSION_PATCH
                 ERROR_VARIABLE _${MODULE}_VERSION_PATCH
