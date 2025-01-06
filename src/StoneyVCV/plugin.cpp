@@ -65,28 +65,20 @@ void init(::rack::plugin::Plugin* p) {
 
     ::StoneyDSP::StoneyVCV::Plugin::pluginInstance = p;
 
-#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 2)
+#ifdef STONEYVCV_BUILD_VCA
+    p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
+#endif
 
-    #ifdef STONEYVCV_BUILD_VCA
-        p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
-    #endif
+#ifdef STONEYVCV_BUILD_HP4
+    p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
+#endif
 
-#endif // STONEYVCV_VERSION_PATCH >= 2
+#ifdef STONEYVCV_BUILD_HP2
+    p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
+#endif
 
-#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-
-    #ifdef STONEYVCV_BUILD_HP4
-        p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
-    #endif
-
-    #ifdef STONEYVCV_BUILD_HP2
-        p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
-    #endif
-
-    #ifdef STONEYVCV_BUILD_HP1
-        p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
-    #endif
-
+#ifdef STONEYVCV_BUILD_HP1
+    p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH < 1U)
