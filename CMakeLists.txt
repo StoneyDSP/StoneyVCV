@@ -154,6 +154,7 @@ target_sources("${STONEYVCV_SLUG}"
     $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}.hpp>
     $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}.hpp>
 )
+target_sources("${STONEYVCV_SLUG}" PRIVATE "src/StoneyVCV.cpp")
 # Add project version number
 set_target_properties("${STONEYVCV_SLUG}"
     PROPERTIES
