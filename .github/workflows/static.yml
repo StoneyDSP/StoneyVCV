@@ -53,7 +53,7 @@ jobs:
 
       - name: Install VCV's Linux Deps
         run: |
-          sudo apt-get update && sudo apt install make doxygen ninja-build cmake graphviz
+          sudo apt-get update && sudo apt install coreutils make doxygen ninja-build cmake graphviz
 
       - name: get Rack Executable
         shell: bash
