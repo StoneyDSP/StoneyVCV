@@ -10,7 +10,6 @@
 //==============================================================================
 
 #include <StoneyVCV/ComponentLibrary.hpp>
-#include <StoneyVCV/plugin.hpp> // TODO!!
 
 //==============================================================================
 
@@ -57,8 +56,7 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::draw(const
 
     // Load font from cache
 	::std::shared_ptr<::rack::window::Font> font = APP->window->loadFont(
-        ::rack::asset::plugin(
-            ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/fonts/DejaVuSans.ttf"
+            ::rack::asset::system("res/fonts/DejaVuSans.ttf"
         )
     );
 
