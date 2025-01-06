@@ -1,10 +1,6 @@
 /*******************************************************************************
  * @file src/StoneyVCV/plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 2.0.1
- * @date 2024-11-11
- *
  * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
@@ -14,6 +10,10 @@
 //==============================================================================
 
 #include <StoneyVCV/plugin.hpp>
+
+//==============================================================================
+
+#include <StoneyVCV.hpp>
 
 //==============================================================================
 
@@ -100,41 +100,6 @@ void init(::rack::plugin::Plugin* p) {
     // As an alternative, consider lazy-loading assets and lookup tables when
     // your module is created to reduce startup times of Rack.
 }
-
-//==============================================================================
-
-namespace StoneyDSP {
-
-//==============================================================================
-
-namespace StoneyVCV {
-
-//==============================================================================
-
-namespace Tools {
-
-//==============================================================================
-
-const ::StoneyDSP::float_t vMin = (-12.0F);
-const ::StoneyDSP::float_t vMax = (12.0F);
-const ::StoneyDSP::float_t vNominal = (10.0F);
-const ::StoneyDSP::float_t vBias = (0.0F);
-const ::StoneyDSP::float_t vGround = (0.0F);
-const ::StoneyDSP::float_t vFloor = (0.0F);
-
-//==============================================================================
-
-} // namespace Tools
-
-//==============================================================================
-
-} // namespace StoneyVCV
-
-//==============================================================================
-
-} // namespace StoneyDSP
-
-//==============================================================================
 
 #endif // defined (STONEYVCV_BUILD_MODULES)
 
