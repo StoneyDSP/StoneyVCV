@@ -62,13 +62,6 @@ namespace StoneyDSP
 
 //==============================================================================
 
-/**
- * @brief The `StoneyVCV` namespace.
- * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @copyright Copyright (c) 2024
- * @version @STONEYVCV_VERSION@
- *
- */
 namespace StoneyVCV
 {
 /** @addtogroup StoneyVCV
