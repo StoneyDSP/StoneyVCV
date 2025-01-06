@@ -50,32 +50,7 @@ set(STONEYVCV_VERSION "${CMAKE_PROJECT_VERSION}" CACHE STRING "" FORCE)
 
 # Validate plugin.json
 vcvrack_get_plugin_version()
-
-if(NOT "${VCVRACK_PLUGIN_VERSION}" STREQUAL "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
-    set(_STONEYVCV_ERROR_STRING [==[
-
-There is a mismatch between plugin versions in 'plugin.json' and 'CMakeLists.txt':
-plugin.json#version: @VCVRACK_PLUGIN_VERSION@
-project(VERSION @STONEYVCV_VERSION_MAJOR@.@STONEYVCV_VERSION_MINOR@.@STONEYVCV_VERSION_PATCH@
-Please update the version number in the following files in order to silence this error:
-@STONEYVCV_SOURCE_DIR@/plugin.json
-@STONEYVCV_SOURCE_DIR@/CMakeLists.txt
-    ]==])
-    string(CONFIGURE "${_STONEYVCV_ERROR_STRING}" STONEYVCV_ERROR_STRING @ONLY)
-    if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-        message(SEND_ERROR "${STONEYVCV_ERROR_STRING}")
-        return()
-    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        message(WARNING "${STONEYVCV_ERROR_STRING}")
-    endif()
-endif()
-
-set(STONEYVCV_VERSION_FILE "${STONEYVCV_SOURCE_DIR}/VERSION")
-file(WRITE "${STONEYVCV_VERSION_FILE}.tmp" "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}.${STONEYVCV_VERSION_TWEAK}\n")
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different "${STONEYVCV_VERSION_FILE}.tmp" "${STONEYVCV_VERSION_FILE}")
-file(REMOVE "${STONEYVCV_VERSION_FILE}.tmp")
-set(STONEYVCV_VERSION_FILE "${STONEYVCV_VERSION_FILE}" CACHE INTERNAL "StoneyVCV current version file." FORCE)
-
+stoneyvcv_update_version_file()
 
 # Initialize list of targets to build
 set(STONEYVCV_TARGETS)
