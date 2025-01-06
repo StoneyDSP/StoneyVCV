@@ -38,3 +38,42 @@
 #include <StoneyDSP/Core.hpp>
 
 //==============================================================================
+
+/**
+ * @brief The `StoneyDSP` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @version @PROJECT_VERSION@
+ *
+ */
+namespace StoneyDSP {
+/** @addtogroup StoneyDSP
+ *  @{
+ */
+
+//==============================================================================
+
+/**
+ * @brief The `StoneyVCV` namespace.
+ * @author Nathan J. Hood (nathanjhood@googlemail.com)
+ * @copyright Copyright (c) 2024
+ * @version @STONEYVCV_VERSION@
+ *
+ */
+namespace StoneyVCV
+{
+/** @addtogroup StoneyVCV
+ *  @{
+ */
+
+//==============================================================================
+
+  /// @} group StoneyVCV
+} // namespace StoneyVCV
+
+//==============================================================================
+
+  /// @} group StoneyDSP
+} // namespace StoneyDSP
+
+//==============================================================================
