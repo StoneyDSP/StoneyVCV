@@ -28,14 +28,15 @@ include(CMakeDependentOption)
 include(GNUInstallDirs)
 
 option(STONEYVCV_EXPERIMENTAL                       "Use '-DSTONEYVCV_EXPERIMENTAL=ON|OFF' when configuring to toggle this option." OFF)
-option(STONEYVCV_BUILD_DOCS "" OFF)
-option(STONEYVCV_BUILD_PLUGIN                       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON)
-cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN" ON)
-cmake_dependent_option(STONEYVCV_BUILD_HP1          "Use '-DSTONEYVCV_BUILD_HP1=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_HP2          "Use '-DSTONEYVCV_BUILD_HP2=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_HP4          "Use '-DSTONEYVCV_BUILD_HP4=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_VCA          "Use '-DSTONEYVCV_BUILD_VCA=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES" ON)
-cmake_dependent_option(STONEYVCV_BUILD_LFO          "Use '-DSTONEYVCV_BUILD_LFO=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL" ON)
+option(STONEYVCV_BUILD_DOCS                         "" OFF)
+option(STONEYVCV_BUILD_COMPONENTLIBRARY             "" ON)
+cmake_dependent_option(STONEYVCV_BUILD_PLUGIN       "Use '-DSTONEYVCV_BUILD_PLUGIN=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_COMPONENTLIBRARY" ON)
+cmake_dependent_option(STONEYVCV_BUILD_MODULES      "Use '-DSTONEYVCV_BUILD_MODULES=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_PLUGIN;STONEYVCV_BUILD_COMPONENTLIBRARY" ON)
+cmake_dependent_option(STONEYVCV_BUILD_HP1          "Use '-DSTONEYVCV_BUILD_HP1=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES;STONEYVCV_BUILD_PLUGIN;STONEYVCV_BUILD_COMPONENTLIBRARY" ON)
+cmake_dependent_option(STONEYVCV_BUILD_HP2          "Use '-DSTONEYVCV_BUILD_HP2=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES;STONEYVCV_BUILD_PLUGIN;STONEYVCV_BUILD_COMPONENTLIBRARY" ON)
+cmake_dependent_option(STONEYVCV_BUILD_HP4          "Use '-DSTONEYVCV_BUILD_HP4=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES;STONEYVCV_BUILD_PLUGIN;STONEYVCV_BUILD_COMPONENTLIBRARY" ON)
+cmake_dependent_option(STONEYVCV_BUILD_VCA          "Use '-DSTONEYVCV_BUILD_VCA=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_BUILD_MODULES;STONEYVCV_BUILD_PLUGIN;STONEYVCV_BUILD_COMPONENTLIBRARY" ON)
+cmake_dependent_option(STONEYVCV_BUILD_LFO          "Use '-DSTONEYVCV_BUILD_LFO=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_EXPERIMENTAL;STONEYVCV_BUILD_PLUGIN;STONEYVCV_BUILD_COMPONENTLIBRARY" ON)
 cmake_dependent_option(STONEYVCV_BUILD_TESTS        "Use '-DSTONEYVCV_BUILD_TESTS=ON|OFF' when configuring to toggle this option." ON "STONEYVCV_IS_TOP_LEVEL" ON)
 
 # Put components in the correct order of their dependencies on eachother to save tears...
@@ -59,7 +60,8 @@ set(STONEYVCV_TARGETS)
 # Core interface library - base dependency carrier for other developers
 add_library("${STONEYVCV_SLUG}" INTERFACE)
 add_library("${STONEYVCV_BRAND}::${STONEYVCV_SLUG}" ALIAS "${STONEYVCV_SLUG}")
-configure_file("include/StoneyVCV.hpp" "include/StoneyVCV.hpp")
+configure_file("include/${STONEYVCV_SLUG}.hpp" "include/${STONEYVCV_SLUG}.hpp")
+configure_file("include/${STONEYVCV_SLUG}/version.hpp" "include/${STONEYVCV_SLUG}/version.hpp")
 target_sources("${STONEYVCV_SLUG}"
     INTERFACE
     FILE_SET stoneyvcv_INTERFACE_HEADERS
@@ -70,8 +72,13 @@ target_sources("${STONEYVCV_SLUG}"
     FILES
     $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}.hpp>
     $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}.hpp>
+    $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/version.hpp>
+    $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/version.hpp>
 )
-target_sources("${STONEYVCV_SLUG}" PRIVATE "src/StoneyVCV.cpp")
+target_sources("${STONEYVCV_SLUG}"
+    PRIVATE
+        "src/${STONEYVCV_SLUG}.cpp"
+)
 # Add project version number
 set_target_properties("${STONEYVCV_SLUG}"
     PROPERTIES
@@ -111,10 +118,94 @@ install(EXPORT ${STONEYVCV_SLUG}Exports
 export(SETUP ${STONEYVCV_SLUG}Exports)
 export(
     EXPORT ${STONEYVCV_SLUG}Exports
-    FILE "lib/cmake/${STONEYVCV_BRAND}/$${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-targets.cmake"
+    FILE "lib/cmake/${STONEYVCV_BRAND}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-targets.cmake"
     NAMESPACE ${STONEYVCV_BRAND}::
 )
 message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG} v${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
+
+#[=============================[ComponentLibrary]=============================]#
+if(STONEYVCV_BUILD_COMPONENTLIBRARY)
+
+    set(ComponentLibrary_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+    set(ComponentLibrary_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+    set(ComponentLibrary_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
+    set(ComponentLibrary_VERSION "${ComponentLibrary_VERSION_MAJOR}.${ComponentLibrary_VERSION_MINOR}.${ComponentLibrary_VERSION_PATCH}")
+
+    add_library(ComponentLibrary OBJECT)
+    add_library(${STONEYVCV_SLUG}::ComponentLibrary ALIAS ComponentLibrary)
+    add_library(${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::ComponentLibrary ALIAS ComponentLibrary)
+    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary.hpp")
+    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp")
+    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp")
+    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp")
+    target_sources(ComponentLibrary
+        PUBLIC
+        FILE_SET stoneyvcv_COMPONENTLIBRARY_PUBLIC_HEADERS
+        TYPE HEADERS
+        BASE_DIRS
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+        FILES
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary.hpp>
+            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary.hpp>
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp>
+            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp>
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp>
+            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp>
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp>
+            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp>
+    )
+    target_sources(ComponentLibrary
+        PRIVATE
+            "src/${STONEYVCV_SLUG}/ComponentLibrary.cpp"
+            "src/${STONEYVCV_SLUG}/ComponentLibrary/Widget.cpp"
+            "src/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.cpp"
+            "src/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.cpp"
+    )
+    # Add project version number
+    set_target_properties(ComponentLibrary
+        PROPERTIES
+        VERSION "${ComponentLibrary_VERSION_MAJOR}.${ComponentLibrary_VERSION_MINOR}.${ComponentLibrary_VERSION_PATCH}"
+        SOVERSION "${ComponentLibrary_VERSION_MAJOR}"
+    )
+    target_compile_definitions(ComponentLibrary
+        PUBLIC
+            "STONEYVCV_BUILD_COMPONENTLIBRARY=1"
+            "ComponentLibrary_VERSION_MAJOR=${ComponentLibrary_VERSION_MAJOR}"
+            "ComponentLibrary_VERSION_MINOR=${ComponentLibrary_VERSION_MINOR}"
+            "ComponentLibrary_VERSION_PATCH=${ComponentLibrary_VERSION_PATCH}"
+            "ComponentLibrary_VERSION_TWEAK=${ComponentLibrary_VERSION_TWEAK}"
+            "ComponentLibrary_VERSION_VERSION=${ComponentLibrary_VERSION}"
+    )
+    target_link_libraries(ComponentLibrary
+        PUBLIC
+            unofficial-vcvrack::rack-sdk::core
+            StoneyDSP::Core
+    )
+    install(TARGETS ComponentLibrary
+        EXPORT ComponentLibraryExports
+        COMPONENT ComponentLibrary
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        FILE_SET stoneyvcv_COMPONENTLIBRARY_PUBLIC_HEADERS DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
+    install(EXPORT ComponentLibraryExports
+        FILE "${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-ComponentLibrary-targets.cmake"
+        NAMESPACE ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${STONEYVCV_BRAND}"
+    )
+    export(SETUP ComponentLibraryExports)
+    export(
+        EXPORT ComponentLibraryExports
+        FILE "lib/cmake/${STONEYVCV_BRAND}/${STONEYVCV_BRAND}-${STONEYVCV_SLUG}-ComponentLibrary-targets.cmake"
+        NAMESPACE ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::
+    )
+
+    message(STATUS "Added target: ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::ComponentLibrary v${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}")
+
+endif(STONEYVCV_BUILD_COMPONENTLIBRARY)
 
 #[==================================[plugin]==================================]#
 
@@ -131,18 +222,19 @@ if(STONEYVCV_BUILD_PLUGIN)
         BRAND "${STONEYVCV_BRAND}"
         HEADERS
             "include/${STONEYVCV_SLUG}/plugin.hpp"
-            "include/${STONEYVCV_SLUG}/version.hpp"
-            "include/${STONEYVCV_SLUG}/ComponentLibrary.hpp"
         SOURCES
             "src/${STONEYVCV_SLUG}/plugin.cpp"
-            "src/${STONEYVCV_SLUG}/ComponentLibrary.cpp"
         VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
         SOVERSION "${STONEYVCV_VERSION_MAJOR}"
         EXPORT
         INSTALL
     )
 
-    target_link_libraries(plugin PUBLIC "${STONEYVCV_BRAND}::${STONEYVCV_SLUG}")
+    target_link_libraries(plugin
+        PUBLIC
+            "${STONEYVCV_BRAND}::${STONEYVCV_SLUG}"
+            "${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::ComponentLibrary"
+    )
 
     target_compile_definitions(plugin
         PUBLIC
@@ -291,6 +383,10 @@ if(STONEYVCV_BUILD_MODULES)
                     "-DSTONEYVCV_BUILD_MODULES=1"
                     "-DSTONEYVCV_BUILD_${MODULE}=1"
                     "-D${MODULE}_VERSION=${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${${MODULE}_VERSION_PATCH}"
+            )
+            target_link_libraries(${MODULE}
+                PRIVATE
+                    "${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::ComponentLibrary"
             )
 
             list(APPEND STONEYVCV_TARGETS ${MODULE}) # Collect enabled modules
