@@ -36,12 +36,16 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+//==============================================================================
 
 #include <array>
 

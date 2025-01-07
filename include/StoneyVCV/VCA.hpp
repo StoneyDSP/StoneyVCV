@@ -36,6 +36,9 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/plugin.hpp>
 
@@ -45,6 +48,8 @@
 #include <StoneyDSP/Core.hpp>
 #include <StoneyDSP/DSP.hpp>
 #include <StoneyDSP/SIMD.hpp>
+
+//==============================================================================
 
 #include <array>
 
@@ -247,6 +252,18 @@ private:
      */
     const ::StoneyDSP::float_t &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
 
+    //==========================================================================
+
+    ::rack::engine::Input* vcaInputPtr;
+
+    ::rack::engine::Input* cvInputPtr;
+
+    ::rack::engine::Param* gainParamPtr;
+
+    ::rack::engine::Output* vcaOutputPtr;
+
+    ::rack::engine::Light* blinkLightPtr;
+
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
 };
@@ -257,14 +274,14 @@ private:
  * @brief The `VCAWidget` struct.
  *
  */
-struct VCAWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget
+struct VCAWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::DrawArgs;
 
     //==========================================================================
 
@@ -333,6 +350,8 @@ struct VCAModuleWidget final : virtual ::rack::app::ModuleWidget
 
 public:
 
+    using DrawArgs = ::rack::app::ModuleWidget::DrawArgs;
+
     //==========================================================================
 
     /**
@@ -356,6 +375,8 @@ public:
      *
      */
     virtual void step() override;
+
+    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::DrawArgs &args) override;
 
     //==========================================================================
 
@@ -393,7 +414,7 @@ private:
      * @brief
      *
      */
-    ::rack::componentlibrary::RoundBigBlackKnob *gainKnob;
+    ::rack::componentlibrary::RoundLargeBlackKnob *gainKnob;
 
     // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
 

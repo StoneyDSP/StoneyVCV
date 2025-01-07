@@ -3,6 +3,26 @@
   "version": "2.0.2",
   "license": "MIT",
   "supports": "(linux & x64)|(osx & x64)|(osx & arm64)|(windows & mingw & x64)",
+  "default-features": [
+    "componentlibrary"
+  ],
+  "features": {
+    "componentlibrary": {
+      "description": ""
+    },
+    "hp1": {
+      "description": ""
+    },
+    "hp2": {
+      "description": ""
+    },
+    "hp4": {
+      "description": ""
+    },
+    "vca": {
+      "description": ""
+    }
+  },
   "dependencies": [
     {
       "name": "catch2",
