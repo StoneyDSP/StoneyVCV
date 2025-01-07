@@ -36,21 +36,13 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
 #include <StoneyVCV/version.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
-
-//==============================================================================
-
-#ifdef STONEYDSP_DEBUG
-#include <iostream>
-#define DBG(msg, ...) do { ::std::cerr << std::string(msg, ##__VA_ARGS__) << std::endl; } while (0)
-#else
-#define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
-#endif
 
 //==============================================================================
 
@@ -204,55 +196,3 @@ extern ::rack::plugin::Plugin* pluginInstance;
 #endif // STONEYVCV_BUILD_PLUGIN
 
 //==============================================================================
-
-namespace StoneyDSP {
-/** @addtogroup StoneyDSP
- *  @{
- */
-
-namespace StoneyVCV {
-/** @addtogroup StoneyVCV
- *  @{
- */
-
-namespace Tools {
-/** @addtogroup Tools
- *  @{
- */
-const extern ::StoneyDSP::float_t vMin;
-const extern ::StoneyDSP::float_t vMax;
-const extern ::StoneyDSP::float_t vNominal;
-const extern ::StoneyDSP::float_t vBias;
-const extern ::StoneyDSP::float_t vGround;
-const extern ::StoneyDSP::float_t vFloor;
-
-  /// @} group Tools
-} // namespace Tools
-
-// Declare an abstract base class with a pure virtual destructor.
-// It's the simplest possible abstract class.
-template <typename T>
-struct Engine
-{
-public:
-    Engine() {
-        DBG("Creating StoneyDSP::StoneyVCV::Engine");
-    };
-    virtual ~Engine() noexcept = 0;                                             // pure virtual
-    virtual void processSample(T* sample) = 0;                                  // pure virtual
-};
-
-template<class T>
-::StoneyDSP::StoneyVCV::Engine<T>::~Engine() noexcept
-{
-    DBG("Destroying StoneyDSP::StoneyVCV::Engine");
-}
-
-template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::float_t>;
-template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::double_t>;
-
-  /// @} group StoneyVCV
-} // namespace StoneyVCV
-
-  /// @} group StoneyDSP
-} // namespace StoneyDSP

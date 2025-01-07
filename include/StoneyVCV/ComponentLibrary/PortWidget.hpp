@@ -1,8 +1,8 @@
 /*******************************************************************************
- * @file include/StoneyVCV.hpp
+ * @file include/StoneyVCV/ComponentLibrary/PortWidget.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief @PROJECT_DESCRIPTION@
- * @version @STONEYVCV_VERSION@
+ * @version @plugin_VERSION@
  *
  * @copyright MIT License
  *
@@ -30,7 +30,14 @@
 
 #pragma once
 
-#define STONEYVCV_HPP_INCLUDED 1
+#define STONEYVCV_COMPONENTLIBRARY_PORTWIDGET_HPP_INCLUDED 1
+
+#if defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
+
+//==============================================================================
+
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary.hpp>
 
 //==============================================================================
 
@@ -39,36 +46,14 @@
 
 //==============================================================================
 
-#ifdef STONEYDSP_DEBUG
-#include <iostream>
-#define DBG(msg, ...) do { ::std::cerr << std::string(msg, ##__VA_ARGS__) << std::endl; } while (0)
-#else
-#define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
-#endif
-
-//==============================================================================
-
-/**
- * @brief The `StoneyDSP` namespace.
- * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @copyright Copyright (c) 2024
- * @version @PROJECT_VERSION@
- *
- */
-namespace StoneyDSP {
+namespace StoneyDSP
+{
 /** @addtogroup StoneyDSP
  *  @{
  */
 
 //==============================================================================
 
-/**
- * @brief The `StoneyVCV` namespace.
- * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @copyright Copyright (c) 2024
- * @version @STONEYVCV_VERSION@
- *
- */
 namespace StoneyVCV
 {
 /** @addtogroup StoneyVCV
@@ -77,31 +62,21 @@ namespace StoneyVCV
 
 //==============================================================================
 
-namespace Tools {
-/** @addtogroup Tools
+namespace ComponentLibrary
+{
+/** @addtogroup ComponentLibrary
  *  @{
  */
 
 //==============================================================================
 
-const extern ::StoneyDSP::float_t vMin;
-const extern ::StoneyDSP::float_t vMax;
-const extern ::StoneyDSP::float_t vNominal;
-const extern ::StoneyDSP::float_t vBias;
-const extern ::StoneyDSP::float_t vGround;
-const extern ::StoneyDSP::float_t vFloor;
-
-//==============================================================================
-
-  /// @} group Tools
-} // namespace Tools
-
-//==============================================================================
-
-// Declare an abstract base class with a pure virtual destructor.
-// It's the simplest possible abstract class.
-template <typename T>
-struct Engine
+/**
+ * @brief The `ThemedPortWidgetPanel` struct.
+ *
+ * Provides a panel background to the `ThemedPortWidget` struct.
+ *
+ */
+struct ThemedPortWidgetPanel : virtual ::rack::widget::TransparentWidget
 {
 
     //==========================================================================
@@ -110,16 +85,43 @@ public:
 
     //==========================================================================
 
-    Engine()
-    {
-        DBG("Creating StoneyDSP::StoneyVCV::Engine");
-    };
-
-    virtual ~Engine() noexcept = 0;                                             // pure virtual
+    using DrawArgs = ::rack::widget::TransparentWidget::DrawArgs;
 
     //==========================================================================
 
-    virtual void processSample(T* sample) = 0;                                  // pure virtual
+    /**
+     * @brief Constructs a new `ThemedPortWidgetPanel` object.
+     *
+     */
+    ThemedPortWidgetPanel();
+
+    virtual ~ThemedPortWidgetPanel();
+
+    //==========================================================================
+
+    /**
+     * @brief Advances the module by one frame.
+     * Calls `::rack::widget::Widget::step()` internally.
+     *
+     */
+    virtual void step() override;
+
+    /**
+     * @brief Renders to the NanoVG context.
+     * Calls `::rack::widget::Widget::draw(args)` internally.
+     *
+     */
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::DrawArgs &args) override;
+
+    //==========================================================================
+
+    ::std::string labelText;
+
+    /**
+     * @brief Set whether the parent is an input or an output port.
+     *
+     */
+    bool isOutput;
 
     //==========================================================================
 
@@ -127,36 +129,61 @@ private:
 
     //==========================================================================
 
-    STONEYDSP_DECLARE_NON_COPYABLE(Engine)
-    STONEYDSP_DECLARE_NON_MOVEABLE(Engine)
+    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortWidgetPanel)
+    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortWidgetPanel)
 };
-
-template<class T>
-::StoneyDSP::StoneyVCV::Engine<T>::~Engine() noexcept
-{
-    DBG("Destroying StoneyDSP::StoneyVCV::Engine");
-}
-
-template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::float_t>;
-template struct ::StoneyDSP::StoneyVCV::Engine<::StoneyDSP::double_t>;
 
 //==============================================================================
 
-template <class TWidget = ::rack::widget::Widget>
-TWidget *createWidgetSized(::rack::math::Vec pos, ::rack::math::Vec size)
+/**
+ * @brief The `ThemedPortWidget` struct.
+ *
+ */
+struct ThemedPortWidget : virtual ::rack::app::ThemedSvgPort
 {
-    TWidget* o = ::rack::createWidget<TWidget>(pos);
-	o->box.size = size;
-	return o;
-}
 
-template <class TWidget = ::rack::widget::Widget>
-TWidget* createWidgetCenteredSized(::rack::math::Vec pos, ::rack::math::Vec size)
-{
-    TWidget* o = ::rack::createWidgetCentered<TWidget>(pos);
-	o->box.size = size;
-	return o;
-}
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    using DrawArgs = ::rack::app::ThemedSvgPort::DrawArgs;
+
+    ThemedPortWidget();
+
+    virtual ~ThemedPortWidget();
+
+    //==========================================================================
+
+    virtual void step() override;
+
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
+    bool isOutput;
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel* panel;
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    ::rack::FramebufferWidget* fb;
+
+    bool lastPrefersDarkPanels;
+
+    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortWidget)
+};
+
+//==============================================================================
+
+  /// @} group ComponentLibrary
+} // namespace ComponentLibrary
 
 //==============================================================================
 
@@ -170,12 +197,6 @@ TWidget* createWidgetCenteredSized(::rack::math::Vec pos, ::rack::math::Vec size
 
 //==============================================================================
 
-// #include <StoneyVCV/version.hpp>
-// #include <StoneyVCV/ComponentLibrary.hpp>
-// #include <StoneyVCV/plugin.hpp>
-// #include <StoneyVCV/HP1.hpp>
-// #include <StoneyVCV/HP2.hpp>
-// #include <StoneyVCV/HP4.hpp>
-// #include <StoneyVCV/VCA.hpp>
+#endif // STONEYVCV_BUILD_COMPONENTLIBRARY
 
 //==============================================================================
