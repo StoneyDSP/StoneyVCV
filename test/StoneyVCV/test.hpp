@@ -36,6 +36,7 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
 #include <StoneyVCV/version.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
 
