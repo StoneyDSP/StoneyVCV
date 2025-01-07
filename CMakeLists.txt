@@ -294,6 +294,7 @@ if(STONEYVCV_IS_TOP_LEVEL AND STONEYVCV_BUILD_TESTS)
     target_link_libraries(tests
         PUBLIC
         unofficial-vcvrack::rack-sdk::lib
+        ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::ComponentLibrary
         ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::plugin
         Catch2::Catch2WithMain
     )
