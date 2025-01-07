@@ -1,9 +1,6 @@
 /*******************************************************************************
  * @file src/StoneyVCV/VCA.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @version 2.0.2
- * @date 2024-11-11
- *
  * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
@@ -12,6 +9,9 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/VCA.hpp>
 
@@ -121,9 +121,15 @@ template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::double_t>;
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::VCA::VCAModule::VCAModule()
-:   lightDivider(),
+:   ::rack::engine::Module::Module(),
+    lightDivider(),
     engine(),
-    lightGains{0.0F}
+    lightGains{0.0F},
+    vcaInputPtr(nullptr),
+    cvInputPtr(nullptr),
+    gainParamPtr(nullptr),
+    vcaOutputPtr(nullptr),
+    blinkLightPtr(nullptr)
 {
     // Assertions
     DBG("Constructing StoneyVCV::VCA::VCAModule");
@@ -169,6 +175,18 @@ template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::double_t>;
     for(auto &e : this->engine) {
         e.setGain(0.0F);
     }
+
+    this->vcaInputPtr = dynamic_cast<::rack::engine::Input*>(&this->inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT]);
+    this->cvInputPtr = dynamic_cast<::rack::engine::Input*>(&this->inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT]);
+    this->gainParamPtr = dynamic_cast<::rack::engine::Param*>(&this->params[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM]);
+    this->vcaOutputPtr = dynamic_cast<::rack::engine::Output*>(&this->outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT]);
+    this->blinkLightPtr = dynamic_cast<::rack::engine::Light*>(&this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT]);
+
+    assert(this->vcaInputPtr != nullptr);
+    assert(this->cvInputPtr != nullptr);
+    assert(this->gainParamPtr != nullptr);
+    assert(this->vcaOutputPtr != nullptr);
+    assert(this->blinkLightPtr != nullptr);
 }
 
 ::StoneyDSP::StoneyVCV::VCA::VCAModule::~VCAModule() noexcept
@@ -190,7 +208,8 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     auto &cv_input = this->getCvInput();
     auto &gain_param = this->getGainParam();
     auto &vca_output = this->getVcaOutput();
-    auto &blink_light = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 0];
+    auto &blink_light = this->getBlinkLight();
+    // auto &blink_light = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 0];
     // auto &blink_light_r = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 1];
 
     // if (!vca_input.isConnected() && !vca_output.isConnected() && !cv_input.isConnected()) {
@@ -256,27 +275,27 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
 
 ::rack::engine::Input &::StoneyDSP::StoneyVCV::VCA::VCAModule::getVcaInput() noexcept
 {
-    return this->inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT];
+    return *this->vcaInputPtr;
 }
 
 ::rack::engine::Input &::StoneyDSP::StoneyVCV::VCA::VCAModule::getCvInput() noexcept
 {
-    return this->inputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT];
+    return *this->cvInputPtr;
 }
 
 ::rack::engine::Param &::StoneyDSP::StoneyVCV::VCA::VCAModule::getGainParam() noexcept
 {
-    return this->params[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM];
+    return *this->gainParamPtr;
 }
 
 ::rack::engine::Output &::StoneyDSP::StoneyVCV::VCA::VCAModule::getVcaOutput() noexcept
 {
-    return this->outputs[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT];
+    return *this->vcaOutputPtr;
 }
 
 ::rack::engine::Light &::StoneyDSP::StoneyVCV::VCA::VCAModule::getBlinkLight() noexcept
 {
-    return this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT];
+    return *this->blinkLightPtr;
 }
 
 // ::json_t *::StoneyDSP::StoneyVCV::VCA::VCAModule::dataToJson()
@@ -347,17 +366,53 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     assert(!this->parent);
 
     // Children
+    for(const auto& screw : this->screws) {
+        screw->clearChildren();
+    }
     this->clearChildren();
 }
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::step()
 {
-    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::step();
+    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::step();
 }
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args)
 {
-    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(args);
+    // const auto& textColor = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgWhite : ::StoneyDSP::StoneyVCV::Panels::bgBlack;
+
+    // // Load font from cache
+	// ::std::shared_ptr<::rack::window::Font> font = APP->window->loadFont(
+    //     ::rack::asset::plugin(
+    //         ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/fonts/Roboto-Regular.ttf"
+    //     )
+    // );
+
+    // // Don't draw text if font failed to load
+	// if (font) {
+    //     ::nvgBeginPath(args.vg);
+	// 	// Select font handle
+	// 	::nvgFontFaceId(args.vg, font->handle);
+
+	// 	// Set font size and alignment
+	// 	::nvgFontSize(args.vg, 8.0F);
+	// 	::nvgTextAlign(args.vg,
+    //         ::NVGalign::NVG_ALIGN_CENTER | ::NVGalign::NVG_ALIGN_BASELINE
+    //     );
+    //     ::nvgFillColor(args.vg, textColor);
+
+    //     ::std::string labelText = "VCA";
+
+	// 	// Draw the text at a position
+	// 	::nvgText(args.vg,
+    //         (this->getSize().x * 0.5F),
+    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 3.0F) + 8.0F,
+    //         labelText.c_str(),
+    //         NULL
+    //     );
+	// }
+
+    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::draw(args);
 }
 
 //==============================================================================
@@ -376,14 +431,24 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
             )
         )
     ),
-    vcaWidget(::rack::createWidget<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(::rack::math::Vec(0.0F, 0.0F))),
-    vcaModuleWidgetFrameBuffer(new ::rack::FramebufferWidget),
+    vcaWidget(
+        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(
+            ::rack::math::Vec(0.0F, 0.0F),
+            ::StoneyDSP::StoneyVCV::VCA::VCADimensions
+        )
+    ),
+    vcaModuleWidgetFrameBuffer(
+        ::StoneyDSP::StoneyVCV::createWidgetSized<::rack::FramebufferWidget>(
+            ::rack::math::Vec(0.0F, 0.0F),
+            ::StoneyDSP::StoneyVCV::VCA::VCADimensions
+        )
+    ),
     // Params
     gainKnob(
-        ::rack::createParamCentered<::rack::componentlibrary::RoundBigBlackKnob>(
+        ::rack::createParamCentered<::rack::componentlibrary::RoundLargeBlackKnob>(
             ::rack::math::Vec(
-                ::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F,
-                0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 15.0F)
+                (::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F),
+                (0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 15.0F))
             ),
             module,
             ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM
@@ -473,11 +538,9 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     this->getPanel()->setSize(this->getSize());
 
     // Frame Buffer
-    this->vcaModuleWidgetFrameBuffer->setSize(this->getSize());
     this->addChild(this->vcaModuleWidgetFrameBuffer);
 
     // Widget
-    this->vcaWidget->setSize(this->getSize());
     this->vcaModuleWidgetFrameBuffer->addChild(this->vcaWidget);
 
     // Params
@@ -526,7 +589,12 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::step()
         this->lastPrefersDarkPanels = ::rack::settings::preferDarkPanels;
     }
 
-    return ::rack::Widget::step();
+    return ::rack::app::ModuleWidget::step();
+}
+
+void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::draw(const ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::DrawArgs &args)
+{
+    return ::rack::app::ModuleWidget::draw(args);
 }
 
 //==============================================================================
