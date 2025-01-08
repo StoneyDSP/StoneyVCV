@@ -129,6 +129,7 @@ if(STONEYVCV_BUILD_COMPONENTLIBRARY)
     set(ComponentLibrary_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
     set(ComponentLibrary_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
     set(ComponentLibrary_VERSION_PATCH "${STONEYVCV_VERSION_PATCH}")
+    set(ComponentLibrary_VERSION_TWEAK "${STONEYVCV_VERSION_TWEAK}")
     set(ComponentLibrary_VERSION "${ComponentLibrary_VERSION_MAJOR}.${ComponentLibrary_VERSION_MINOR}.${ComponentLibrary_VERSION_PATCH}")
 
     add_library(ComponentLibrary OBJECT)
@@ -220,20 +221,12 @@ if(STONEYVCV_BUILD_PLUGIN)
     vcvrack_add_plugin(
         SLUG "${STONEYVCV_SLUG}"
         BRAND "${STONEYVCV_BRAND}"
-        HEADERS
-            "include/${STONEYVCV_SLUG}/plugin.hpp"
-        SOURCES
-            "src/${STONEYVCV_SLUG}/plugin.cpp"
-        VERSION "${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${STONEYVCV_VERSION_PATCH}"
-        SOVERSION "${STONEYVCV_VERSION_MAJOR}"
+        HEADERS "include/${STONEYVCV_SLUG}/plugin.hpp"
+        SOURCES "src/${STONEYVCV_SLUG}/plugin.cpp"
+        VERSION "${plugin_VERSION_MAJOR}.${plugin_VERSION_MINOR}.${plugin_VERSION_PATCH}"
+        SOVERSION "${plugin_VERSION_MAJOR}"
         EXPORT
         INSTALL
-    )
-
-    target_link_libraries(plugin
-        PUBLIC
-            "${STONEYVCV_BRAND}::${STONEYVCV_SLUG}"
-            "${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::ComponentLibrary"
     )
 
     target_compile_definitions(plugin
@@ -251,6 +244,8 @@ if(STONEYVCV_BUILD_PLUGIN)
     # plugin custom dependencies
     target_link_libraries(plugin
         PUBLIC
+            ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}
+            ${STONEYVCV_BRAND}::${STONEYVCV_SLUG}::ComponentLibrary
             StoneyDSP::Core
     )
 
@@ -383,7 +378,10 @@ if(STONEYVCV_BUILD_MODULES)
                     "-DSTONEYVCV_BUILD_PLUGIN=1"
                     "-DSTONEYVCV_BUILD_MODULES=1"
                     "-DSTONEYVCV_BUILD_${MODULE}=1"
-                    "-D${MODULE}_VERSION=${STONEYVCV_VERSION_MAJOR}.${STONEYVCV_VERSION_MINOR}.${${MODULE}_VERSION_PATCH}"
+                    "-D${MODULE}_VERSION_MAJOR=${${MODULE}_VERSION_MAJOR}"
+                    "-D${MODULE}_VERSION_MINOR=${${MODULE}_VERSION_MINOR}"
+                    "-D${MODULE}_VERSION_PATCH=${${MODULE}_VERSION_PATCH}"
+                    "-D${MODULE}_VERSION=${${MODULE}_VERSION}"
             )
             target_link_libraries(${MODULE}
                 PUBLIC
