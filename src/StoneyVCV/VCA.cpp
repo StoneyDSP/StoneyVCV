@@ -9,11 +9,14 @@
 
 //==============================================================================
 
+#include <StoneyVCV/VCA.hpp>
+
+//==============================================================================
+
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
 #include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
-#include <StoneyVCV/VCA.hpp>
 
 //==============================================================================
 
