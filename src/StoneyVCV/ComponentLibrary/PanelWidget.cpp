@@ -5,6 +5,10 @@
  *
  ******************************************************************************/
 
+#if defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
+
+//==============================================================================
+
 #include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
 
 //==============================================================================
@@ -214,5 +218,9 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::draw(const ::S
 
     return ::rack::widget::Widget::draw(args);
 }
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
 
 //==============================================================================

@@ -115,3 +115,7 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(const ::Stoney
 }
 
 //==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
+
+//==============================================================================

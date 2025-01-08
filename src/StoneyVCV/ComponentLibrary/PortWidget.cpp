@@ -5,6 +5,10 @@
  *
  ******************************************************************************/
 
+#if defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
+
+//==============================================================================
+
 #include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
 
 //==============================================================================
@@ -213,5 +217,9 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::draw(const ::St
 {
     return ::rack::app::ThemedSvgPort::draw(args);
 };
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
 
 //==============================================================================
