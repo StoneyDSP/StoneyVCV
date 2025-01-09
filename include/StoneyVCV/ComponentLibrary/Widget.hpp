@@ -125,7 +125,7 @@ public:
     friend TWidget* ::rack::createWidget(::rack::math::Vec pos);
 
     template <class TWidget>
-    friend TWidget* ::rack::createWidgetCentered(math::Vec pos);
+    friend TWidget* ::rack::createWidgetCentered(::rack::math::Vec pos);
 
     template <class TWidget>
     friend TWidget *::StoneyDSP::StoneyVCV::createWidgetSized(::rack::math::Vec pos, ::rack::math::Vec size);
