@@ -38,6 +38,7 @@
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
 
 //==============================================================================
 
@@ -119,14 +120,14 @@ private:
  * @brief The `ThemedPanelWidget` struct.
  *
  */
-struct ThemedPanelWidget : virtual ::rack::widget::Widget
+struct ThemedPanelWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::widget::Widget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs;
 
     //==========================================================================
 

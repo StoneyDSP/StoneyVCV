@@ -15,6 +15,7 @@
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
 
 //==============================================================================
 
@@ -81,7 +82,8 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::ThemedPanelWidget()
-:   fb(
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget(),
+    fb(
         ::StoneyDSP::StoneyVCV::createWidgetSized<::rack::widget::FramebufferWidget>(
             ::rack::math::Vec(0.0F, 0.0F),
             this->getSize()
@@ -173,50 +175,12 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::step()
     this->panelBorder->setSize(size);
     this->fb->setSize(size);
 
-    return ::rack::widget::Widget::step();
+    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::step();
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::DrawArgs &args)
 {
-    // draw Themed BG
-    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
-    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
-    const auto& size = this->getSize();
-
-    // draw Themed BG
-    ::nvgBeginPath(args.vg);
-    ::nvgRect(args.vg,
-        /** x */0.0F,
-        /** y */0.0F,
-        /** w */size.x,
-        /** h */size.y
-    );
-    ::nvgFillColor(args.vg, bgColor);
-    ::nvgFill(args.vg);
-
-    // Draw themed BG gradient
-    const auto& bgGradient = ::nvgLinearGradient(args.vg,
-        /** x */size.x * 0.5,
-        /** Y */0.0F,
-        /** w */size.x * 0.5,
-        /** h */size.y,
-        /** s1 */bgGradientS0,
-        /** s2 */bgGradientS1
-    );
-    ::nvgBeginPath(args.vg);
-    ::nvgRect(args.vg,
-        /** x */0.0F,
-        /** y */0.0F,
-        /** w */size.x,
-        /** h */size.y
-    );
-    ::nvgFillPaint(args.vg, bgGradient);
-    ::nvgFill(args.vg);
-
-    return ::rack::widget::Widget::draw(args);
+    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(args);
 }
 
 //==============================================================================
