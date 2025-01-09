@@ -22,30 +22,39 @@
 
 //==============================================================================
 
+::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::Widget()
+:   ::rack::widget::Widget(),
+    box(::rack::math::Vec(), ::rack::math::Vec(INFINITY, INFINITY))
+{
+    // Assertions
+    // DBG("StoneyDSP::StoneyVCV::ComponentLibrary::Widget");
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::~Widget()
+{
+    // DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::Widget");
+    assert(!this->parent);
+
+    this->clearChildren();
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::step()
+{
+    return ::rack::widget::Widget::step();
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::DrawArgs &args)
+{
+    return ::rack::widget::Widget::draw(args);
+}
+
+//==============================================================================
+
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::ThemedWidget()
-:   fb(
-        ::rack::createWidget<::rack::widget::FramebufferWidget>(
-            ::rack::math::Vec(0.0F, 0.0F)
-        )
-    ),
-    panelBorder(
-        ::rack::createWidget<::rack::app::PanelBorder>(
-            ::rack::math::Vec(0.0F, 0.0F)
-        )
-    )
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget()
 {
     // Assertions
     // DBG("StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget");
-    assert(this->fb != nullptr);
-    assert(this->panelBorder != nullptr);
-
-    // Widgets
-    this->fb->setSize(this->getSize());
-    this->addChild(this->fb);
-
-    // Border
-    this->panelBorder->setSize(this->getSize());
-    this->fb->addChild(this->panelBorder);
 }
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::~ThemedWidget()
@@ -55,23 +64,17 @@
     assert(!this->parent);
 
     // Children
-    this->panelBorder->clearChildren();
-    this->fb->clearChildren();
     this->clearChildren();
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::step()
 {
-    const auto& size = this->getSize();
-
-    this->panelBorder->setSize(size);
-    this->fb->setSize(size);
-
     return ::rack::widget::Widget::step();
 }
 
-void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::drawThemedBg(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs &args)
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs &args)
 {
+    // draw Themed BG
     const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
     const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
     const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
@@ -108,12 +111,6 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::drawThemedBg(const 
     );
     ::nvgFillPaint(args.vg, bgGradient);
     ::nvgFill(args.vg);
-}
-
-void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs &args)
-{
-    // draw Themed BG
-    this->drawThemedBg(args);
 
     return ::rack::widget::Widget::draw(args);
 }

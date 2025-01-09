@@ -71,17 +71,98 @@ namespace ComponentLibrary
 //==============================================================================
 
 /**
+ * The `Widget` struct.
+ *
+ * A node in the 2D [scene graph](https://en.wikipedia.org/wiki/Scene_graph).
+ * The bounding box of a Widget is a rectangle specified by `box` relative to
+ * their parent.
+ *
+ * The appearance is defined by overriding `draw()`, and the behavior is defined
+ * by overriding `step()` and `on*()` event handlers.
+ *
+ */
+struct Widget : virtual ::rack::widget::Widget
+{
+    //==========================================================================
+
+public:
+
+    using DrawArgs = ::rack::widget::Widget::DrawArgs;
+
+    //==========================================================================
+
+    /**
+     * @brief Construct a new `Widget` object.
+     *
+     */
+    Widget();
+
+    /**
+     * @brief Destroys the `Widget` object.
+     *
+     */
+    virtual ~Widget();
+
+    //==========================================================================
+
+    /**
+     * @brief Advances the widget by one frame.
+     *
+     */
+    virtual void step() override;
+
+    /**
+     * @brief Draws the widget to the NanoVG context.
+     * Calls the superclass's draw(args) to recurse to children.
+     *
+     * @param args
+     */
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::DrawArgs &args) override;
+
+    //==========================================================================
+
+    template <class TWidget>
+    friend TWidget* ::rack::createWidget(::rack::math::Vec pos);
+
+    template <class TWidget>
+    friend TWidget* ::rack::createWidgetCentered(math::Vec pos);
+
+    template <class TWidget>
+    friend TWidget *::StoneyDSP::StoneyVCV::createWidgetSized(::rack::math::Vec pos, ::rack::math::Vec size);
+
+    template <class TWidget>
+    friend TWidget* ::StoneyDSP::StoneyVCV::createWidgetCenteredSized(::rack::math::Vec pos, ::rack::math::Vec size);
+
+private:
+
+    //==========================================================================
+
+    /**
+     * @brief Position relative to parent and size of widget.
+     *
+     */
+    ::rack::math::Rect box;
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(Widget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(Widget)
+};
+
+//==============================================================================
+
+/**
  * @brief The `ThemedWidget` struct.
  *
  */
-struct ThemedWidget : virtual ::rack::widget::Widget
+struct ThemedWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::widget::Widget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::DrawArgs;
 
     //==========================================================================
 
@@ -107,13 +188,6 @@ public:
 
     /**
      * @brief Draws a themed background color to the widget's NanoVG context.
-     *
-     * @param args
-     */
-    void drawThemedBg(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs &args);
-
-    /**
-     * @brief Draws the widget to the NanoVG context.
      * Calls the superclass's draw(args) to recurse to children.
      *
      * @param args
@@ -123,20 +197,6 @@ public:
     //==========================================================================
 
 private:
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget *fb;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
