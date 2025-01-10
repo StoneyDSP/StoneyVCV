@@ -106,13 +106,13 @@ public:
     //==========================================================================
 
     /**
-     * @brief Advances the widget by one frame.
+     * @brief Advances the `Widget` by one frame.
      *
      */
     virtual void step() override;
 
     /**
-     * @brief Draws the widget to the NanoVG context.
+     * @brief Draws the `Widget` to the NanoVG context.
      * Calls the superclass's draw(args) to recurse to children.
      *
      * @param args
@@ -122,18 +122,24 @@ public:
     //==========================================================================
 
     template <class TWidget>
-    friend TWidget* ::rack::createWidget(::rack::math::Vec pos);
+    friend TWidget *::rack::createWidget(::rack::math::Vec pos);
 
     template <class TWidget>
-    friend TWidget* ::rack::createWidgetCentered(::rack::math::Vec pos);
+    friend TWidget *::rack::createWidgetCentered(::rack::math::Vec pos);
+
+    template <class TWidget>
+    friend TWidget *::StoneyDSP::StoneyVCV::createWidget(::rack::math::Vec pos);
+
+    template <class TWidget>
+    friend TWidget *::rack::createWidgetCentered(::rack::math::Vec pos);
 
     template <class TWidget>
     friend TWidget *::StoneyDSP::StoneyVCV::createWidgetSized(::rack::math::Vec pos, ::rack::math::Vec size);
 
     template <class TWidget>
-    friend TWidget* ::StoneyDSP::StoneyVCV::createWidgetCenteredSized(::rack::math::Vec pos, ::rack::math::Vec size);
+    friend TWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized(::rack::math::Vec pos, ::rack::math::Vec size);
 
-private:
+protected:
 
     //==========================================================================
 
@@ -141,7 +147,33 @@ private:
      * @brief Position relative to parent and size of widget.
      *
      */
-    ::rack::math::Rect box;
+    ::rack::math::Rect box = ::rack::math::Rect(::rack::math::Vec(), ::rack::math::Vec(INFINITY, INFINITY));
+
+    /**
+     * Automatically set when Widget is added as a child to another Widget
+     *
+     */
+	::rack::Widget *parent = NULL;
+
+	::std::list<::rack::Widget *> children;
+
+	/**
+     * Disables rendering but allow stepping.
+     * Use isVisible(), setVisible(), show(), or hide() instead of using this variable directly.
+	 *
+     */
+	bool visible = true;
+
+    /**
+     * If set to true, parent will delete Widget in the next step().
+     * Use requestDelete() instead of using this variable directly.
+     *
+	 */
+	bool requestedDelete = false;
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
@@ -194,14 +226,135 @@ public:
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs &args) override;
 
+    const bool &getPrefersDarkPanels() const noexcept;
+
+//==========================================================================
+
+    /**
+     * Occurs after the `prefersDarkPanels` setting is changed.
+     * The concept of a "dark" or "light" panel is defined by the type of Widget.
+	 *
+     */
+	struct PrefersDarkPanelsChangeEvent : ::rack::widget::Widget::BaseEvent {
+        bool newPrefersDarkPanels;
+    };
+
+    /**
+     * Called after the `prefersDarkPanels` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `ThemedWidget::step()` method).
+     *
+     * @param e
+     *
+     */
+	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e)
+    {
+        if(this->lastPrefersDarkPanels != e.newPrefersDarkPanels)
+            this->lastPrefersDarkPanels = e.newPrefersDarkPanels;
+    }
+
+    //==========================================================================
+
+    STONEYVCV_DECLARE_WIDGET_FACTORY_FUNCTIONS(ThemedWidget)
+
+    //==========================================================================
+
+protected:
+
+    //==========================================================================
+
+    bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
+
     //==========================================================================
 
 private:
 
     //==========================================================================
 
+    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(ThemedWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(ThemedWidget)
+};
+
+//==============================================================================
+
+struct FramebufferWidget : virtual ::rack::widget::FramebufferWidget
+{
+
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    using DrawArgs = ::rack::widget::FramebufferWidget::DrawArgs;
+
+    //==========================================================================
+
+    FramebufferWidget();
+
+    virtual ~FramebufferWidget();
+
+    //==========================================================================
+
+    STONEYVCV_DECLARE_WIDGET_FACTORY_FUNCTIONS(FramebufferWidget)
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(FramebufferWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(FramebufferWidget)
+};
+
+//==============================================================================
+
+struct TransparentWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget
+{
+
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::DrawArgs;
+
+    //==========================================================================
+
+    TransparentWidget();
+
+    virtual ~TransparentWidget();
+
+    //==========================================================================
+
+    STONEYVCV_DECLARE_WIDGET_FACTORY_FUNCTIONS(TransparentWidget)
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+	// Override behavior to do nothing instead
+
+    virtual void onHover(const HoverEvent& e) override {}
+	virtual void onButton(const ButtonEvent& e) override {}
+	virtual void onHoverKey(const HoverKeyEvent& e) override {}
+	virtual void onHoverText(const HoverTextEvent& e) override {}
+	virtual void onHoverScroll(const HoverScrollEvent& e) override {}
+	virtual void onDragHover(const DragHoverEvent& e) override {}
+	virtual void onPathDrop(const PathDropEvent& e) override {}
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(TransparentWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(TransparentWidget)
 };
 
 //==============================================================================
