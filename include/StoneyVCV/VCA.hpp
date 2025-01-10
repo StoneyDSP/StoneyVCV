@@ -101,9 +101,7 @@ public:
 
     VCAEngine();
 
-    VCAEngine(T sample);
-
-    ~VCAEngine() noexcept;
+    virtual ~VCAEngine() noexcept;
 
     //==========================================================================
 
@@ -200,13 +198,29 @@ public:
 
     //==========================================================================
 
-private:
+	struct NumChannelsChangedEvent {};
+	/** Called after enabling the module.
+	*/
+	virtual void onNumChannelsChanged(const NumChannelsChangedEvent& e) {}
+
+	struct GainParamChangedEvent {};
+	/** Called after changing the Gain parameter (knob) on the panel.
+	*/
+	virtual void onGainParamChanged(const GainParamChangedEvent& e) {}
 
     //==========================================================================
 
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+    ::std::size_t getVcaInputNumChannels() noexcept;
 
-    //==========================================================================
+    ::std::size_t getCvInputNumChannels() noexcept;
+
+    /**
+     * Get desired number of channels from `vcaInput` and `cvInput`.
+     * If these input are unpatched, getChannels() returns 0, but we should
+     * still generate 1 channel of output.
+     *
+     */
+    ::std::size_t getMinNumChannels() noexcept;
 
     ::rack::engine::Input &getVcaInput() noexcept;
 
@@ -220,6 +234,14 @@ private:
 
     //==========================================================================
 
+private:
+
+    //==========================================================================
+
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+
+    //==========================================================================
+
     /**
      * @brief
      *
@@ -230,13 +252,13 @@ private:
      * @brief
      *
      */
-    ::std::array<::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::float_t>, 16> engine;
+    ::std::array<::StoneyDSP::StoneyVCV::VCA::VCAEngine<float>, 16> engine;
 
     /**
      * @brief
      *
      */
-    ::std::array<::StoneyDSP::float_t, 16> lightGains;
+    ::std::array<float, 16> lightGains;
 
     //==========================================================================
 
@@ -254,15 +276,17 @@ private:
 
     //==========================================================================
 
-    ::rack::engine::Input* vcaInputPtr;
+    ::rack::engine::Input* vcaInputPtr = NULL;
 
-    ::rack::engine::Input* cvInputPtr;
+    ::rack::engine::Input* cvInputPtr = NULL;
 
-    ::rack::engine::Param* gainParamPtr;
+    ::rack::engine::Param* gainParamPtr = NULL;
 
-    ::rack::engine::Output* vcaOutputPtr;
+    ::rack::engine::Output* vcaOutputPtr = NULL;
 
-    ::rack::engine::Light* blinkLightPtr;
+    ::rack::engine::Light* blinkLightPtr = NULL;
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
@@ -315,6 +339,14 @@ public:
 
     //==========================================================================
 
+    /**
+     * Called after the `prefersDarkPanels` setting is changed.
+     *
+     * @param e
+     *
+     */
+	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e) override;
+
 private:
 
     //==========================================================================
@@ -323,13 +355,15 @@ private:
      * @brief
      *
      */
-    const ::std::array<::rack::math::Vec, 4> screwsPositions;
+    const ::std::array<::rack::math::Vec, 4> screwsPositions = { ::rack::math::Vec() };
 
     /**
      * @brief
      *
      */
-    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws = { NULL };
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *vcaWidgetFrameBuffer = NULL;
 
     //==========================================================================
 
@@ -371,12 +405,41 @@ public:
     //==========================================================================
 
     /**
-     * @brief Advances the module by one frame.
+     * @brief Advances the `VCAModuleWidget` by one frame.
+     * Calls `::rack::ModuleWidget::step()` internally.
      *
      */
     virtual void step() override;
 
+    /**
+     * @brief Renders the `VCAModuleWidget` to the NanoVG context.
+     * Calls `::rack::ModuleWidget::draw(args)` internally.
+     *
+     */
     virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::DrawArgs &args) override;
+
+    const bool &getPrefersDarkPanels() const noexcept;
+
+    //==========================================================================
+
+    /**
+     * Occurs after the `prefersDarkPanels` setting is changed.
+     * The concept of a "dark" or "light" panel is defined by the type of Widget.
+	 *
+     */
+	struct PrefersDarkPanelsChangeEvent : ::rack::widget::Widget::BaseEvent {
+        bool newPrefersDarkPanels;
+    };
+
+    /**
+     * Called after the `prefersDarkPanels` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `ThemedWidget::step()` method).
+     *
+     * @param e
+     *
+     */
+	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e);
 
     //==========================================================================
 
@@ -388,25 +451,19 @@ private:
      * @brief
      *
      */
-    const ::rack::math::Vec size;
+    ::rack::app::ThemedSvgPanel *panel = NULL;
 
     /**
      * @brief
      *
      */
-    ::rack::app::ThemedSvgPanel *panel;
+    ::StoneyDSP::StoneyVCV::VCA::VCAWidget *vcaWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::VCA::VCAWidget *vcaWidget;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *vcaModuleWidgetFrameBuffer = NULL;
 
     //==========================================================================
 
@@ -449,7 +506,9 @@ private:
      * @brief
      *
      */
-    bool lastPrefersDarkPanels;
+    bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
+
+    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
 
     //==========================================================================
 
