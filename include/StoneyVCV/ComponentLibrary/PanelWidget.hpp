@@ -76,28 +76,57 @@ namespace ComponentLibrary
 
 //==============================================================================
 
-/**
- * @brief The `PanelLinesWidget` struct.
- * Draws 4 lines around the inner edges of the module.
- * Does not ssend or respond to events.
- *
- */
-struct PanelLinesWidget : virtual ::rack::widget::TransparentWidget
+struct PanelBorderWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::widget::TransparentWidget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::DrawArgs;
 
     //==========================================================================
 
-    /**
-     * @brief Construct a new `PanelLinesWidget` object.
-     *
-     */
-    PanelLinesWidget() = default;
+    PanelBorderWidget();
+
+    virtual ~PanelBorderWidget();
+
+    //==========================================================================
+
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::DrawArgs &args) override;
+
+private:
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(PanelBorderWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(PanelBorderWidget)
+};
+
+//==============================================================================
+
+/**
+ * @brief The `PanelLinesWidget` struct.
+ * Draws 4 lines around the inner edges of the module.
+ * Does not ssend or respond to events.
+ *
+ */
+struct PanelLinesWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
+{
+
+    //==========================================================================
+
+public:
+
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::DrawArgs;
+
+    //==========================================================================
+
+    PanelLinesWidget();
+
+    virtual ~PanelLinesWidget();
+
+    //==========================================================================
 
     /**
      * @brief Draws a set of lines for spacing to the widget's NanoVG context.
@@ -169,31 +198,19 @@ private:
      * @brief
      *
      */
-    ::rack::FramebufferWidget *fb;
-
-    // /**
-    //  * @brief
-    //  *
-    //  */
-    // const ::std::array<::rack::math::Vec, 4> screwsPositions;
-
-    // /**
-    //  * @brief
-    //  *
-    //  */
-    // const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *fb = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *panelLines;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *panelLines = NULL;
 
     /**
      * @brief
      *
      */
-    ::rack::app::PanelBorder *panelBorder;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget *panelBorder = NULL;
 
     //==========================================================================
 
