@@ -234,7 +234,7 @@ endif
 
 EXTERNAL_DEPS :=
 EXTERNAL_DEPS += StoneyDSP
-EXTERNAL_DEPS += Rack-SDK
+# EXTERNAL_DEPS += Rack-SDK
 # EXTERNAL_DEPS += catch2
 
 PKG_CONFIG_PATH := $(PWD)/build/vcpkg_installed/$(TRIPLET_ARCH)-$(TRIPLET_OS)/lib/pkgconfig:$(PKG_CONFIG_PATH)
