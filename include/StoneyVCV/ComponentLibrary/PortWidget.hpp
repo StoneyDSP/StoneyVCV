@@ -38,6 +38,7 @@
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
 
 //==============================================================================
 
@@ -76,7 +77,7 @@ namespace ComponentLibrary
  * Provides a panel background to the `ThemedPortWidget` struct.
  *
  */
-struct ThemedPortWidgetPanel : virtual ::rack::widget::TransparentWidget
+struct ThemedPortWidgetPanel : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
 {
 
     //==========================================================================
@@ -85,7 +86,7 @@ public:
 
     //==========================================================================
 
-    using DrawArgs = ::rack::widget::TransparentWidget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::DrawArgs;
 
     //==========================================================================
 
@@ -95,23 +96,29 @@ public:
      */
     ThemedPortWidgetPanel();
 
+    /**
+     * @brief Destroys the `ThemedPortWidgetPanel` object.
+     *
+     */
     virtual ~ThemedPortWidgetPanel();
 
     //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
-     * Calls `::rack::widget::Widget::step()` internally.
+     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::step()` internally.
      *
      */
     virtual void step() override;
 
     /**
      * @brief Renders to the NanoVG context.
-     * Calls `::rack::widget::Widget::draw(args)` internally.
+     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::draw(args)` internally.
      *
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::DrawArgs &args) override;
+
+    const bool &getPrefersDarkPanels() const noexcept;
 
     //==========================================================================
 
@@ -126,6 +133,10 @@ public:
     //==========================================================================
 
 private:
+
+    //==========================================================================
+
+    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
 
     //==========================================================================
 
@@ -150,6 +161,8 @@ public:
 
     using DrawArgs = ::rack::app::ThemedSvgPort::DrawArgs;
 
+    //==========================================================================
+
     ThemedPortWidget();
 
     virtual ~ThemedPortWidget();
@@ -158,7 +171,14 @@ public:
 
     virtual void step() override;
 
+    /**
+     * @brief Renders to the NanoVG context.
+     * Calls `::rack::app::ThemedSvgPort::draw(args)` internally.
+     *
+     */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::DrawArgs &args) override;
+
+    const bool &getPrefersDarkPanels() const noexcept;
 
     //==========================================================================
 
@@ -172,9 +192,19 @@ private:
 
     //==========================================================================
 
-    ::rack::FramebufferWidget* fb;
+	::std::shared_ptr<::rack::window::Svg> lightSvg;
 
-    bool lastPrefersDarkPanels;
+	::std::shared_ptr<::rack::window::Svg> darkSvg;
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget* fb;
+
+    //==========================================================================
+
+    bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
+
+    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
+
+    //==========================================================================
 
     STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortWidget)

@@ -15,6 +15,7 @@
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
 
 //==============================================================================
 
@@ -23,17 +24,21 @@
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::ThemedPortWidgetPanel()
-:   labelText(""),
-    isOutput(true)
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget(),
+    labelText(""),
+    isOutput(true),
+    prefersDarkPanelsPtr(&::rack::settings::preferDarkPanels)
 {
-    // TODO: Assertions...
+    // Assertions...
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel");
+
     this->setSize(::rack::math::Vec(28.55155F, 39.15691F));
 }
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::~ThemedPortWidgetPanel()
 {
     // Assertions
-    // DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel");
+    DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel");
     assert(!this->parent);
 
     // Children
@@ -43,21 +48,24 @@
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::step()
 {
     this->setSize(::rack::math::Vec(28.55155F, 39.15691F));
+
     return ::rack::widget::Widget::step();
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::draw(const StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::DrawArgs &args)
 {
+    const bool &prefersDarkPanels = this->getPrefersDarkPanels();
+    const auto& size = this->getSize();
+
     const auto& bgBlack = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortBlack : ::StoneyDSP::StoneyVCV::Panels::bgPortWhite;
     const auto& bgWhite = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortWhite : ::StoneyDSP::StoneyVCV::Panels::bgPortBlack;
-    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    // const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    // const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
+    const auto& bgColor = prefersDarkPanels ? bgBlack : bgWhite;
+    // const auto& bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
+    // const auto& bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
     // const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
     const auto& textWhite = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortBlack : ::StoneyDSP::StoneyVCV::Panels::bgPortWhite;
     const auto& textBlack = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortWhite : ::StoneyDSP::StoneyVCV::Panels::bgPortBlack;
-    const auto& textColor = ::rack::settings::preferDarkPanels ? textBlack : textWhite;
-    const auto& size = this->getSize();
+    const auto& textColor = prefersDarkPanels ? textBlack : textWhite;
 
     // Load font from cache
 	::std::shared_ptr<::rack::window::Font> font = APP->window->loadFont(
@@ -128,7 +136,7 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::draw(const
 
 		// Draw the text at a position
 		::nvgText(args.vg,
-            (this->getSize().x * 0.5F),
+            (size.x * 0.5F),
             (8.0F + 2.425775F),
             labelText.c_str(),
             NULL
@@ -138,49 +146,61 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::draw(const
     return ::rack::widget::Widget::draw(args);
 }
 
+const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::getPrefersDarkPanels() const noexcept
+{
+    return *this->prefersDarkPanelsPtr;
+}
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::ThemedPortWidget()
-:   isOutput(true),
+:   ::rack::app::ThemedSvgPort(),
+    isOutput(true),
     panel(
-        ::rack::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel>(
+        ::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel>(
+            ::rack::math::Vec(
+                0.0F,
+                0.0F
+            )
+        )
+    ),
+    lightSvg(
+        ::rack::window::Svg::load(
+            ::rack::asset::system("res/ComponentLibrary/PJ301M.svg")
+        )
+    ),
+    darkSvg(
+        ::rack::window::Svg::load(
+            ::rack::asset::system("res/ComponentLibrary/PJ301M-dark.svg")
+        )
+    ),
+    fb(
+        ::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(
             ::rack::math::Vec(
                 0.0F - 2.425775F,
                 0.0F - ((39.15691F - 23.7F) - 2.425775F)
             )
         )
     ),
-    fb(
-        ::rack::createWidget<::rack::FramebufferWidget>(
-            ::rack::math::Vec(0.0F, 0.0F)
-        )
-    ),
-    lastPrefersDarkPanels(::rack::settings::preferDarkPanels)
+    lastPrefersDarkPanels(::rack::settings::preferDarkPanels),
+    prefersDarkPanelsPtr(&::rack::settings::preferDarkPanels)
 {
-    // // TODO: Assertions
-    // DBG("Constructing StoneyVCV::ComponentLibrary::ThemedPortWidget");
+    // Assertions
+    DBG("Constructing StoneyVCV::ComponentLibrary::ThemedPortWidget");
     this->isOutput = this->type == ::rack::engine::Port::Type::OUTPUT;
     this->panel->isOutput = this->isOutput;
 
-    this->setSize(this->panel->getSize());
+    ::rack::app::ThemedSvgPort::setSvg(this->lightSvg, this->darkSvg);
+
     this->fb->setSize(this->panel->getSize());
     this->addChildBottom(this->fb);
-    this->fb->addChild(this->panel);
-
-    this->setSvg(
-        ::rack::window::Svg::load(
-            ::rack::asset::system("res/ComponentLibrary/PJ301M.svg")
-        ),
-        ::rack::window::Svg::load(
-            ::rack::asset::system("res/ComponentLibrary/PJ301M-dark.svg")
-        )
-    );
+    this->fb->addChildBottom(this->panel);
 }
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::~ThemedPortWidget()
 {
     // Assertions
-    // DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget");
+    DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget");
     assert(!this->parent);
 
     // Children
@@ -191,32 +211,41 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::draw(const
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::step()
 {
-    if (APP->window->pixelRatio < 2.0F) {
-		// Small details draw poorly at low DPI,
-        // so oversample when drawing to the framebuffer
-		this->fb->oversample = 2.0F;
-	}
-	else {
-		this->fb->oversample = 1.0F;
-	}
+    const bool &prefersDarkPanels = this->getPrefersDarkPanels();
 
-    if(this->lastPrefersDarkPanels != ::rack::settings::preferDarkPanels) {
+    // if (APP->window->pixelRatio < 2.0F) {
+	// 	// Small details draw poorly at low DPI,
+    //     // so oversample when drawing to the framebuffer
+	// 	this->fb->oversample = 2.0F;
+	// }
+	// else {
+	// 	this->fb->oversample = 1.0F;
+	// }
+
+    if(this->lastPrefersDarkPanels != prefersDarkPanels) {
         this->fb->setDirty();
-        this->lastPrefersDarkPanels = ::rack::settings::preferDarkPanels;
+        this->lastPrefersDarkPanels = prefersDarkPanels;
     }
 
-    // Update
-    this->isOutput = this->type == ::rack::engine::Port::Type::OUTPUT;
-    this->panel->isOutput = this->isOutput;
-    this->fb->setSize(this->panel->getSize());
+    ::rack::app::ThemedSvgPort::setSvg(this->lightSvg, this->darkSvg);
 
     return ::rack::app::ThemedSvgPort::step();
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::DrawArgs &args)
 {
+    // Update
+    this->isOutput = this->type == ::rack::engine::Port::Type::OUTPUT;
+    this->panel->isOutput = this->isOutput;
+    this->fb->setSize(this->panel->getSize());
+
     return ::rack::app::ThemedSvgPort::draw(args);
 };
+
+const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::getPrefersDarkPanels() const noexcept
+{
+    return *this->prefersDarkPanelsPtr;
+}
 
 //==============================================================================
 
