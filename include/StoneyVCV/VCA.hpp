@@ -319,7 +319,7 @@ public:
      * @brief Destroys the `VCAWidget` object.
      *
      */
-    virtual ~VCAWidget();
+    virtual ~VCAWidget() noexcept;
 
     //==========================================================================
 
@@ -355,14 +355,18 @@ private:
      * @brief
      *
      */
-    const ::std::array<::rack::math::Vec, 4> screwsPositions = { ::rack::math::Vec() };
+    ::std::array<::rack::math::Vec, 4> screwsPositions = { ::rack::math::Vec() };
 
     /**
      * @brief
      *
      */
-    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws = { NULL };
+    ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws = { NULL };
 
+    /**
+     * @brief
+     *
+     */
     ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *vcaWidgetFrameBuffer = NULL;
 
     //==========================================================================
@@ -400,7 +404,7 @@ public:
      * @brief Destroys the `VCAModuleWidget` object.
      *
      */
-    virtual ~VCAModuleWidget();
+    virtual ~VCAModuleWidget() noexcept;
 
     //==========================================================================
 
@@ -417,8 +421,6 @@ public:
      *
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::DrawArgs &args) override;
-
-    const bool &getPrefersDarkPanels() const noexcept;
 
     //==========================================================================
 
@@ -440,6 +442,33 @@ public:
      *
      */
 	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e);
+
+    /**
+     *
+     */
+    const bool &getPrefersDarkPanels() const noexcept;
+
+    //==========================================================================
+
+    struct PixelRatioChangeEvent : ::rack::widget::Widget::BaseEvent {
+        float newPixelRatio = APP->window->pixelRatio;
+    };
+
+    /**
+     * Called after the `App->window->pixelRatio` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `Widget::step()` method).
+     *
+     * @param e
+     *
+     */
+    virtual void onPixelRatioChange(const PixelRatioChangeEvent& e);
+
+    /**
+     * @brief
+     *
+     */
+    const float &getPixelRatio() const noexcept;
 
     //==========================================================================
 
@@ -471,34 +500,37 @@ private:
      * @brief
      *
      */
-    ::rack::componentlibrary::RoundLargeBlackKnob *gainKnob;
+    ::rack::componentlibrary::RoundLargeBlackKnob *gainKnob = NULL;
 
-    // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
+    // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider = NULL;
 
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portCvInput;
+    //==========================================================================
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaInput;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portCvInput = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaOutput;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaInput = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaOutput = NULL;
 
     /**
      * @brief 3mm LED showing a smoothed CV value.
+     *
      */
-    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca;
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca = NULL;
 
-    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca;
+    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca = NULL;
 
     //==========================================================================
 
@@ -508,7 +540,25 @@ private:
      */
     bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
 
-    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
+    /**
+     * `{&::rack::settings::preferDarkPanels}`
+     *
+     */
+    const bool *prefersDarkPanelsPtr = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    float lastPixelRatio = {APP->window->pixelRatio};
+
+    /**
+     * @brief
+     *
+     */
+    const float *pixelRatioPtr = NULL;
 
     //==========================================================================
 
