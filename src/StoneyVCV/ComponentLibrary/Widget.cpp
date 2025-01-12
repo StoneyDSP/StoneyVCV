@@ -28,18 +28,25 @@
     parent(NULL),
     children(),
     visible(true),
-    requestedDelete(false)
+    requestedDelete(false),
+    pixelRatioPtr(nullptr)
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::Widget");
+
+    this->pixelRatioPtr = static_cast<const float *>(&APP->window->pixelRatio);
+
+    assert(this->pixelRatioPtr != nullptr);
 }
 
-::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::~Widget()
+::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::~Widget() noexcept
 {
     DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::Widget");
     assert(!this->parent);
 
     this->clearChildren();
+
+    this->pixelRatioPtr = nullptr;
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::step()
@@ -52,18 +59,27 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::draw(const ::StoneyDSP::S
     return ::rack::widget::Widget::draw(args);
 }
 
+const float &::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::getPixelRatio() const noexcept
+{
+    return *this->pixelRatioPtr;
+}
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::ThemedWidget()
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget(),
     lastPrefersDarkPanels(::rack::settings::preferDarkPanels),
-    prefersDarkPanelsPtr(&::rack::settings::preferDarkPanels)
+    prefersDarkPanelsPtr(nullptr)
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget");
+
+    this->prefersDarkPanelsPtr = static_cast<const bool *>(&::rack::settings::preferDarkPanels);
+
+    assert(this->prefersDarkPanelsPtr != nullptr);
 }
 
-::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::~ThemedWidget()
+::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::~ThemedWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget");
@@ -71,18 +87,21 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::draw(const ::StoneyDSP::S
 
     // Children
     this->clearChildren();
+
+    this->prefersDarkPanelsPtr = nullptr;
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::step()
 {
-    const bool &prefersDarkPanels = this->getPrefersDarkPanels();
+    const bool &currentPrefersDarkPanels = *this->prefersDarkPanelsPtr;
 
-    if(this->lastPrefersDarkPanels != prefersDarkPanels) {
+    if(this->lastPrefersDarkPanels != currentPrefersDarkPanels) {
         // Dispatch event
         PrefersDarkPanelsChangeEvent ePrefersDarkPanelsChanged;
+        ePrefersDarkPanelsChanged.newPrefersDarkPanels = currentPrefersDarkPanels;
         this->onPrefersDarkPanelsChange(ePrefersDarkPanelsChanged);
         // Update
-        this->lastPrefersDarkPanels = prefersDarkPanels;
+        this->lastPrefersDarkPanels = currentPrefersDarkPanels;
     }
 
     return ::rack::widget::Widget::step();
@@ -90,12 +109,12 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::step()
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs &args)
 {
-    const bool &prefersDarkPanels = this->getPrefersDarkPanels();
+    const bool &prefersDarkPanels = *this->prefersDarkPanelsPtr;
 
     // draw Themed BG
-    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
-    const auto& bgColor = prefersDarkPanels ? bgBlack : bgWhite;
+    const auto& bgDark = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
+    const auto& bgLight = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
+    const auto& bgColor = prefersDarkPanels ? bgDark : bgLight;
     const auto& bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
     const auto& bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
     const auto& size = this->getSize();
@@ -147,7 +166,7 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::getPrefersDa
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget");
 }
 
-::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::~FramebufferWidget()
+::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::~FramebufferWidget() noexcept
 {
     DBG("Destroying StoneyDSP::StoneyVCV::FramebufferWidget::FramebufferWidget");
     assert(!this->parent);
@@ -164,7 +183,7 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::getPrefersDa
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget");
 }
 
-::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::~TransparentWidget()
+::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::~TransparentWidget() noexcept
 {
     DBG("Destroying StoneyDSP::StoneyVCV::TransparentWidget::TransparentWidget");
     assert(!this->parent);

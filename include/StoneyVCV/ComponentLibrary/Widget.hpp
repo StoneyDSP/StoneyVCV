@@ -101,23 +101,48 @@ public:
      * @brief Destroys the `Widget` object.
      *
      */
-    virtual ~Widget();
+    virtual ~Widget() noexcept;
 
     //==========================================================================
 
     /**
      * @brief Advances the `Widget` by one frame.
+     * Calls the superclass's `step()` to recurse to children.
      *
      */
     virtual void step() override;
 
     /**
      * @brief Draws the `Widget` to the NanoVG context.
-     * Calls the superclass's draw(args) to recurse to children.
+     * Calls the superclass's `draw(args)` to recurse to children.
      *
      * @param args
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::DrawArgs &args) override;
+
+    //==========================================================================
+
+    struct PixelRatioChangeEvent : ::rack::widget::Widget::BaseEvent {
+        float newPixelRatio = APP->window->pixelRatio;
+    };
+
+    /**
+     * Called after the `App->window->pixelRatio` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `Widget::step()` method).
+     *
+     * @param e
+     *
+     */
+    virtual void onPixelRatioChange(const PixelRatioChangeEvent& e) {
+        ::StoneyDSP::ignoreUnused(e);
+    };
+
+    /**
+     * @brief
+     *
+     */
+    const float &getPixelRatio() const noexcept;
 
     //==========================================================================
 
@@ -131,7 +156,7 @@ public:
     friend TWidget *::StoneyDSP::StoneyVCV::createWidget(::rack::math::Vec pos);
 
     template <class TWidget>
-    friend TWidget *::rack::createWidgetCentered(::rack::math::Vec pos);
+    friend TWidget *::StoneyDSP::StoneyVCV::createWidgetCentered(::rack::math::Vec pos);
 
     template <class TWidget>
     friend TWidget *::StoneyDSP::StoneyVCV::createWidgetSized(::rack::math::Vec pos, ::rack::math::Vec size);
@@ -144,13 +169,13 @@ protected:
     //==========================================================================
 
     /**
-     * @brief Position relative to parent and size of widget.
+     * @brief Position relative to parent and size of `Widget`.
      *
      */
     ::rack::math::Rect box = ::rack::math::Rect(::rack::math::Vec(), ::rack::math::Vec(INFINITY, INFINITY));
 
     /**
-     * Automatically set when Widget is added as a child to another Widget
+     * Automatically set when `Widget` is added as a child to another `Widget`.
      *
      */
 	::rack::Widget *parent = NULL;
@@ -159,17 +184,32 @@ protected:
 
 	/**
      * Disables rendering but allow stepping.
-     * Use isVisible(), setVisible(), show(), or hide() instead of using this variable directly.
+     * Use `isVisible()`, `setVisible()`, `show()`, or `hide()` instead of using
+     * this variable directly.
 	 *
      */
 	bool visible = true;
 
     /**
-     * If set to true, parent will delete Widget in the next step().
-     * Use requestDelete() instead of using this variable directly.
+     * If set to true, parent will delete Widget in the next `step()`.
+     * Use `requestDelete()` instead of using this variable directly.
      *
 	 */
 	bool requestedDelete = false;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    float lastPixelRatio = {APP->window->pixelRatio};
+
+    /**
+     * @brief
+     *
+     */
+    const float *pixelRatioPtr = NULL;
 
     //==========================================================================
 
@@ -208,27 +248,29 @@ public:
      * @brief Destroys the `ThemedWidget` object.
      *
      */
-    virtual ~ThemedWidget();
+    virtual ~ThemedWidget() noexcept;
 
     //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
+     * Calls the superclass's `step()` to recurse the children.
      *
      */
     virtual void step() override;
 
     /**
      * @brief Draws a themed background color to the widget's NanoVG context.
-     * Calls the superclass's draw(args) to recurse to children.
+     * Calls the superclass's `draw(args)` to recurse to children.
      *
      * @param args
+     *
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs &args) override;
 
     const bool &getPrefersDarkPanels() const noexcept;
 
-//==========================================================================
+    //==========================================================================
 
     /**
      * Occurs after the `prefersDarkPanels` setting is changed.
@@ -236,7 +278,7 @@ public:
 	 *
      */
 	struct PrefersDarkPanelsChangeEvent : ::rack::widget::Widget::BaseEvent {
-        bool newPrefersDarkPanels;
+        bool newPrefersDarkPanels = {::rack::settings::preferDarkPanels};
     };
 
     /**
@@ -271,7 +313,11 @@ private:
 
     //==========================================================================
 
-    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
+    /**
+     * `{&::rack::settings::preferDarkPanels};`
+     *
+     */
+    const bool *prefersDarkPanelsPtr = NULL;
 
     //==========================================================================
 
@@ -296,7 +342,7 @@ public:
 
     FramebufferWidget();
 
-    virtual ~FramebufferWidget();
+    virtual ~FramebufferWidget() noexcept;
 
     //==========================================================================
 
@@ -329,7 +375,7 @@ public:
 
     TransparentWidget();
 
-    virtual ~TransparentWidget();
+    virtual ~TransparentWidget() noexcept;
 
     //==========================================================================
 
