@@ -100,20 +100,24 @@ public:
      * @brief Destroys the `ThemedPortWidgetPanel` object.
      *
      */
-    virtual ~ThemedPortWidgetPanel();
+    virtual ~ThemedPortWidgetPanel() noexcept;
 
     //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
-     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::step()` internally.
+     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::step()`
+     * internally to recurse the children.
      *
      */
     virtual void step() override;
 
     /**
      * @brief Renders to the NanoVG context.
-     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::draw(args)` internally.
+     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::draw(args)`
+     * internally to recurse the children.
+     *
+     * @param args
      *
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::DrawArgs &args) override;
@@ -136,7 +140,10 @@ private:
 
     //==========================================================================
 
-    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
+    /**
+     * `{&::rack::settings::preferDarkPanels}`
+     */
+    const bool *prefersDarkPanelsPtr = NULL;
 
     //==========================================================================
 
@@ -165,7 +172,7 @@ public:
 
     ThemedPortWidget();
 
-    virtual ~ThemedPortWidget();
+    virtual ~ThemedPortWidget() noexcept;
 
     //==========================================================================
 
@@ -182,9 +189,31 @@ public:
 
     //==========================================================================
 
+    struct PixelRatioChangeEvent : ::rack::widget::Widget::BaseEvent {
+        float newPixelRatio = APP->window->pixelRatio;
+    };
+
+    /**
+     * Called after the `App->window->pixelRatio` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `Widget::step()` method).
+     *
+     * @param e
+     *
+     */
+    virtual void onPixelRatioChange(const PixelRatioChangeEvent& e);
+
+    /**
+     * @brief
+     *
+     */
+    const float &getPixelRatio() const noexcept;
+
+    //==========================================================================
+
     bool isOutput;
 
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel* panel;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel* panel = NULL;
 
     //==========================================================================
 
@@ -196,13 +225,31 @@ private:
 
 	::std::shared_ptr<::rack::window::Svg> darkSvg;
 
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget* fb;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget* panelFrameBufferWidget = NULL;
 
     //==========================================================================
 
     bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
 
-    const bool *prefersDarkPanelsPtr = {&::rack::settings::preferDarkPanels};
+    /**
+     * `{&::rack::settings::preferDarkPanels}`
+     *
+     */
+    const bool *prefersDarkPanelsPtr = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    float lastPixelRatio = {APP->window->pixelRatio};
+
+    /**
+     * @brief
+     *
+     */
+    const float *pixelRatioPtr = NULL;
 
     //==========================================================================
 
