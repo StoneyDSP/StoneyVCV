@@ -46,6 +46,20 @@
 #define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
 #endif
 
+// #if defined (STONEYDSP_DEBUG)
+//  #include <iostream>
+//  #define DBG(x, ...) do { x } while (false)
+// #else
+//  #define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
+// #endif
+
+// #if defined (STONEYDSP_DEBUG)
+//  #include <iostream>
+//  #define DBG(x, ...) DEBUG(x, ##__VA_ARGS__)
+// #else
+//  #define DBG(msg, ...) ::StoneyDSP::ignoreUnused(msg, ##__VA_ARGS__)
+// #endif
+
 //==============================================================================
 
 /**
@@ -157,7 +171,6 @@ inline TWidget *createWidget(::rack::math::Vec pos)
 	o->box.pos = pos;
 	return o;
 }
-
 
 /**
  * @brief Creates a `Widget` subclass with its center at a position.
@@ -282,7 +295,7 @@ public: \
     friend TWidget *::StoneyDSP::StoneyVCV::createWidget(::rack::math::Vec pos); \
  \
     template <class TWidget> \
-    friend TWidget *::rack::createWidgetCentered(::rack::math::Vec pos); \
+    friend TWidget *::StoneyDSP::StoneyVCV::createWidgetCentered(::rack::math::Vec pos); \
  \
     template <class TWidget> \
     friend TWidget *::StoneyDSP::StoneyVCV::createWidgetSized(::rack::math::Vec pos, ::rack::math::Vec size); \
