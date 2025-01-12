@@ -76,6 +76,12 @@ namespace ComponentLibrary
 
 //==============================================================================
 
+/**
+ * @brief The `PaneBorderWidget` struct.
+ * Draws 4 lines around the outer edges of the module.
+ * Does not send or respond to events.
+ *
+ */
 struct PanelBorderWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
 {
 
@@ -87,12 +93,26 @@ public:
 
     //==========================================================================
 
+    /**
+     * @brief Constructs a new `PanelBorderWidget` object.
+     *
+     */
     PanelBorderWidget();
 
-    virtual ~PanelBorderWidget();
+    /**
+     * @brief Destroys the `PanelBorderWidget` object.
+     *
+     */
+    virtual ~PanelBorderWidget() noexcept;
 
     //==========================================================================
 
+    /**
+     * @brief Draws a set of lines for spacing to the widget's NanoVG context.
+     *
+     * @param args
+     *
+     */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::DrawArgs &args) override;
 
 private:
@@ -108,7 +128,7 @@ private:
 /**
  * @brief The `PanelLinesWidget` struct.
  * Draws 4 lines around the inner edges of the module.
- * Does not ssend or respond to events.
+ * Does not send or respond to events.
  *
  */
 struct PanelLinesWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
@@ -122,9 +142,17 @@ public:
 
     //==========================================================================
 
+    /**
+     * @brief Constructs a new `PanelLinesWidget` object.
+     *
+     */
     PanelLinesWidget();
 
-    virtual ~PanelLinesWidget();
+    /**
+     * @brief Destroys the `PanelLinesWidget` object.
+     *
+     */
+    virtual ~PanelLinesWidget() noexcept;
 
     //==========================================================================
 
@@ -132,6 +160,7 @@ public:
      * @brief Draws a set of lines for spacing to the widget's NanoVG context.
      *
      * @param args
+     *
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::DrawArgs &args) override;
 
@@ -170,19 +199,20 @@ public:
      * @brief Destroys the `ThemedPanelWidget` object.
      *
      */
-    virtual ~ThemedPanelWidget();
+    virtual ~ThemedPanelWidget() noexcept;
 
     //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
+     * Calls the superclass's `step()` to recurse to children.
      *
      */
     virtual void step() override;
 
     /**
      * @brief Draws a themed background to the widget's NanoVG context.
-     * Calls the superclass's draw(args) to recurse to children.
+     * Calls the superclass's `draw(args)` to recurse to children.
      *
      * @param args
      */
@@ -204,13 +234,13 @@ private:
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *panelLines = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget *panelBorder = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget *panelBorder = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *panelLines = NULL;
 
     //==========================================================================
 
