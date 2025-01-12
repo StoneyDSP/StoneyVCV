@@ -79,7 +79,7 @@ template <typename T>
 template <typename T>
 void ::StoneyDSP::StoneyVCV::VCA::VCAEngine<T>::processSample(T* sample)
 {
-    *sample *= this->getGain();
+    *sample *= this->gain;
 }
 
 template <typename T>
@@ -196,21 +196,27 @@ template struct ::StoneyDSP::StoneyVCV::VCA::VCAEngine<float>;
     for(auto &lightGain : this->lightGains) {
         lightGain = (0.0F);
     }
+
+    this->vcaInputPtr = nullptr;
+    this->cvInputPtr = nullptr;
+    this->gainParamPtr = nullptr;
+    this->vcaOutputPtr = nullptr;
+    this->blinkLightPtr = nullptr;
 }
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVCV::VCA::VCAModule::ProcessArgs &args)
 {
+    auto &vca_input = *this->vcaInputPtr;
+    auto &cv_input = *this->cvInputPtr;
+    auto &gain_param = *this->gainParamPtr;
+    auto &vca_output = *this->vcaOutputPtr;
+    auto &blink_light = *this->blinkLightPtr;
+    // auto &blink_light = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 0];
+    // auto &blink_light_r = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 1];
+
     // if (!vca_input.isConnected() && !vca_output.isConnected() && !cv_input.isConnected()) {
     //     return;
     // }
-
-    auto &vca_input = this->getVcaInput();
-    auto &cv_input = this->getCvInput();
-    auto &gain_param = this->getGainParam();
-    auto &vca_output = this->getVcaOutput();
-    auto &blink_light = this->getBlinkLight();
-    // auto &blink_light = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 0];
-    // auto &blink_light_r = this->lights[::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT + 1];
 
     // Panel-based params are monophonic by nature,
     // so don't iterate over them
@@ -219,14 +225,19 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     // Get desired number of channels from a "primary" input.
 	// If this input is unpatched, getChannels() returns 0, but we should
     // still generate 1 channel of output.
-    ::std::size_t numChannels = this->getMinNumChannels();
+    // (allocation)
+    ::std::size_t numChannels = ::std::max<::std::size_t>({
+        1U,
+        static_cast<unsigned int>(vca_input.getChannels()),
+        static_cast<unsigned int>(cv_input.getChannels())
+    });
 
     // Poly process block
     for (::std::size_t channel = 0U; channel < numChannels; channel++ /** channel += 4 */ ) {
 
         // const auto& cchannel = channel / 4;
 
-        // Get input or 0v
+        // Get input or 0v (allocation)
         auto input = vca_input.getNormalPolyVoltage(vFloor, channel);
 
         // Get cv or 10v as 0..1
@@ -267,12 +278,12 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
 
 ::std::size_t StoneyDSP::StoneyVCV::VCA::VCAModule::getVcaInputNumChannels() noexcept
 {
-    return static_cast<unsigned>(this->getVcaInput().getChannels());
+    return static_cast<unsigned>(this->vcaInputPtr->getChannels());
 }
 
 ::std::size_t StoneyDSP::StoneyVCV::VCA::VCAModule::getCvInputNumChannels() noexcept
 {
-    return static_cast<unsigned>(this->getCvInput().getChannels());
+    return static_cast<unsigned>(this->cvInputPtr->getChannels());
 }
 
 ::std::size_t StoneyDSP::StoneyVCV::VCA::VCAModule::getMinNumChannels() noexcept
@@ -349,33 +360,38 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
             (::StoneyDSP::StoneyVCV::VCA::VCADimensions.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
         ),
     },
-    screws{
-        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[0]),
-        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[1]),
-        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[2]),
-        ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[3])
-    },
-    vcaWidgetFrameBuffer(
-        ::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(
-            ::rack::math::Vec(0.0F, 0.0F)
-        )
-    )
+    screws{nullptr},
+    vcaWidgetFrameBuffer(nullptr)
 {
     // Assertions
     DBG("Constructing StoneyVCV::VCA::VCAWidget");
-    assert(this->screws[0] != nullptr);
-    assert(this->screws[1] != nullptr);
-    assert(this->screws[2] != nullptr);
-    assert(this->screws[3] != nullptr);
-    assert(this->vcaWidgetFrameBuffer != nullptr);
+
+    this->vcaWidgetFrameBuffer = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *>(
+        ::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(
+            ::rack::math::Vec(0.0F, 0.0F)
+        )
+    );
+    this->screws = {
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[0])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[1])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[2])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[3]))
+    };
 
     this->setSize(::StoneyDSP::StoneyVCV::VCA::VCADimensions);
+
     this->vcaWidgetFrameBuffer->setSize(this->getSize());
     this->addChildBottom(this->vcaWidgetFrameBuffer);
 
     for(const auto& screw : this->screws) {
         this->vcaWidgetFrameBuffer->addChild(screw);
     }
+
+    assert(this->screws[0] != nullptr);
+    assert(this->screws[1] != nullptr);
+    assert(this->screws[2] != nullptr);
+    assert(this->screws[3] != nullptr);
+    assert(this->vcaWidgetFrameBuffer != nullptr);
 
     assert(static_cast<unsigned int>(this->getSize().x) == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
     assert(static_cast<unsigned int>(this->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
@@ -395,6 +411,12 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     // }
     this->vcaWidgetFrameBuffer->clearChildren();
     this->clearChildren();
+
+    this->screws[0] = nullptr;
+    this->screws[1] = nullptr;
+    this->screws[2] = nullptr;
+    this->screws[3] = nullptr;
+    this->vcaWidgetFrameBuffer = nullptr;
 }
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::step()
@@ -424,41 +446,11 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
 ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::VCAModuleWidget(::StoneyDSP::StoneyVCV::VCA::VCAModule* module)
 :   ::rack::app::ModuleWidget(),
     // Panel
-    panel(
-        ::rack::createPanel<::rack::app::ThemedSvgPanel>(
-            // Light-mode panel
-            ::rack::asset::plugin(
-                ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/VCA-light.svg"
-            ),
-            // Dark-mode panel
-            ::rack::asset::plugin(
-                ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/VCA-dark.svg"
-            )
-        )
-    ),
-    vcaWidget(
-        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(
-            ::rack::math::Vec(0.0F, 0.0F),
-            ::StoneyDSP::StoneyVCV::VCA::VCADimensions
-        )
-    ),
-    vcaModuleWidgetFrameBuffer(
-        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(
-            ::rack::math::Vec(0.0F, 0.0F),
-            ::StoneyDSP::StoneyVCV::VCA::VCADimensions
-        )
-    ),
+    panel(nullptr),
+    vcaWidget(nullptr),
+    vcaModuleWidgetFrameBuffer(nullptr),
     // Params
-    gainKnob(
-        ::rack::createParamCentered<::rack::componentlibrary::RoundLargeBlackKnob>(
-            ::rack::math::Vec(
-                (::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F),
-                (0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 15.0F))
-            ),
-            module,
-            ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM
-        )
-    ),
+    gainKnob(nullptr),
     // gainSlider(
     //     ::rack::createLightParamCentered<::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>>(
     //         ::rack::math::Vec(
@@ -471,7 +463,63 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
     //     )
     // ),
     // Ports
-    portCvInput(
+    portCvInput(nullptr),
+    portVcaInput(nullptr),
+    portVcaOutput(nullptr),
+    // Lights
+    // lightVca(
+    //     ::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight>>(
+    //         ::rack::math::Vec(
+    //             size.x * 0.5F,
+    //             0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 10.0F)
+    //         ),
+    //         module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT
+    //     )
+    // ),
+    lightVca(nullptr),
+    lastPrefersDarkPanels(::rack::settings::preferDarkPanels),
+    prefersDarkPanelsPtr(nullptr),
+    lastPixelRatio(APP->window->pixelRatio),
+    pixelRatioPtr(nullptr)
+{
+    // Assertions
+    DBG("Constructing StoneyVCV::VCA::VCAModuleWidget");
+
+    this->panel = dynamic_cast<::rack::app::ThemedSvgPanel *>(
+        ::rack::createPanel<::rack::app::ThemedSvgPanel>(
+            // Light-mode panel
+            ::rack::asset::plugin(
+                ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/VCA-light.svg"
+            ),
+            // Dark-mode panel
+            ::rack::asset::plugin(
+                ::StoneyDSP::StoneyVCV::Plugin::pluginInstance, "res/VCA-dark.svg"
+            )
+        )
+    );
+    this->vcaWidget = dynamic_cast<::StoneyDSP::StoneyVCV::VCA::VCAWidget *>(
+        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(
+            ::rack::math::Vec(0.0F, 0.0F),
+            ::StoneyDSP::StoneyVCV::VCA::VCADimensions
+        )
+    );
+    this->vcaModuleWidgetFrameBuffer = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *>(
+        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(
+            ::rack::math::Vec(0.0F, 0.0F),
+            ::StoneyDSP::StoneyVCV::VCA::VCADimensions
+        )
+    );
+    this->gainKnob = dynamic_cast<::rack::componentlibrary::RoundLargeBlackKnob *>(
+        ::rack::createParamCentered<::rack::componentlibrary::RoundLargeBlackKnob>(
+            ::rack::math::Vec(
+                (::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F),
+                (0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 15.0F))
+            ),
+            module,
+            ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxParams::GAIN_PARAM
+        )
+    );
+    this->portCvInput = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *>(
         ::StoneyDSP::StoneyVCV::createInputCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget>(
             ::rack::math::Vec(
                 ::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F,
@@ -480,8 +528,8 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
             module,
             ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::CV_INPUT
         )
-    ),
-    portVcaInput(
+    );
+    this->portVcaInput = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *>(
         ::StoneyDSP::StoneyVCV::createInputCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget>(
             ::rack::math::Vec(
                 ::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F,
@@ -490,8 +538,8 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
             module,
             ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxInputs::VCA_INPUT
         )
-    ),
-    portVcaOutput(
+    );
+    this->portVcaOutput = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *>(
         ::StoneyDSP::StoneyVCV::createOutputCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget>(
             ::rack::math::Vec(
                 ::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F,
@@ -503,18 +551,8 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
             module,
             ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxOutputs::VCA_OUTPUT
         )
-    ),
-    // Lights
-    // lightVca(
-    //     ::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight>>(
-    //         ::rack::math::Vec(
-    //             size.x * 0.5F,
-    //             0.0F + ((::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F) * 10.0F)
-    //         ),
-    //         module, ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT
-    //     )
-    // ),
-    lightVca(
+    );
+    this->lightVca = dynamic_cast<::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *>(
         ::rack::createLightCentered<::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight>>(
             ::rack::math::Vec(
                 ::StoneyDSP::StoneyVCV::VCA::VCADimensions.x * 0.5F,
@@ -523,16 +561,10 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
             module,
             ::StoneyDSP::StoneyVCV::VCA::VCAModule::IdxLights::BLINK_LIGHT
         )
-    ),
-    lastPrefersDarkPanels(::rack::settings::preferDarkPanels),
-    prefersDarkPanelsPtr(&::rack::settings::preferDarkPanels)
-{
-    // Assertions
-    DBG("Constructing StoneyVCV::VCA::VCAModuleWidget");
-    // assert(module != nullptr);
-    assert(this->vcaWidget != nullptr);
-    assert(this->vcaModuleWidgetFrameBuffer != nullptr);
-    assert(this->panel != nullptr);
+    );
+    this->prefersDarkPanelsPtr = static_cast<const bool *>(&::rack::settings::preferDarkPanels);
+    this->pixelRatioPtr = static_cast<const float *>(&APP->window->pixelRatio);
+
 
     this->portVcaInput->panel->labelText = "IN";
     this->portCvInput->panel->labelText = "CV";
@@ -541,7 +573,7 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
     this->setModule(module);
     this->setSize(::StoneyDSP::StoneyVCV::VCA::VCADimensions);
 
-    // Panel (calls addCildBottom)
+    // Panel (calls addChildBottom)
     this->setPanel(this->panel);
     this->getPanel()->setSize(this->getSize());
 
@@ -550,6 +582,15 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
 
     // Widget
     this->vcaModuleWidgetFrameBuffer->addChildBottom(this->vcaWidget);
+
+    if (APP->window->pixelRatio < 2.0F) {
+		// Small details draw poorly at low DPI,
+        // so oversample when drawing to the framebuffer
+		this->vcaModuleWidgetFrameBuffer->oversample = 2.0F;
+	}
+	else {
+		this->vcaModuleWidgetFrameBuffer->oversample = 1.0F;
+	}
 
     // Params
     this->addParam(this->gainKnob);
@@ -561,6 +602,18 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
     this->addOutput(this->portVcaOutput);
     // Lights
     this->addChild(this->lightVca);
+
+    // assert(module != nullptr);
+    assert(this->panel != nullptr);
+    assert(this->vcaWidget != nullptr);
+    assert(this->vcaModuleWidgetFrameBuffer != nullptr);
+    assert(this->gainKnob != nullptr);
+    assert(this->portCvInput != nullptr);
+    assert(this->portVcaInput != nullptr);
+    assert(this->portVcaOutput != nullptr);
+    assert(this->lightVca != nullptr);
+    assert(this->prefersDarkPanelsPtr != nullptr);
+    assert(this->pixelRatioPtr != nullptr);
 
     assert(static_cast<unsigned int>(this->getSize().x) == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
     assert(static_cast<unsigned int>(this->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
@@ -579,20 +632,23 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
     this->vcaModuleWidgetFrameBuffer->clearChildren();
     this->clearChildren();
     this->setModule(NULL);
+
+    this->panel = nullptr;
+    this->vcaWidget = nullptr;
+    this->vcaModuleWidgetFrameBuffer = nullptr;
+    this->gainKnob = nullptr;
+    this->portCvInput = nullptr;
+    this->portVcaInput = nullptr;
+    this->portVcaOutput = nullptr;
+    this->lightVca = nullptr;
+    this->prefersDarkPanelsPtr = nullptr;
+    this->pixelRatioPtr = nullptr;
 }
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::step()
 {
-    const bool &currentPrefersDarkPanels = this->getPrefersDarkPanels();
-
-    // if (APP->window->pixelRatio < 2.0F) {
-	// 	// Small details draw poorly at low DPI,
-    //     // so oversample when drawing to the framebuffer
-	// 	this->vcaModuleWidgetFrameBuffer->oversample = 2.0F;
-	// }
-	// else {
-	// 	this->vcaModuleWidgetFrameBuffer->oversample = 1.0F;
-	// }
+    const bool &currentPrefersDarkPanels = *this->prefersDarkPanelsPtr;
+    const float &currentPixelRatio = *this->pixelRatioPtr;
 
     if(this->lastPrefersDarkPanels != currentPrefersDarkPanels) {
         // Dispatch event
@@ -603,17 +659,21 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::step()
         this->lastPrefersDarkPanels = currentPrefersDarkPanels;
     }
 
+    if(this->lastPixelRatio != currentPixelRatio) {
+        // Dispatch event
+        PixelRatioChangeEvent ePixelRatioChanged;
+        ePixelRatioChanged.newPixelRatio = currentPixelRatio;
+        this->onPixelRatioChange(ePixelRatioChanged);
+        // Update
+        this->lastPixelRatio = currentPixelRatio;
+    }
+
     return ::rack::app::ModuleWidget::step();
 }
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::draw(const ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::DrawArgs &args)
 {
     return ::rack::app::ModuleWidget::draw(args);
-}
-
-const bool &::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::getPrefersDarkPanels() const noexcept
-{
-    return *this->prefersDarkPanelsPtr;
 }
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent & e)
@@ -623,6 +683,37 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::onPrefersDarkPanelsChange(con
         return;
 
     this->vcaModuleWidgetFrameBuffer->setDirty();
+}
+
+const bool &::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::getPrefersDarkPanels() const noexcept
+{
+    return *this->prefersDarkPanelsPtr;
+}
+
+void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::onPixelRatioChange(const PixelRatioChangeEvent & e)
+{
+    DBG("pixelRatioChanged event");
+    DBG(::rack::string::f("%f", lastPixelRatio));
+    DBG(::rack::string::f("%f", e.newPixelRatio));
+    // Validate
+    if(this->lastPixelRatio == e.newPixelRatio)
+        return;
+
+    if (APP->window->pixelRatio < 2.0F) {
+		// Small details draw poorly at low DPI,
+        // so oversample when drawing to the framebuffer
+		this->vcaModuleWidgetFrameBuffer->oversample = 2.0F;
+	}
+	else {
+		this->vcaModuleWidgetFrameBuffer->oversample = 1.0F;
+	}
+
+    this->vcaModuleWidgetFrameBuffer->setDirty();
+}
+
+const float &StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::getPixelRatio() const noexcept
+{
+    return *this->pixelRatioPtr;
 }
 
 //==============================================================================
