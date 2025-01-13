@@ -95,3 +95,19 @@ macro(stoneyvcv_update_version_file)
     set(STONEYVCV_VERSION_FILE "${STONEYVCV_VERSION_FILE}" CACHE INTERNAL "StoneyVCV current version file." FORCE)
 
 endmacro()
+
+macro(stoneyvcv_git_module_versions MODULE)
+    set(${MODULE}_VERSION_MAJOR "${STONEYVCV_VERSION_MAJOR}")
+    set(${MODULE}_VERSION_MINOR "${STONEYVCV_VERSION_MINOR}")
+    execute_process(
+        COMMAND "${GIT_EXECUTABLE}" rev-list origin/module/${MODULE}
+        COMMAND wc -l
+        OUTPUT_VARIABLE ${MODULE}_VERSION_PATCH
+        ERROR_VARIABLE _${MODULE}_VERSION_PATCH
+    )
+    if(${_${MODULE}_VERSION_PATCH})
+        message(WARNING "git: could not find a corresponding module/${MODULE} branch for module ${MODULE}")
+    endif()
+    string(STRIP "${${MODULE}_VERSION_PATCH}" ${MODULE}_VERSION_PATCH)
+    set(${MODULE}_VERSION "${${MODULE}_VERSION_MAJOR}.${${MODULE}_VERSION_MINOR}.${${MODULE}_VERSION_PATCH}")
+endmacro()
