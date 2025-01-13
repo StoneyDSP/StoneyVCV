@@ -112,11 +112,11 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(const ::Stoney
     const bool &prefersDarkPanels = *this->prefersDarkPanelsPtr;
 
     // draw Themed BG
-    const auto& bgDark = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgLight = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
+    const auto& bgDark = ::StoneyDSP::StoneyVCV::Panels::bgDark;
+    const auto& bgLight = ::StoneyDSP::StoneyVCV::Panels::bgLight;
     const auto& bgColor = prefersDarkPanels ? bgDark : bgLight;
-    const auto& bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    const auto& bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
+    const auto& bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0;
+    const auto& bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1;
     const auto& size = this->getSize();
 
     // draw Themed BG

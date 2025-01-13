@@ -61,15 +61,15 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::draw(const
     const bool &prefersDarkPanels = *this->prefersDarkPanelsPtr;
     const auto& size = this->getSize();
 
-    const auto& bgBlack = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortBlack : ::StoneyDSP::StoneyVCV::Panels::bgPortWhite;
-    const auto& bgWhite = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortWhite : ::StoneyDSP::StoneyVCV::Panels::bgPortBlack;
-    const auto& bgColor = prefersDarkPanels ? bgBlack : bgWhite;
-    // const auto& bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    // const auto& bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
-    // const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
-    const auto& textWhite = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortBlack : ::StoneyDSP::StoneyVCV::Panels::bgPortWhite;
-    const auto& textBlack = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortWhite : ::StoneyDSP::StoneyVCV::Panels::bgPortBlack;
-    const auto& textColor = prefersDarkPanels ? textBlack : textWhite;
+    const auto& bgDark = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortDark : ::StoneyDSP::StoneyVCV::Panels::bgPortLight;
+    const auto& bgLight = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortLight : ::StoneyDSP::StoneyVCV::Panels::bgPortDark;
+    const auto& bgColor = prefersDarkPanels ? bgDark : bgLight;
+    const auto& bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0;
+    const auto& bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1;
+    const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
+    const auto& textLight = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortDark : ::StoneyDSP::StoneyVCV::Panels::bgPortLight;
+    const auto& textDark = this->isOutput ? ::StoneyDSP::StoneyVCV::Panels::bgPortLight : ::StoneyDSP::StoneyVCV::Panels::bgPortDark;
+    const auto& textColor = prefersDarkPanels ? textDark : textLight;
 
     // Load font from cache
 	::std::shared_ptr<::rack::window::Font> font = APP->window->loadFont(
@@ -91,38 +91,38 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::draw(const
         ::nvgFillColor(args.vg, bgColor);
         ::nvgFill(args.vg);
 
-        // // Draw themed BG gradient
-        // const auto& bgGradient = ::nvgLinearGradient(args.vg,
-        //     /** x */size.x * 0.5,
-        //     /** Y */0.0F,
-        //     /** w */size.x * 0.5,
-        //     /** h */size.y,
-        //     /** s1 */bgGradientS0,
-        //     /** s2 */bgGradientS1
-        // );
-        // ::nvgBeginPath(args.vg);
-        // ::nvgRoundedRect(args.vg,
-        //     /** x  */0.0F,
-        //     /** y  */0.0F,
-        //     /** w  */size.x,
-        //     /** h  */size.y,
-        //     /** rx */2.83465F
-        // );
-        // ::nvgFillPaint(args.vg, bgGradient);
-        // ::nvgFill(args.vg);
+        // Draw themed BG gradient
+        const auto& bgGradient = ::nvgLinearGradient(args.vg,
+            /** x */size.x * 0.5,
+            /** Y */0.0F,
+            /** w */size.x * 0.5,
+            /** h */size.y,
+            /** s1 */bgGradientS0,
+            /** s2 */bgGradientS1
+        );
+        ::nvgBeginPath(args.vg);
+        ::nvgRoundedRect(args.vg,
+            /** x  */0.0F,
+            /** y  */0.0F,
+            /** w  */size.x,
+            /** h  */size.y,
+            /** rx */2.83465F
+        );
+        ::nvgFillPaint(args.vg, bgGradient);
+        ::nvgFill(args.vg);
 
-        // // Draw border
-        // ::nvgBeginPath(args.vg);
-        // ::nvgRoundedRect(args.vg,
-        //     /** x  */0.0F,
-        //     /** y  */0.0F,
-        //     /** w  */size.x,
-        //     /** h  */size.y,
-        //     /** rx */2.83465F
-        // );
-        // ::nvgStrokeColor(args.vg, borderColor);
-        // ::nvgStrokeWidth(args.vg, 1.0F);
-        // ::nvgStroke(args.vg);
+        // Draw border
+        ::nvgBeginPath(args.vg);
+        ::nvgRoundedRect(args.vg,
+            /** x  */0.0F,
+            /** y  */0.0F,
+            /** w  */size.x,
+            /** h  */size.y,
+            /** rx */2.83465F
+        );
+        ::nvgStrokeColor(args.vg, borderColor);
+        ::nvgStrokeWidth(args.vg, 1.0F);
+        ::nvgStroke(args.vg);
     }
 
     // Don't draw text if font failed to load
@@ -212,7 +212,7 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::get
     this->panelFrameBufferWidget->addChildBottom(this->panel);
 
     // Oversample (for panel text)
-    if (APP->window->pixelRatio < 2.0F) {
+    if (static_cast<unsigned int>(APP->window->pixelRatio) < static_cast<unsigned int>(2.0F)) {
 		// Small details draw poorly at low DPI,
         // so oversample when drawing to the framebuffer
 		this->panelFrameBufferWidget->oversample = 2.0F;
@@ -228,7 +228,7 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::get
     assert(this->pixelRatioPtr != nullptr);
 }
 
-::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::~ThemedPortWidget()
+::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::~ThemedPortWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget");
@@ -285,14 +285,12 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::getPrefe
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::onPixelRatioChange(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::PixelRatioChangeEvent & e)
 {
-    DBG("pixelRatioChanged event");
-    DBG(::rack::string::f("%f", lastPixelRatio));
-    DBG(::rack::string::f("%f", e.newPixelRatio));
     // Validate
     if(this->lastPixelRatio == e.newPixelRatio)
         return;
 
-    if (APP->window->pixelRatio < 2.0F) {
+    // Oversample (for panel text)
+    if (static_cast<unsigned int>(APP->window->pixelRatio) < static_cast<unsigned int>(2.0F)) {
 		// Small details draw poorly at low DPI,
         // so oversample when drawing to the framebuffer
 		this->panelFrameBufferWidget->oversample = 2.0F;

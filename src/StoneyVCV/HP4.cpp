@@ -21,6 +21,8 @@
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
 
+//==============================================================================
+
 #include <array>
 
 //==============================================================================
@@ -71,7 +73,7 @@ static const ::rack::math::Vec HP4Dimensions = (
     );
 }
 
-::StoneyDSP::StoneyVCV::HP4::HP4Module::~HP4Module()
+::StoneyDSP::StoneyVCV::HP4::HP4Module::~HP4Module() noexcept
 {
     DBG("Destroying StoneyVCV::HP4::HP4Module");
 }
@@ -100,7 +102,7 @@ static const ::rack::math::Vec HP4Dimensions = (
     this->hp4WidgetFrameBuffer->addChild(this->panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::HP4::HP4Widget::~HP4Widget()
+::StoneyDSP::StoneyVCV::HP4::HP4Widget::~HP4Widget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP4::HP4Widget");
@@ -127,11 +129,11 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
     const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
     const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
     const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
-    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
-    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
+    const auto& bgDark = ::StoneyDSP::StoneyVCV::Panels::bgDark;
+    const auto& bgLight = ::StoneyDSP::StoneyVCV::Panels::bgLight;
+    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgDark : bgLight;
+    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0;
+    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1;
 
     const auto& size = this->getSize();
 

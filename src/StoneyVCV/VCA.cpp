@@ -583,15 +583,6 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
     // Widget
     this->vcaModuleWidgetFrameBuffer->addChildBottom(this->vcaWidget);
 
-    if (APP->window->pixelRatio < 2.0F) {
-		// Small details draw poorly at low DPI,
-        // so oversample when drawing to the framebuffer
-		this->vcaModuleWidgetFrameBuffer->oversample = 2.0F;
-	}
-	else {
-		this->vcaModuleWidgetFrameBuffer->oversample = 1.0F;
-	}
-
     // Params
     this->addParam(this->gainKnob);
     // this->addParam(this->gainSlider);
@@ -602,6 +593,16 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
     this->addOutput(this->portVcaOutput);
     // Lights
     this->addChild(this->lightVca);
+
+    // Oversample
+    if (static_cast<unsigned int>(APP->window->pixelRatio) < static_cast<unsigned int>(2.0F)) {
+		// Small details draw poorly at low DPI,
+        // so oversample when drawing to the framebuffer
+		this->vcaModuleWidgetFrameBuffer->oversample = 2.0F;
+	}
+	else {
+		this->vcaModuleWidgetFrameBuffer->oversample = 1.0F;
+	}
 
     // assert(module != nullptr);
     assert(this->panel != nullptr);
@@ -692,14 +693,12 @@ const bool &::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::getPrefersDarkPanels()
 
 void ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::onPixelRatioChange(const PixelRatioChangeEvent & e)
 {
-    DBG("pixelRatioChanged event");
-    DBG(::rack::string::f("%f", lastPixelRatio));
-    DBG(::rack::string::f("%f", e.newPixelRatio));
     // Validate
     if(this->lastPixelRatio == e.newPixelRatio)
         return;
 
-    if (APP->window->pixelRatio < 2.0F) {
+    // Oversample
+    if (static_cast<unsigned int>(APP->window->pixelRatio) < static_cast<unsigned int>(2.0F)) {
 		// Small details draw poorly at low DPI,
         // so oversample when drawing to the framebuffer
 		this->vcaModuleWidgetFrameBuffer->oversample = 2.0F;

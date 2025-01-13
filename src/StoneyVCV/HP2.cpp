@@ -101,7 +101,7 @@ static const ::rack::math::Vec HP2Dimensions = (
     this->hp2WidgetFrameBuffer->addChild(this->panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::HP2::HP2Widget::~HP2Widget()
+::StoneyDSP::StoneyVCV::HP2::HP2Widget::~HP2Widget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP2::HP2Widget");
@@ -128,11 +128,11 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::
     const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
     const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
     const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
-    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
-    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
+    const auto& bgDark = ::StoneyDSP::StoneyVCV::Panels::bgDark;
+    const auto& bgLight = ::StoneyDSP::StoneyVCV::Panels::bgLight;
+    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgDark : bgLight;
+    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0;
+    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1;
 
     const auto& size = this->getSize();
 
@@ -277,7 +277,7 @@ void ::StoneyDSP::StoneyVCV::HP2::HP2Widget::draw(const ::StoneyDSP::StoneyVCV::
 
 }
 
-::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::~HP2ModuleWidget()
+::StoneyDSP::StoneyVCV::HP2::HP2ModuleWidget::~HP2ModuleWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP2::HP2ModuleWidget");
