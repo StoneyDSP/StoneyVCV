@@ -140,6 +140,7 @@ if(STONEYVCV_BUILD_COMPONENTLIBRARY)
     configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp")
     configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp")
     configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp")
+    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp")
     target_sources(ComponentLibrary
         PUBLIC
         FILE_SET stoneyvcv_COMPONENTLIBRARY_PUBLIC_HEADERS
@@ -156,6 +157,8 @@ if(STONEYVCV_BUILD_COMPONENTLIBRARY)
             $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp>
             $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp>
             $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp>
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp>
+            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp>
     )
     target_sources(ComponentLibrary
         PRIVATE
@@ -234,26 +237,6 @@ if(STONEYVCV_BUILD_PLUGIN)
         PUBLIC
             "-DSTONEYVCV_BUILD_PLUGIN=1"
     )
-
-    # # Generate dependency files alongside the object files
-    # target_compile_options(plugin PUBLIC "-MMD" "-MP")
-    # # Debugger symbols. These are removed with `strip`.
-    # target_compile_options(plugin PUBLIC "-g")
-    # # Optimization
-    # target_compile_options(plugin PUBLIC "-O3" "-funsafe-math-optimizations" "-fno-omit-frame-pointer")
-    # # Warnings
-    # target_compile_options(plugin PUBLIC "-Wall" "-Wextra" "-Wno-unused-parameter")
-    # if(UNIX)
-    #     if(APPLE)
-    #         target_compile_options(plugin PUBLIC "-stdlib=libc++")
-    #     else() # LINUX
-    #         target_compile_options(plugin PUBLIC "-Wsuggest-override")
-    #     endif()
-    # endif()
-    # if(WIN32)
-    #     target_compile_definitions(plugin PUBLIC "-D_USE_MATH_DEFINES")
-    #     target_compile_options(plugin PUBLIC "-municode" "-Wsuggest-override")
-    # endif()
 
     if(STONEYVCV_BUILD_MODULES)
         target_compile_definitions(plugin

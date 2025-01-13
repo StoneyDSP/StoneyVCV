@@ -131,7 +131,27 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget(),
     fb(nullptr),
     panelBorder(nullptr),
-    panelLines(nullptr)
+    panelLines(nullptr),
+    // Screws
+    screwsPositions{
+        ::rack::math::Vec( // top-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+        ),
+        ::rack::math::Vec( // top-right
+            (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+        ),
+        ::rack::math::Vec( // bottom-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
+        ),
+        ::rack::math::Vec( // bottom-right
+            (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
+        ),
+    },
+    screws{nullptr}
 {
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget");
 
@@ -153,11 +173,12 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
             this->getSize()
         )
     );
-
-    // Assertions
-    assert(this->fb != nullptr);
-    assert(this->panelBorder != nullptr);
-    assert(this->panelLines != nullptr);
+    this->screws = {
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[0])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[1])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[2])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[3]))
+    };
 
     // Framebuffer
     this->fb->setSize(this->getSize());
@@ -170,6 +191,20 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
     // Lines
     this->panelLines->setSize(this->getSize());
     this->fb->addChild(this->panelLines);
+
+    // Screws
+    for(const auto& screw : this->screws) {
+        this->fb->addChild(screw);
+    }
+
+    // Assertions
+    assert(this->fb != nullptr);
+    assert(this->panelBorder != nullptr);
+    assert(this->panelLines != nullptr);
+    assert(this->screws[0] != nullptr);
+    assert(this->screws[1] != nullptr);
+    assert(this->screws[2] != nullptr);
+    assert(this->screws[3] != nullptr);
 }
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::~ThemedPanelWidget() noexcept
@@ -179,13 +214,18 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
     assert(!this->parent);
 
     // Children
-    // this->panelBorder->clearChildren();
-    // this->fb->clearChildren();
+    // for(const auto& screw : this->screws) {
+    //     screw->clearChildren();
+    // }
     this->clearChildren();
 
+    this->fb = nullptr;
     this->panelBorder = nullptr;
     this->panelLines = nullptr;
-    this->fb = nullptr;
+    this->screws[0] = nullptr;
+    this->screws[1] = nullptr;
+    this->screws[2] = nullptr;
+    this->screws[3] = nullptr;
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::step()
@@ -202,6 +242,22 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::step()
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::DrawArgs &args)
 {
     return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(args);
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent & e)
+{
+    // Validate
+    if(this->lastPrefersDarkPanels == e.newPrefersDarkPanels)
+        return;
+
+    // Update
+    this->fb->setDirty();
+
+    // Opaque behaviour p.1
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::onPrefersDarkPanelsChange(e);
+
+    // Opaque behaviour p.2
+    return e.stopPropagating();
 }
 
 //==============================================================================

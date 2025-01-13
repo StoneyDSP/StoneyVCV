@@ -220,7 +220,17 @@ public:
 
     //==========================================================================
 
-private:
+    /**
+     * Called after the `prefersDarkPanels` setting is changed.
+     *
+     * @param e
+     *
+     */
+	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e) override;
+
+    //==========================================================================
+
+protected:
 
     //==========================================================================
 
@@ -229,6 +239,8 @@ private:
      *
      */
     ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *fb = NULL;
+
+    //==========================================================================
 
     /**
      * @brief
@@ -241,6 +253,24 @@ private:
      *
      */
     ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *panelLines = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::rack::math::Vec, 4> screwsPositions = { ::rack::math::Vec() };
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws = { NULL };
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 

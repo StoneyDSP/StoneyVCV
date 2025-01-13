@@ -39,6 +39,7 @@
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
 #include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/RoundKnob.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/plugin.hpp>
 
@@ -339,35 +340,7 @@ public:
 
     //==========================================================================
 
-    /**
-     * Called after the `prefersDarkPanels` setting is changed.
-     *
-     * @param e
-     *
-     */
-	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e) override;
-
 private:
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    ::std::array<::rack::math::Vec, 4> screwsPositions = { ::rack::math::Vec() };
-
-    /**
-     * @brief
-     *
-     */
-    ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws = { NULL };
-
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *vcaWidgetFrameBuffer = NULL;
 
     //==========================================================================
 
@@ -500,7 +473,7 @@ private:
      * @brief
      *
      */
-    ::rack::componentlibrary::RoundLargeBlackKnob *gainKnob = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundBlackKnob *gainKnob = NULL;
 
     // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider = NULL;
 
