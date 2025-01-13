@@ -1,10 +1,6 @@
 /*******************************************************************************
  * @file test/StoneyVCV/VCA.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 2.0.2
- * @date 2024-11-11
- *
  * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
@@ -89,10 +85,10 @@ TEST_CASE( "VCA", "[VCA]" ) {
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::VCA::VCAModule* test_vcaModule = new ::StoneyDSP::StoneyVCV::VCA::VCAModule;
-            REQUIRE( test_vcaModule->getNumParams() == spec.get()->NUM_PARAMS );
-            REQUIRE( test_vcaModule->getNumInputs() == spec.get()->NUM_INPUTS );
-            REQUIRE( test_vcaModule->getNumOutputs() == spec.get()->NUM_OUTPUTS );
-            REQUIRE( test_vcaModule->getNumLights() == spec.get()->NUM_LIGHTS );
+            REQUIRE( test_vcaModule->getNumParams() == static_cast<int>(spec.get()->NUM_PARAMS) );
+            REQUIRE( test_vcaModule->getNumInputs() == static_cast<int>(spec.get()->NUM_INPUTS) );
+            REQUIRE( test_vcaModule->getNumOutputs() == static_cast<int>(spec.get()->NUM_OUTPUTS) );
+            REQUIRE( test_vcaModule->getNumLights() == static_cast<int>(spec.get()->NUM_LIGHTS) );
             delete test_vcaModule;
         }
     }
