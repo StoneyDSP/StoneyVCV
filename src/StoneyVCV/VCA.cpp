@@ -399,7 +399,7 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     assert(static_cast<unsigned int>(this->vcaWidgetFrameBuffer->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
-::StoneyDSP::StoneyVCV::VCA::VCAWidget::~VCAWidget()
+::StoneyDSP::StoneyVCV::VCA::VCAWidget::~VCAWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::VCA::VCAWidget");
@@ -622,7 +622,7 @@ void StoneyDSP::StoneyVCV::VCA::VCAWidget::onPrefersDarkPanelsChange(const Prefe
     assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
-::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::~VCAModuleWidget()
+::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::~VCAModuleWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::VCA::VCAModuleWidget");

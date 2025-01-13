@@ -301,7 +301,7 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
     assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
-::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::~HP4ModuleWidget()
+::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::~HP4ModuleWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP4::HP4ModuleWidget");
