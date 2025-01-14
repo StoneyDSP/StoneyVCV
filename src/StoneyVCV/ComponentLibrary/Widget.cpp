@@ -174,6 +174,21 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::getPrefersDa
     this->clearChildren();
 }
 
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::step()
+{
+    return ::rack::widget::FramebufferWidget::step();
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::DrawArgs &args)
+{
+    // // For debugging the bounding box of the framebuffer
+	// ::nvgStrokeWidth(args.vg, 2.0F);
+	// ::nvgStrokeColor(args.vg, ::nvgRGBAf(1.0F, 1.0F, 0.0F, 0.5F));
+	// ::nvgStroke(args.vg);
+
+    return ::rack::widget::FramebufferWidget::draw(args);
+}
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::TransparentWidget()
@@ -189,6 +204,67 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::getPrefersDa
     assert(!this->parent);
 
     this->clearChildren();
+}
+
+//==============================================================================
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget::OpaqueWidget()
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget()
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget");
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget::~OpaqueWidget() noexcept
+{
+    DBG("Destroying StoneyDSP::StoneyVCV::OpaqueWidget::OpaqueWidget");
+    assert(!this->parent);
+
+    this->clearChildren();
+}
+
+//==============================================================================
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::SvgWidget()
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget()
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget");
+
+    this->box.size = ::rack::math::Vec();
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::~SvgWidget() noexcept
+{
+    DBG("Destroying StoneyDSP::StoneyVCV::SvgWidget::SvgWidget");
+    assert(!this->parent);
+
+    this->clearChildren();
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::wrap() noexcept
+{
+    if (this->svg) {
+		this->box.size = this->svg->getSize();
+	}
+	else {
+		this->box.size = ::rack::math::Vec();
+	}
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::setSvg(::std::shared_ptr<::rack::window::Svg> newSvg)
+{
+    this->svg = newSvg;
+
+    this->wrap();
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::draw(const DrawArgs &args)
+{
+    if (!this->svg)
+		return;
+
+	return ::rack::window::svgDraw(args.vg, this->svg->handle);
 }
 
 //==============================================================================

@@ -346,6 +346,12 @@ public:
 
     //==========================================================================
 
+    virtual void step() override;
+
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
     STONEYVCV_DECLARE_WIDGET_FACTORY_FUNCTIONS(FramebufferWidget)
 
     //==========================================================================
@@ -401,6 +407,137 @@ private:
 
     STONEYDSP_DECLARE_NON_COPYABLE(TransparentWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(TransparentWidget)
+};
+
+//==============================================================================
+
+struct OpaqueWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget
+{
+
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    OpaqueWidget();
+
+    virtual ~OpaqueWidget() noexcept;
+
+    //==========================================================================
+
+    virtual void onHover(const HoverEvent& e) override
+    {
+		::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::onHover(e);
+		e.stopPropagating();
+		// Consume if not consumed by child
+		if (!e.isConsumed())
+			e.consume(this);
+	}
+
+	virtual void onButton(const ButtonEvent& e) override
+    {
+		::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::onButton(e);
+		e.stopPropagating();
+		if (e.button == GLFW_MOUSE_BUTTON_LEFT) {
+			// Consume if not consumed by child
+			if (!e.isConsumed())
+				e.consume(this);
+		}
+	}
+
+	virtual void onHoverKey(const HoverKeyEvent& e) override
+    {
+		::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::onHoverKey(e);
+		e.stopPropagating();
+	}
+
+	virtual void onHoverText(const HoverTextEvent& e) override
+    {
+		::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::onHoverText(e);
+		e.stopPropagating();
+	}
+
+	virtual void onHoverScroll(const HoverScrollEvent& e) override
+    {
+		::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::onHoverScroll(e);
+		e.stopPropagating();
+	}
+
+	virtual void onDragHover(const DragHoverEvent& e) override
+    {
+		::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::onDragHover(e);
+		e.stopPropagating();
+		// Consume if not consumed by child
+		if (!e.isConsumed())
+            e.consume(this);
+	}
+
+	virtual void onPathDrop(const PathDropEvent& e) override
+    {
+		::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::onPathDrop(e);
+		e.stopPropagating();
+	}
+
+    //==========================================================================
+
+    STONEYVCV_DECLARE_WIDGET_FACTORY_FUNCTIONS(OpaqueWidget)
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(OpaqueWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(OpaqueWidget)
+};
+
+struct SvgWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget
+{
+
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::DrawArgs;
+
+    //==========================================================================
+
+    SvgWidget();
+
+    virtual ~SvgWidget() noexcept;
+
+    //==========================================================================
+
+    void wrap() noexcept;
+
+    void setSvg(::std::shared_ptr<::rack::window::Svg> newSvg);
+
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
+    STONEYVCV_DECLARE_WIDGET_FACTORY_FUNCTIONS(SvgWidget)
+
+    //==========================================================================
+
+protected:
+
+    //==========================================================================
+
+    ::std::shared_ptr<::rack::window::Svg> svg;
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(SvgWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(SvgWidget)
 };
 
 //==============================================================================
