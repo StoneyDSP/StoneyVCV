@@ -39,6 +39,7 @@
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/ComponentLibrary/Widget.hpp>
+#include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
 
 //==============================================================================
 
@@ -227,6 +228,10 @@ public:
      *
      */
 	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e) override;
+
+    //==========================================================================
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *> portPanelWidgets = { NULL };
 
     //==========================================================================
 
