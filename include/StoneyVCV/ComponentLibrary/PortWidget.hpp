@@ -72,12 +72,16 @@ namespace ComponentLibrary
 //==============================================================================
 
 /**
- * @brief The `ThemedPortWidgetPanel` struct.
+ * @brief The `ThemedPortPanelWidget` struct.
  *
- * Provides a panel background to the `ThemedPortWidget` struct.
+ * Provides a themed panel background which can fit around instances of the
+ * `ThemedPortWidget` struct on a Module's panel.
+ *
+ * Carries a `labelText` member for writing a text label corresponding to the
+ * port's purpose.
  *
  */
-struct ThemedPortWidgetPanel : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
+struct ThemedPortPanelWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
 {
 
     //==========================================================================
@@ -91,38 +95,54 @@ public:
     //==========================================================================
 
     /**
-     * @brief Constructs a new `ThemedPortWidgetPanel` object.
+     * @brief Constructs a new `ThemedPortPanelWidget` object.
      *
      */
-    ThemedPortWidgetPanel();
+    ThemedPortPanelWidget();
 
     /**
-     * @brief Destroys the `ThemedPortWidgetPanel` object.
+     * @brief Destroys the `ThemedPortPanelWidget` object.
      *
      */
-    virtual ~ThemedPortWidgetPanel() noexcept;
+    virtual ~ThemedPortPanelWidget() noexcept;
 
     //==========================================================================
 
     /**
-     * @brief Advances the module by one frame.
-     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::step()`
-     * internally to recurse the children.
+     * @brief Advances the `ThemedPortPanelWidget` by one frame.
+     * Calls the superclass's `step()` method internally to recurse the children.
      *
      */
     virtual void step() override;
 
     /**
-     * @brief Renders to the NanoVG context.
-     * Calls `::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::draw(args)`
-     * internally to recurse the children.
+     * @brief Renders the `ThemedPortPanelWidget` to the NanoVG context.
+     * Calls the superclass's `draw(args)` method internally to recurse the children.
      *
      * @param args
      *
      */
-    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel::DrawArgs &args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget::DrawArgs &args) override;
 
-    const bool &getPrefersDarkPanels() const noexcept;
+    //==========================================================================
+
+    virtual const bool &getPrefersDarkPanels() const noexcept;
+
+    //==========================================================================
+
+    virtual void setLabelText(const ::std::string &newLabelText) noexcept;
+
+    virtual const ::std::string &getLabelText() const noexcept;
+
+    //==========================================================================
+
+    virtual void setIsOutput(const bool &newIsOutput) noexcept;
+
+    virtual const bool &getIsOutput() const noexcept;
+
+    //==========================================================================
+
+protected:
 
     //==========================================================================
 
@@ -147,8 +167,8 @@ private:
 
     //==========================================================================
 
-    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortWidgetPanel)
-    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortWidgetPanel)
+    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortPanelWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortPanelWidget)
 };
 
 //==============================================================================
@@ -185,39 +205,9 @@ public:
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::DrawArgs &args) override;
 
-    const bool &getPrefersDarkPanels() const noexcept;
-
     //==========================================================================
 
-    struct PixelRatioChangeEvent : ::rack::widget::Widget::BaseEvent {
-        float newPixelRatio = APP->window->pixelRatio;
-    };
-
-    /**
-     * Called after the `App->window->pixelRatio` setting is changed.
-     * Sub-classes can override this to receive callbacks when the event is
-     * dispatched (from the `Widget::step()` method).
-     *
-     * @param e
-     *
-     */
-    virtual void onPixelRatioChange(const PixelRatioChangeEvent& e);
-
-    /**
-     * @brief
-     *
-     */
-    const float &getPixelRatio() const noexcept;
-
-    //==========================================================================
-
-    bool isOutput;
-
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidgetPanel* panel = NULL;
-
-    //==========================================================================
-
-private:
+protected:
 
     //==========================================================================
 
@@ -225,31 +215,9 @@ private:
 
 	::std::shared_ptr<::rack::window::Svg> darkSvg;
 
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget* panelFrameBufferWidget = NULL;
-
     //==========================================================================
 
-    bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
-
-    /**
-     * `{&::rack::settings::preferDarkPanels}`
-     *
-     */
-    const bool *prefersDarkPanelsPtr = NULL;
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    float lastPixelRatio = {APP->window->pixelRatio};
-
-    /**
-     * @brief
-     *
-     */
-    const float *pixelRatioPtr = NULL;
+private:
 
     //==========================================================================
 
