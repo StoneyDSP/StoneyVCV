@@ -90,42 +90,9 @@ struct RoundKnob : virtual ::rack::app::SvgKnob
     virtual ~RoundKnob() noexcept
     {
         assert(!this->parent);
+
+        this->clearChildren();
     }
-
-// // Knob
-
-//     /** Drag horizontally instead of vertically. */
-// 	bool horizontal = false;
-// 	/** Enables per-sample value smoothing while dragging.
-// 	Alternatively, use ParamQuantity::smoothEnabled.
-// 	*/
-// 	bool smooth = true;
-// 	/** Enables value snapping to the nearest integer.
-// 	Alternatively, use ParamQuantity::snapEnabled.
-// 	*/
-// 	bool snap = false;
-// 	/** Multiplier for mouse movement to adjust knob value */
-// 	float speed = 1.f;
-// 	/** Force dragging to linear, e.g. for sliders. */
-// 	bool forceLinear = false;
-// 	/** Angles in radians.
-// 	For drawing and handling the global radial knob setting.
-// 	*/
-// 	float minAngle = -M_PI;
-// 	float maxAngle = M_PI;
-
-// // SVGKnob
-
-//     /** */
-//     ::rack::widget::FramebufferWidget* fb = NULL;
-//     /** */
-// 	::rack::CircularShadow* shadow = NULL;
-//     /** */
-// 	::rack::widget::TransformWidget* tw = NULL;
-//     /** */
-// 	::rack::widget::SvgWidget* sw = NULL;
-
-// // RoundKnob
 
     /** */
 	::rack::widget::SvgWidget* bg = NULL;
@@ -143,25 +110,209 @@ public:
 	RoundBlackKnob()
     {
 		this->setSvg(
-            ::rack::Svg::load(
-                ::rack::asset::system("res/ComponentLibrary/RoundBlackKnob.svg")
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundBlackKnob.svg"
+                )
             )
         );
 		this->bg->setSvg(
-            ::rack::Svg::load(
-                ::rack::asset::system("res/ComponentLibrary/RoundBlackKnob_bg.svg")
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundBlackKnob_bg.svg"
+                )
             )
         );
 	}
 
-    ~RoundBlackKnob() {
+    ~RoundBlackKnob()
+    {
         assert(!this->parent);
+
+        this->clearChildren();
     }
 
 private:
 
     STONEYDSP_DECLARE_NON_COPYABLE(RoundBlackKnob)
     STONEYDSP_DECLARE_NON_MOVEABLE(RoundBlackKnob)
+};
+
+
+struct RoundSmallBlackKnob : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob
+{
+
+public:
+
+    RoundSmallBlackKnob()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
+    {
+		this->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundSmallBlackKnob.svg"
+                )
+            )
+        );
+
+		this->bg->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundSmallBlackKnob_bg.svg"
+                )
+            )
+        );
+	}
+
+    ~RoundSmallBlackKnob()
+    {
+        assert(!this->parent);
+
+        this->clearChildren();
+    }
+
+private:
+
+    STONEYDSP_DECLARE_NON_COPYABLE(RoundSmallBlackKnob)
+    STONEYDSP_DECLARE_NON_MOVEABLE(RoundSmallBlackKnob)
+};
+
+struct RoundLargeBlackKnob : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob
+{
+
+public:
+
+    RoundLargeBlackKnob()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
+    {
+		this->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundLargeBlackKnob.svg"
+                )
+            )
+        );
+
+		this->bg->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundLargeBlackKnob_bg.svg"
+                )
+            )
+        );
+	}
+
+    ~RoundLargeBlackKnob()
+    {
+        assert(!this->parent);
+
+        this->clearChildren();
+    }
+
+private:
+
+    STONEYDSP_DECLARE_NON_COPYABLE(RoundLargeBlackKnob)
+    STONEYDSP_DECLARE_NON_MOVEABLE(RoundLargeBlackKnob)
+};
+
+struct RoundBigBlackKnob : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob
+{
+
+public:
+
+	RoundBigBlackKnob()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
+    {
+		this->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundBigBlackKnob.svg"
+                )
+            )
+        );
+
+		this->bg->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundBigBlackKnob_bg.svg"
+                )
+            )
+        );
+	}
+
+    ~RoundBigBlackKnob()
+    {
+        assert(!this->parent);
+
+        this->clearChildren();
+    }
+
+private:
+
+    STONEYDSP_DECLARE_NON_COPYABLE(RoundBigBlackKnob)
+    STONEYDSP_DECLARE_NON_MOVEABLE(RoundBigBlackKnob)
+};
+
+struct RoundHugeBlackKnob : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob
+{
+
+public:
+
+    RoundHugeBlackKnob()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
+    {
+		this->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundHugeBlackKnob.svg"
+                )
+            )
+        );
+
+		this->bg->setSvg(
+            ::rack::window::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/RoundHugeBlackKnob_bg.svg"
+                )
+            )
+        );
+	}
+
+    ~RoundHugeBlackKnob()
+    {
+        assert(!this->parent);
+
+        this->clearChildren();
+    }
+
+private:
+
+    STONEYDSP_DECLARE_NON_COPYABLE(RoundHugeBlackKnob)
+    STONEYDSP_DECLARE_NON_MOVEABLE(RoundHugeBlackKnob)
+};
+
+struct RoundBlackSnapKnob : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob
+{
+
+public:
+
+	RoundBlackSnapKnob()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
+    {
+		snap = true;
+	}
+
+    ~RoundBlackSnapKnob()
+    {
+        assert(!this->parent);
+
+        this->clearChildren();
+    }
+
+private:
+
+    STONEYDSP_DECLARE_NON_COPYABLE(RoundBlackSnapKnob)
+    STONEYDSP_DECLARE_NON_MOVEABLE(RoundBlackSnapKnob)
 };
 
 //==============================================================================
