@@ -138,6 +138,7 @@ ifeq ($(STONEYVCV_BUILD_COMPONENTLIBRARY),1)
 	SOURCES += src/StoneyVCV/ComponentLibrary.cpp
 	SOURCES += src/StoneyVCV/ComponentLibrary/Widget.cpp
 	SOURCES += src/StoneyVCV/ComponentLibrary/PortWidget.cpp
+	SOURCES += src/StoneyVCV/ComponentLibrary/ParamWidget.cpp
 	SOURCES += src/StoneyVCV/ComponentLibrary/PanelWidget.cpp
 endif
 
