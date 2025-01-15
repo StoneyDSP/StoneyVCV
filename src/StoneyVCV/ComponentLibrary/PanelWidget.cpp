@@ -130,6 +130,7 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::ThemedPanelWidget()
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget(),
     portPanelWidgets{nullptr},
+    paramPanelWidgets{nullptr},
     fb(nullptr),
     panelBorder(nullptr),
     panelLines(nullptr),
@@ -157,6 +158,7 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget");
 
     this->portPanelWidgets.reserve(0);
+    this->paramPanelWidgets.reserve(0);
 
     this->fb = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *>(
         ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(

@@ -40,6 +40,7 @@
 #include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/ComponentLibrary/Widget.hpp>
 #include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/ParamWidget.hpp>
 
 //==============================================================================
 
@@ -231,7 +232,38 @@ public:
 
     //==========================================================================
 
+    //==========================================================================
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget &getFrameBufferWidget()
+    {
+        return *this->fb;
+    };
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget &getPortPanelWidget(const ::std::size_t &i)
+    {
+        return *this->portPanelWidgets[i];
+    }
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *> &getPortPanelWidgets()
+    {
+        return this->portPanelWidgets;
+    }
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget &getParamPanelWidget(const ::std::size_t &i)
+    {
+        return *this->paramPanelWidgets[i];
+    }
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *> &getParamPanelWidgets()
+    {
+        return this->paramPanelWidgets;
+    }
+
+    //==========================================================================
+
     ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *> portPanelWidgets = { NULL };
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *> paramPanelWidgets = { NULL };
 
     //==========================================================================
 
