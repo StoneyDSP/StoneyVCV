@@ -37,10 +37,10 @@
 //==============================================================================
 
 #include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
 #include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
-#include <StoneyVCV/ComponentLibrary/RoundKnob.hpp>
-#include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/RoundKnobWidget.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
@@ -473,7 +473,7 @@ private:
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundBlackKnob *gainKnob = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundHugeBlackKnob *gainKnob = NULL;
 
     // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider = NULL;
 
