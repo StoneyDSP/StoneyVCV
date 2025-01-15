@@ -139,8 +139,9 @@ if(STONEYVCV_BUILD_COMPONENTLIBRARY)
     configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary.hpp")
     configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp")
     configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp")
+    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/ParamWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/ParamWidget.hpp")
+    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnobWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnobWidget.hpp")
     configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp")
-    configure_file("include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp" "include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp")
     target_sources(ComponentLibrary
         PUBLIC
         FILE_SET stoneyvcv_COMPONENTLIBRARY_PUBLIC_HEADERS
@@ -155,16 +156,20 @@ if(STONEYVCV_BUILD_COMPONENTLIBRARY)
             $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/Widget.hpp>
             $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp>
             $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.hpp>
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/ParamWidget.hpp>
+            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/ParamWidget.hpp>
+            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnobWidget.hpp>
+            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnobWidget.hpp>
             $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp>
             $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.hpp>
-            $<BUILD_INTERFACE:${STONEYVCV_BINARY_DIR}/include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp>
-            $<INSTALL_INTERFACE:include/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnob.hpp>
     )
     target_sources(ComponentLibrary
         PRIVATE
             "src/${STONEYVCV_SLUG}/ComponentLibrary.cpp"
             "src/${STONEYVCV_SLUG}/ComponentLibrary/Widget.cpp"
             "src/${STONEYVCV_SLUG}/ComponentLibrary/PortWidget.cpp"
+            "src/${STONEYVCV_SLUG}/ComponentLibrary/ParamWidget.cpp"
+            # "src/${STONEYVCV_SLUG}/ComponentLibrary/RoundKnobWidget.cpp"
             "src/${STONEYVCV_SLUG}/ComponentLibrary/PanelWidget.cpp"
     )
     # Add project version number
