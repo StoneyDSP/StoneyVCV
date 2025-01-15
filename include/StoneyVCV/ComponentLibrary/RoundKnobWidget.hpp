@@ -38,6 +38,8 @@
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
+#include <StoneyVCV/ComponentLibrary/ParamWidget.hpp>
 
 //==============================================================================
 
@@ -74,6 +76,156 @@ namespace ComponentLibrary
 
 //==============================================================================
 
+/**
+ *
+ *
+ */
+struct ThemedRoundKnobPanelWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget
+{
+
+    //==========================================================================
+
+public:
+
+    //==========================================================================
+
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::DrawArgs;
+
+    //==========================================================================
+
+    ThemedRoundKnobPanelWidget()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget()
+    {
+
+    }
+
+    virtual ~ThemedRoundKnobPanelWidget() noexcept
+    {
+        assert(!this->parent);
+    }
+
+    //==========================================================================
+
+    virtual void step() override
+    {
+        return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::step();
+    }
+
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget::DrawArgs &args) override
+    {
+        const bool &prefersDarkPanels = this->getPrefersDarkPanels();
+        const auto &size = this->getSize();
+
+        // For debugging the bounding box of the widget
+        const auto &bgColor = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgLight: ::StoneyDSP::StoneyVCV::Panels::bgDark;
+        // const auto &bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0;
+        // const auto &bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1;
+        // const auto &borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
+        const auto &textColor = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgPortDark : ::StoneyDSP::StoneyVCV::Panels::bgPortLight;
+        const auto &fontSize = this->getFontSize();
+
+        // Load font from cache
+        ::std::shared_ptr<::rack::window::Font> font = APP->window->loadFont(
+                ::rack::asset::system("res/fonts/DejaVuSans.ttf"
+            )
+        );
+
+        // Clip the bottom of the ring
+        ::nvgScissor(args.vg,
+            0.0F - (size.x * 0.5F),
+            0.0F - (fontSize * 2.0F),
+            size.x * 2.0F,
+            size.y + (fontSize * 2.0F)
+        );
+
+        // Draw the ring as the colour-filled diff between two circles
+        ::nvgBeginPath(args.vg);
+        ::nvgCircle(args.vg,
+            size.x * 0.5F,
+            size.y * 0.5F,
+            (size.x * 0.5F) + 4.0F
+        );
+        ::nvgCircle(args.vg,
+            size.x * 0.5F,
+            size.y * 0.5F,
+            (size.x * 0.5F) + 3.0F
+        );
+        ::nvgPathWinding(args.vg, NVG_HOLE);
+        ::nvgFillColor(args.vg, bgColor);
+        ::nvgFill(args.vg);
+
+        // // Draw themed bg panel box
+        // ::nvgBeginPath(args.vg);
+        // ::nvgRoundedRect(args.vg,
+        //     /** x  */0.0F,
+        //     /** y  */0.0F,
+        //     /** w  */size.x,
+        //     /** h  */size.y,
+        //     /** rx */2.83465F
+        // );
+        // ::nvgFillColor(args.vg, bgColor);
+        // ::nvgFill(args.vg);
+
+        // ::nvgBeginPath(args.vg);
+        // ::nvgStrokeWidth(args.vg, 2.0F);
+        // ::nvgStrokeColor(args.vg, ::nvgRGBAf(1.0F, 1.0F, 0.0F, 0.5F));
+        // ::nvgStroke(args.vg);
+        // // Draw themed BG gradient
+        // const auto& bgGradient = ::nvgLinearGradient(args.vg,
+        //     /** x */size.x * 0.5,
+        //     /** Y */0.0F,
+        //     /** w */size.x * 0.5,
+        //     /** h */size.y,
+        //     /** s1 */bgGradientS0,
+        //     /** s2 */bgGradientS1
+        // );
+        // ::nvgRoundedRect(args.vg,
+        //     /** x  */0.0F,
+        //     /** y  */0.0F,
+        //     /** w  */size.x,
+        //     /** h  */size.y,
+        //     /** rx */2.83465F
+        // );
+        // ::nvgFillPaint(args.vg, bgGradient);
+        // ::nvgFill(args.vg);
+
+        // Don't draw text if font failed to load
+        if (font) {
+            ::nvgBeginPath(args.vg);
+            // Select font handle
+            ::nvgFontFaceId(args.vg, font->handle);
+
+            // Set font size and alignment
+            ::nvgFontSize(args.vg, fontSize);
+            ::nvgTextAlign(args.vg,
+                ::NVGalign::NVG_ALIGN_CENTER | ::NVGalign::NVG_ALIGN_BASELINE
+            );
+            ::nvgFillColor(args.vg, textColor);
+
+            // Draw the text at a position
+            ::nvgText(args.vg,
+                (size.x * 0.5F),
+                0.0F - (fontSize), // font size / 2
+                this->getLabelText().c_str(),
+                NULL
+            );
+        }
+
+        return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::draw(args);
+    }
+
+    //==========================================================================
+
+private:
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(ThemedRoundKnobPanelWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedRoundKnobPanelWidget)
+};
+
+//==============================================================================
+
 struct RoundKnob : virtual ::rack::app::SvgKnob
 {
     RoundKnob()
@@ -103,11 +255,14 @@ private:
     STONEYDSP_DECLARE_NON_MOVEABLE(RoundKnob)
 };
 
+//==============================================================================
+
 struct RoundBlackKnob : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob
 {
 public:
 
 	RoundBlackKnob()
+    : ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
     {
 		this->setSvg(
             ::rack::window::Svg::load(
