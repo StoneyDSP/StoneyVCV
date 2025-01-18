@@ -11,12 +11,6 @@
 
 //==============================================================================
 
-#pragma comment( lib, "Rack" )
-#pragma comment( compiler )
-#pragma comment( user, "Compiled on " __DATE__ " at " __TIME__ )
-
-//==============================================================================
-
 #if defined (STONEYVCV_BUILD_PLUGIN) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================

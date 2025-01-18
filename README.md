@@ -2,6 +2,9 @@
 
 StoneyDSP modules for [VCV Rack 2](https://vcvrack.com/).
 
+[Preview](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/images/preview-light.svg#gh-light-mode-only)
+[Preview](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/images/preview-dark.svg#gh-dark-mode-only)
+
 [![HP1](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP1-light.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html#gh-light-mode-only)
 [![HP1](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP1-dark.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP1.html#gh-dark-mode-only)
 [![HP2](https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP2-light.svg)](https://stoneydsp.github.io/StoneyVCV/md_docs_2HP2.html#gh-light-mode-only)

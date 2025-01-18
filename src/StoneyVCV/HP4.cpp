@@ -9,14 +9,19 @@
 
 //==============================================================================
 
+#include <StoneyVCV/HP4.hpp>
+
+//==============================================================================
+
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
-#include <StoneyVCV/HP4.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+//==============================================================================
 
 #include <array>
 
@@ -68,7 +73,7 @@ static const ::rack::math::Vec HP4Dimensions = (
     );
 }
 
-::StoneyDSP::StoneyVCV::HP4::HP4Module::~HP4Module()
+::StoneyDSP::StoneyVCV::HP4::HP4Module::~HP4Module() noexcept
 {
     DBG("Destroying StoneyVCV::HP4::HP4Module");
 }
@@ -97,7 +102,7 @@ static const ::rack::math::Vec HP4Dimensions = (
     this->hp4WidgetFrameBuffer->addChild(this->panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::HP4::HP4Widget::~HP4Widget()
+::StoneyDSP::StoneyVCV::HP4::HP4Widget::~HP4Widget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP4::HP4Widget");
@@ -124,11 +129,11 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
     const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
     const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
     const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
-    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
-    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
+    const auto& bgDark = ::StoneyDSP::StoneyVCV::Panels::bgDark;
+    const auto& bgLight = ::StoneyDSP::StoneyVCV::Panels::bgLight;
+    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgDark : bgLight;
+    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0;
+    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1;
 
     const auto& size = this->getSize();
 
@@ -164,6 +169,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line L
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth * 0.5F,                         /** 0.5 screws right */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
@@ -176,6 +183,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line R
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */size.x - (minWidth * 0.5F),              /** 0.5 screws left  */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
@@ -188,6 +197,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line T
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
         /** y */minWidth * 0.5F);                        /** 0.5 screws down  */
@@ -200,6 +211,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line B
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
         /** y */size.y - (minWidth * 0.5F));             /** 0.5 screws up    */
@@ -296,7 +309,7 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
     assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
-::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::~HP4ModuleWidget()
+::StoneyDSP::StoneyVCV::HP4::HP4ModuleWidget::~HP4ModuleWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP4::HP4ModuleWidget");

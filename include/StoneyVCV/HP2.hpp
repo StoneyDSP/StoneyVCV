@@ -166,7 +166,7 @@ public:
      * @brief Destroys the `HP2Widget` object.
      *
      */
-    virtual ~HP2Widget();
+    virtual ~HP2Widget() noexcept;
 
     //==========================================================================
 
@@ -236,7 +236,7 @@ public:
      * @brief Destroys the `HP2ModuleWidget` object.
      *
      */
-    virtual ~HP2ModuleWidget();
+    virtual ~HP2ModuleWidget() noexcept;
 
     //==========================================================================
 

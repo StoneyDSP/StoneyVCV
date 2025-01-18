@@ -80,18 +80,18 @@ namespace Panels
  */
 
 //==============================================================================
-const extern ::NVGcolor bgBlack;
-const extern ::NVGcolor bgWhite;
+
+const extern ::NVGcolor bgDark;
+const extern ::NVGcolor bgLight;
 const extern ::NVGcolor borderColor;
-const extern ::NVGcolor bgPortWhite;
-const extern ::NVGcolor bgPortBlack;
-const extern ::NVGcolor bgGradientBlackS0;
-const extern ::NVGcolor bgGradientBlackS1;
-const extern ::NVGcolor bgGradientWhiteS0;
-const extern ::NVGcolor bgGradientWhiteS1;
+const extern ::NVGcolor bgPortLight;
+const extern ::NVGcolor bgPortDark;
+const extern ::NVGcolor bgGradientDarkS0;
+const extern ::NVGcolor bgGradientDarkS1;
+const extern ::NVGcolor bgGradientLightS0;
+const extern ::NVGcolor bgGradientLightS1;
 const extern float MIN_WIDTH;
 const extern float MIN_HEIGHT;
-extern void addScrewsToWidget(::rack::widget::Widget* widget);
 
 //==============================================================================
 
