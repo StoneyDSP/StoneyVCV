@@ -94,14 +94,24 @@ public:
     //==========================================================================
 
     ThemedRoundKnobPanelWidget()
-    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget(),
+        minAngle(0.0F),
+        maxAngle(0.0F),
+        leading(0.0F)
     {
+        DBG("Constructing StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget");
 
+        this->minAngle = (0.0F - (5.0F / 6.0F)) * M_PI;
+        this->maxAngle = (5.0F / 6.0F) * M_PI;
+        this->leading = (4.0F);
     }
 
     virtual ~ThemedRoundKnobPanelWidget() noexcept
     {
+        DBG("Destroying StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget");
         assert(!this->parent);
+
+        this->clearChildren();
     }
 
     //==========================================================================
@@ -111,15 +121,32 @@ public:
         return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::step();
     }
 
+    float radiansToDegrees(const float &radians)
+    {
+        return radians * (180.0F / M_PI);
+    }
+
+    ::rack::math::Vec radiusToXY(const float &radius, float angle, float rotation = 0.0F)
+    {
+        const float theta = (angle + rotation) * (M_PI / 180.0F);
+
+        return ::rack::math::Vec(
+             radius * ::std::cos(theta),
+            -radius * ::std::sin(theta)
+        );
+    }
+
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget::DrawArgs &args) override
     {
         const bool &prefersDarkPanels = this->getPrefersDarkPanels();
         const auto &size = this->getSize();
 
+        const auto &minAngle = this->getMinAngle();
+        const auto &maxAngle = this->getMaxAngle();
+        const auto &leading = this->getLeading();
+
         // For debugging the bounding box of the widget
         const auto &bgColor = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgLight: ::StoneyDSP::StoneyVCV::Panels::bgDark;
-        // const auto &bgGradientS0 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0;
-        // const auto &bgGradientS1 = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1;
         // const auto &borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
         const auto &textColor = prefersDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgPortDark : ::StoneyDSP::StoneyVCV::Panels::bgPortLight;
         const auto &fontSize = this->getFontSize();
@@ -130,68 +157,9 @@ public:
             )
         );
 
-        // Clip the bottom of the ring
-        ::nvgScissor(args.vg,
-            0.0F - (size.x * 0.5F),
-            0.0F - (fontSize * 2.0F),
-            size.x * 2.0F,
-            size.y + (fontSize * 2.0F)
-        );
-
-        // Draw the ring as the colour-filled diff between two circles
-        ::nvgBeginPath(args.vg);
-        ::nvgCircle(args.vg,
-            size.x * 0.5F,
-            size.y * 0.5F,
-            (size.x * 0.5F) + 4.0F
-        );
-        ::nvgCircle(args.vg,
-            size.x * 0.5F,
-            size.y * 0.5F,
-            (size.x * 0.5F) + 3.0F
-        );
-        ::nvgPathWinding(args.vg, NVG_HOLE);
-        ::nvgFillColor(args.vg, bgColor);
-        ::nvgFill(args.vg);
-
-        // // Draw themed bg panel box
-        // ::nvgBeginPath(args.vg);
-        // ::nvgRoundedRect(args.vg,
-        //     /** x  */0.0F,
-        //     /** y  */0.0F,
-        //     /** w  */size.x,
-        //     /** h  */size.y,
-        //     /** rx */2.83465F
-        // );
-        // ::nvgFillColor(args.vg, bgColor);
-        // ::nvgFill(args.vg);
-
-        // ::nvgBeginPath(args.vg);
-        // ::nvgStrokeWidth(args.vg, 2.0F);
-        // ::nvgStrokeColor(args.vg, ::nvgRGBAf(1.0F, 1.0F, 0.0F, 0.5F));
-        // ::nvgStroke(args.vg);
-        // // Draw themed BG gradient
-        // const auto& bgGradient = ::nvgLinearGradient(args.vg,
-        //     /** x */size.x * 0.5,
-        //     /** Y */0.0F,
-        //     /** w */size.x * 0.5,
-        //     /** h */size.y,
-        //     /** s1 */bgGradientS0,
-        //     /** s2 */bgGradientS1
-        // );
-        // ::nvgRoundedRect(args.vg,
-        //     /** x  */0.0F,
-        //     /** y  */0.0F,
-        //     /** w  */size.x,
-        //     /** h  */size.y,
-        //     /** rx */2.83465F
-        // );
-        // ::nvgFillPaint(args.vg, bgGradient);
-        // ::nvgFill(args.vg);
-
         // Don't draw text if font failed to load
         if (font) {
-            ::nvgBeginPath(args.vg);
+            // ::nvgBeginPath(args.vg);
             // Select font handle
             ::nvgFontFaceId(args.vg, font->handle);
 
@@ -211,8 +179,121 @@ public:
             );
         }
 
+        ::nvgBeginPath(args.vg);
+        ::nvgLineCap(args.vg, NVG_ROUND);               // set rounded lines
+        ::nvgLineJoin(args.vg, NVG_ROUND);              // set the line join to round corners
+
+        float radius = (size.x * 0.5F) + leading;
+        float rotationOffset = -M_PI / 2.0F;            // Knob Widgets are actually rotated -90 degress in rads
+
+        ::nvgArc(args.vg,                               // Draw knob ring
+            (size.x * 0.5F),                            // knob ring centre x
+            (size.y * 0.5F),                            // knob ring center y
+            radius,                                     // knob ring diameter
+            (minAngle + rotationOffset),                // knob ring start position
+            (maxAngle + rotationOffset),                // knob ring end position
+            NVG_CW                                      // knob ring direction
+        );
+
+        // reset cursor
+        ::nvgMoveTo(args.vg,
+            size.x * 0.5F,
+            size.y * 0.5F
+        );
+
+        /// Use the 'ranges' iterable to draw a list of lines on the knob panel,
+        /// indicating useful positions such as the knob's minimum and maximum
+        /// positions, the default position when double-clicked, the mid-point
+        /// for bi-polar knobs, and snap points, if any.
+
+        /// TODO:
+        /// This widget should read the values - specified in radians - carried
+        /// by the 'ranges' vector member. It purposely makes no attempts at
+        /// creating equidistant spaces between given 'ranges', allowing for
+        /// any arbitrary position(s) to be marked out on the knob panel.
+        /// If some spacing scheme is required, calculate that on the outside
+        /// after instanstating this class, and pass the results as an iterable
+        /// to a `setRanges()` method - be aware that the method re-allocates
+        /// if your number of ranges is greater than the default, or previously
+        /// - specified, number of ranges, since the container type is dynamic.
+
+        ::rack::math::Vec ranges [] = {
+            // rangeStart, rangeEnd
+            this->radiusToXY(radius, this->radiansToDegrees(this->minAngle - rotationOffset)),
+            // this->radiusToXY(radius, 0.0F),
+            // this->radiusToXY(radius, 45.0F),
+            // this->radiusToXY(radius, 90.0F),
+            // this->radiusToXY(radius, 180.0F),
+            // this->radiusToXY(radius, 270.0F),
+            this->radiusToXY(radius, this->radiansToDegrees(this->maxAngle - rotationOffset))
+        };
+
+        // Draw ranges as lines from the knob centre-point to the outer radius (includes leading)
+        for(const auto &range : ranges) {
+            ::nvgLineTo(args.vg,
+                (size.x * 0.5F) + range.x,
+                (size.y * 0.5F) + range.y
+            );
+            ::nvgMoveTo(args.vg,
+                size.x * 0.5F,
+                size.y * 0.5F
+            );
+        }
+
+        // Draw ranges as lines
+        ::nvgStrokeWidth(args.vg, (5.0F / 6.0F));
+        ::nvgStrokeColor(args.vg, bgColor);
+        ::nvgStroke(args.vg);
+        ::nvgClosePath(args.vg);
+
         return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::draw(args);
     }
+
+    //==========================================================================
+
+    virtual void setMinAngle(const float &newMinAngle)
+    {
+        this->minAngle = newMinAngle;
+    }
+
+    virtual const float &getMinAngle() const noexcept
+    {
+        return this->minAngle;
+    }
+
+    //==========================================================================
+
+    virtual void setMaxAngle(const float &newMaxAngle)
+    {
+        this->maxAngle = newMaxAngle;
+    }
+
+    virtual const float &getMaxAngle() const noexcept
+    {
+        return this->maxAngle;
+    }
+
+    //==========================================================================
+
+    virtual void setLeading(const float &newLeading)
+    {
+        this->leading = newLeading;
+    }
+
+    virtual const float &getLeading() const noexcept
+    {
+        return this->leading;
+    }
+
+    //==========================================================================
+
+protected:
+
+    //==========================================================================
+
+    float minAngle = (0.0F - (5.0F / 6.0F)) * M_PI;     // -0.8333... * pi
+    float maxAngle = (5.0F / 6.0F) * M_PI;              // +0.8333... * pi
+    float leading = (4.0F);
 
     //==========================================================================
 
@@ -232,8 +313,8 @@ struct RoundKnob : virtual ::rack::app::SvgKnob
     :   ::rack::app::SvgKnob(),
         bg(nullptr)
     {
-		this->minAngle = -0.83 * M_PI;
-		this->maxAngle = 0.83 * M_PI;
+		this->minAngle = (0.0F - (5.0F / 6.0F)) * M_PI; // -0.83 * pi
+		this->maxAngle = (5.0F / 6.0F) * M_PI;          //  0.83 * pi
 
 		this->bg = new ::rack::widget::SvgWidget;
 		this->fb->addChildBelow(this->bg, this->tw);
@@ -264,6 +345,7 @@ public:
 	RoundBlackKnob()
     : ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
     {
+
 		this->setSvg(
             ::rack::window::Svg::load(
                 ::rack::asset::system(
@@ -271,6 +353,7 @@ public:
                 )
             )
         );
+
 		this->bg->setSvg(
             ::rack::window::Svg::load(
                 ::rack::asset::system(
@@ -278,6 +361,7 @@ public:
                 )
             )
         );
+
 	}
 
     ~RoundBlackKnob()
