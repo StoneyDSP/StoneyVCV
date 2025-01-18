@@ -2,11 +2,9 @@
 
 4hp Panel Spacer.
 
-<picture>
-<source srcset="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP4-dark.svg" media="(prefers-color-scheme: dark)" />
-<source srcset="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP4-light.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
-<img src="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP4-dark.svg" height="380px" width="60px" />
-</picture>
+<img src="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP4-light.svg" height="380px" width="60px" alt="HP4 - light theme" />
+
+<img src="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/HP4-dark.svg" height="380px" width="60px" alt="HP4 - dark theme" />
 
 ## Panel
 
