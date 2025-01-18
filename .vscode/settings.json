@@ -8,7 +8,10 @@
     80,
     160
   ],
-  "makefile.configureOnOpen": false,
+  "makefile.configureOnOpen": true,
+  "makefile.compileCommandsPath": "${workspaceFolder}/build/compile_commands_make.json",
+  "makefile.makefilePath": "${workspaceFolder}/Makefile",
+  "makefile.makePath": "make",
   "cmake.cmakePath": "cmake",
   "cmake.ctestPath": "ctest",
   "cmake.cpackPath": "cpack",

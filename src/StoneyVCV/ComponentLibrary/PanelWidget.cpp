@@ -5,12 +5,17 @@
  *
  ******************************************************************************/
 
+#if defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
+
+//==============================================================================
+
 #include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
 
 //==============================================================================
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
 
 //==============================================================================
 
@@ -18,6 +23,57 @@
 #include <array>
 
 //==============================================================================
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::PanelBorderWidget()
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget()
+{
+    // Assertions
+    DBG("Constructing StoneyVCV::ComponentLibrary::PanelBorderWidget");
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::~PanelBorderWidget() noexcept
+{
+    // Assertions
+    DBG("Destroying StoneyVCV::ComponentLibrary::PanelBorderWidget");
+    assert(!this->parent);
+
+    this->clearChildren();
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::DrawArgs &args)
+{
+    const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
+    const auto& size = this->getSize();
+
+	::nvgBeginPath(args.vg);
+	::nvgRect(args.vg,
+        0.5F,
+        0.5F,
+        size.x - 1.0F,
+        size.y - 1.0F
+    );
+	::nvgStrokeColor(args.vg, borderColor);
+	::nvgStrokeWidth(args.vg, 1.0F);
+	::nvgStroke(args.vg);
+}
+
+//==============================================================================
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::PanelLinesWidget()
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget()
+{
+    // Assertions
+    DBG("Constructing StoneyVCV::ComponentLibrary::PanelLinesWidget");
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::~PanelLinesWidget() noexcept
+{
+    // Assertions
+    DBG("Destroying StoneyVCV::ComponentLibrary::PanelLinesWidget");
+    assert(!this->parent);
+
+    this->clearChildren();
+}
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::DrawArgs &args)
 {
@@ -27,6 +83,8 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 
     // Draw line L
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth * 0.5F,                         /** 0.5 screws right */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
@@ -39,6 +97,8 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 
     // Draw line R
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */size.x - (minWidth * 0.5F),              /** 0.5 screws left  */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
@@ -51,6 +111,8 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 
     // Draw line T
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
         /** y */minWidth * 0.5F);                        /** 0.5 screws down  */
@@ -63,6 +125,8 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 
     // Draw line B
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
         /** y */size.y - (minWidth * 0.5F));             /** 0.5 screws up    */
@@ -77,88 +141,109 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::ThemedPanelWidget()
-:   fb(
-        ::StoneyDSP::StoneyVCV::createWidgetSized<::rack::widget::FramebufferWidget>(
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget(),
+    portPanelWidgets{nullptr},
+    paramPanelWidgets{nullptr},
+    fb(nullptr),
+    panelBorder(nullptr),
+    panelLines(nullptr),
+    // Screws
+    screwsPositions{
+        ::rack::math::Vec( // top-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+        ),
+        ::rack::math::Vec( // top-right
+            (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+        ),
+        ::rack::math::Vec( // bottom-left
+            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+            (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
+        ),
+        ::rack::math::Vec( // bottom-right
+            (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+            (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
+        ),
+    },
+    screws{nullptr}
+{
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget");
+
+    this->portPanelWidgets.reserve(0);
+    this->paramPanelWidgets.reserve(0);
+
+    this->fb = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *>(
+        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(
             ::rack::math::Vec(0.0F, 0.0F),
             this->getSize()
         )
-    ),
-    // screwsPositions{
-    //     ::rack::math::Vec( // top-left
-    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
-    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
-    //     ),
-    //     ::rack::math::Vec( // top-right
-    //         (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
-    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
-    //     ),
-    //     ::rack::math::Vec( // bottom-left
-    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
-    //         (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
-    //     ),
-    //     ::rack::math::Vec( // bottom-right
-    //         (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
-    //         (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
-    //     ),
-    // },
-    // screws{
-    //     ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[0]),
-    //     ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[1]),
-    //     ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[2]),
-    //     ::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[3])
-    // },
-    panelLines(
+    );
+    this->panelBorder = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget *>(
+        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget>(
+            ::rack::math::Vec(0.0F, 0.0F),
+            this->getSize()
+        )
+    );
+    this->panelLines = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *>(
         ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget>(
             ::rack::math::Vec(0.0F, 0.0F),
             this->getSize()
         )
-    ),
-    panelBorder(
-        ::StoneyDSP::StoneyVCV::createWidgetSized<::rack::app::PanelBorder>(
-            ::rack::math::Vec(0.0F, 0.0F),
-            this->getSize()
-        )
-    )
-{
-    // Assertions
-    DBG("StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget");
-    assert(this->fb != nullptr);
-    // assert(this->screws[0] != nullptr);
-    // assert(this->screws[1] != nullptr);
-    // assert(this->screws[2] != nullptr);
-    // assert(this->screws[3] != nullptr);
-    assert(this->panelLines != nullptr);
-    assert(this->panelBorder != nullptr);
+    );
+    this->screws = {
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[0])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[1])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[2])),
+        dynamic_cast<::rack::componentlibrary::ThemedScrew *>(::rack::createWidgetCentered<::rack::componentlibrary::ThemedScrew>(this->screwsPositions[3]))
+    };
 
-    // Widgets
+    // Framebuffer
     this->fb->setSize(this->getSize());
-    this->addChild(this->fb);
-
-    // Screws
-    // for(const auto& screw : this->screws) {
-    //     this->fb->addChild(screw);
-    // }
+    this->addChildBottom(this->fb);
 
     // Border
+    this->panelBorder->setSize(this->getSize());
+    this->fb->addChildBottom(this->panelBorder);
+
+    // Lines
     this->panelLines->setSize(this->getSize());
     this->fb->addChild(this->panelLines);
-    this->panelBorder->setSize(this->getSize());
-    this->fb->addChild(this->panelBorder);
+
+    // Screws
+    for(const auto& screw : this->screws) {
+        this->fb->addChild(screw);
+    }
+
+    // Assertions
+    assert(this->fb != nullptr);
+    assert(this->panelBorder != nullptr);
+    assert(this->panelLines != nullptr);
+    assert(this->screws[0] != nullptr);
+    assert(this->screws[1] != nullptr);
+    assert(this->screws[2] != nullptr);
+    assert(this->screws[3] != nullptr);
 }
 
-::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::~ThemedPanelWidget()
+::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::~ThemedPanelWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget");
     assert(!this->parent);
 
     // Children
-    this->panelBorder->clearChildren();
     // for(const auto& screw : this->screws) {
     //     screw->clearChildren();
     // }
-    this->fb->clearChildren();
     this->clearChildren();
+
+    this->fb = nullptr;
+    this->panelBorder = nullptr;
+    this->panelLines = nullptr;
+    this->screws[0] = nullptr;
+    this->screws[1] = nullptr;
+    this->screws[2] = nullptr;
+    this->screws[3] = nullptr;
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::step()
@@ -169,50 +254,32 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::step()
     this->panelBorder->setSize(size);
     this->fb->setSize(size);
 
-    return ::rack::widget::Widget::step();
+    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::step();
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::DrawArgs &args)
 {
-    // draw Themed BG
-    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
-    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
-    const auto& size = this->getSize();
-
-    // draw Themed BG
-    ::nvgBeginPath(args.vg);
-    ::nvgRect(args.vg,
-        /** x */0.0F,
-        /** y */0.0F,
-        /** w */size.x,
-        /** h */size.y
-    );
-    ::nvgFillColor(args.vg, bgColor);
-    ::nvgFill(args.vg);
-
-    // Draw themed BG gradient
-    const auto& bgGradient = ::nvgLinearGradient(args.vg,
-        /** x */size.x * 0.5,
-        /** Y */0.0F,
-        /** w */size.x * 0.5,
-        /** h */size.y,
-        /** s1 */bgGradientS0,
-        /** s2 */bgGradientS1
-    );
-    ::nvgBeginPath(args.vg);
-    ::nvgRect(args.vg,
-        /** x */0.0F,
-        /** y */0.0F,
-        /** w */size.x,
-        /** h */size.y
-    );
-    ::nvgFillPaint(args.vg, bgGradient);
-    ::nvgFill(args.vg);
-
-    return ::rack::widget::Widget::draw(args);
+    return ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::draw(args);
 }
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent & e)
+{
+    // Validate
+    if(this->lastPrefersDarkPanels == e.newPrefersDarkPanels)
+        return;
+
+    // Update
+    this->fb->setDirty();
+
+    // Opaque behaviour p.1
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::onPrefersDarkPanelsChange(e);
+
+    // Opaque behaviour p.2
+    return e.stopPropagating();
+}
+
+//==============================================================================
+
+#endif // defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
 
 //==============================================================================

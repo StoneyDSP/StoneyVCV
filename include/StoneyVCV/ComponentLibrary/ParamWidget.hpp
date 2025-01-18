@@ -1,5 +1,5 @@
 /*******************************************************************************
- * @file include/StoneyVCV/ComponentLibrary/PortWidget.hpp
+ * @file include/StoneyVCV/ComponentLibrary/Widget.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief @PROJECT_DESCRIPTION@
  * @version @plugin_VERSION@
@@ -30,7 +30,7 @@
 
 #pragma once
 
-#define STONEYVCV_COMPONENTLIBRARY_PORTWIDGET_HPP_INCLUDED 1
+#define STONEYVCV_COMPONENTLIBRARY_PARAMWIDGET_HPP_INCLUDED 1
 
 #if defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
 
@@ -72,16 +72,16 @@ namespace ComponentLibrary
 //==============================================================================
 
 /**
- * @brief The `ThemedPortPanelWidget` struct.
+ * @brief The `ThemedParamPanelWidget` struct.
  *
  * Provides a themed panel background which can fit around instances of the
- * `ThemedPortWidget` struct on a Module's panel.
+ * `ThemedParamWidget` struct on a Module's panel.
  *
  * Carries a `labelText` member for writing a text label corresponding to the
  * port's purpose.
  *
  */
-struct ThemedPortPanelWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
+struct ThemedParamPanelWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
 {
 
     //==========================================================================
@@ -95,38 +95,46 @@ public:
     //==========================================================================
 
     /**
-     * @brief Constructs a new `ThemedPortPanelWidget` object.
+     * @brief Constructs a new `ThemedParamPanelWidget` object.
      *
      */
-    ThemedPortPanelWidget();
+    ThemedParamPanelWidget();
 
     /**
-     * @brief Destroys the `ThemedPortPanelWidget` object.
+     * @brief Destroys the `ThemedParamPanelWidget` object.
      *
      */
-    virtual ~ThemedPortPanelWidget() noexcept;
+    virtual ~ThemedParamPanelWidget() noexcept;
 
     //==========================================================================
 
     /**
-     * @brief Advances the `ThemedPortPanelWidget` by one frame.
-     * Calls the superclass's `step()` method internally to recurse the children.
+     * @brief Advances the `ThemedParamPanelWidget` by one frame.
+     * Calls the superclass's `step()` method internally to recurse the
+     * children.
      *
      */
     virtual void step() override;
 
     /**
-     * @brief Renders the `ThemedPortPanelWidget` to the NanoVG context.
-     * Calls the superclass's `draw(args)` method internally to recurse the children.
+     * @brief Renders the `ThemedParamPanelWidget` to the NanoVG context.
+     * Calls the superclass's `draw(args)` method internally to recurse the
+     * children.
      *
      * @param args
      *
      */
-    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget::DrawArgs &args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::DrawArgs &args) override;
 
     //==========================================================================
 
     virtual const bool &getPrefersDarkPanels() const noexcept;
+
+    //==========================================================================
+
+    virtual void setFontSize(const float &newFontSize) noexcept;
+
+    virtual const float &getFontSize() const noexcept;
 
     //==========================================================================
 
@@ -136,23 +144,22 @@ public:
 
     //==========================================================================
 
-    virtual void setIsOutput(const bool &newIsOutput) noexcept;
+    enum Type {
+		KNOB,
+		SLIDER,
+        BUTTON,
+        SWITCH
+	};
 
-    virtual const bool &getIsOutput() const noexcept;
-
-    //==========================================================================
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::Type type = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::Type::KNOB;
 
 protected:
 
     //==========================================================================
 
-    ::std::string labelText;
+    float fontSize = 8.0F;
 
-    /**
-     * @brief Set whether the parent is an input or an output port.
-     *
-     */
-    bool isOutput;
+    ::std::string labelText = "";
 
     //==========================================================================
 
@@ -167,62 +174,8 @@ private:
 
     //==========================================================================
 
-    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortPanelWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortPanelWidget)
-};
-
-//==============================================================================
-
-/**
- * @brief The `ThemedPortWidget` struct.
- *
- */
-struct ThemedPortWidget : virtual ::rack::app::ThemedSvgPort
-{
-
-    //==========================================================================
-
-public:
-
-    //==========================================================================
-
-    using DrawArgs = ::rack::app::ThemedSvgPort::DrawArgs;
-
-    //==========================================================================
-
-    ThemedPortWidget();
-
-    virtual ~ThemedPortWidget() noexcept;
-
-    //==========================================================================
-
-    virtual void step() override;
-
-    /**
-     * @brief Renders to the NanoVG context.
-     * Calls `::rack::app::ThemedSvgPort::draw(args)` internally.
-     *
-     */
-    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::DrawArgs &args) override;
-
-    //==========================================================================
-
-protected:
-
-    //==========================================================================
-
-	::std::shared_ptr<::rack::window::Svg> lightSvg;
-
-	::std::shared_ptr<::rack::window::Svg> darkSvg;
-
-    //==========================================================================
-
-private:
-
-    //==========================================================================
-
-    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortWidget)
+    STONEYDSP_DECLARE_NON_COPYABLE(ThemedParamPanelWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedParamPanelWidget)
 };
 
 //==============================================================================

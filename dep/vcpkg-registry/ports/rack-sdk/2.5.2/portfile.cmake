@@ -86,9 +86,9 @@ vcpkg_extract_source_archive_ex(
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO StoneyDSP/Rack-SDK
-    REF fc96101baa8396e17163e7b2b68659911c692ed7
-    SHA512 5432b5267bfc69eb634e21e5918f2e9521a12ae0e585023c6f05b97f181c4e1fdd964c1c86a44c0a0aeb0311e1adc7860ef4ffdf3babb397da5b2c4a049ed4a2
-    HEAD_REF main
+    REF ad37c3856ea0fcbbc29c51b37a8e1bee4a7411c9
+    SHA512 e04ecbcbae1f4f60cad3bf672a494a5e415a4aaad34ba441c237cb2345c86d6521cefea8600b1bcc6f2073acf3a594694cf0f924d8d5799e2761a9b7ea7d15bc
+    HEAD_REF development
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS

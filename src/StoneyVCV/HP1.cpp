@@ -9,9 +9,12 @@
 
 //==============================================================================
 
+#include <StoneyVCV/HP1.hpp>
+
+//==============================================================================
+
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
-#include <StoneyVCV/HP1.hpp>
 
 //==============================================================================
 
@@ -70,7 +73,7 @@ static const ::rack::math::Vec HP1Dimensions = (
     );
 }
 
-::StoneyDSP::StoneyVCV::HP1::HP1Module::~HP1Module()
+::StoneyDSP::StoneyVCV::HP1::HP1Module::~HP1Module() noexcept
 {
     DBG("Destroying StoneyVCV::HP1::HP1Module");
 }
@@ -99,7 +102,7 @@ static const ::rack::math::Vec HP1Dimensions = (
     this->hp1WidgetFrameBuffer->addChild(this->panelBorder);
 }
 
-::StoneyDSP::StoneyVCV::HP1::HP1Widget::~HP1Widget()
+::StoneyDSP::StoneyVCV::HP1::HP1Widget::~HP1Widget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP1::HP1Widget");
@@ -126,11 +129,11 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
     const auto& minWidth = ::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH;
     const auto& minHeight = ::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT;
     const auto& borderColor = ::StoneyDSP::StoneyVCV::Panels::borderColor;
-    const auto& bgBlack = ::StoneyDSP::StoneyVCV::Panels::bgBlack;
-    const auto& bgWhite = ::StoneyDSP::StoneyVCV::Panels::bgWhite;
-    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgBlack : bgWhite;
-    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS0;
-    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientBlackS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientWhiteS1;
+    const auto& bgDark = ::StoneyDSP::StoneyVCV::Panels::bgDark;
+    const auto& bgLight = ::StoneyDSP::StoneyVCV::Panels::bgLight;
+    const auto& bgColor = ::rack::settings::preferDarkPanels ? bgDark : bgLight;
+    const auto& bgGradientS0 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS0 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS0;
+    const auto& bgGradientS1 = ::rack::settings::preferDarkPanels ? ::StoneyDSP::StoneyVCV::Panels::bgGradientDarkS1 : ::StoneyDSP::StoneyVCV::Panels::bgGradientLightS1;
 
     const auto& size = this->getSize();
 
@@ -166,6 +169,8 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth * 0.5F,                         /** 0.5 screws right */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
@@ -201,7 +206,11 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
             )
         )
     ),
-    hp1Widget(::rack::createWidget<::StoneyDSP::StoneyVCV::HP1::HP1Widget>(::rack::math::Vec(0.0F, 0.0F))),
+    hp1Widget(
+        ::rack::createWidget<::StoneyDSP::StoneyVCV::HP1::HP1Widget>(
+            ::rack::math::Vec(0.0F, 0.0F)
+        )
+    ),
     hp1ModuleWidgetFrameBuffer(new ::rack::widget::FramebufferWidget),
     screwsPositions{
         ::rack::math::Vec( // Top
@@ -252,7 +261,7 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
     assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
-::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget::~HP1ModuleWidget()
+::StoneyDSP::StoneyVCV::HP1::HP1ModuleWidget::~HP1ModuleWidget() noexcept
 {
     // Assertions
     DBG("Destroying StoneyVCV::HP1::HP1ModuleWidget");
