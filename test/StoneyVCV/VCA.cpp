@@ -37,7 +37,7 @@ public:
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 1U;
     static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 1U;
-    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 1U;
+    static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 2U;
     const ::rack::math::Vec size;
     VCASpec()
     :   slug("VCA"),

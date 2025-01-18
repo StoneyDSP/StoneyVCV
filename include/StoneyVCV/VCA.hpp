@@ -170,7 +170,8 @@ public:
     };
 
     enum IdxLights {
-        BLINK_LIGHT, // ENUMS(BLINK_LIGHT, 2),
+        //BLINK_LIGHT,
+        ENUMS(BLINK_LIGHT, 2),
         NUM_LIGHTS
     };
 
@@ -501,9 +502,10 @@ private:
      * @brief 3mm LED showing a smoothed CV value.
      *
      */
-    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca = NULL;
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca = NULL;
 
-    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca = NULL;
+    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca = NULL;
+
 
     //==========================================================================
 
