@@ -169,6 +169,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line L
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth * 0.5F,                         /** 0.5 screws right */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
@@ -181,6 +183,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line R
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */size.x - (minWidth * 0.5F),              /** 0.5 screws left  */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
@@ -193,6 +197,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line T
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
         /** y */minWidth * 0.5F);                        /** 0.5 screws down  */
@@ -205,6 +211,8 @@ void ::StoneyDSP::StoneyVCV::HP4::HP4Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line B
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth + (minWidth * 0.5F),            /** 1.5 screws right */
         /** y */size.y - (minWidth * 0.5F));             /** 0.5 screws up    */

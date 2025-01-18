@@ -169,6 +169,8 @@ void ::StoneyDSP::StoneyVCV::HP1::HP1Widget::draw(const ::StoneyDSP::StoneyVCV::
 
     // Draw line
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth * 0.5F,                         /** 0.5 screws right */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
