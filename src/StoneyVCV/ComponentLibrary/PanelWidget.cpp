@@ -46,9 +46,14 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::draw(const ::S
     const auto& size = this->getSize();
 
 	::nvgBeginPath(args.vg);
-	::nvgRect(args.vg, 0.5, 0.5, size.x - 1.0, size.y - 1.0);
+	::nvgRect(args.vg,
+        0.5F,
+        0.5F,
+        size.x - 1.0F,
+        size.y - 1.0F
+    );
 	::nvgStrokeColor(args.vg, borderColor);
-	::nvgStrokeWidth(args.vg, 1.0);
+	::nvgStrokeWidth(args.vg, 1.0F);
 	::nvgStroke(args.vg);
 }
 
@@ -78,6 +83,8 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 
     // Draw line L
     ::nvgBeginPath(args.vg);
+    ::nvgLineCap(args.vg, NVG_ROUND);                    /** rounded lines */
+    ::nvgLineJoin(args.vg, NVG_ROUND);                   /** set the line join to round corners */
     ::nvgMoveTo(args.vg,
         /** x */minWidth * 0.5F,                         /** 0.5 screws right */
         /** y */minWidth + (minWidth * 0.5F));           /** 1.5 screws down  */
