@@ -164,7 +164,7 @@ public:
      * @brief Destroys the `HP1Widget` object.
      *
      */
-    virtual ~HP1Widget();
+    virtual ~HP1Widget() noexcept;
 
     //==========================================================================
 
@@ -234,7 +234,7 @@ public:
      * @brief Destroys the `HP1ModuleWidget` object.
      *
      */
-    virtual ~HP1ModuleWidget();
+    virtual ~HP1ModuleWidget() noexcept;
 
     //==========================================================================
 

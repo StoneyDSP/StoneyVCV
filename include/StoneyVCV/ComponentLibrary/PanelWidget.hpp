@@ -38,6 +38,9 @@
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
+#include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/ParamWidget.hpp>
 
 //==============================================================================
 
@@ -76,32 +79,90 @@ namespace ComponentLibrary
 //==============================================================================
 
 /**
- * @brief The `PanelLinesWidget` struct.
- * Draws 4 lines around the inner edges of the module.
- * Does not ssend or respond to events.
+ * @brief The `PaneBorderWidget` struct.
+ * Draws 4 lines around the outer edges of the module.
+ * Does not send or respond to events.
  *
  */
-struct PanelLinesWidget : virtual ::rack::widget::TransparentWidget
+struct PanelBorderWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::widget::TransparentWidget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::DrawArgs;
 
     //==========================================================================
 
     /**
-     * @brief Construct a new `PanelLinesWidget` object.
+     * @brief Constructs a new `PanelBorderWidget` object.
      *
      */
-    PanelLinesWidget() = default;
+    PanelBorderWidget();
+
+    /**
+     * @brief Destroys the `PanelBorderWidget` object.
+     *
+     */
+    virtual ~PanelBorderWidget() noexcept;
+
+    //==========================================================================
 
     /**
      * @brief Draws a set of lines for spacing to the widget's NanoVG context.
      *
      * @param args
+     *
+     */
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget::DrawArgs &args) override;
+
+private:
+
+    //==========================================================================
+
+    STONEYDSP_DECLARE_NON_COPYABLE(PanelBorderWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(PanelBorderWidget)
+};
+
+//==============================================================================
+
+/**
+ * @brief The `PanelLinesWidget` struct.
+ * Draws 4 lines around the inner edges of the module.
+ * Does not send or respond to events.
+ *
+ */
+struct PanelLinesWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
+{
+
+    //==========================================================================
+
+public:
+
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::DrawArgs;
+
+    //==========================================================================
+
+    /**
+     * @brief Constructs a new `PanelLinesWidget` object.
+     *
+     */
+    PanelLinesWidget();
+
+    /**
+     * @brief Destroys the `PanelLinesWidget` object.
+     *
+     */
+    virtual ~PanelLinesWidget() noexcept;
+
+    //==========================================================================
+
+    /**
+     * @brief Draws a set of lines for spacing to the widget's NanoVG context.
+     *
+     * @param args
+     *
      */
     virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::DrawArgs &args) override;
 
@@ -119,14 +180,14 @@ private:
  * @brief The `ThemedPanelWidget` struct.
  *
  */
-struct ThemedPanelWidget : virtual ::rack::widget::Widget
+struct ThemedPanelWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::widget::Widget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs;
 
     //==========================================================================
 
@@ -140,19 +201,20 @@ public:
      * @brief Destroys the `ThemedPanelWidget` object.
      *
      */
-    virtual ~ThemedPanelWidget();
+    virtual ~ThemedPanelWidget() noexcept;
 
     //==========================================================================
 
     /**
      * @brief Advances the module by one frame.
+     * Calls the superclass's `step()` to recurse to children.
      *
      */
     virtual void step() override;
 
     /**
      * @brief Draws a themed background to the widget's NanoVG context.
-     * Calls the superclass's draw(args) to recurse to children.
+     * Calls the superclass's `draw(args)` to recurse to children.
      *
      * @param args
      */
@@ -160,7 +222,52 @@ public:
 
     //==========================================================================
 
-private:
+    /**
+     * Called after the `prefersDarkPanels` setting is changed.
+     *
+     * @param e
+     *
+     */
+	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e) override;
+
+    //==========================================================================
+
+    //==========================================================================
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget &getFrameBufferWidget()
+    {
+        return *this->fb;
+    };
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget &getPortPanelWidget(const ::std::size_t &i)
+    {
+        return *this->portPanelWidgets[i];
+    }
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *> &getPortPanelWidgets()
+    {
+        return this->portPanelWidgets;
+    }
+
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget &getParamPanelWidget(const ::std::size_t &i)
+    {
+        return *this->paramPanelWidgets[i];
+    }
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *> &getParamPanelWidgets()
+    {
+        return this->paramPanelWidgets;
+    }
+
+    //==========================================================================
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *> portPanelWidgets = { NULL };
+
+    ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *> paramPanelWidgets = { NULL };
+
+    //==========================================================================
+
+protected:
 
     //==========================================================================
 
@@ -168,31 +275,39 @@ private:
      * @brief
      *
      */
-    ::rack::FramebufferWidget *fb;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *fb = NULL;
 
-    // /**
-    //  * @brief
-    //  *
-    //  */
-    // const ::std::array<::rack::math::Vec, 4> screwsPositions;
-
-    // /**
-    //  * @brief
-    //  *
-    //  */
-    // const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+    //==========================================================================
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *panelLines;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelBorderWidget *panelBorder = NULL;
 
     /**
      * @brief
      *
      */
-    ::rack::app::PanelBorder *panelBorder;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget *panelLines = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::rack::math::Vec, 4> screwsPositions = { ::rack::math::Vec() };
+
+    /**
+     * @brief
+     *
+     */
+    ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws = { NULL };
+
+    //==========================================================================
+
+private:
 
     //==========================================================================
 
