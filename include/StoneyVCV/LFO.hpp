@@ -36,6 +36,8 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
@@ -44,6 +46,8 @@
 #include <StoneyDSP/Core.hpp>
 #include <StoneyDSP/DSP.hpp>
 #include <StoneyDSP/SIMD.hpp>
+
+//==============================================================================
 
 #include <array>
 

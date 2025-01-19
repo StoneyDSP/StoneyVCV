@@ -38,7 +38,7 @@ jobs:
       # https://vcvrack.com/manual/Building#Setting-up-your-development-environment
     - name: Install VCV's macOS Deps
       run: |
-        brew install git wget cmake autoconf automake libtool jq python zstd pkg-config sccache ninja tree
+        brew install coreutils git wget cmake autoconf automake libtool jq python zstd pkg-config sccache ninja tree
 
     - name: checkout StoneyVCV
       uses: actions/checkout@v4

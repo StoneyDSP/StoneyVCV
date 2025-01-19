@@ -1,10 +1,6 @@
 /*******************************************************************************
  * @file src/StoneyVCV/LFO.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 2.0.2
- * @date 2024-11-11
- *
  * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
@@ -13,8 +9,12 @@
 
 //==============================================================================
 
-#include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/LFO.hpp>
+
+//==============================================================================
+
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary.hpp>
 
 //==============================================================================
 
