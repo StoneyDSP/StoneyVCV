@@ -11,12 +11,6 @@
 
 //==============================================================================
 
-#pragma comment( lib, "Rack" )
-#pragma comment( compiler )
-#pragma comment( user, "Compiled on " __DATE__ " at " __TIME__ )
-
-//==============================================================================
-
 #if defined (STONEYVCV_BUILD_PLUGIN) && defined (STONEYVCV_BUILD_TESTS)
 
 //==============================================================================
@@ -57,30 +51,26 @@ TEST_CASE("plugin", "[plugin]") {
     #endif
 #endif
 
-#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 2U)
-    #ifdef STONEYVCV_BUILD_VCA
-        SECTION( "VCA" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
-        }
-    #endif
+#ifdef STONEYVCV_BUILD_VCA
+    SECTION( "VCA" ) {
+        REQUIRE(::StoneyDSP::StoneyVCV::VCA::modelVCA != nullptr);
+    }
 #endif
 
-#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH >= 1U)
-    #ifdef STONEYVCV_BUILD_HP4
-        SECTION( "HP4" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::HP4::modelHP4 != nullptr);
-        }
-    #endif
-    #ifdef STONEYVCV_BUILD_HP2
-        SECTION( "HP2" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::HP2::modelHP2 != nullptr);
-        }
-    #endif
-    #ifdef STONEYVCV_BUILD_HP1
-        SECTION( "HP1" ) {
-            REQUIRE(::StoneyDSP::StoneyVCV::HP1::modelHP1 != nullptr);
-        }
-    #endif
+#ifdef STONEYVCV_BUILD_HP4
+    SECTION( "HP4" ) {
+        REQUIRE(::StoneyDSP::StoneyVCV::HP4::modelHP4 != nullptr);
+    }
+#endif
+#ifdef STONEYVCV_BUILD_HP2
+    SECTION( "HP2" ) {
+        REQUIRE(::StoneyDSP::StoneyVCV::HP2::modelHP2 != nullptr);
+    }
+#endif
+#ifdef STONEYVCV_BUILD_HP1
+    SECTION( "HP1" ) {
+        REQUIRE(::StoneyDSP::StoneyVCV::HP1::modelHP1 != nullptr);
+    }
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0U) && (STONEYVCV_VERSION_PATCH < 1U)

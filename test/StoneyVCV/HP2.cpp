@@ -95,10 +95,10 @@ TEST_CASE( "HP2", "[HP2]" ) {
 
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::HP2::HP2Module* test_hp2Module = new ::StoneyDSP::StoneyVCV::HP2::HP2Module;
-            REQUIRE( test_hp2Module->getNumParams() == spec.get()->NUM_PARAMS );
-            REQUIRE( test_hp2Module->getNumInputs() == spec.get()->NUM_INPUTS );
-            REQUIRE( test_hp2Module->getNumOutputs() == spec.get()->NUM_OUTPUTS );
-            REQUIRE( test_hp2Module->getNumLights() == spec.get()->NUM_LIGHTS );
+            REQUIRE( test_hp2Module->getNumParams() == static_cast<int>(spec.get()->NUM_PARAMS) );
+            REQUIRE( test_hp2Module->getNumInputs() == static_cast<int>(spec.get()->NUM_INPUTS) );
+            REQUIRE( test_hp2Module->getNumOutputs() == static_cast<int>(spec.get()->NUM_OUTPUTS) );
+            REQUIRE( test_hp2Module->getNumLights() == static_cast<int>(spec.get()->NUM_LIGHTS) );
             delete test_hp2Module;
         }
     }

@@ -1,8 +1,8 @@
 /*******************************************************************************
- * @file include/StoneyVCV/HP1.hpp
+ * @file include/StoneyVCV/ComponentLibrary/PortWidget.hpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
  * @brief @PROJECT_DESCRIPTION@
- * @version @HP1_VERSION@
+ * @version @plugin_VERSION@
  *
  * @copyright MIT License
  *
@@ -30,24 +30,20 @@
 
 #pragma once
 
-#define STONEYVCV_HP1_HPP_INCLUDED 1
+#define STONEYVCV_COMPONENTLIBRARY_PORTWIDGET_HPP_INCLUDED 1
 
-#if defined (STONEYVCV_BUILD_HP1)
+#if defined (STONEYVCV_BUILD_COMPONENTLIBRARY)
 
 //==============================================================================
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
-#include <StoneyVCV/plugin.hpp>
+#include <StoneyVCV/ComponentLibrary/Widget.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
-
-//==============================================================================
-
-#include <array>
 
 //==============================================================================
 
@@ -67,121 +63,96 @@ namespace StoneyVCV
 
 //==============================================================================
 
-/**
- * @brief The `HP1` namespace.
- * @author Nathan J. Hood (nathanjhood@googlemail.com)
- * @copyright Copyright (c) 2024
- * @version @HP1_VERSION@
- *
- */
-namespace HP1
+namespace ComponentLibrary
 {
-/** @addtogroup HP1
+/** @addtogroup ComponentLibrary
  *  @{
  */
 
 //==============================================================================
 
 /**
- * @brief The `HP1Module` struct.
+ * @brief The `ThemedPortPanelWidget` struct.
+ *
+ * Provides a themed panel background which can fit around instances of the
+ * `ThemedPortWidget` struct on a Module's panel.
+ *
+ * Carries a `labelText` member for writing a text label corresponding to the
+ * port's purpose.
  *
  */
-struct HP1Module final : virtual ::rack::engine::Module
+struct ThemedPortPanelWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget
 {
+
     //==========================================================================
 
 public:
 
     //==========================================================================
 
-    enum IdxParams {
-        /** Number of Parameters. */
-        NUM_PARAMS
-    };
-
-	enum IdxInputs {
-        /** Number of Input ports. */
-		NUM_INPUTS
-	};
-
-	enum IdxOutputs {
-        /** Number of Output ports. */
-		NUM_OUTPUTS
-	};
-
-	enum IdxLights {
-        /** Number of Lights. */
-		NUM_LIGHTS
-	};
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::DrawArgs;
 
     //==========================================================================
 
     /**
-     * @brief Construct a new `HP1Module` object.
+     * @brief Constructs a new `ThemedPortPanelWidget` object.
      *
      */
-    HP1Module();
+    ThemedPortPanelWidget();
 
     /**
-     * @brief Destroys the `HP1Module` object.
+     * @brief Destroys the `ThemedPortPanelWidget` object.
      *
      */
-    virtual ~HP1Module() noexcept;
-
-    //==========================================================================
-
-private:
-
-    //==========================================================================
-
-    STONEYDSP_DECLARE_NON_COPYABLE(HP1Module)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP1Module)
-};
-
-//==============================================================================
-
-/**
- * @brief The `HP1Widget` struct.
- *
- */
-struct HP1Widget final : virtual ::rack::widget::Widget
-{
-    //==========================================================================
-
-public:
-
-    using DrawArgs = ::rack::widget::Widget::DrawArgs;
+    virtual ~ThemedPortPanelWidget() noexcept;
 
     //==========================================================================
 
     /**
-     * @brief Construct a new `HP1Widget` object.
-     *
-     */
-    HP1Widget();
-
-    /**
-     * @brief Destroys the `HP1Widget` object.
-     *
-     */
-    virtual ~HP1Widget() noexcept;
-
-    //==========================================================================
-
-    /**
-     * @brief Advances the module by one frame.
+     * @brief Advances the `ThemedPortPanelWidget` by one frame.
+     * Calls the superclass's `step()` method internally to recurse the children.
      *
      */
     virtual void step() override;
 
     /**
-     * @brief Draws the widget to the NanoVG context.
-     * When overriding, call the superclass's draw(args) to recurse to
-     * children.
+     * @brief Renders the `ThemedPortPanelWidget` to the NanoVG context.
+     * Calls the superclass's `draw(args)` method internally to recurse the children.
      *
      * @param args
+     *
      */
-    virtual void draw(const ::StoneyDSP::StoneyVCV::HP1::HP1Widget::DrawArgs& args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
+    virtual const bool &getPrefersDarkPanels() const noexcept;
+
+    //==========================================================================
+
+    virtual void setLabelText(const ::std::string &newLabelText) noexcept;
+
+    virtual const ::std::string &getLabelText() const noexcept;
+
+    //==========================================================================
+
+    virtual void setIsOutput(const bool &newIsOutput) noexcept;
+
+    virtual const bool &getIsOutput() const noexcept;
+
+    //==========================================================================
+
+protected:
+
+    //==========================================================================
+
+    ::std::string labelText;
+
+    /**
+     * @brief Set whether the parent is an input or an output port.
+     *
+     */
+    bool isOutput;
 
     //==========================================================================
 
@@ -190,30 +161,23 @@ private:
     //==========================================================================
 
     /**
-     * @brief
-     *
+     * `{&::rack::settings::preferDarkPanels}`
      */
-    ::rack::widget::FramebufferWidget *hp1WidgetFrameBuffer;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::app::PanelBorder *panelBorder;
+    const bool *prefersDarkPanelsPtr = NULL;
 
     //==========================================================================
 
-    STONEYDSP_DECLARE_NON_COPYABLE(HP1Widget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP1Widget)
+    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortPanelWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortPanelWidget)
 };
 
 //==============================================================================
 
 /**
- * @brief The `HP1ModuleWidget` struct.
+ * @brief The `ThemedPortWidget` struct.
  *
  */
-struct HP1ModuleWidget final : virtual ::rack::app::ModuleWidget
+struct ThemedPortWidget : virtual ::rack::app::ThemedSvgPort
 {
 
     //==========================================================================
@@ -222,27 +186,34 @@ public:
 
     //==========================================================================
 
-    /**
-     * @brief Construct a new `HP1ModuleWidget` object.
-     *
-     * @param module
-     *
-     */
-    HP1ModuleWidget(::StoneyDSP::StoneyVCV::HP1::HP1Module *module);
-
-    /**
-     * @brief Destroys the `HP1ModuleWidget` object.
-     *
-     */
-    virtual ~HP1ModuleWidget() noexcept;
+    using DrawArgs = ::rack::app::ThemedSvgPort::DrawArgs;
 
     //==========================================================================
 
+    ThemedPortWidget();
+
+    virtual ~ThemedPortWidget() noexcept;
+
+    //==========================================================================
+
+    virtual void step() override;
+
     /**
-     * @brief Advances the module by one frame.
+     * @brief Renders to the NanoVG context.
+     * Calls `::rack::app::ThemedSvgPort::draw(args)` internally.
      *
      */
-    virtual void step() override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
+protected:
+
+    //==========================================================================
+
+	::std::shared_ptr<::rack::window::Svg> lightSvg;
+
+	::std::shared_ptr<::rack::window::Svg> darkSvg;
 
     //==========================================================================
 
@@ -250,79 +221,14 @@ private:
 
     //==========================================================================
 
-    /**
-     * @brief
-     */
-    const ::rack::math::Vec size;
-
-    /**
-     * @brief
-     */
-    ::rack::app::ThemedSvgPanel *panel;
-
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::StoneyVCV::HP1::HP1Widget *hp1Widget;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::widget::FramebufferWidget *hp1ModuleWidgetFrameBuffer;
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::math::Vec, 2> screwsPositions;
-
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::componentlibrary::ThemedScrew *, 2> screws;
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    bool lastPrefersDarkPanels;
-
-    //==========================================================================
-
-    STONEYDSP_DECLARE_NON_COPYABLE(HP1ModuleWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(HP1ModuleWidget)
+    STONEYDSP_DECLARE_NON_COPYABLE(ThemedPortWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(ThemedPortWidget)
 };
 
 //==============================================================================
 
-/**
- * @brief
- *
- * @param name
- * @param description
- * @param manualUrl
- * @param hidden
- *
- * @return `rack::plugin::Model*`
- */
-::rack::plugin::Model* createModelHP1(
-    ::std::string name = "",
-    ::std::string description = "",
-    ::std::string manualUrl = "",
-    bool hidden = true
-) noexcept(false);
-
-//==============================================================================
-
-  /// @} group HP1
-} // namespace HP1
+  /// @} group ComponentLibrary
+} // namespace ComponentLibrary
 
 //==============================================================================
 
@@ -336,6 +242,6 @@ private:
 
 //==============================================================================
 
-#endif // defined (STONEYVCV_BUILD_HP1)
+#endif // STONEYVCV_BUILD_COMPONENTLIBRARY
 
 //==============================================================================
