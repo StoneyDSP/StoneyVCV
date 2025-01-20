@@ -144,6 +144,10 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget(),
     portPanelWidgets{nullptr},
     paramPanelWidgets{nullptr},
+    numScrews(0U),
+    numParams(0U),
+    numPorts(0U),
+    numLights(0U),
     fb(nullptr),
     panelBorder(nullptr),
     panelLines(nullptr),
@@ -170,8 +174,8 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
 {
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget");
 
-    this->portPanelWidgets.reserve(0);
-    this->paramPanelWidgets.reserve(0);
+    this->portPanelWidgets.reserve(this->numPorts);
+    this->paramPanelWidgets.reserve(this->numParams);
 
     this->fb = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *>(
         ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(
@@ -219,31 +223,35 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::draw(const ::St
     assert(this->fb != nullptr);
     assert(this->panelBorder != nullptr);
     assert(this->panelLines != nullptr);
-    assert(this->screws[0] != nullptr);
-    assert(this->screws[1] != nullptr);
-    assert(this->screws[2] != nullptr);
-    assert(this->screws[3] != nullptr);
+    // assert(this->screws[0] != nullptr);
+    // assert(this->screws[1] != nullptr);
+    // assert(this->screws[2] != nullptr);
+    // assert(this->screws[3] != nullptr);
+    for(auto &screw : this->screws) {
+        assert(screw != nullptr);
+    }
 }
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::~ThemedPanelWidget() noexcept
 {
-    // Assertions
     DBG("Destroying StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget");
+
+    // Assertions
     assert(!this->parent);
 
     // Children
-    // for(const auto& screw : this->screws) {
-    //     screw->clearChildren();
-    // }
     this->clearChildren();
 
     this->fb = nullptr;
     this->panelBorder = nullptr;
     this->panelLines = nullptr;
-    this->screws[0] = nullptr;
-    this->screws[1] = nullptr;
-    this->screws[2] = nullptr;
-    this->screws[3] = nullptr;
+    // this->screws[0] = nullptr;
+    // this->screws[1] = nullptr;
+    // this->screws[2] = nullptr;
+    // this->screws[3] = nullptr;
+    for(auto &screw : this->screws) {
+        screw = nullptr;
+    }
 }
 
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::step()
@@ -276,6 +284,46 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::onPrefersDarkP
 
     // Opaque behaviour p.2
     return e.stopPropagating();
+}
+
+const ::std::size_t &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::getNumScrews() const noexcept
+{
+    return this->numScrews;
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::setNumScrews(const ::std::size_t &newNumScrews)
+{
+    this->numScrews = newNumScrews;
+}
+
+const ::std::size_t &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::getNumParams() const noexcept
+{
+    return this->numParams;
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::setNumParams(const ::std::size_t &newNumParams)
+{
+    this->numParams = newNumParams;
+}
+
+const ::std::size_t &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::getNumPorts() const noexcept
+{
+    return this->numPorts;
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::setNumPorts(const ::std::size_t &newNumPorts)
+{
+    this->numPorts = newNumPorts;
+}
+
+const ::std::size_t &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::getNumLights() const noexcept
+{
+    return this->numLights;
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::setNumLights(const ::std::size_t &newNumLights)
+{
+    this->numLights = newNumLights;
 }
 
 //==============================================================================

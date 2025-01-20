@@ -232,6 +232,22 @@ public:
 
     //==========================================================================
 
+    const ::std::size_t &getNumScrews() const noexcept;
+
+    void setNumScrews(const ::std::size_t &newNumScrews);
+
+    const ::std::size_t &getNumPorts() const noexcept;
+
+    void setNumPorts(const ::std::size_t &newNumPorts);
+
+    const ::std::size_t &getNumParams() const noexcept;
+
+    void setNumParams(const ::std::size_t &newNumParams);
+
+    const ::std::size_t &getNumLights() const noexcept;
+
+    void setNumLights(const ::std::size_t &newNumLights);
+
     //==========================================================================
 
     ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget &getFrameBufferWidget()
@@ -239,9 +255,11 @@ public:
         return *this->fb;
     };
 
+    //==========================================================================
+
     ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget &getPortPanelWidget(const ::std::size_t &i)
     {
-        return *this->portPanelWidgets[i];
+        return *this->portPanelWidgets.at(i);
     }
 
     ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *> &getPortPanelWidgets()
@@ -249,9 +267,11 @@ public:
         return this->portPanelWidgets;
     }
 
+    //==========================================================================
+
     ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget &getParamPanelWidget(const ::std::size_t &i)
     {
-        return *this->paramPanelWidgets[i];
+        return *this->paramPanelWidgets.at(i);
     }
 
     ::std::vector<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *> &getParamPanelWidgets()
@@ -268,6 +288,16 @@ public:
     //==========================================================================
 
 protected:
+
+    //==========================================================================
+
+    ::std::size_t numScrews = 0U;
+
+    ::std::size_t numParams = 0U;
+
+    ::std::size_t numPorts = 0U;
+
+    ::std::size_t numLights = 0U;
 
     //==========================================================================
 
