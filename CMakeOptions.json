@@ -12,7 +12,7 @@
       "hidden": true,
       "cacheVariables": {
         "STONEYVCV_EXPERIMENTAL": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_DOCS": {
@@ -52,7 +52,7 @@
           "type": "BOOL"
         },
         "STONEYVCV_BUILD_LFO": {
-          "value": "OFF",
+          "value": "ON",
           "type": "BOOL"
         }
       }
