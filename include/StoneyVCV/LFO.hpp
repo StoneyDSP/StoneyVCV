@@ -38,6 +38,9 @@
 
 #include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/RoundKnobWidget.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
@@ -101,7 +104,7 @@ public:
 
     LFOEngine(T sample);
 
-    ~LFOEngine() noexcept;
+    virtual ~LFOEngine() noexcept;
 
     //==========================================================================
 
@@ -148,24 +151,40 @@ public:
 
     //==========================================================================
 
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+
+    //==========================================================================
+
     enum IdxParams {
+        FREQ_PARAM,
+        PWM_PARAM,
+        TRIMPOT_FM_PARAM,
+        TRIMPOT_PWM_PARAM,
         /** Number of Parameters. */
         NUM_PARAMS
     };
 
     enum IdxInputs {
+        FM_INPUT,
+        CLK_INPUT,
+        RST_INPUT,
+        PWM_INPUT,
         /** Number of Input ports. */
         NUM_INPUTS
     };
 
     enum IdxOutputs {
+        SIN_OUTPUT,
+        TRI_OUTPUT,
+        SAW_OUTPUT,
+        SQR_OUTPUT,
         /** Number of Output ports. */
         NUM_OUTPUTS
     };
 
     enum IdxLights {
-        /** Number of Lights. */
         ENUMS(BLINK_LIGHT, 2),
+        /** Number of Lights. */
         NUM_LIGHTS
     };
 
@@ -213,10 +232,6 @@ private:
 
     //==========================================================================
 
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
-
-    //==========================================================================
-
     /**
      * @brief
      *
@@ -227,13 +242,13 @@ private:
      * @brief
      *
      */
-    ::std::array<::StoneyDSP::StoneyVCV::LFO::LFOEngine<::StoneyDSP::float_t>, 16> engine;
+    ::std::array<::StoneyDSP::StoneyVCV::LFO::LFOEngine<float>, 16> engine;
 
     /**
      * @brief
      *
      */
-    ::std::array<::StoneyDSP::float_t, 16> lightGains;
+    ::std::array<float, 16> lightGains;
 
     //==========================================================================
 
@@ -241,13 +256,13 @@ private:
      * @brief
      *
      */
-    const ::StoneyDSP::float_t &vNominal = ::StoneyDSP::StoneyVCV::Tools::vNominal;
+    const float &vNominal = ::StoneyDSP::StoneyVCV::Tools::vNominal;
 
     /**
      * @brief
      *
      */
-    const ::StoneyDSP::float_t &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
+    const float &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
 
     //==========================================================================
 
@@ -261,14 +276,16 @@ private:
  * @brief The `LFOWidget` struct.
  *
  */
-struct LFOWidget final : virtual ::rack::Widget
+struct LFOWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::rack::Widget::DrawArgs;
+    //==========================================================================
+
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::DrawArgs;
 
     //==========================================================================
 
@@ -282,7 +299,7 @@ public:
      * @brief Destroy the `LFOWidget` object.
      *
      */
-    virtual ~LFOWidget();
+    virtual ~LFOWidget() noexcept;
 
     //==========================================================================
 
@@ -304,20 +321,6 @@ public:
     //==========================================================================
 
 private:
-
-    //==========================================================================
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget* lfoWidgetFrameBuffer;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::app::PanelBorder *panelBorder;
 
     //==========================================================================
 
@@ -354,7 +357,7 @@ public:
      * @brief Destroys the `LFOModuleWidget` object.
      *
      */
-    virtual ~LFOModuleWidget();
+    virtual ~LFOModuleWidget() noexcept;
 
     //==========================================================================
 
@@ -366,6 +369,54 @@ public:
 
     //==========================================================================
 
+    /**
+     * Occurs after the `prefersDarkPanels` setting is changed.
+     * The concept of a "dark" or "light" panel is defined by the type of Widget.
+	 *
+     */
+	struct PrefersDarkPanelsChangeEvent : ::rack::widget::Widget::BaseEvent {
+        bool newPrefersDarkPanels;
+    };
+
+    /**
+     * Called after the `prefersDarkPanels` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `ThemedWidget::step()` method).
+     *
+     * @param e
+     *
+     */
+	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e);
+
+    /**
+     *
+     */
+    const bool &getPrefersDarkPanels() const noexcept;
+
+    //==========================================================================
+
+    struct PixelRatioChangeEvent : ::rack::widget::Widget::BaseEvent {
+        float newPixelRatio = APP->window->pixelRatio;
+    };
+
+    /**
+     * Called after the `App->window->pixelRatio` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `Widget::step()` method).
+     *
+     * @param e
+     *
+     */
+    virtual void onPixelRatioChange(const PixelRatioChangeEvent& e);
+
+    /**
+     * @brief
+     *
+     */
+    const float &getPixelRatio() const noexcept;
+
+    //==========================================================================
+
 private:
 
     //==========================================================================
@@ -374,44 +425,104 @@ private:
      * @brief
      *
      */
-    const ::rack::math::Vec size;
+    ::rack::app::ThemedSvgPanel *panel = NULL;
 
     /**
      * @brief
      *
      */
-    ::rack::app::ThemedSvgPanel *panel;
+    ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *lfoModuleWidgetFrameBuffer = NULL;
+
+    //==========================================================================
 
     /**
      * @brief
      *
      */
-    ::rack::FramebufferWidget *lfoModuleWidgetFrameBuffer;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundHugeBlackKnob *knobFreq = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundLargeBlackKnob *knobPwm = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::Trimpot *trimpotFm = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::Trimpot *trimpotPwm = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputFm = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputClk = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputRst = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputPwm = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portOutputSin = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portOutputTri = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portOutputSaw = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portOutputSqr = NULL;
 
     //==========================================================================
 
     /**
      * @brief 3mm LED showing a smoothed CV value.
      */
-    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightLfo;
-
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::math::Vec, 4> screwsPositions;
-
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightLfo = NULL;
 
     //==========================================================================
 
@@ -419,7 +530,27 @@ private:
      * @brief
      *
      */
-    bool lastPrefersDarkPanels;
+    bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
+
+    /**
+     * `{&::rack::settings::preferDarkPanels}`
+     *
+     */
+    const bool *prefersDarkPanelsPtr = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    float lastPixelRatio = {APP->window->pixelRatio};
+
+    /**
+     * @brief
+     *
+     */
+    const float *pixelRatioPtr = NULL;
 
     //==========================================================================
 
