@@ -38,9 +38,9 @@ struct LFOSpec final : ::StoneyDSP::StoneyVCV::Spec
 public:
     const ::std::string slug, name , description, manualUrl;
     const bool hidden;
-    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 4U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 4U;
     static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 2U;
     const ::rack::math::Vec size;
     LFOSpec()
@@ -50,7 +50,7 @@ public:
         manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2LFO.html"),
         hidden(false),
         size(
-            45.0F, // ::rack::window::mm2px(30.479999995F),
+            135.0F, // ::rack::window::mm2px(30.479999995F),
             380.0F //::rack::window::mm2px(128.693333312F)
         )
     {};
