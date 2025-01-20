@@ -39,7 +39,7 @@ public:
     const ::std::string slug, name , description, manualUrl;
     const bool hidden;
     static constexpr ::StoneyDSP::size_t NUM_PARAMS = 4U;
-    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 2U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 4U;
     static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 4U;
     static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 2U;
     const ::rack::math::Vec size;
