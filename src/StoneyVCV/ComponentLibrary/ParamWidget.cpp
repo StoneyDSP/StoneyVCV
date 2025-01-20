@@ -27,7 +27,9 @@
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget(),
     type(::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::Type::KNOB),
     fontSize(8.0F),
+    leading(4.0F),
     labelText(""),
+    isBipolar(false),
     prefersDarkPanelsPtr(nullptr)
 {
     DBG("Constructing StoneyVCV::ComponentLibrary::ThemedParamPanelWidget");
@@ -72,6 +74,16 @@ const float &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::g
     return this->fontSize;
 }
 
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::setLeading(const float & newLeading) noexcept
+{
+    this->leading = newLeading;
+}
+
+const float &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::getLeading() const noexcept
+{
+    return this->leading;
+}
+
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::setLabelText(const ::std::string & newLabelText) noexcept
 {
     this->labelText = newLabelText;
@@ -80,6 +92,16 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::setLabelT
 const ::std::string &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::getLabelText() const noexcept
 {
     return this->labelText;
+}
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::setIsBipolar(const bool &newIsBipolar)
+{
+    this->isBipolar = newIsBipolar;
+}
+
+const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::getIsBipolar() const noexcept
+{
+    return this->isBipolar;
 }
 
 //==============================================================================
