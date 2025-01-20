@@ -33,7 +33,13 @@
       "description" : "Voltage-controlled Amplifier. Supports polyphony.",
       "name" : "VCA",
       "slug" : "VCA",
-      "tags" : [ "Voltage-controlled Amplifier", "Polyphonic" ]
+      "tags" : [ "Voltage-controlled amplifier", "Polyphonic" ]
+    },
+    {
+      "description" : "Low-frequency Oscillator. Supports polyphony.",
+      "name" : "LFO",
+      "slug" : "LFO",
+      "tags" : [ "Low-frequency oscillator", "Polyphonic" ]
     }
   ],
   "name" : "StoneyVCV",
