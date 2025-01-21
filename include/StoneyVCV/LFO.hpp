@@ -124,13 +124,19 @@ private:
      * @brief
      *
      */
-    T frequency;
+    T frequency = 2.0F;
 
     /**
      * @brief
      *
      */
-    T lastFrequency;
+    T lastFrequency = 2.0F;
+
+    /**
+     * @brief
+     *
+     */
+    T phase = 0.0F;
 
     STONEYDSP_DECLARE_NON_COPYABLE(LFOEngine)
     STONEYDSP_DECLARE_NON_MOVEABLE(LFOEngine)
@@ -273,10 +279,10 @@ private:
 //==============================================================================
 
 /**
- * @brief The `LFOWidget` struct.
+ * @brief The `LFOPanelWidget` struct.
  *
  */
-struct LFOWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget
+struct LFOPanelWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget
 {
 
     //==========================================================================
@@ -293,13 +299,13 @@ public:
      * @brief Construct a new `LFOWidget` object.
      *
      */
-    LFOWidget();
+    LFOPanelWidget(::rack::math::Rect newBox);
 
     /**
      * @brief Destroy the `LFOWidget` object.
      *
      */
-    virtual ~LFOWidget() noexcept;
+    virtual ~LFOPanelWidget() noexcept;
 
     //==========================================================================
 
@@ -316,7 +322,7 @@ public:
      *
      * @param args
      */
-    void draw(const ::StoneyDSP::StoneyVCV::LFO::LFOWidget::DrawArgs& args) override;
+    void draw(const ::StoneyDSP::StoneyVCV::LFO::LFOPanelWidget::DrawArgs& args) override;
 
     //==========================================================================
 
@@ -324,8 +330,9 @@ private:
 
     //==========================================================================
 
-    STONEYDSP_DECLARE_NON_COPYABLE(LFOWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(LFOWidget)
+    STONEYDSP_DECLARE_NON_COPYABLE(LFOPanelWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(LFOPanelWidget)
+    STONEYDSP_DECLARE_NON_CONSTRUCTABLE(LFOPanelWidget)
 };
 
 //==============================================================================
@@ -425,19 +432,19 @@ private:
      * @brief
      *
      */
-    ::rack::app::ThemedSvgPanel *panel = NULL;
+    ::rack::app::ThemedSvgPanel *svgPanelWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::LFO::LFOWidget *lfoWidget = NULL;
+    ::StoneyDSP::StoneyVCV::LFO::LFOPanelWidget *panelWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *lfoModuleWidgetFrameBuffer = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *fb = NULL;
 
     //==========================================================================
 
