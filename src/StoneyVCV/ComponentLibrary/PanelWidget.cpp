@@ -419,7 +419,7 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::setNumLights(c
     try {
         return *this->portPanelWidgets.at(i);
     } catch (const std::out_of_range& e) {
-        std::cerr << "Index out of range: " << e.what() << std::endl;
+        DBG("Index out of range: %s", e.what());
         return *this->portPanelWidgets.at(0);
     }
 }
@@ -434,7 +434,7 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::setNumLights(c
     try {
         return *this->paramPanelWidgets.at(i);
     } catch (const std::out_of_range& e) {
-        std::cerr << "Index out of range: " << e.what() << std::endl;
+        DBG("Index out of range: %s", e.what());
         return *this->paramPanelWidgets.at(0);
     }
 }

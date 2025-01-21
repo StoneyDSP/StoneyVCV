@@ -84,7 +84,7 @@ struct ThemedPanelWidget; // forward-declaration
  *
  * @returns
  */
-template <class TPanelWidget = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget>
+template <class TPanelWidget>
 inline TPanelWidget *createPanelWidget(::rack::math::Rect box);
 
 //==============================================================================
