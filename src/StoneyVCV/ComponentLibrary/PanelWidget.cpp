@@ -253,30 +253,27 @@ const ::NVGcolor &::StoneyDSP::StoneyVCV::ComponentLibrary::PanelLinesWidget::ge
     );
 
     // Framebuffer
+    assert(this->fb != nullptr);
     this->fb->setSize(this->getSize());
     this->addChildBottom(this->fb);
 
     // Border
+    assert(this->panelBorder != nullptr);
     this->panelBorder->setSize(this->getSize());
     this->fb->addChildBottom(this->panelBorder);
 
     // Lines
+    assert(this->panelLines != nullptr);
     this->panelLines->setSize(this->getSize());
     this->fb->addChild(this->panelLines);
 
     // Screws
     for(const auto& screw : this->screws) {
+        assert(screw != nullptr);
         this->fb->addChild(screw);
     }
 
     // Assertions
-    assert(this->fb != nullptr);
-    assert(this->panelBorder != nullptr);
-    assert(this->panelLines != nullptr);
-    for(auto &screw : this->screws) {
-        assert(screw != nullptr);
-    }
-
     assert(static_cast<unsigned int>(this->getPosition().x) == static_cast<unsigned int>(0.0F) && "box.pos.x should be 0.0F");
     assert(static_cast<unsigned int>(this->getPosition().y) == static_cast<unsigned int>(0.0F) && "box.pos.y should be 0.0F");
     assert(static_cast<unsigned int>(this->getSize().x)     >  static_cast<unsigned int>(0.0F) && "box.size.x should be greater than 0.0F");
