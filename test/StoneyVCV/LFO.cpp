@@ -88,10 +88,10 @@ TEST_CASE( "LFO", "[LFO]" ) {
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::LFO::LFOModule* test_lfoModule = new ::StoneyDSP::StoneyVCV::LFO::LFOModule;
-            REQUIRE( test_lfoModule->getNumParams() == spec.get()->NUM_PARAMS );
-            REQUIRE( test_lfoModule->getNumInputs() == spec.get()->NUM_INPUTS );
-            REQUIRE( test_lfoModule->getNumOutputs() == spec.get()->NUM_OUTPUTS );
-            REQUIRE( test_lfoModule->getNumLights() == spec.get()->NUM_LIGHTS );
+            REQUIRE( test_lfoModule->getNumParams() == static_cast<int>(spec.get()->NUM_PARAMS) );
+            REQUIRE( test_lfoModule->getNumInputs() == static_cast<int>(spec.get()->NUM_INPUTS) );
+            REQUIRE( test_lfoModule->getNumOutputs() == static_cast<int>(spec.get()->NUM_OUTPUTS) );
+            REQUIRE( test_lfoModule->getNumLights() == static_cast<int>(spec.get()->NUM_LIGHTS) );
             delete test_lfoModule;
         }
     }
