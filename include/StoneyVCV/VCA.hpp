@@ -315,7 +315,7 @@ public:
      * @brief Construct a new `VCAWidget` object.
      *
      */
-    VCAWidget();
+    VCAWidget(::rack::math::Rect newBox);
 
     /**
      * @brief Destroys the `VCAWidget` object.
@@ -347,6 +347,7 @@ private:
 
     STONEYDSP_DECLARE_NON_COPYABLE(VCAWidget)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAWidget)
+    STONEYDSP_DECLARE_NON_CONSTRUCTABLE(VCAWidget)
 };
 
 //==============================================================================

@@ -266,11 +266,11 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     if (this->lightDivider.process()) {
         auto lightValue = *::std::max_element<float *>(this->lightGains.begin(), this->lightGains.end());
         blink_light.setBrightnessSmooth(
-            1.0F - (lightValue * lightValue),
+            1.0F - lightValue, //(lightValue * lightValue),
             this->lightDivider.getDivision() * args.sampleTime
         );
         blink_light_r.setBrightnessSmooth(
-            (lightValue * lightValue),
+            lightValue, //(lightValue * lightValue),
             this->lightDivider.getDivision() * args.sampleTime
         );
         // blink_light.setBrightnessSmooth(
@@ -343,82 +343,60 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
 
 //==============================================================================
 
-::StoneyDSP::StoneyVCV::VCA::VCAWidget::VCAWidget()
-:   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget()
+::StoneyDSP::StoneyVCV::VCA::VCAWidget::VCAWidget(::rack::math::Rect newBox)
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget(newBox)
 {
     DBG("Constructing StoneyVCV::VCA::VCAWidget");
 
-    this->setSize(::StoneyDSP::StoneyVCV::VCA::VCADimensions);
-
-    this->fb->setSize(this->getSize());
-
-    // Screws
-    this->screwsPositions = {
-        ::rack::math::Vec( // top-left
-            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
-            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
-        ),
-        ::rack::math::Vec( // top-right
-            (::StoneyDSP::StoneyVCV::VCA::VCADimensions.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
-            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
-        ),
-        ::rack::math::Vec( // bottom-left
-            (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
-            (::StoneyDSP::StoneyVCV::VCA::VCADimensions.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
-        ),
-        ::rack::math::Vec( // bottom-right
-            (::StoneyDSP::StoneyVCV::VCA::VCADimensions.x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
-            (::StoneyDSP::StoneyVCV::VCA::VCADimensions.y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
-        ),
-    };
-    this->screws[0]->setPosition( // Centered
-        this->screwsPositions[0].minus(this->screws[0]->getSize().div(2.0F))
-    );
-    this->screws[1]->setPosition( // Centered
-        this->screwsPositions[1].minus(this->screws[1]->getSize().div(2.0F))
-    );
-    this->screws[2]->setPosition( // Centered
-        this->screwsPositions[2].minus(this->screws[2]->getSize().div(2.0F))
-    );
-    this->screws[3]->setPosition( // Centered
-        this->screwsPositions[3].minus(this->screws[3]->getSize().div(2.0F))
-    );
+    // // Screws
+    // this->screwsPositions = {
+    //     ::rack::math::Vec( // top-left
+    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+    //     ),
+    //     ::rack::math::Vec( // top-right
+    //         (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)
+    //     ),
+    //     ::rack::math::Vec( // bottom-left
+    //         (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F),
+    //         (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
+    //     ),
+    //     ::rack::math::Vec( // bottom-right
+    //         (this->getSize().x - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F)),
+    //         (this->getSize().y - (::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH * 0.5F))
+    //     ),
+    // };
+    // this->screws.at(0)->setPosition( // Centered
+    //     this->screwsPositions.at(0).minus(this->screws.at(0)->getSize().div(2.0F))
+    // );
+    // this->screws.at(1)->setPosition( // Centered
+    //     this->screwsPositions.at(1).minus(this->screws.at(1)->getSize().div(2.0F))
+    // );
+    // this->screws.at(2)->setPosition( // Centered
+    //     this->screwsPositions.at(2).minus(this->screws.at(2)->getSize().div(2.0F))
+    // );
+    // this->screws.at(3)->setPosition( // Centered
+    //     this->screwsPositions.at(3).minus(this->screws.at(3)->getSize().div(2.0F))
+    // );
     // Params
-    this->paramPanelWidgets.reserve(1);
-    this->paramPanelWidgets.emplace_back<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget *>(
-        dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget *>(
-            ::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget>(
-                ::rack::math::Vec()
-            )
-        )
-    );
-    this->fb->addChild(this->paramPanelWidgets[1]);
+    this->setNumParams(::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS);
+    this->paramPanelWidgets.clear(); // because element 0 is a null-ish value from the in-class initializer...
+    this->paramPanelWidgets.reserve(this->getNumParams());
+    for(::std::size_t i = 0U; i < this->getNumParams(); ++i)
+    {
+        this->addParamPanelWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget>(::rack::math::Vec());
+        this->fb->addChild(&this->getParamPanelWidget(i));
+    }
     // Ports
-    this->portPanelWidgets.reserve(3);
-    this->portPanelWidgets.emplace_back<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *>(
-        dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *>(
-            ::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget>(
-                ::rack::math::Vec()
-            )
-        )
-    );
-    this->portPanelWidgets.emplace_back<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *>(
-        dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *>(
-            ::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget>(
-                ::rack::math::Vec()
-            )
-        )
-    );
-    this->portPanelWidgets.emplace_back<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *>(
-        dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget *>(
-            ::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget>(
-                ::rack::math::Vec()
-            )
-        )
-    );
-    this->fb->addChild(this->portPanelWidgets[1]);
-    this->fb->addChild(this->portPanelWidgets[2]);
-    this->fb->addChild(this->portPanelWidgets[3]);
+    this->setNumPorts(::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS + ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS);
+    this->portPanelWidgets.clear(); // because element 0 is a null-ish value from the in-class initializer...
+    this->portPanelWidgets.reserve(this->getNumPorts());
+    for(::std::size_t i = 0U; i < this->getNumPorts(); ++i)
+    {
+        this->addPortPanelWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortPanelWidget>(::rack::math::Vec());
+        this->fb->addChild(&this->getPortPanelWidget(i));
+    }
     // Update
     this->fb->setDirty();
     // Assertions
@@ -426,6 +404,14 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAModule::process(const ::StoneyDSP::StoneyVC
     assert(static_cast<unsigned int>(this->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
     assert(static_cast<unsigned int>(this->fb->getSize().x) == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
     assert(static_cast<unsigned int>(this->fb->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
+    assert(this->getNumParams() == ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_PARAMS);
+    for(::std::size_t i = 0U; i < this->getNumParams(); ++i) {
+        assert(&this->getParamPanelWidget(i) != nullptr);
+    }
+    assert(this->getNumPorts() == ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_INPUTS + ::StoneyDSP::StoneyVCV::VCA::VCAModule::NUM_OUTPUTS);
+    for(::std::size_t i = 0U; i < this->getNumPorts(); ++i) {
+        assert(&this->getPortPanelWidget(i) != nullptr);
+    }
 }
 
 ::StoneyDSP::StoneyVCV::VCA::VCAWidget::~VCAWidget() noexcept
@@ -505,9 +491,11 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         )
     );
     this->vcaWidget = dynamic_cast<::StoneyDSP::StoneyVCV::VCA::VCAWidget *>(
-        ::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(
-            ::rack::math::Vec(0.0F, 0.0F),
-            ::StoneyDSP::StoneyVCV::VCA::VCADimensions
+        ::StoneyDSP::StoneyVCV::createPanelWidget<::StoneyDSP::StoneyVCV::VCA::VCAWidget>(
+            ::rack::math::Rect(
+                ::rack::math::Vec(0.0F, 0.0F),
+                ::StoneyDSP::StoneyVCV::VCA::VCADimensions
+            )
         )
     );
     this->vcaModuleWidgetFrameBuffer = dynamic_cast<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *>(
@@ -570,71 +558,36 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
         )
     );
 
-    // try {
-    //     std::cout << "Element at index 0: " << this->vcaWidget->portPanelWidgets.at(0) << std::endl; // Output: 3
-    // } catch (const std::out_of_range& e) {
-    //     std::cerr << "Index out of range: " << e.what() << std::endl;
-    // }
-
-    // try {
-    //     std::cout << "Element at index 1: " << this->vcaWidget->portPanelWidgets.at(1) << std::endl; // Output: 3
-    // } catch (const std::out_of_range& e) {
-    //     std::cerr << "Index out of range: " << e.what() << std::endl;
-    // }
-
-    // try {
-    //     std::cout << "Element at index 2: " << this->vcaWidget->portPanelWidgets.at(2) << std::endl; // Output: 3
-    // } catch (const std::out_of_range& e) {
-    //     std::cerr << "Index out of range: " << e.what() << std::endl;
-    // }
-
-    // try {
-    //     std::cout << "Element at index 3: " << this->vcaWidget->portPanelWidgets.at(3) << std::endl; // Output: 3
-    // } catch (const std::out_of_range& e) {
-    //     std::cerr << "Index out of range: " << e.what() << std::endl;
-    // }
-
-    this->vcaWidget->portPanelWidgets[1]->setPosition(
+    this->vcaWidget->getPortPanelWidget(0).setPosition(
         ::rack::math::Vec(
             this->portVcaInput->getPosition().x - 2.425775F, // margin = portPanel.x - port.x / 2
             this->portVcaInput->getPosition().y - ((39.15691F - 23.7F) - 2.425775F) // portPanel.y - port.y - margin
         )
     );
-    this->vcaWidget->portPanelWidgets[2]->setPosition(
+    this->vcaWidget->getPortPanelWidget(1).setPosition(
         ::rack::math::Vec(
             this->portCvInput->getPosition().x - 2.425775F,
             this->portCvInput->getPosition().y - ((39.15691F - 23.7F) - 2.425775F)
         )
     );
-    this->vcaWidget->portPanelWidgets[3]->setPosition(
+    this->vcaWidget->getPortPanelWidget(2).setPosition(
         ::rack::math::Vec(
             this->portVcaOutput->getPosition().x - 2.425775F,
             this->portVcaOutput->getPosition().y - ((39.15691F - 23.7F) - 2.425775F)
         )
     );
 
-    this->vcaWidget->portPanelWidgets[1]->setIsOutput(false);
-    this->vcaWidget->portPanelWidgets[2]->setIsOutput(false);
-    this->vcaWidget->portPanelWidgets[3]->setIsOutput(true);
+    this->vcaWidget->getPortPanelWidget(0).setIsOutput(false);
+    this->vcaWidget->getPortPanelWidget(1).setIsOutput(false);
+    this->vcaWidget->getPortPanelWidget(2).setIsOutput(true);
 
-    this->vcaWidget->portPanelWidgets[1]->setLabelText("IN");
-    this->vcaWidget->portPanelWidgets[2]->setLabelText("CV");
-    this->vcaWidget->portPanelWidgets[3]->setLabelText("OUT");
+    this->vcaWidget->getPortPanelWidget(0).setLabelText("IN");
+    this->vcaWidget->getPortPanelWidget(1).setLabelText("CV");
+    this->vcaWidget->getPortPanelWidget(2).setLabelText("OUT");
 
-    this->vcaWidget->paramPanelWidgets[1]->setPosition(
-        ::rack::math::Vec(
-            this->gainKnob->getPosition().x,
-            this->gainKnob->getPosition().y
-        )
-    );
-    this->vcaWidget->paramPanelWidgets[1]->setSize( // this instead of defining one knob panel struct per knob size?
-        ::rack::math::Vec(
-            this->gainKnob->getSize().x,
-            this->gainKnob->getSize().y
-        )
-    );
-    this->vcaWidget->paramPanelWidgets[1]->setFontSize(12.0F);
-    this->vcaWidget->paramPanelWidgets[1]->setLabelText("GAIN");
+    this->vcaWidget->getParamPanelWidget(0).setBox(this->gainKnob->getBox());
+    this->vcaWidget->getParamPanelWidget(0).setFontSize(12.0F);
+    this->vcaWidget->getParamPanelWidget(0).setLabelText("GAIN");
 
     this->prefersDarkPanelsPtr = static_cast<const bool *>(&::rack::settings::preferDarkPanels);
     this->pixelRatioPtr = static_cast<const float *>(&APP->window->pixelRatio);
@@ -676,10 +629,6 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     // assert(module != nullptr);
     assert(this->panel != nullptr);
     assert(this->vcaWidget != nullptr);
-    // assert(this->vcaWidget->portPanelWidgets[0] != nullptr);
-    assert(this->vcaWidget->portPanelWidgets[1] != nullptr);
-    assert(this->vcaWidget->portPanelWidgets[2] != nullptr);
-    assert(this->vcaWidget->portPanelWidgets[3] != nullptr);
     assert(this->vcaModuleWidgetFrameBuffer != nullptr);
     assert(this->gainKnob != nullptr);
     assert(this->portCvInput != nullptr);
@@ -689,10 +638,10 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     assert(this->prefersDarkPanelsPtr != nullptr);
     assert(this->pixelRatioPtr != nullptr);
 
-    assert(static_cast<unsigned int>(this->getSize().x) == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
-    assert(static_cast<unsigned int>(this->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
+    assert(static_cast<unsigned int>(this->getSize().x)             == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
+    assert(static_cast<unsigned int>(this->getSize().y)             ==      static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
     assert(static_cast<unsigned int>(this->getPanel()->getSize().x) == 6U * static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH));
-    assert(static_cast<unsigned int>(this->getPanel()->getSize().y) == static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
+    assert(static_cast<unsigned int>(this->getPanel()->getSize().y) ==      static_cast<unsigned int>(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT));
 }
 
 ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::~VCAModuleWidget() noexcept
@@ -702,7 +651,6 @@ void ::StoneyDSP::StoneyVCV::VCA::VCAWidget::draw(const ::StoneyDSP::StoneyVCV::
     assert(!this->parent);
 
     // Children
-    // this->vcaWidget->clearChildren();
     this->vcaModuleWidgetFrameBuffer->clearChildren();
     this->clearChildren();
     this->setModule(NULL);
