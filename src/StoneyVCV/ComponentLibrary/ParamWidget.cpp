@@ -19,10 +19,6 @@
 
 //==============================================================================
 
-#include <string>
-
-//==============================================================================
-
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::ThemedParamPanelWidget()
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget(),
     type(::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::Type::KNOB),
@@ -103,6 +99,12 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::ge
 {
     return this->isBipolar;
 }
+
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
 
 //==============================================================================
 
