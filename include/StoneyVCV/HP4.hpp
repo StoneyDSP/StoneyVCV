@@ -36,12 +36,16 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+//==============================================================================
 
 #include <array>
 
@@ -163,7 +167,7 @@ public:
      * @brief Destroys the `HP4Widget` object.
      *
      */
-    virtual ~HP4Widget();
+    virtual ~HP4Widget() noexcept;
 
     /**
      * @brief Advances the module by one frame.
@@ -229,7 +233,7 @@ public:
      * @brief Destroys the `HP4ModuleWidget` object.
      *
      */
-    virtual ~HP4ModuleWidget();
+    virtual ~HP4ModuleWidget() noexcept;
 
     //==========================================================================
 

@@ -36,12 +36,16 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
+#include <StoneyVCV/ComponentLibrary.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
 
 #include <rack.hpp>
 #include <StoneyDSP/Core.hpp>
+
+//==============================================================================
 
 #include <array>
 
@@ -162,7 +166,7 @@ public:
      * @brief Destroys the `HP2Widget` object.
      *
      */
-    virtual ~HP2Widget();
+    virtual ~HP2Widget() noexcept;
 
     //==========================================================================
 
@@ -232,7 +236,7 @@ public:
      * @brief Destroys the `HP2ModuleWidget` object.
      *
      */
-    virtual ~HP2ModuleWidget();
+    virtual ~HP2ModuleWidget() noexcept;
 
     //==========================================================================
 
