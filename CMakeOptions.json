@@ -23,6 +23,10 @@
           "value": "ON",
           "type": "BOOL"
         },
+        "STONEYVCV_BUILD_COMPONENTLIBRARY": {
+          "value": "ON",
+          "type": "BOOL"
+        },
         "STONEYVCV_BUILD_PLUGIN": {
           "value": "ON",
           "type": "BOOL"

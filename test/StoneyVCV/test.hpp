@@ -36,8 +36,8 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
 #include <StoneyVCV/version.hpp>
-#include <StoneyVCV/ComponentLibrary.hpp>
 
 //==============================================================================
 
@@ -80,8 +80,7 @@ public:
         name(""),
         description("Unit test spec base class (internal)"),
         size(
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_WIDTH),
-            ::rack::window::mm2px(::StoneyDSP::StoneyVCV::Panels::MIN_HEIGHT)
+            0.0F, 0.0F
         )
     {};
     ~Spec() = default;

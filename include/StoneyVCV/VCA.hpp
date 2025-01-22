@@ -36,7 +36,11 @@
 
 //==============================================================================
 
+#include <StoneyVCV.hpp>
 #include <StoneyVCV/ComponentLibrary.hpp>
+#include <StoneyVCV/ComponentLibrary/PortWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/PanelWidget.hpp>
+#include <StoneyVCV/ComponentLibrary/RoundKnobWidget.hpp>
 #include <StoneyVCV/plugin.hpp>
 
 //==============================================================================
@@ -45,6 +49,8 @@
 #include <StoneyDSP/Core.hpp>
 #include <StoneyDSP/DSP.hpp>
 #include <StoneyDSP/SIMD.hpp>
+
+//==============================================================================
 
 #include <array>
 
@@ -96,9 +102,7 @@ public:
 
     VCAEngine();
 
-    VCAEngine(T sample);
-
-    ~VCAEngine() noexcept;
+    virtual ~VCAEngine() noexcept;
 
     //==========================================================================
 
@@ -166,7 +170,8 @@ public:
     };
 
     enum IdxLights {
-        BLINK_LIGHT, // ENUMS(BLINK_LIGHT, 2),
+        //BLINK_LIGHT,
+        ENUMS(BLINK_LIGHT, 2),
         NUM_LIGHTS
     };
 
@@ -195,13 +200,29 @@ public:
 
     //==========================================================================
 
-private:
+	struct NumChannelsChangedEvent {};
+	/** Called after enabling the module.
+	*/
+	virtual void onNumChannelsChanged(const NumChannelsChangedEvent& e) {}
+
+	struct GainParamChangedEvent {};
+	/** Called after changing the Gain parameter (knob) on the panel.
+	*/
+	virtual void onGainParamChanged(const GainParamChangedEvent& e) {}
 
     //==========================================================================
 
-    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+    ::std::size_t getVcaInputNumChannels() noexcept;
 
-    //==========================================================================
+    ::std::size_t getCvInputNumChannels() noexcept;
+
+    /**
+     * Get desired number of channels from `vcaInput` and `cvInput`.
+     * If these input are unpatched, getChannels() returns 0, but we should
+     * still generate 1 channel of output.
+     *
+     */
+    ::std::size_t getMinNumChannels() noexcept;
 
     ::rack::engine::Input &getVcaInput() noexcept;
 
@@ -215,6 +236,14 @@ private:
 
     //==========================================================================
 
+private:
+
+    //==========================================================================
+
+    using ProcessArgs = ::rack::engine::Module::ProcessArgs;
+
+    //==========================================================================
+
     /**
      * @brief
      *
@@ -225,13 +254,13 @@ private:
      * @brief
      *
      */
-    ::std::array<::StoneyDSP::StoneyVCV::VCA::VCAEngine<::StoneyDSP::float_t>, 16> engine;
+    ::std::array<::StoneyDSP::StoneyVCV::VCA::VCAEngine<float>, 16> engine;
 
     /**
      * @brief
      *
      */
-    ::std::array<::StoneyDSP::float_t, 16> lightGains;
+    ::std::array<float, 16> lightGains;
 
     //==========================================================================
 
@@ -247,6 +276,20 @@ private:
      */
     const ::StoneyDSP::float_t &vFloor = ::StoneyDSP::StoneyVCV::Tools::vFloor;
 
+    //==========================================================================
+
+    ::rack::engine::Input* vcaInputPtr = NULL;
+
+    ::rack::engine::Input* cvInputPtr = NULL;
+
+    ::rack::engine::Param* gainParamPtr = NULL;
+
+    ::rack::engine::Output* vcaOutputPtr = NULL;
+
+    ::rack::engine::Light* blinkLightPtr = NULL;
+
+    //==========================================================================
+
     STONEYDSP_DECLARE_NON_COPYABLE(VCAModule)
     STONEYDSP_DECLARE_NON_MOVEABLE(VCAModule)
 };
@@ -254,31 +297,31 @@ private:
 //==============================================================================
 
 /**
- * @brief The `VCAWidget` struct.
+ * @brief The `VCAPanelWidget` struct.
  *
  */
-struct VCAWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget
+struct VCAPanelWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget
 {
 
     //==========================================================================
 
 public:
 
-    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::DrawArgs;
+    using DrawArgs = ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget::DrawArgs;
 
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCAWidget` object.
+     * @brief Construct a new `VCAPanelWidget` object.
      *
      */
-    VCAWidget();
+    VCAPanelWidget(::rack::math::Rect newBox);
 
     /**
-     * @brief Destroys the `VCAWidget` object.
+     * @brief Destroys the `VCAPanelWidget` object.
      *
      */
-    virtual ~VCAWidget();
+    virtual ~VCAPanelWidget() noexcept;
 
     //==========================================================================
 
@@ -294,7 +337,7 @@ public:
      *
      * @param args
      */
-    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAPanelWidget::DrawArgs &args) override;
 
     //==========================================================================
 
@@ -302,22 +345,9 @@ private:
 
     //==========================================================================
 
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::math::Vec, 4> screwsPositions;
-
-    /**
-     * @brief
-     *
-     */
-    const ::std::array<::rack::componentlibrary::ThemedScrew *, 4> screws;
-
-    //==========================================================================
-
-    STONEYDSP_DECLARE_NON_COPYABLE(VCAWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(VCAWidget)
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAPanelWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAPanelWidget)
+    STONEYDSP_DECLARE_NON_CONSTRUCTABLE(VCAPanelWidget)
 };
 
 //==============================================================================
@@ -333,6 +363,8 @@ struct VCAModuleWidget final : virtual ::rack::app::ModuleWidget
 
 public:
 
+    using DrawArgs = ::rack::app::ModuleWidget::DrawArgs;
+
     //==========================================================================
 
     /**
@@ -347,15 +379,71 @@ public:
      * @brief Destroys the `VCAModuleWidget` object.
      *
      */
-    virtual ~VCAModuleWidget();
+    virtual ~VCAModuleWidget() noexcept;
 
     //==========================================================================
 
     /**
-     * @brief Advances the module by one frame.
+     * @brief Advances the `VCAModuleWidget` by one frame.
+     * Calls `::rack::ModuleWidget::step()` internally.
      *
      */
     virtual void step() override;
+
+    /**
+     * @brief Renders the `VCAModuleWidget` to the NanoVG context.
+     * Calls `::rack::ModuleWidget::draw(args)` internally.
+     *
+     */
+    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAModuleWidget::DrawArgs &args) override;
+
+    //==========================================================================
+
+    /**
+     * Occurs after the `prefersDarkPanels` setting is changed.
+     * The concept of a "dark" or "light" panel is defined by the type of Widget.
+	 *
+     */
+	struct PrefersDarkPanelsChangeEvent : ::rack::widget::Widget::BaseEvent {
+        bool newPrefersDarkPanels;
+    };
+
+    /**
+     * Called after the `prefersDarkPanels` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `ThemedWidget::step()` method).
+     *
+     * @param e
+     *
+     */
+	virtual void onPrefersDarkPanelsChange(const PrefersDarkPanelsChangeEvent& e);
+
+    /**
+     *
+     */
+    const bool &getPrefersDarkPanels() const noexcept;
+
+    //==========================================================================
+
+    struct PixelRatioChangeEvent : ::rack::widget::Widget::BaseEvent {
+        float newPixelRatio = APP->window->pixelRatio;
+    };
+
+    /**
+     * Called after the `App->window->pixelRatio` setting is changed.
+     * Sub-classes can override this to receive callbacks when the event is
+     * dispatched (from the `Widget::step()` method).
+     *
+     * @param e
+     *
+     */
+    virtual void onPixelRatioChange(const PixelRatioChangeEvent& e);
+
+    /**
+     * @brief
+     *
+     */
+    const float &getPixelRatio() const noexcept;
 
     //==========================================================================
 
@@ -367,25 +455,19 @@ private:
      * @brief
      *
      */
-    const ::rack::math::Vec size;
+    ::rack::app::ThemedSvgPanel *svgPanelWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::rack::app::ThemedSvgPanel *panel;
+    ::StoneyDSP::StoneyVCV::VCA::VCAPanelWidget *panelWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::VCA::VCAWidget *vcaWidget;
-
-    /**
-     * @brief
-     *
-     */
-    ::rack::FramebufferWidget *vcaModuleWidgetFrameBuffer;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *fb = NULL;
 
     //==========================================================================
 
@@ -393,34 +475,38 @@ private:
      * @brief
      *
      */
-    ::rack::componentlibrary::RoundBigBlackKnob *gainKnob;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundHugeBlackKnob *knobGain = NULL;
 
-    // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider;
+    // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider = NULL;
 
-    /**
-     * @brief
-     *
-     */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portCvInput;
+    //==========================================================================
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaInput;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputCv = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaOutput;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputVca = NULL;
+
+    /**
+     * @brief
+     *
+     */
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portOutputVca = NULL;
 
     /**
      * @brief 3mm LED showing a smoothed CV value.
+     *
      */
-    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca;
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *vcaLight = NULL;
 
-    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca;
+    // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca = NULL;
+
 
     //==========================================================================
 
@@ -428,7 +514,27 @@ private:
      * @brief
      *
      */
-    bool lastPrefersDarkPanels;
+    bool lastPrefersDarkPanels = {::rack::settings::preferDarkPanels};
+
+    /**
+     * `{&::rack::settings::preferDarkPanels}`
+     *
+     */
+    const bool *prefersDarkPanelsPtr = NULL;
+
+    //==========================================================================
+
+    /**
+     * @brief
+     *
+     */
+    float lastPixelRatio = {APP->window->pixelRatio};
+
+    /**
+     * @brief
+     *
+     */
+    const float *pixelRatioPtr = NULL;
 
     //==========================================================================
 
