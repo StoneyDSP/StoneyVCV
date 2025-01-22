@@ -38,9 +38,9 @@ struct LFOSpec final : ::StoneyDSP::StoneyVCV::Spec
 public:
     const ::std::string slug, name , description, manualUrl;
     const bool hidden;
-    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 0U;
-    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 0U;
+    static constexpr ::StoneyDSP::size_t NUM_PARAMS = 4U;
+    static constexpr ::StoneyDSP::size_t NUM_INPUTS = 4U;
+    static constexpr ::StoneyDSP::size_t NUM_OUTPUTS = 4U;
     static constexpr ::StoneyDSP::size_t NUM_LIGHTS = 2U;
     const ::rack::math::Vec size;
     LFOSpec()
@@ -50,7 +50,7 @@ public:
         manualUrl("https://stoneydsp.github.io/StoneyVCV/md_docs_2LFO.html"),
         hidden(false),
         size(
-            45.0F, // ::rack::window::mm2px(30.479999995F),
+            135.0F, // ::rack::window::mm2px(30.479999995F),
             380.0F //::rack::window::mm2px(128.693333312F)
         )
     {};
@@ -88,10 +88,10 @@ TEST_CASE( "LFO", "[LFO]" ) {
         }
         SECTION( "methods" ) {
             ::StoneyDSP::StoneyVCV::LFO::LFOModule* test_lfoModule = new ::StoneyDSP::StoneyVCV::LFO::LFOModule;
-            REQUIRE( test_lfoModule->getNumParams() == spec.get()->NUM_PARAMS );
-            REQUIRE( test_lfoModule->getNumInputs() == spec.get()->NUM_INPUTS );
-            REQUIRE( test_lfoModule->getNumOutputs() == spec.get()->NUM_OUTPUTS );
-            REQUIRE( test_lfoModule->getNumLights() == spec.get()->NUM_LIGHTS );
+            REQUIRE( test_lfoModule->getNumParams() == static_cast<int>(spec.get()->NUM_PARAMS) );
+            REQUIRE( test_lfoModule->getNumInputs() == static_cast<int>(spec.get()->NUM_INPUTS) );
+            REQUIRE( test_lfoModule->getNumOutputs() == static_cast<int>(spec.get()->NUM_OUTPUTS) );
+            REQUIRE( test_lfoModule->getNumLights() == static_cast<int>(spec.get()->NUM_LIGHTS) );
             delete test_lfoModule;
         }
     }
