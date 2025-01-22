@@ -138,9 +138,21 @@ public:
 
     //==========================================================================
 
+    virtual void setLeading(const float &newLeading) noexcept;
+
+    virtual const float &getLeading() const noexcept;
+
+    //==========================================================================
+
     virtual void setLabelText(const ::std::string &newLabelText) noexcept;
 
     virtual const ::std::string &getLabelText() const noexcept;
+
+    //==========================================================================
+
+    virtual void setIsBipolar(const bool &newIsBipolar);
+
+    virtual const bool &getIsBipolar() const noexcept;
 
     //==========================================================================
 
@@ -159,7 +171,11 @@ protected:
 
     float fontSize = 8.0F;
 
+    float leading = 4.0F;
+
     ::std::string labelText = "";
+
+    bool isBipolar;
 
     //==========================================================================
 

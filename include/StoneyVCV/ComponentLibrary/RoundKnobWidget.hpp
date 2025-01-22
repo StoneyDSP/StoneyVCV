@@ -96,8 +96,7 @@ public:
     ThemedRoundKnobPanelWidget()
     :   ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget(),
         minAngle(0.0F),
-        maxAngle(0.0F),
-        leading(0.0F)
+        maxAngle(0.0F)
     {
         DBG("Constructing StoneyVCV::ComponentLibrary::ThemedRoundKnobPanelWidget");
 
@@ -186,7 +185,8 @@ public:
         float radius = (size.x * 0.5F) + leading;
         float rotationOffset = -M_PI / 2.0F;            // Knob Widgets are actually rotated -90 degress in rads
 
-        ::nvgArc(args.vg,                               // Draw knob ring
+        // Draw knob ring
+        ::nvgArc(args.vg,
             (size.x * 0.5F),                            // knob ring centre x
             (size.y * 0.5F),                            // knob ring center y
             radius,                                     // knob ring diameter
@@ -217,16 +217,38 @@ public:
         /// if your number of ranges is greater than the default, or previously
         /// - specified, number of ranges, since the container type is dynamic.
 
-        ::rack::math::Vec ranges [] = {
-            // rangeStart, rangeEnd
-            this->radiusToXY(radius, this->radiansToDegrees(this->minAngle - rotationOffset)),
-            // this->radiusToXY(radius, 0.0F),
-            // this->radiusToXY(radius, 45.0F),
-            // this->radiusToXY(radius, 90.0F),
-            // this->radiusToXY(radius, 180.0F),
-            // this->radiusToXY(radius, 270.0F),
+        ::std::vector<::rack::math::Vec> ranges;
+
+        ranges.reserve(3);
+
+        // ranges = {
+        //     // rangeStart, rangeEnd
+        //     this->radiusToXY(radius, this->radiansToDegrees(this->minAngle - rotationOffset)),
+        //     // this->radiusToXY(radius, 0.0F),
+        //     // this->radiusToXY(radius, 45.0F),
+        //     // this->radiusToXY(radius, 90.0F),
+        //     // this->radiusToXY(radius, 180.0F),
+        //     // this->radiusToXY(radius, 270.0F),
+        //     this->radiusToXY(radius, this->radiansToDegrees(this->maxAngle - rotationOffset))
+        // };
+
+        ranges.emplace_back(
+            this->radiusToXY(radius, this->radiansToDegrees(this->minAngle - rotationOffset))
+        );
+
+        if(this->isBipolar)
+            ranges.emplace_back(
+                // this->radiusToXY(
+                //     radius,
+                //     this->radiansToDegrees(this->minAngle - rotationOffset) - this->radiansToDegrees(this->maxAngle - rotationOffset)
+                // )
+                this->radiusToXY(radius, 90.0F)
+            );
+
+        ranges.emplace_back(
             this->radiusToXY(radius, this->radiansToDegrees(this->maxAngle - rotationOffset))
-        };
+
+        );
 
         // Draw ranges as lines from the knob centre-point to the outer radius (includes leading)
         for(const auto &range : ranges) {
@@ -275,25 +297,12 @@ public:
 
     //==========================================================================
 
-    virtual void setLeading(const float &newLeading)
-    {
-        this->leading = newLeading;
-    }
-
-    virtual const float &getLeading() const noexcept
-    {
-        return this->leading;
-    }
-
-    //==========================================================================
-
 protected:
 
     //==========================================================================
 
     float minAngle = (0.0F - (5.0F / 6.0F)) * M_PI;     // -0.8333... * pi
     float maxAngle = (5.0F / 6.0F) * M_PI;              // +0.8333... * pi
-    float leading = (4.0F);
 
     //==========================================================================
 
@@ -364,7 +373,7 @@ public:
 
 	}
 
-    ~RoundBlackKnob()
+    virtual ~RoundBlackKnob() noexcept
     {
         assert(!this->parent);
 
@@ -403,7 +412,7 @@ public:
         );
 	}
 
-    ~RoundSmallBlackKnob()
+    virtual ~RoundSmallBlackKnob() noexcept
     {
         assert(!this->parent);
 
@@ -441,7 +450,7 @@ public:
         );
 	}
 
-    ~RoundLargeBlackKnob()
+    virtual ~RoundLargeBlackKnob() noexcept
     {
         assert(!this->parent);
 
@@ -479,7 +488,7 @@ public:
         );
 	}
 
-    ~RoundBigBlackKnob()
+    virtual ~RoundBigBlackKnob() noexcept
     {
         assert(!this->parent);
 
@@ -517,7 +526,7 @@ public:
         );
 	}
 
-    ~RoundHugeBlackKnob()
+    virtual ~RoundHugeBlackKnob() noexcept
     {
         assert(!this->parent);
 
@@ -541,7 +550,7 @@ public:
 		snap = true;
 	}
 
-    ~RoundBlackSnapKnob()
+    virtual ~RoundBlackSnapKnob() noexcept
     {
         assert(!this->parent);
 
@@ -552,6 +561,45 @@ private:
 
     STONEYDSP_DECLARE_NON_COPYABLE(RoundBlackSnapKnob)
     STONEYDSP_DECLARE_NON_MOVEABLE(RoundBlackSnapKnob)
+};
+
+struct Trimpot : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob
+{
+public:
+
+	Trimpot()
+    :   ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundKnob()
+    {
+		this->minAngle = -0.75 * M_PI;
+		this->maxAngle = 0.75 * M_PI;
+
+		this->setSvg(
+            ::rack::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/Trimpot.svg"
+                )
+            )
+        );
+		this->bg->setSvg(
+            ::rack::Svg::load(
+                ::rack::asset::system(
+                    "res/ComponentLibrary/Trimpot_bg.svg"
+                )
+            )
+        );
+	}
+
+    virtual ~Trimpot() noexcept
+    {
+        assert(!this->parent);
+
+        this->clearChildren();
+    }
+
+private:
+
+    STONEYDSP_DECLARE_NON_COPYABLE(Trimpot)
+    STONEYDSP_DECLARE_NON_MOVEABLE(Trimpot)
 };
 
 //==============================================================================
