@@ -98,6 +98,13 @@ public:
     Widget();
 
     /**
+     * @brief Construct a new `Widget` object with its' position and size set
+     * using a `rack::math::Rect`.
+     *
+     */
+    Widget(::rack::math::Rect newBox);
+
+    /**
      * @brief Destroys the `Widget` object.
      *
      */
@@ -245,6 +252,13 @@ public:
     ThemedWidget();
 
     /**
+     * @brief Construct a new `ThemedWidget` object with its' position and size
+     * set using a `rack::math::Rect`.
+     *
+     */
+    ThemedWidget(::rack::math::Rect newBox);
+
+    /**
      * @brief Destroys the `ThemedWidget` object.
      *
      */
@@ -342,6 +356,8 @@ public:
 
     FramebufferWidget();
 
+    FramebufferWidget(::rack::math::Rect newBox);
+
     virtual ~FramebufferWidget() noexcept;
 
     //==========================================================================
@@ -380,6 +396,8 @@ public:
     //==========================================================================
 
     TransparentWidget();
+
+    TransparentWidget(::rack::math::Rect newBox);
 
     virtual ~TransparentWidget() noexcept;
 
@@ -421,6 +439,8 @@ public:
     //==========================================================================
 
     OpaqueWidget();
+
+    OpaqueWidget(::rack::math::Rect newBox);
 
     virtual ~OpaqueWidget() noexcept;
 
@@ -493,6 +513,8 @@ private:
     STONEYDSP_DECLARE_NON_MOVEABLE(OpaqueWidget)
 };
 
+//==============================================================================
+
 struct SvgWidget : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget
 {
 
@@ -507,6 +529,8 @@ public:
     //==========================================================================
 
     SvgWidget();
+
+    SvgWidget(::rack::math::Rect newBox);
 
     virtual ~SvgWidget() noexcept;
 

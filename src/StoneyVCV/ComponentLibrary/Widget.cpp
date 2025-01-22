@@ -24,7 +24,12 @@
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::Widget()
 :   ::rack::widget::Widget(),
-    box(::rack::math::Rect(::rack::math::Vec(), ::rack::math::Vec(INFINITY, INFINITY))),
+    box(
+        ::rack::math::Rect(
+            ::rack::math::Vec(),
+            ::rack::math::Vec(INFINITY, INFINITY)
+        )
+    ),
     parent(NULL),
     children(),
     visible(true),
@@ -33,6 +38,25 @@
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::Widget");
+
+    this->pixelRatioPtr = static_cast<const float *>(&APP->window->pixelRatio);
+
+    assert(this->pixelRatioPtr != nullptr);
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::Widget(::rack::math::Rect newBox)
+:   ::rack::widget::Widget(),
+    box(newBox),
+    parent(NULL),
+    children(),
+    visible(true),
+    requestedDelete(false),
+    pixelRatioPtr(nullptr)
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::Widget");
+
+    this->setBox(newBox);
 
     this->pixelRatioPtr = static_cast<const float *>(&APP->window->pixelRatio);
 
@@ -64,6 +88,12 @@ const float &::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::getPixelRatio() c
     return *this->pixelRatioPtr;
 }
 
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::Widget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::Widget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::Widget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::Widget>(::rack::math::Vec pos, ::rack::math::Vec size);
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::ThemedWidget()
@@ -73,6 +103,21 @@ const float &::StoneyDSP::StoneyVCV::ComponentLibrary::Widget::getPixelRatio() c
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget");
+
+    this->prefersDarkPanelsPtr = static_cast<const bool *>(&::rack::settings::preferDarkPanels);
+
+    assert(this->prefersDarkPanelsPtr != nullptr);
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::ThemedWidget(::rack::math::Rect newBox)
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget(newBox),
+    lastPrefersDarkPanels(::rack::settings::preferDarkPanels),
+    prefersDarkPanelsPtr(nullptr)
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget");
+
+    this->setBox(newBox);
 
     this->prefersDarkPanelsPtr = static_cast<const bool *>(&::rack::settings::preferDarkPanels);
 
@@ -157,6 +202,12 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::getPrefersDa
     return *this->prefersDarkPanelsPtr;
 }
 
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::FramebufferWidget()
@@ -164,6 +215,15 @@ const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedWidget::getPrefersDa
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget");
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::FramebufferWidget(::rack::math::Rect newBox)
+:   ::rack::widget::FramebufferWidget()
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget");
+
+    this->box = newBox;
 }
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::~FramebufferWidget() noexcept
@@ -189,10 +249,23 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::draw(const ::S
     return ::rack::widget::FramebufferWidget::draw(args);
 }
 
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::TransparentWidget()
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget()
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget");
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget::TransparentWidget(::rack::math::Rect newBox)
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget(newBox)
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget");
@@ -206,10 +279,23 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::draw(const ::S
     this->clearChildren();
 }
 
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget::OpaqueWidget()
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget()
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget");
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget::OpaqueWidget(::rack::math::Rect newBox)
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget(newBox)
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget");
@@ -223,10 +309,25 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget::draw(const ::S
     this->clearChildren();
 }
 
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::OpaqueWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+
 //==============================================================================
 
 ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::SvgWidget()
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget()
+{
+    // Assertions
+    DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget");
+
+    this->box.size = ::rack::math::Vec();
+}
+
+::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::SvgWidget(::rack::math::Rect newBox)
+:   ::StoneyDSP::StoneyVCV::ComponentLibrary::Widget(newBox)
 {
     // Assertions
     DBG("Constructing StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget");
@@ -266,6 +367,12 @@ void ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget::draw(const DrawArgs &a
 
 	return ::rack::window::svgDraw(args.vg, this->svg->handle);
 }
+
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::SvgWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
 
 //==============================================================================
 

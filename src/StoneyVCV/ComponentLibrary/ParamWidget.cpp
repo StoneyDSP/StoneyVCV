@@ -19,15 +19,13 @@
 
 //==============================================================================
 
-#include <string>
-
-//==============================================================================
-
 ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::ThemedParamPanelWidget()
 :   ::StoneyDSP::StoneyVCV::ComponentLibrary::TransparentWidget(),
     type(::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::Type::KNOB),
     fontSize(8.0F),
+    leading(4.0F),
     labelText(""),
+    isBipolar(false),
     prefersDarkPanelsPtr(nullptr)
 {
     DBG("Constructing StoneyVCV::ComponentLibrary::ThemedParamPanelWidget");
@@ -72,6 +70,16 @@ const float &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::g
     return this->fontSize;
 }
 
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::setLeading(const float & newLeading) noexcept
+{
+    this->leading = newLeading;
+}
+
+const float &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::getLeading() const noexcept
+{
+    return this->leading;
+}
+
 void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::setLabelText(const ::std::string & newLabelText) noexcept
 {
     this->labelText = newLabelText;
@@ -81,6 +89,22 @@ const ::std::string &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelW
 {
     return this->labelText;
 }
+
+void ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::setIsBipolar(const bool &newIsBipolar)
+{
+    this->isBipolar = newIsBipolar;
+}
+
+const bool &::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget::getIsBipolar() const noexcept
+{
+    return this->isBipolar;
+}
+
+// Explicit instantiations to ensure the definition is visible to the linker...
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidget<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidgetCentered<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidgetSized<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
+template ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget *::StoneyDSP::StoneyVCV::createWidgetCenteredSized<::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedParamPanelWidget>(::rack::math::Vec pos, ::rack::math::Vec size);
 
 //==============================================================================
 
