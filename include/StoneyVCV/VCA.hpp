@@ -297,10 +297,10 @@ private:
 //==============================================================================
 
 /**
- * @brief The `VCAWidget` struct.
+ * @brief The `VCAPanelWidget` struct.
  *
  */
-struct VCAWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget
+struct VCAPanelWidget final : virtual ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPanelWidget
 {
 
     //==========================================================================
@@ -312,16 +312,16 @@ public:
     //==========================================================================
 
     /**
-     * @brief Construct a new `VCAWidget` object.
+     * @brief Construct a new `VCAPanelWidget` object.
      *
      */
-    VCAWidget();
+    VCAPanelWidget(::rack::math::Rect newBox);
 
     /**
-     * @brief Destroys the `VCAWidget` object.
+     * @brief Destroys the `VCAPanelWidget` object.
      *
      */
-    virtual ~VCAWidget() noexcept;
+    virtual ~VCAPanelWidget() noexcept;
 
     //==========================================================================
 
@@ -337,7 +337,7 @@ public:
      *
      * @param args
      */
-    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAWidget::DrawArgs &args) override;
+    virtual void draw(const ::StoneyDSP::StoneyVCV::VCA::VCAPanelWidget::DrawArgs &args) override;
 
     //==========================================================================
 
@@ -345,8 +345,9 @@ private:
 
     //==========================================================================
 
-    STONEYDSP_DECLARE_NON_COPYABLE(VCAWidget)
-    STONEYDSP_DECLARE_NON_MOVEABLE(VCAWidget)
+    STONEYDSP_DECLARE_NON_COPYABLE(VCAPanelWidget)
+    STONEYDSP_DECLARE_NON_MOVEABLE(VCAPanelWidget)
+    STONEYDSP_DECLARE_NON_CONSTRUCTABLE(VCAPanelWidget)
 };
 
 //==============================================================================
@@ -454,19 +455,19 @@ private:
      * @brief
      *
      */
-    ::rack::app::ThemedSvgPanel *panel = NULL;
+    ::rack::app::ThemedSvgPanel *svgPanelWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::VCA::VCAWidget *vcaWidget = NULL;
+    ::StoneyDSP::StoneyVCV::VCA::VCAPanelWidget *panelWidget = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *vcaModuleWidgetFrameBuffer = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::FramebufferWidget *fb = NULL;
 
     //==========================================================================
 
@@ -474,7 +475,7 @@ private:
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundHugeBlackKnob *gainKnob = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::RoundHugeBlackKnob *knobGain = NULL;
 
     // ::rack::componentlibrary::VCVLightSlider<::rack::componentlibrary::YellowLight>* gainSlider = NULL;
 
@@ -484,25 +485,25 @@ private:
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portCvInput = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputCv = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaInput = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portInputVca = NULL;
 
     /**
      * @brief
      *
      */
-    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portVcaOutput = NULL;
+    ::StoneyDSP::StoneyVCV::ComponentLibrary::ThemedPortWidget *portOutputVca = NULL;
 
     /**
      * @brief 3mm LED showing a smoothed CV value.
      *
      */
-    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *lightVca = NULL;
+    ::rack::componentlibrary::MediumLight<::rack::componentlibrary::GreenRedLight> *vcaLight = NULL;
 
     // ::rack::componentlibrary::MediumLight<::rack::componentlibrary::RedLight> *lightVca = NULL;
 

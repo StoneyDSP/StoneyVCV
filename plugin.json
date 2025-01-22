@@ -9,7 +9,7 @@
   "license" : "MIT",
   "manualUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production/README.md",
   "minRackVersion" : "2.5.2",
-  "modules" : 
+  "modules" :
   [
     {
       "description" : "1hp Panel Spacer.",
@@ -33,12 +33,12 @@
       "description" : "Voltage-controlled Amplifier. Supports polyphony.",
       "name" : "VCA",
       "slug" : "VCA",
-      "tags" : [ "Voltage-controlled Amplifier", "Polyphonic" ]
+      "tags" : [ "Voltage-controlled amplifier", "Polyphonic" ]
     }
   ],
   "name" : "StoneyVCV",
   "pluginUrl" : "https://github.com/StoneyDSP/StoneyVCV",
   "slug" : "StoneyDSP-StoneyVCV",
   "sourceUrl" : "https://github.com/StoneyDSP/StoneyVCV/blob/production",
-  "version" : "2.0.1315"
+  "version" : "2.0.1349"
 }
