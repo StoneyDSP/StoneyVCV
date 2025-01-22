@@ -1,10 +1,6 @@
 /*******************************************************************************
  * @file src/StoneyVCV/plugin.cpp
  * @author Nathan J. Hood <nathanjhood@googlemail.com>
- * @brief
- * @version 2.0.1
- * @date 2024-11-11
- *
  * @copyright Copyright (c) 2024 MIT License
  *
  ******************************************************************************/
@@ -14,6 +10,10 @@
 //==============================================================================
 
 #include <StoneyVCV/plugin.hpp>
+
+//==============================================================================
+
+#include <StoneyVCV.hpp>
 
 //==============================================================================
 
@@ -65,28 +65,20 @@ void init(::rack::plugin::Plugin* p) {
 
     ::StoneyDSP::StoneyVCV::Plugin::pluginInstance = p;
 
-#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 2)
+#ifdef STONEYVCV_BUILD_VCA
+    p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
+#endif
 
-    #ifdef STONEYVCV_BUILD_VCA
-        p->addModel(::StoneyDSP::StoneyVCV::VCA::modelVCA);
-    #endif
+#ifdef STONEYVCV_BUILD_HP4
+    p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
+#endif
 
-#endif // STONEYVCV_VERSION_PATCH >= 2
+#ifdef STONEYVCV_BUILD_HP2
+    p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
+#endif
 
-#if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH >= 1)
-
-    #ifdef STONEYVCV_BUILD_HP4
-        p->addModel(::StoneyDSP::StoneyVCV::HP4::modelHP4);
-    #endif
-
-    #ifdef STONEYVCV_BUILD_HP2
-        p->addModel(::StoneyDSP::StoneyVCV::HP2::modelHP2);
-    #endif
-
-    #ifdef STONEYVCV_BUILD_HP1
-        p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
-    #endif
-
+#ifdef STONEYVCV_BUILD_HP1
+    p->addModel(::StoneyDSP::StoneyVCV::HP1::modelHP1);
 #endif
 
 #if (STONEYVCV_VERSION_MAJOR >= 2U) && (STONEYVCV_VERSION_MINOR >= 0) && (STONEYVCV_VERSION_PATCH < 1U)
@@ -108,41 +100,6 @@ void init(::rack::plugin::Plugin* p) {
     // As an alternative, consider lazy-loading assets and lookup tables when
     // your module is created to reduce startup times of Rack.
 }
-
-//==============================================================================
-
-namespace StoneyDSP {
-
-//==============================================================================
-
-namespace StoneyVCV {
-
-//==============================================================================
-
-namespace Tools {
-
-//==============================================================================
-
-const ::StoneyDSP::float_t vMin = (-12.0F);
-const ::StoneyDSP::float_t vMax = (12.0F);
-const ::StoneyDSP::float_t vNominal = (10.0F);
-const ::StoneyDSP::float_t vBias = (0.0F);
-const ::StoneyDSP::float_t vGround = (0.0F);
-const ::StoneyDSP::float_t vFloor = (0.0F);
-
-//==============================================================================
-
-} // namespace Tools
-
-//==============================================================================
-
-} // namespace StoneyVCV
-
-//==============================================================================
-
-} // namespace StoneyDSP
-
-//==============================================================================
 
 #endif // defined (STONEYVCV_BUILD_MODULES)
 

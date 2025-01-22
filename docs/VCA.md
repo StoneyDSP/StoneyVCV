@@ -4,11 +4,9 @@ Voltage-controlled Amplifier.
 
 Supports polyphony.
 
-<picture>
-<source srcset="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/VCA-dark.svg" media="(prefers-color-scheme: dark)" />
-<source srcset="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/VCA-light.svg" media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)" />
-<img src="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/VCA-dark.svg" height="380px" width="90px" />
-</picture>
+<img src="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/VCA-light.svg" height="380px" width="90px" alt="VCA - light theme" />
+
+<img src="https://raw.githubusercontent.com/StoneyDSP/StoneyVCV/refs/heads/production/res/specs/VCA-dark.svg" height="380px" width="90px" alt="VCA - dark theme" />
 
 ## Panel
 

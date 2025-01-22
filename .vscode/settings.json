@@ -8,7 +8,10 @@
     80,
     160
   ],
-  "makefile.configureOnOpen": false,
+  "makefile.configureOnOpen": true,
+  "makefile.compileCommandsPath": "${workspaceFolder}/build/compile_commands_make.json",
+  "makefile.makefilePath": "${workspaceFolder}/Makefile",
+  "makefile.makePath": "make",
   "cmake.cmakePath": "cmake",
   "cmake.ctestPath": "ctest",
   "cmake.cpackPath": "cpack",
@@ -60,6 +63,7 @@
   "C_Cpp.default.defines": [
     "_DEBUG=1",
     "STONEYVCV_EXPERIMENTAL",
+    "STONEYVCV_BUILD_COMPONENTLIBRARY=1",
     "STONEYVCV_BUILD_PLUGIN=1",
     "STONEYVCV_BUILD_MODULES=1",
     "STONEYVCV_BUILD_HP4=1",
